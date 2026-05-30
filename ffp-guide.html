@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Guide Déploiement</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<style>
+:root{--gold:#D4AF37;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.dtab{padding:9px 18px;background:transparent;border:1px solid rgba(212,175,55,.15);border-radius:8px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.dtab:hover{border-color:rgba(212,175,55,.3);color:#FBCB57}
+.dtab.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.45);color:#D4AF37}
+.dsec{display:none}
+.card{background:#0A0800;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:20px 22px;margin-bottom:16px;position:relative;z-index:1}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px}
+.step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.step:last-child{border-bottom:none}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.step-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;margin-bottom:6px}
+.step-desc{font-size:13px;color:#888;line-height:1.7;margin-bottom:10px}
+pre{background:#080602;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:14px 16px;overflow-x:auto;font-family:monospace;font-size:12px;line-height:1.7;position:relative;margin:8px 0 0}
+.copy-btn{position:absolute;top:8px;right:10px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);border-radius:5px;color:#D4AF37;padding:4px 10px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;transition:all .2s}
+.copy-btn:hover{background:rgba(212,175,55,.2)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:12px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700}
+.b-free{background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.25);color:#4BC88A}
+.b-paid{background:rgba(251,203,87,.1);border:1px solid rgba(251,203,87,.25);color:#FBCB57}
+.b-tech{background:rgba(96,168,208,.1);border:1px solid rgba(96,168,208,.25);color:#60A8D0}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,.04);margin-bottom:6px}
+.chk:hover{background:rgba(212,175,55,.04)}
+.chk.checked{background:rgba(75,200,138,.05);border-color:rgba(75,200,138,.2)}
+.chk-box{width:20px;height:20px;border-radius:5px;border:2px solid rgba(212,175,55,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.chk.checked .chk-box{background:#4BC88A;border-color:#4BC88A}
+.chk.checked .chk-box::after{content:'✓';color:#000;font-weight:700;font-size:12px}
+.chk-text{font-size:13px;line-height:1.5}
+.chk.checked .chk-text{color:#888;text-decoration:line-through}
+.info-box{background:rgba(96,168,208,.05);border:1px solid rgba(96,168,208,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:#888;line-height:1.7;margin-bottom:12px}
+.info-box strong{color:#60A8D0}
+.warn-box{background:rgba(251,203,87,.05);border:1px solid rgba(251,203,87,.2);border-radius:8px;padding:12px 16px;font-size:12px;color:#888;line-height:1.7;margin-bottom:12px}
+.warn-box strong{color:#FBCB57}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:700px){.dtab{font-size:9px;padding:7px 12px}}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
+<a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Guide Déploiement</div></div></a><div style="margin-left:auto;display:flex;gap:6px"><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">← Accueil</a></div></header>
+<div style="max-width:1100px;margin:0 auto;padding:24px 20px;position:relative;z-index:1"><div style="margin-bottom:32px"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(20px,3vw,32px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Guide de Déploiement</div><p style="font-size:14px;color:#888;max-width:600px;line-height:1.7">Mettre Foot Factory Pro en ligne en moins de 10 minutes. Hébergement gratuit, URL publique, accessible depuis n'importe quel appareil.</p><div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><span class="badge b-free">✓ Hébergement gratuit</span><span class="badge b-free">✓ HTTPS automatique</span><span class="badge b-free">✓ URL personnalisée</span><span class="badge b-tech">⚡ Déploiement en 5 min</span></div></div><div class="card" style="margin-bottom:24px;border-top:3px solid #4BC88A"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px"><div class="ct" style="margin:0">Checklist de déploiement</div><div style="display:flex;align-items:center;gap:10px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#4BC88A" id="progress-pct">0%</div><div style="width:120px;height:5px;background:#1A1A1A;border-radius:3px;overflow:hidden"><div id="progress-bar" style="height:100%;background:linear-gradient(to right,#4BC88A,#D4AF37);border-radius:3px;width:0%;transition:width .4s"></div></div></div></div><div id="deploy-success" style="display:none;background:rgba(75,200,138,.08);border:1px solid rgba(75,200,138,.25);border-radius:8px;padding:12px 16px;text-align:center;margin-bottom:12px"><div style="font-size:24px;margin-bottom:6px">🚀</div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">Déploiement complété !</div><div style="font-size:12px;color:#888;margin-top:4px">Votre plateforme Foot Factory Pro est en ligne.</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Télécharger tous les fichiers (14 fichiers dans le même dossier)</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Créer un compte GitHub (github.com) — gratuit</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Créer un repository GitHub et uploader les fichiers</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Créer un compte Vercel (vercel.com) — gratuit avec GitHub</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Connecter le repository GitHub à Vercel</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Déployer — cliquer "Deploy" dans Vercel</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">Tester la plateforme via l'URL Vercel fournie</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">(Optionnel) Configurer Firebase pour la sync multi-appareils</div></div><div onclick="toggleCheck(this)" class="chk"><div class="chk-box"></div><div class="chk-text">(Optionnel) Connecter un domaine personnalisé</div></div></div><div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap"><button class="dtab on" onclick="showTab('vercel',this)">🔺 Vercel (Recommandé)</button><button class="dtab" onclick="showTab('netlify',this)">🌐 Netlify</button><button class="dtab" onclick="showTab('firebase-host',this)">🔥 Firebase Hosting</button><button class="dtab" onclick="showTab('github-pages',this)">🐙 GitHub Pages</button><button class="dtab" onclick="showTab('supabase',this)" style="color:rgba(75,200,138,.7)">🟢 Supabase (BDD)</button><button class="dtab" onclick="showTab('domaine',this)">🌍 Domaine perso</button></div><div id="ds-vercel" class="dsec"><div class="info-box">🔺 <strong>Vercel</strong> est la solution recommandée pour FFP. Déploiement instantané depuis GitHub, HTTPS gratuit, URL en <code>ffp.vercel.app</code>, CDN mondial. Plan gratuit suffisant pour toute la plateforme.</div><div class="card"><div class="ct">Option A — Interface Web (Sans code)</div><div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Créer un compte GitHub</div><div class="step-desc">Aller sur <a href="https://github.com" target="_blank" style="color:#60A8D0">github.com</a> → Sign up → Compte gratuit. Si vous en avez déjà un, passer à l'étape 2.</div></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Créer un nouveau repository</div><div class="step-desc">GitHub → New repository → Nom : <code style="color:#D4AF37">foot-factory-pro</code> → Public → Create repository</div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Uploader les 14 fichiers FFP</div><div class="step-desc">Dans le repository → <strong>Add file → Upload files</strong> → Glisser-déposer les 14 fichiers → Commit changes</div><div class="warn-box">⚠️ Tous les fichiers doivent être à la <strong>racine</strong> du repository (pas dans un sous-dossier). Vérifier que ffp-accueil.html, ffp-coach.html, ffp-coach.js, etc. sont bien à la racine.</div></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Connecter Vercel</div><div class="step-desc">Aller sur <a href="https://vercel.com" target="_blank" style="color:#60A8D0">vercel.com</a> → Continue with GitHub → Autoriser → Import le repository <code>foot-factory-pro</code></div></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">Configurer le déploiement</div><div class="step-desc">Dans Vercel :<br>• Framework Preset : <strong>Other</strong><br>• Root Directory : <strong>./</strong> (laisser par défaut)<br>• Build Command : <strong>laisser vide</strong><br>• Output Directory : <strong>./</strong> (laisser par défaut)<br>→ Cliquer <strong>Deploy</strong></div></div></div><div class="step"><div class="step-num">6</div><div class="step-body"><div class="step-title">🎉 Votre URL est prête !</div><div class="step-desc">Vercel génère automatiquement une URL du type :<br><code style="color:#4BC88A;font-size:13px">https://foot-factory-pro.vercel.app</code><br><br>Accès immédiat depuis n'importe quel appareil, iPhone, Android, PC.</div></div></div></div><div class="card" style="margin-top:0"><div class="ct">Option B — Via terminal (Git)</div><pre id="v-git"><code>// 1. Installer Vercel CLI
+npm install -g vercel
+
+// 2. Aller dans le dossier FFP
+cd chemin/vers/foot-factory-pro
+
+// 3. Déployer
+vercel
+
+// Suivre les instructions :
+// ? Set up and deploy current directory? Y
+// ? Which scope? (votre compte)
+// ? Link to existing project? N
+// ? Project name: foot-factory-pro
+// ? Directory: ./
+// → URL déployée !</code></pre><button class="copy-btn" onclick="copyCode('v-git')">Copier</button><p style="font-size:12px;color:#444;margin-top:10px">Node.js requis : <a href="https://nodejs.org" target="_blank" style="color:#60A8D0">nodejs.org</a></p></div><div class="card" style="margin-top:0;border-top:3px solid #D4AF37"><div class="ct">Fichier vercel.json (déjà créé ✓)</div><div class="step-desc" style="margin-bottom:10px">Ce fichier est inclus dans votre dossier FFP. Il configure Vercel pour servir correctement les fichiers HTML.</div><pre id="v-json"><code>{
+  "version": 2,
+  "builds": [{ "src": "*.html", "use": "@vercel/static" }],
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "headers": [{
+    "source": "/(.*)",
+    "headers": [
+      { "key": "Cache-Control", "value": "public, max-age=3600" },
+      { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+    ]
+  }]
+}</code></pre><button class="copy-btn" onclick="copyCode('v-json')">Copier</button></div></div><div id="ds-netlify" class="dsec"><div class="info-box">🌐 <strong>Netlify</strong> est une alternative solide à Vercel. Interface simple, drag-and-drop possible, HTTPS automatique. Légèrement plus simple pour les débutants.</div><div class="card"><div class="ct">Déploiement Drag &amp; Drop — 2 minutes</div><div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Créer un compte</div><div class="step-desc">Aller sur <a href="https://app.netlify.com/signup" target="_blank" style="color:#60A8D0">app.netlify.com</a> → Sign up with GitHub (ou email)</div></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Drag &amp; Drop</div><div class="step-desc">Dashboard Netlify → Onglet <strong>Sites</strong> → Glisser votre <strong>dossier FFP</strong> directement dans la zone "Drag and drop your site folder here"</div><div class="warn-box">⚠️ Glisser le <strong>dossier entier</strong> (pas les fichiers un par un). Le dossier doit contenir ffp-accueil.html, ffp-coach.js, etc.</div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">URL automatique</div><div class="step-desc">Netlify génère une URL comme :<br><code style="color:#4BC88A">https://amazing-koala-12345.netlify.app</code><br><br>Renommer : Site settings → Change site name → <code>foot-factory-pro</code></div></div></div></div><div class="card" style="margin-top:0"><div class="ct">Via CLI</div><pre id="n-cli"><code>// Installer Netlify CLI
+npm install -g netlify-cli
+
+// Déployer
+cd chemin/vers/foot-factory-pro
+netlify deploy --prod --dir=.
+
+// Suivre les instructions
+// → URL déployée !</code></pre><button class="copy-btn" onclick="copyCode('n-cli')">Copier</button></div></div><div id="ds-firebase-host" class="dsec"><div class="info-box">🔥 <strong>Firebase Hosting</strong> de Google. Idéal si vous utilisez déjà Firebase pour la synchronisation des données. Un seul projet Firebase pour tout.</div><div class="card"><div class="ct">Configuration Firebase Hosting</div><div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Créer un projet Firebase</div><div class="step-desc">Aller sur <a href="https://console.firebase.google.com" target="_blank" style="color:#60A8D0">console.firebase.google.com</a> → Add project → Nom : foot-factory-pro → Créer</div></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Installer Firebase CLI</div><pre id="fb-install"><code>npm install -g firebase-tools
+firebase login</code></pre><button class="copy-btn" onclick="copyCode('fb-install')">Copier</button></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Initialiser et déployer</div><pre id="fb-deploy"><code>cd chemin/vers/foot-factory-pro
+firebase init hosting
+# Public directory: .
+# Single-page app: No
+# Overwrite index.html: No
+
+firebase deploy</code></pre><button class="copy-btn" onclick="copyCode('fb-deploy')">Copier</button></div></div></div><div class="card" style="margin-top:0"><div class="ct">firebase.json (déjà créé ✓)</div><pre id="fb-json"><code>{
+  "hosting": {
+    "public": ".",
+    "ignore": ["firebase.json", ".gitignore"],
+    "rewrites": [{
+      "source": "/",
+      "destination": "/ffp-accueil.html"
+    }],
+    "headers": [{
+      "source": "**/*.@(js|html|css)",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "max-age=3600"
+      }]
+    }]
+  }
+}</code></pre><button class="copy-btn" onclick="copyCode('fb-json')">Copier</button></div></div><div id="ds-github-pages" class="dsec"><div class="info-box">🐙 <strong>GitHub Pages</strong> est 100% gratuit mais nécessite de nommer la page d'accueil <code>index.html</code>. Léger ajustement à faire.</div><div class="card"><div class="ct">Étapes GitHub Pages</div><div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Renommer le fichier d'accueil</div><div class="step-desc">GitHub Pages utilise <code>index.html</code> comme page d'entrée. Renommer <code>ffp-accueil.html</code> en <code>index.html</code> dans votre dossier (ou créer une copie).</div><pre id="gh-rename"><code>// Option 1 : copier
+cp ffp-accueil.html index.html
+
+// Option 2 : créer un index.html de redirection
+// (contenu ci-dessous)</code></pre><button class="copy-btn" onclick="copyCode('gh-rename')">Copier</button></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">index.html de redirection</div><pre id="gh-index"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;meta http-equiv="refresh" content="0;url=ffp-accueil.html"&gt;
+&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</code></pre><button class="copy-btn" onclick="copyCode('gh-index')">Copier</button></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Activer GitHub Pages</div><div class="step-desc">Repository → Settings → Pages → Branch: main → Save<br><br>URL générée : <code style="color:#4BC88A">https://votre-user.github.io/foot-factory-pro/</code></div></div></div></div></div><div id="ds-supabase" class="dsec"><div class="info-box">🟢 <strong>Supabase</strong> est un backend PostgreSQL open-source, alternative à Firebase. Il remplace localStorage par une vraie base de données accessible depuis n'importe quel appareil et navigateur.</div><div class="card"><div class="ct">Schéma de base de données FFP</div><pre id="sb-schema"><code>-- Créer dans Supabase SQL Editor
+
+-- Joueurs
+CREATE TABLE joueurs (
+  id SERIAL PRIMARY KEY,
+  prenom TEXT NOT NULL,
+  nom TEXT NOT NULL,
+  poste TEXT,
+  numero INT,
+  date_naissance DATE,
+  taille INT,
+  poids INT,
+  club TEXT DEFAULT 'Foot Factory Pro',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Évaluations
+CREATE TABLE evaluations (
+  id SERIAL PRIMARY KEY,
+  joueur_id INT REFERENCES joueurs(id),
+  session_date DATE DEFAULT CURRENT_DATE,
+  technique JSONB,
+  physique JSONB,
+  tactique JSONB,
+  mental JSONB,
+  culture JSONB,
+  score_global DECIMAL(4,2),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Événements (agenda)
+CREATE TABLE evenements (
+  id TEXT PRIMARY KEY,
+  type TEXT,
+  titre TEXT NOT NULL,
+  date DATE NOT NULL,
+  heure TEXT,
+  lieu TEXT,
+  description TEXT,
+  obligatoire BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Messages
+CREATE TABLE messages (
+  id TEXT PRIMARY KEY,
+  from_role TEXT,
+  from_name TEXT,
+  to_dest TEXT,
+  sujet TEXT,
+  corps TEXT,
+  priorite TEXT DEFAULT 'normale',
+  tag TEXT DEFAULT 'général',
+  lu_par TEXT[],
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Matchs
+CREATE TABLE matchs (
+  id TEXT PRIMARY KEY,
+  titre TEXT NOT NULL,
+  adversaire TEXT,
+  date DATE,
+  lieu TEXT,
+  score_home INT DEFAULT 0,
+  score_away INT DEFAULT 0,
+  statut TEXT DEFAULT 'setup',
+  evenements JSONB,
+  stats JSONB,
+  notes JSONB,
+  rapport TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Highlights
+CREATE TABLE highlights (
+  id TEXT PRIMARY KEY,
+  joueur_id INT REFERENCES joueurs(id),
+  match_titre TEXT,
+  type TEXT,
+  ia_score DECIMAL(3,1),
+  tags TEXT[],
+  description TEXT,
+  views INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);</code></pre><button class="copy-btn" onclick="copyCode('sb-schema')">Copier</button></div><div class="card" style="margin-top:0"><div class="ct">Connexion depuis FFP (JavaScript)</div><pre id="sb-client"><code>// Installer le client Supabase
+// Dans le HTML, ajouter en head :
+// &lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;
+
+// Variables d'environnement
+const SUPABASE_URL = 'https://xxxx.supabase.co';
+const SUPABASE_KEY = 'votre-anon-public-key';
+
+// Initialiser
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Exemple : récupérer les joueurs
+async function getJoueurs() {
+  const { data, error } = await db
+    .from('joueurs')
+    .select('*')
+    .order('nom');
+  return data;
+}
+
+// Exemple : sauvegarder un événement
+async function saveEvent(event) {
+  const { data, error } = await db
+    .from('evenements')
+    .upsert(event);
+  return data;
+}
+
+// Exemple : écouter les nouveaux messages (temps réel)
+db.channel('messages')
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' },
+    (payload) => { handleNewMessage(payload.new); })
+  .subscribe();</code></pre><button class="copy-btn" onclick="copyCode('sb-client')">Copier</button></div></div><div id="ds-domaine" class="dsec"><div class="info-box">🌍 Connecter un domaine comme <strong>footfactorypro.com</strong> à votre déploiement Vercel/Netlify. Domaine : ~10€/an sur OVH, Namecheap, ou Google Domains.</div><div class="card"><div class="ct">Configurer un domaine sur Vercel</div><div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Acheter un domaine</div><div class="step-desc">Recommandés : <a href="https://www.ovhcloud.com" target="_blank" style="color:#60A8D0">OVH</a> · <a href="https://www.namecheap.com" target="_blank" style="color:#60A8D0">Namecheap</a> · <a href="https://domains.google.com" target="_blank" style="color:#60A8D0">Google Domains</a><br>Rechercher <code>footfactorypro.com</code> ou <code>footfactorypro.fr</code></div></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Ajouter dans Vercel</div><div class="step-desc">Vercel Dashboard → Votre projet → Settings → Domains → Add<br>Entrer votre domaine : <code>footfactorypro.com</code></div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Configurer les DNS</div><div class="step-desc">Vercel vous donnera 2 enregistrements DNS à ajouter chez votre registrar :</div><pre id="d-dns"><code>// A Record
+Nom:  @
+Type: A
+Valeur: 76.76.21.21
+
+// CNAME Record
+Nom:  www
+Type: CNAME
+Valeur: cname.vercel-dns.com</code></pre><button class="copy-btn" onclick="copyCode('d-dns')">Copier</button><p style="font-size:12px;color:#444;margin-top:8px">La propagation DNS prend 15 min à 48h.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">HTTPS automatique</div><div class="step-desc">Vercel génère et renouvelle automatiquement le certificat SSL (HTTPS). Rien à faire de votre côté.</div></div></div></div><div class="card" style="margin-top:0;border-top:3px solid #D4AF37"><div class="ct">Idées de domaines disponibles</div><div style="display:flex;gap:8px;flex-wrap:wrap"><code style="background:#111;padding:5px 10px;border-radius:6px;font-size:12px;color:#D4AF37">footfactorypro.com</code><code style="background:#111;padding:5px 10px;border-radius:6px;font-size:12px;color:#D4AF37">footfactorypro.fr</code><code style="background:#111;padding:5px 10px;border-radius:6px;font-size:12px;color:#D4AF37">ffp-academy.com</code><code style="background:#111;padding:5px 10px;border-radius:6px;font-size:12px;color:#D4AF37">ffp-platform.fr</code><code style="background:#111;padding:5px 10px;border-radius:6px;font-size:12px;color:#888">foot-factory.pro</code></div></div></div></div>
+<script>
+// ── Tabs ──
+function showTab(id, btn) {
+  document.querySelectorAll('.dtab').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelectorAll('.dsec').forEach(function(s){ s.style.display = 'none'; });
+  if (btn) btn.classList.add('on');
+  var s = document.getElementById('ds-' + id);
+  if (s) s.style.display = 'block';
+}
+
+// ── Copy to clipboard ──
+function copyCode(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var text = el.textContent || el.innerText;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      showCopyFeedback(id);
+    }).catch(function() { fallbackCopy(text, id); });
+  } else { fallbackCopy(text, id); }
+}
+function fallbackCopy(text, id) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showCopyFeedback(id); } catch(e) {}
+  document.body.removeChild(ta);
+}
+function showCopyFeedback(id) {
+  var btn = document.querySelector('[onclick="copyCode(\'' + id + '\')"]');
+  if (btn) {
+    var old = btn.textContent;
+    btn.textContent = '✓ Copié !';
+    btn.style.color = '#4BC88A';
+    setTimeout(function() { btn.textContent = old; btn.style.color = ''; }, 2000);
+  }
+}
+
+// ── Checklist ──
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  var allChecks = document.querySelectorAll('.chk');
+  var done = document.querySelectorAll('.chk.checked').length;
+  var pct = Math.round(done / allChecks.length * 100);
+  var bar = document.getElementById('progress-bar');
+  var pctEl = document.getElementById('progress-pct');
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (pct === 100) {
+    var msg = document.getElementById('deploy-success');
+    if (msg) msg.style.display = 'block';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  showTab('vercel', document.querySelector('.dtab'));
+});
+
+</script>
+</body>
+</html>

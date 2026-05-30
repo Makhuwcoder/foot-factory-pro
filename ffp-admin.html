@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<style>
+:root{--gold:#D4AF37;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+.layout{flex:1;display:flex;overflow:hidden;min-height:0}
+/* Sidebar */
+.sidebar{width:220px;flex-shrink:0;background:#050402;border-right:1px solid rgba(212,175,55,.1);display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-logo{padding:16px 16px 12px;border-bottom:1px solid rgba(212,175,55,.08)}
+.nav-section{padding:10px 10px 4px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#333}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 14px;background:transparent;border:none;color:#666;cursor:pointer;font-family:'Raleway',sans-serif;font-size:12px;transition:all .2s;text-align:left;border-radius:6px;margin:1px 6px;width:calc(100% - 12px)}
+.nav-item:hover{background:rgba(212,175,55,.05);color:#FBCB57}
+.nav-item.on{background:rgba(212,175,55,.1);color:#D4AF37;font-weight:600}
+.nav-ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+/* Main */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.main-hdr{padding:12px 20px;border-bottom:1px solid rgba(212,175,55,.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:8px;background:#020200}
+.content{flex:1;overflow-y:auto;padding:20px}
+/* Cards */
+.acard{background:#0A0800;border:1px solid rgba(212,175,55,.12);border-radius:12px;padding:16px 18px;margin-bottom:14px;position:relative;z-index:1}
+.act{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px}
+/* Modal fields */
+.mf{margin-bottom:11px}
+.ml{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#444;display:block;margin-bottom:4px}
+.mi{background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:7px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.mi:focus{border-color:rgba(212,175,55,.4)}.mi option{background:#0A0800}
+/* Audit filter */
+.audit-filter{padding:5px 11px;background:transparent;border:1px solid rgba(212,175,55,.15);border-radius:6px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;transition:all .2s}
+.audit-filter.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.4);color:#D4AF37}
+/* Scrollbar */
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:768px){.sidebar{width:180px}.nav-item span:not(.nav-ico){display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header style="background:#020200;border-bottom:1px solid rgba(212,175,55,.15);padding:0 16px;display:flex;align-items:center;gap:10px;height:52px;flex-shrink:0"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Administration</div></div></a><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:3px 10px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700">👑 Super Admin FFP</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#4BC88A;display:inline-block;box-shadow:0 0 6px #4BC88A"></span>Session active</span><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">← Accueil</a></div></header>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-logo"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#444;margin-bottom:4px">Panneau</div><div style="font-family:Montserrat,sans-serif;font-size:13px;font-weight:800;color:#D4AF37">Administration</div></div><div class="nav-section">Vue globale</div><button id="nav-dashboard" class="nav-item on" onclick="showView('dashboard',this)"><span class="nav-ico">📊</span><span>Dashboard</span></button><div class="nav-section">Structure</div><button id="nav-clubs" class="nav-item" onclick="showView('clubs',this)"><span class="nav-ico">🏟️</span><span>Clubs</span></button><button id="nav-users" class="nav-item" onclick="showView('users',this)"><span class="nav-ico">👥</span><span>Utilisateurs</span></button><button id="nav-categories" class="nav-item" onclick="showView('categories',this)"><span class="nav-ico">📋</span><span>Catégories</span></button><div class="nav-section">Sécurité</div><button id="nav-audit" class="nav-item" onclick="showView('audit',this)"><span class="nav-ico">🔍</span><span>Logs d'accès</span></button><button id="nav-security" class="nav-item" onclick="showView('security',this)"><span class="nav-ico">🛡️</span><span>Sécurité</span></button><div class="nav-section">Système</div><button id="nav-settings" class="nav-item" onclick="showView('settings',this)"><span class="nav-ico">⚙️</span><span>Paramètres</span></button><div style="flex:1"></div><div style="padding:12px 14px;border-top:1px solid rgba(212,175,55,.06)"><div style="font-size:10px;color:#333;line-height:1.7">FFP Admin v1.0<br>Saison 2026-27</div></div></div>
+<div class="main-area"><div class="main-hdr"><div><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Panel Administration</div><div style="font-size:11px;color:#444">Foot Factory Pro · Gestion multi-clubs · Saison 2026-27</div></div><div style="display:flex;gap:8px;align-items:center"><a href="ffp-guide.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#60A8D0;text-decoration:none;border:1px solid rgba(96,168,208,.25);border-radius:5px;padding:5px 10px">📖 Guide déploiement</a></div></div><div class="content"><div id="view-dashboard" style="display:none"></div><div id="view-clubs" style="display:none"></div><div id="view-users" style="display:none"></div><div id="view-categories" style="display:none"><div class="acard"><div class="act">Catégories disponibles dans FFP</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px"><div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U6</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U7</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U8</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U9</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U10</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U11</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U12</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U13</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U14</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U15</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U16</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U17</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U18</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">U19</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div>
+<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:9px;padding:12px;text-align:center;transition:all .2s" onmouseover="this.style.borderColor='rgba(212,175,55,.35)'" onmouseout="this.style.borderColor='rgba(212,175,55,.12)'"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#D4AF37;margin-bottom:4px">Senior</div><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Catégorie active</div></div></div></div><div class="acard" style="border-top:3px solid #60A8D0"><div class="act" style="color:#60A8D0">Modèle de permissions par catégorie</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="border-bottom:1px solid rgba(212,175,55,.12)"><th style="padding:8px 10px;text-align:left;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase">Rôle</th><th style="padding:8px 6px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;text-align:center">Sa catégorie</th><th style="padding:8px 6px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;text-align:center">Autres catégories</th><th style="padding:8px 6px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;text-align:center">Autre club</th><th style="padding:8px 6px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;text-align:center">Export données</th></tr></thead><tbody><tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">👑 Super Admin</td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Tout</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Tout</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Tout</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Complet</span></td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">🏛️ Directeur</td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ R/W</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Lecture</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Club</span></td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">📋 Coordinateur</td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Lecture</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ Lecture</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Partiel</span></td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">🏟️ Coach</td><td style="padding:9px 6px;text-align:center"><span style="color:#4BC88A">✓ R/W</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Sa catég.</span></td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">🫂 Parent</td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Enfant seul</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Non</span></td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.03)"><td style="padding:9px 10px;font-weight:600">🔍 Scout</td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Public seul</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Public seul</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#E24B4A">✗ Bloqué</span></td><td style="padding:9px 6px;text-align:center"><span style="color:#D4AF37">⚠ Scout seul</span></td></tr></tbody></table></div></div></div><div id="view-audit" style="display:none"></div><div id="view-security" style="display:none"></div><div id="view-settings" style="display:none"><div class="acard" style="border-top:3px solid #60A8D0"><div class="act" style="color:#60A8D0">Configuration Supabase</div><p style="font-size:13px;color:#888;line-height:1.7;margin-bottom:14px">Connecter votre instance Supabase pour activer la vraie base de données, l'authentification sécurisée et le Row Level Security.</p><div class="mf"><label class="ml">Supabase Project URL</label><input class="mi" type="text" placeholder="https://xxxx.supabase.co"></div><div class="mf"><label class="ml">Supabase Anon Key</label><input class="mi" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></div><div class="mf"><label class="ml">Service Role Key (admin uniquement)</label><input class="mi" type="password" placeholder="Clé secrète — ne jamais exposer côté client"></div><div style="background:rgba(251,203,87,.05);border:1px solid rgba(251,203,87,.2);border-radius:8px;padding:12px 14px;font-size:11px;color:#888;margin-bottom:14px;line-height:1.7">⚠️ <strong style="color:#FBCB57">Important :</strong> La Service Role Key ne doit jamais être incluse dans du code client (JavaScript exposé dans le navigateur). Elle est réservée aux fonctions serveur (Edge Functions Supabase).</div><button style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:10px 22px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Tester la connexion →</button></div><div class="acard"><div class="act">Paramètres de sécurité globaux</div><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">Forcer HTTPS</div><div style="font-size:10px;color:#666">Rediriger automatiquement HTTP → HTTPS</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"checked><span style="position:absolute;cursor:pointer;inset:0;background:#D4AF37;border-radius:11px;transition:.3s"></span></label></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">Session timeout 24h</div><div style="font-size:10px;color:#666">Déconnecter automatiquement après 24h d'inactivité</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"checked><span style="position:absolute;cursor:pointer;inset:0;background:#D4AF37;border-radius:11px;transition:.3s"></span></label></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">Bloquer cross-club</div><div style="font-size:10px;color:#666">Empêcher tout accès aux données d'un autre club</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"checked><span style="position:absolute;cursor:pointer;inset:0;background:#D4AF37;border-radius:11px;transition:.3s"></span></label></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">Log toutes les actions</div><div style="font-size:10px;color:#666">Enregistrer chaque action dans l'audit trail</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"checked><span style="position:absolute;cursor:pointer;inset:0;background:#D4AF37;border-radius:11px;transition:.3s"></span></label></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">2FA obligatoire pour coaches</div><div style="font-size:10px;color:#666">Activer l'authentification à deux facteurs</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"><span style="position:absolute;cursor:pointer;inset:0;background:#222;border-radius:11px;transition:.3s"></span></label></div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px"><div><div style="font-size:12px;font-weight:600">Alerte tentatives échouées</div><div style="font-size:10px;color:#666">Email admin après 3 échecs de connexion</div></div><label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0"><input type="checkbox" style="opacity:0;width:0;height:0"checked><span style="position:absolute;cursor:pointer;inset:0;background:#D4AF37;border-radius:11px;transition:.3s"></span></label></div></div></div></div></div></div>
+</div>
+</div>
+<div id="modal" style="display:none"></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — PANEL ADMINISTRATION
+// Hiérarchie : SuperAdmin > Directeur > Coach > Parent > Scout
+// ══════════════════════════════════════════════════════
+
+var LS_CLUBS    = 'ffp_clubs';
+var LS_USERS    = 'ffp_users';
+var LS_AUDIT    = 'ffp_audit_log';
+var LS_SESSION  = 'ffp_session';
+
+// ── Rôles et permissions ──
+var ROLES = {
+  superadmin: { label:'Super Admin FFP',    ico:'👑', color:'#FBCB57',
+    can:['all'] },
+  directeur:  { label:'Directeur de club',  ico:'🏛️', color:'#D4AF37',
+    can:['manage_coaches','manage_categories','view_all_players','export_stats','view_messages'] },
+  coordinateur:{ label:'Coordinateur tech', ico:'📋', color:'#60A8D0',
+    can:['view_all_categories','export_stats','view_players'] },
+  coach:      { label:'Coach',              ico:'🏟️', color:'#4BC88A',
+    can:['manage_players','eval_players','manage_matches','send_messages','view_own_category'] },
+  parent:     { label:'Parent',             ico:'🫂', color:'#A060E0',
+    can:['view_child','send_messages','view_events'] },
+  scout:      { label:'Recruteur accrédité',ico:'🔍', color:'#C89020',
+    can:['view_public_profiles','compare_players','export_scout_reports'] }
+};
+
+var CATEGORIES = ['U6','U7','U8','U9','U10','U11','U12','U13','U14','U15','U16','U17','U18','U19','Senior'];
+
+// ── Demo data ──
+var DEMO_CLUBS = [
+  {id:'club_1', name:'Foot Factory Pro Academy', ville:'Paris', region:'Île-de-France',
+   categories:['U10','U11','U12','U13','U14','U15'], actif:true, created_at:'2024-09-01',
+   plan:'premium', max_joueurs:200, joueurs_actifs:87},
+  {id:'club_2', name:'FC Étoile Nord', ville:'Lille', region:'Hauts-de-France',
+   categories:['U12','U14','U16'], actif:true, created_at:'2025-01-15',
+   plan:'standard', max_joueurs:100, joueurs_actifs:52},
+  {id:'club_3', name:'AS Olympique Sud', ville:'Marseille', region:'PACA',
+   categories:['U11','U13','U15','Senior'], actif:true, created_at:'2025-03-20',
+   plan:'standard', max_joueurs:100, joueurs_actifs:71},
+];
+
+var DEMO_USERS = [
+  {id:'u1',role:'superadmin',prenom:'Admin',nom:'FFP',email:'admin@footfactorypro.com',club_id:null,category_id:null,actif:true,last_login:'2026-05-29'},
+  {id:'u2',role:'directeur',prenom:'Jean-Pierre',nom:'Moreau',email:'jp.moreau@ffp-academy.fr',club_id:'club_1',category_id:null,actif:true,last_login:'2026-05-28'},
+  {id:'u3',role:'coach',prenom:'Ahmed',nom:'Benali',email:'a.benali@ffp-academy.fr',club_id:'club_1',category_id:'U12',actif:true,last_login:'2026-05-29'},
+  {id:'u4',role:'coach',prenom:'Sophie',nom:'Garnier',email:'s.garnier@ffp-academy.fr',club_id:'club_1',category_id:'U14',actif:true,last_login:'2026-05-27'},
+  {id:'u5',role:'coordinateur',prenom:'Marc',nom:'Lefebvre',email:'m.lefebvre@ffp-academy.fr',club_id:'club_1',category_id:null,actif:true,last_login:'2026-05-25'},
+  {id:'u6',role:'directeur',prenom:'Fatima',nom:'Ouali',email:'f.ouali@fc-etoile.fr',club_id:'club_2',category_id:null,actif:true,last_login:'2026-05-20'},
+  {id:'u7',role:'coach',prenom:'Luc',nom:'Bernard',email:'l.bernard@fc-etoile.fr',club_id:'club_2',category_id:'U12',actif:true,last_login:'2026-05-19'},
+  {id:'u8',role:'scout',prenom:'Thomas',nom:'Renaud',email:'t.renaud@olyud.fr',club_id:null,category_id:null,actif:true,last_login:'2026-05-15'},
+  {id:'u9',role:'coach',prenom:'Pierre',nom:'Duval',email:'p.duval@as-olympique.fr',club_id:'club_3',category_id:'U13',actif:false,last_login:'2026-04-30'},
+];
+
+var DEMO_AUDIT = [
+  {id:'a1',ts:Date.now()-300000,user:'Ahmed Benali',role:'coach',club:'FFP Academy',action:'Évaluation joueur',detail:'Thomas Bernard — Score: 7.62',level:'info'},
+  {id:'a2',ts:Date.now()-1800000,user:'Jean-Pierre Moreau',role:'directeur',club:'FFP Academy',action:'Export PDF',detail:'Rapport équipe U12 complet',level:'info'},
+  {id:'a3',ts:Date.now()-3600000,user:'Thomas Renaud',role:'scout',club:'—',action:'Consultation fiche',detail:'Kylian Faure — Profil Elite',level:'info'},
+  {id:'a4',ts:Date.now()-7200000,user:'SYSTÈME',role:'system',club:'—',action:'Tentative accès échouée',detail:'Login incorrect x3 — IP: 192.168.1.45',level:'warn'},
+  {id:'a5',ts:Date.now()-86400000,user:'Sophie Garnier',role:'coach',club:'FFP Academy',action:'Message envoyé',detail:'Convocation — U14 — 12 parents',level:'info'},
+  {id:'a6',ts:Date.now()-86400000*2,user:'Admin FFP',role:'superadmin',club:'—',action:'Création compte',detail:'Nouvel utilisateur: Luc Bernard (coach)',level:'info'},
+  {id:'a7',ts:Date.now()-86400000*3,user:'SYSTÈME',role:'system',club:'—',action:'Tentative cross-club',detail:'User club_2 a tenté d\'accéder aux données club_1',level:'error'},
+];
+
+// ── State ──
+var CURRENT_VIEW = 'dashboard';
+var SESSION_ROLE = 'superadmin'; // Simulate admin session
+var SELECTED_CLUB = null;
+
+// ── Load/Save ──
+function loadData(){
+  try{
+    var clubs=localStorage.getItem(LS_CLUBS);
+    if(clubs)DEMO_CLUBS=JSON.parse(clubs);
+    var users=localStorage.getItem(LS_USERS);
+    if(users)DEMO_USERS=JSON.parse(users);
+  }catch(e){}
+}
+function saveData(){
+  try{
+    localStorage.setItem(LS_CLUBS,JSON.stringify(DEMO_CLUBS));
+    localStorage.setItem(LS_USERS,JSON.stringify(DEMO_USERS));
+  }catch(e){}
+}
+function addAudit(action,detail,level){
+  var entry={id:'a'+Date.now(),ts:Date.now(),user:'Admin FFP',role:SESSION_ROLE,club:'—',action:action,detail:detail,level:level||'info'};
+  DEMO_AUDIT.unshift(entry);
+  if(DEMO_AUDIT.length>100)DEMO_AUDIT.pop();
+}
+
+// ── Navigation ──
+function showView(view,btn){
+  CURRENT_VIEW=view;
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  var views=['dashboard','clubs','users','categories','audit','security','settings'];
+  views.forEach(function(v){
+    var el=document.getElementById('view-'+v);if(el)el.style.display=(v===view?'block':'none');
+  });
+  var renderers={dashboard:renderDashboard,clubs:renderClubs,users:renderUsers,audit:renderAudit,security:renderSecurity};
+  if(renderers[view])renderers[view]();
+}
+
+// ── Dashboard ──
+function renderDashboard(){
+  var el=document.getElementById('view-dashboard');if(!el)return;
+  var totalJoueurs=DEMO_CLUBS.reduce(function(s,c){return s+c.joueurs_actifs;},0);
+  var totalUsers=DEMO_USERS.filter(function(u){return u.actif;}).length;
+  var totalClubs=DEMO_CLUBS.filter(function(c){return c.actif;}).length;
+  var alerts=DEMO_AUDIT.filter(function(a){return a.level==='error'||a.level==='warn';}).length;
+  var kpis=[
+    {l:'Clubs actifs',v:totalClubs,i:'🏟️',c:'#D4AF37',sub:DEMO_CLUBS.length+' total'},
+    {l:'Utilisateurs',v:totalUsers,i:'👥',c:'#4BC88A',sub:DEMO_USERS.filter(function(u){return !u.actif;}).length+' inactifs'},
+    {l:'Joueurs profilés',v:totalJoueurs,i:'⚽',c:'#60A8D0',sub:'toutes catégories'},
+    {l:'Alertes sécurité',v:alerts,i:'🔒',c:alerts>0?'#E24B4A':'#4BC88A',sub:alerts>0?'à traiter':'Tout OK'},
+  ];
+  var kHtml=kpis.map(function(k){
+    return '<div style="background:#0A0800;border:1px solid rgba(212,175,55,.12);border-radius:12px;padding:18px 16px;position:relative;overflow:hidden;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(212,175,55,.3)\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.12)\'">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+k.c+'"></div>'
+      +'<div style="font-size:22px;margin-bottom:6px">'+k.i+'</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:28px;color:'+k.c+';line-height:1;margin-bottom:3px">'+k.v+'</div>'
+      +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">'+k.l+'</div>'
+      +'<div style="font-size:10px;color:#333">'+k.sub+'</div>'
+    +'</div>';
+  }).join('');
+
+  // Role distribution
+  var roleCounts={};
+  DEMO_USERS.forEach(function(u){roleCounts[u.role]=(roleCounts[u.role]||0)+1;});
+  var roleHtml=Object.keys(ROLES).map(function(r){
+    var n=roleCounts[r]||0;
+    var info=ROLES[r];
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+      +'<span style="font-size:16px">'+info.ico+'</span>'
+      +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+info.label+'</div></div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:'+info.color+'">'+n+'</div>'
+    +'</div>';
+  }).join('');
+
+  // Recent audit
+  var auditHtml=DEMO_AUDIT.slice(0,5).map(function(a){
+    var col=a.level==='error'?'#E24B4A':a.level==='warn'?'#FBCB57':'#4BC88A';
+    return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:flex-start">'
+      +'<div style="width:6px;height:6px;border-radius:50%;background:'+col+';flex-shrink:0;margin-top:5px"></div>'
+      +'<div style="flex:1"><div style="font-size:11px;font-weight:600;color:'+col+'">'+a.action+'</div><div style="font-size:10px;color:#666">'+a.user+' · '+a.detail+'</div></div>'
+      +'<div style="font-size:9px;color:#333;flex-shrink:0">'+new Date(a.ts).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</div>'
+    +'</div>';
+  }).join('');
+
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">'+kHtml+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+      +'<div class="acard"><div class="act">Répartition des rôles</div>'+roleHtml+'</div>'
+      +'<div class="acard"><div class="act">Activité récente</div>'+auditHtml
+        +'<button onclick="showView(\'audit\',null)" style="margin-top:10px;background:transparent;border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#D4AF37;padding:6px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;width:100%">Voir tous les logs →</button>'
+      +'</div>'
+    +'</div>';
+}
+
+// ── Clubs ──
+function renderClubs(){
+  var el=document.getElementById('view-clubs');if(!el)return;
+  var html='<div style="display:flex;justify-content:flex-end;margin-bottom:14px">'
+    +'<button onclick="openClubModal(null)" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:10px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Nouveau club</button>'
+  +'</div>'
+  +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px">'
+  +DEMO_CLUBS.map(function(c){
+    var coaches=DEMO_USERS.filter(function(u){return u.club_id===c.id&&u.role==='coach';}).length;
+    var planCol=c.plan==='premium'?'#D4AF37':'#60A8D0';
+    return '<div class="acard" style="border-top:3px solid '+(c.actif?'#4BC88A':'#444')+'">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">'
+        +'<div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;margin-bottom:3px">'+c.name+'</div>'
+          +'<div style="font-size:11px;color:#888">'+c.ville+' · '+c.region+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:5px;flex-direction:column;align-items:flex-end">'
+          +'<span style="font-size:9px;background:'+planCol+'22;border:1px solid '+planCol+'44;border-radius:8px;padding:2px 9px;color:'+planCol+';font-family:Montserrat,sans-serif;font-weight:700;text-transform:uppercase">'+c.plan+'</span>'
+          +'<span style="font-size:9px;background:'+(c.actif?'rgba(75,200,138,.1)':'rgba(136,136,136,.1)')+';border:1px solid '+(c.actif?'rgba(75,200,138,.25)':'rgba(136,136,136,.2)')+';border-radius:8px;padding:2px 9px;color:'+(c.actif?'#4BC88A':'#888')+';font-family:Montserrat,sans-serif;font-weight:700">'+(c.actif?'Actif':'Inactif')+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">'
+        +'<div style="text-align:center;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.08);border-radius:7px;padding:8px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#D4AF37">'+c.joueurs_actifs+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Joueurs</div></div>'
+        +'<div style="text-align:center;background:rgba(96,168,208,.04);border:1px solid rgba(96,168,208,.08);border-radius:7px;padding:8px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#60A8D0">'+coaches+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Coaches</div></div>'
+        +'<div style="text-align:center;background:rgba(75,200,138,.04);border:1px solid rgba(75,200,138,.08);border-radius:7px;padding:8px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#4BC88A">'+c.categories.length+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Catégories</div></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">'+c.categories.map(function(cat){return '<span style="font-size:10px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:2px 8px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:600">'+cat+'</span>';}).join('')+'</div>'
+      +'<div style="display:flex;gap:7px">'
+        +'<button onclick="openClubModal(\''+c.id+'\')" style="flex:1;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#D4AF37;padding:7px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">✏️ Modifier</button>'
+        +'<button onclick="viewClubUsers(\''+c.id+'\')" style="flex:1;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:6px;color:#60A8D0;padding:7px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">👥 Utilisateurs</button>'
+        +'<button onclick="toggleClub(\''+c.id+'\')" style="background:rgba(226,75,74,.07);border:1px solid rgba(226,75,74,.2);border-radius:6px;color:#E24B4A;padding:7px 10px;cursor:pointer;font-size:12px" title="'+(c.actif?'Désactiver':'Activer')+'">'+( c.actif?'⏸':'▶')+'</button>'
+      +'</div>'
+    +'</div>';
+  }).join('')
+  +'</div>';
+  el.innerHTML=html;
+}
+
+function toggleClub(id){
+  var c=DEMO_CLUBS.find(function(x){return x.id===id;});if(!c)return;
+  c.actif=!c.actif;
+  addAudit((c.actif?'Activation':'Désactivation')+' club',c.name,(c.actif?'info':'warn'));
+  saveData();renderClubs();
+}
+
+function viewClubUsers(clubId){
+  SELECTED_CLUB=clubId;
+  showView('users',null);
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('nav-users').classList.add('on');
+}
+
+// ── Users ──
+function renderUsers(){
+  var el=document.getElementById('view-users');if(!el)return;
+  var users=SELECTED_CLUB?DEMO_USERS.filter(function(u){return u.club_id===SELECTED_CLUB;}):DEMO_USERS;
+  var selectedClub=SELECTED_CLUB?DEMO_CLUBS.find(function(c){return c.id===SELECTED_CLUB;}):null;
+
+  var filterHtml='<div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">'
+    +(selectedClub?'<span style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#D4AF37;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:4px 12px">'+selectedClub.name+'</span><button onclick="SELECTED_CLUB=null;renderUsers()" style="background:transparent;border:none;color:#888;cursor:pointer;font-size:11px">✕ Voir tous</button>':'')
+    +'<div style="margin-left:auto;display:flex;gap:8px">'
+      +'<button onclick="openUserModal(null)" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:9px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Nouvel utilisateur</button>'
+    +'</div>'
+  +'</div>';
+
+  var tableHtml='<div class="acard" style="padding:0;overflow:hidden"><div style="overflow-x:auto">'
+    +'<table style="width:100%;border-collapse:collapse">'
+    +'<thead><tr style="border-bottom:1px solid rgba(212,175,55,.12)">'
+    +'<th style="padding:10px 14px;text-align:left;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Utilisateur</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Rôle</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Club</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Catégorie</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Statut</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Dernière connexion</th>'
+    +'<th style="padding:10px 8px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px">Actions</th>'
+    +'</tr></thead><tbody>'
+    +users.map(function(u){
+      var role=ROLES[u.role]||ROLES.coach;
+      var club=u.club_id?DEMO_CLUBS.find(function(c){return c.id===u.club_id;}):null;
+      return '<tr style="border-bottom:1px solid rgba(255,255,255,.025);transition:background .1s" onmouseover="this.style.background=\'rgba(212,175,55,.025)\'" onmouseout="this.style.background=\'transparent\'">'
+        +'<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:9px">'
+          +'<div style="width:34px;height:34px;border-radius:50%;background:'+role.color+'22;border:1px solid '+role.color+'44;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">'+role.ico+'</div>'
+          +'<div><div style="font-size:12px;font-weight:600">'+u.prenom+' '+u.nom+'</div><div style="font-size:10px;color:#444">'+u.email+'</div></div>'
+        +'</div></td>'
+        +'<td style="padding:10px 8px"><span style="font-size:9px;background:'+role.color+'22;border:1px solid '+role.color+'44;border-radius:8px;padding:2px 8px;color:'+role.color+';font-family:Montserrat,sans-serif;font-weight:700">'+role.label+'</span></td>'
+        +'<td style="padding:10px 8px;font-size:11px;color:#888">'+(club?club.name:'<span style="color:#444">—</span>')+'</td>'
+        +'<td style="padding:10px 8px;font-size:11px;color:#888">'+(u.category_id?'<span style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:5px;padding:1px 7px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:600;font-size:10px">'+u.category_id+'</span>':'<span style="color:#444">Toutes</span>')+'</td>'
+        +'<td style="padding:10px 8px"><span style="font-size:9px;background:'+(u.actif?'rgba(75,200,138,.1)':'rgba(136,136,136,.1)')+';border:1px solid '+(u.actif?'rgba(75,200,138,.25)':'rgba(136,136,136,.2)')+';border-radius:8px;padding:2px 8px;color:'+(u.actif?'#4BC88A':'#666')+';font-family:Montserrat,sans-serif;font-weight:700">'+(u.actif?'Actif':'Inactif')+'</span></td>'
+        +'<td style="padding:10px 8px;font-size:11px;color:#444">'+u.last_login+'</td>'
+        +'<td style="padding:10px 8px"><div style="display:flex;gap:4px">'
+          +'<button onclick="openUserModal(\''+u.id+'\')" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;color:#D4AF37;transition:all .2s">✏️</button>'
+          +'<button onclick="toggleUser(\''+u.id+'\')" style="background:rgba(226,75,74,.07);border:1px solid rgba(226,75,74,.2);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;color:#E24B4A;transition:all .2s" title="'+(u.actif?'Désactiver':'Activer')+'">'+(u.actif?'⏸':'▶')+'</button>'
+          +'<button onclick="resetUserPassword(\''+u.id+'\')" style="background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;color:#60A8D0;transition:all .2s" title="Reset mot de passe">🔑</button>'
+        +'</div></td>'
+      +'</tr>';
+    }).join('')
+    +'</tbody></table></div></div>';
+
+  el.innerHTML=filterHtml+tableHtml;
+}
+
+function toggleUser(id){
+  var u=DEMO_USERS.find(function(x){return x.id===id;});if(!u)return;
+  u.actif=!u.actif;
+  addAudit((u.actif?'Activation':'Désactivation')+' utilisateur',u.prenom+' '+u.nom+' ('+ROLES[u.role].label+')',(u.actif?'info':'warn'));
+  saveData();renderUsers();
+}
+
+function resetUserPassword(id){
+  var u=DEMO_USERS.find(function(x){return x.id===id;});if(!u)return;
+  if(!confirm('Réinitialiser le mot de passe de '+u.prenom+' '+u.nom+' ?'))return;
+  addAudit('Réinitialisation mot de passe',u.prenom+' '+u.nom,'warn');
+  alert('Email de réinitialisation envoyé à '+u.email+'\n(Simulation — Supabase Auth envoie l\'email réel)');
+}
+
+// ── Audit Log ──
+function renderAudit(){
+  var el=document.getElementById('view-audit');if(!el)return;
+  var html='<div class="acard" style="padding:0;overflow:hidden">'
+    +'<div style="padding:12px 16px;border-bottom:1px solid rgba(212,175,55,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      +'<div class="act" style="margin:0">Journal d\'accès et d\'activité</div>'
+      +'<div style="display:flex;gap:8px">'
+        +'<button onclick="filterAudit(\'all\')" class="audit-filter on" id="af-all">Tous</button>'
+        +'<button onclick="filterAudit(\'error\')" class="audit-filter" id="af-error" style="color:#E24B4A">Erreurs</button>'
+        +'<button onclick="filterAudit(\'warn\')" class="audit-filter" id="af-warn" style="color:#FBCB57">Alertes</button>'
+      +'</div>'
+    +'</div>'
+    +'<div id="audit-table">'
+    +renderAuditRows(DEMO_AUDIT)
+    +'</div>'
+  +'</div>';
+  el.innerHTML=html;
+}
+
+function renderAuditRows(list){
+  return list.map(function(a){
+    var col=a.level==='error'?'#E24B4A':a.level==='warn'?'#FBCB57':'#4BC88A';
+    var bg=a.level==='error'?'rgba(226,75,74,.05)':a.level==='warn'?'rgba(251,203,87,.03)':'transparent';
+    return '<div style="display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.025);align-items:center;background:'+bg+'">'
+      +'<div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div>'
+      +'<div style="min-width:140px;font-size:10px;color:#444;font-family:Montserrat,sans-serif">'+new Date(a.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</div>'
+      +'<div style="min-width:130px;font-size:11px;color:#888">'+a.user+'</div>'
+      +'<div style="min-width:90px"><span style="font-size:9px;background:'+col+'22;border:1px solid '+col+'44;border-radius:6px;padding:1px 7px;color:'+col+';font-family:Montserrat,sans-serif;font-weight:600">'+a.role+'</span></div>'
+      +'<div style="font-size:11px;font-weight:600;color:'+col+';min-width:140px">'+a.action+'</div>'
+      +'<div style="font-size:11px;color:#666;flex:1">'+a.detail+'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function filterAudit(level){
+  document.querySelectorAll('.audit-filter').forEach(function(b){b.classList.remove('on');});
+  var btn=document.getElementById('af-'+level);if(btn)btn.classList.add('on');
+  var list=level==='all'?DEMO_AUDIT:DEMO_AUDIT.filter(function(a){return a.level===level;});
+  var t=document.getElementById('audit-table');if(t)t.innerHTML=renderAuditRows(list);
+}
+
+// ── Security ──
+function renderSecurity(){
+  var el=document.getElementById('view-security');if(!el)return;
+  var rules=[
+    {title:'Isolation inter-clubs',status:'actif',desc:'Chaque club ne voit que ses propres données. Implémenté via club_id sur toutes les tables.',ico:'🏟️',col:'#4BC88A'},
+    {title:'Isolation inter-catégories',status:'partiel',desc:'Coach limité à sa catégorie. Directeur voit toutes. Nécessite validation RLS Supabase.',ico:'📋',col:'#D4AF37'},
+    {title:'Hiérarchie des rôles (5 niveaux)',status:'actif',desc:'SuperAdmin > Directeur > Coordinateur > Coach > Parent/Scout. Permissions définies.',ico:'👑',col:'#4BC88A'},
+    {title:'Chiffrement des mots de passe',status:'insuffisant',desc:'Actuellement btoa() côté client. À migrer vers bcrypt via Supabase Auth.',ico:'🔐',col:'#E24B4A'},
+    {title:'Sessions JWT signées',status:'insuffisant',desc:'Sessions en localStorage non signées. À remplacer par JWT Supabase côté serveur.',ico:'🎫',col:'#E24B4A'},
+    {title:'Row Level Security (RLS)',status:'plan',desc:'Politiques SQL définies dans ffp-security.sql. À activer dans Supabase.',ico:'🛡️',col:'#60A8D0'},
+    {title:'Audit trail',status:'actif',desc:'Log de toutes les actions sensibles. Consultable dans cet admin.',ico:'📊',col:'#4BC88A'},
+    {title:'Validation RGPD',status:'plan',desc:'Mentions légales, droit à l\'oubli, export données personnelles. À implémenter.',ico:'🇪🇺',col:'#A060E0'},
+    {title:'2FA pour comptes sensibles',status:'plan',desc:'Double authentification pour coaches et directeurs. Via Supabase Auth TOTP.',ico:'📱',col:'#C89020'},
+    {title:'Protection CSRF',status:'plan',desc:'Tokens anti-CSRF sur toutes les mutations. Inclus dans le backend Supabase.',ico:'⚔️',col:'#60A8D0'},
+  ];
+  var statusInfo={
+    actif:  {label:'Actif',    bg:'rgba(75,200,138,.1)', border:'rgba(75,200,138,.3)',  col:'#4BC88A'},
+    partiel:{label:'Partiel',  bg:'rgba(212,175,55,.1)', border:'rgba(212,175,55,.3)',  col:'#D4AF37'},
+    insuffisant:{label:'À corriger',bg:'rgba(226,75,74,.1)',border:'rgba(226,75,74,.3)',col:'#E24B4A'},
+    plan:   {label:'Planifié', bg:'rgba(96,168,208,.1)', border:'rgba(96,168,208,.3)',  col:'#60A8D0'},
+  };
+  var score=rules.filter(function(r){return r.status==='actif';}).length;
+  var pct=Math.round(score/rules.length*100);
+  el.innerHTML='<div class="acard" style="margin-bottom:16px;border-top:3px solid '+(pct>=80?'#4BC88A':pct>=50?'#D4AF37':'#E24B4A')+'">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      +'<div class="act" style="margin:0">Score de sécurité global</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:24px;color:'+(pct>=80?'#4BC88A':pct>=50?'#D4AF37':'#E24B4A')+'">'+pct+'%</div>'
+    +'</div>'
+    +'<div style="height:8px;background:#1A1A1A;border-radius:4px;overflow:hidden">'
+      +'<div style="height:100%;background:linear-gradient(to right,'+(pct>=80?'#4BC88A':pct>=50?'#D4AF37':'#E24B4A')+',#FBCB57);border-radius:4px;width:'+pct+'%;transition:width 1s"></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:12px;margin-top:10px;font-size:11px;flex-wrap:wrap">'
+      +'<span style="color:#4BC88A">✓ '+rules.filter(function(r){return r.status==='actif';}).length+' actifs</span>'
+      +'<span style="color:#D4AF37">⚠ '+rules.filter(function(r){return r.status==='partiel';}).length+' partiels</span>'
+      +'<span style="color:#E24B4A">✗ '+rules.filter(function(r){return r.status==='insuffisant';}).length+' à corriger</span>'
+      +'<span style="color:#60A8D0">○ '+rules.filter(function(r){return r.status==='plan';}).length+' planifiés</span>'
+    +'</div>'
+  +'</div>'
+  +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">'
+  +rules.map(function(r){
+    var si=statusInfo[r.status];
+    return '<div class="acard" style="padding:14px 16px">'
+      +'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">'
+        +'<span style="font-size:20px">'+r.ico+'</span>'
+        +'<div style="flex:1">'
+          +'<div style="font-size:12px;font-weight:700;margin-bottom:3px">'+r.title+'</div>'
+          +'<div style="font-size:11px;color:#888;line-height:1.5">'+r.desc+'</div>'
+        +'</div>'
+        +'<span style="font-size:9px;background:'+si.bg+';border:1px solid '+si.border+';border-radius:8px;padding:2px 9px;color:'+si.col+';font-family:Montserrat,sans-serif;font-weight:700;white-space:nowrap;flex-shrink:0">'+si.label+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('')
+  +'</div>';
+}
+
+// ── Modals ──
+function openClubModal(id){
+  var c=id?DEMO_CLUBS.find(function(x){return x.id===id;}):null;
+  var modal=document.getElementById('modal');if(!modal)return;
+  var catCheckboxes=CATEGORIES.map(function(cat){
+    var checked=c&&c.categories.indexOf(cat)>=0;
+    return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;padding:3px 0">'
+      +'<input type="checkbox" class="cat-chk" value="'+cat+'"'+(checked?' checked':'')+' style="accent-color:#D4AF37"> '+cat+'</label>';
+  }).join('');
+  modal.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeModal()">'
+    +'<div style="background:#141410;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(560px,96vw);max-height:88vh;overflow-y:auto">'
+      +'<div style="position:sticky;top:0;background:#141410;border-bottom:1px solid rgba(212,175,55,.12);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;z-index:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#D4AF37">'+(c?'Modifier':'Nouveau')+' club</div>'
+        +'<button onclick="closeModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:18px">×</button>'
+      +'</div>'
+      +'<div style="padding:18px 20px">'
+        +'<div class="mf"><label class="ml">Nom du club *</label><input class="mi" id="m-name" type="text" value="'+(c?c.name.replace(/"/g,'&quot;'):'')+'" placeholder="Nom officiel du club"></div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+          +'<div class="mf"><label class="ml">Ville</label><input class="mi" id="m-ville" type="text" value="'+(c?c.ville:'')+'" placeholder="Ville"></div>'
+          +'<div class="mf"><label class="ml">Région</label><input class="mi" id="m-region" type="text" value="'+(c?c.region:'')+'" placeholder="Région"></div>'
+        +'</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+          +'<div class="mf"><label class="ml">Plan</label><select class="mi" id="m-plan"><option value="standard"'+(c&&c.plan==='standard'?' selected':'')+'>Standard</option><option value="premium"'+(c&&c.plan==='premium'?' selected':'')+'>Premium</option></select></div>'
+          +'<div class="mf"><label class="ml">Joueurs max</label><input class="mi" id="m-max" type="number" value="'+(c?c.max_joueurs:100)+'" min="10" max="500"></div>'
+        +'</div>'
+        +'<div class="mf"><label class="ml">Catégories actives</label><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:12px">'+catCheckboxes+'</div></div>'
+        +'<div id="m-err" style="min-height:16px;font-size:11px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:8px"></div>'
+        +'<div style="display:flex;gap:10px">'
+          +'<button onclick="saveClub(\''+( c?c.id:''  )+'\')" style="flex:1;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:11px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">'+(c?'Enregistrer':'Créer')+'</button>'
+          +'<button onclick="closeModal()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:11px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px">Annuler</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+  modal.style.display='block';
+}
+
+function saveClub(id){
+  var name=((document.getElementById('m-name')||{}).value||'').trim();
+  if(!name){var e=document.getElementById('m-err');if(e)e.textContent='Le nom est obligatoire.';return;}
+  var cats=[];document.querySelectorAll('.cat-chk:checked').forEach(function(cb){cats.push(cb.value);});
+  if(id){
+    var c=DEMO_CLUBS.find(function(x){return x.id===id;});if(!c)return;
+    c.name=name;c.ville=(document.getElementById('m-ville')||{}).value||'';c.region=(document.getElementById('m-region')||{}).value||'';
+    c.plan=(document.getElementById('m-plan')||{}).value||'standard';c.max_joueurs=parseInt((document.getElementById('m-max')||{}).value||'100');c.categories=cats;
+    addAudit('Modification club',name,'info');
+  } else {
+    DEMO_CLUBS.push({id:'club_'+Date.now(),name:name,ville:(document.getElementById('m-ville')||{}).value||'',region:(document.getElementById('m-region')||{}).value||'',
+      categories:cats,actif:true,created_at:new Date().toISOString().slice(0,10),plan:(document.getElementById('m-plan')||{}).value||'standard',
+      max_joueurs:parseInt((document.getElementById('m-max')||{}).value||'100'),joueurs_actifs:0});
+    addAudit('Création club',name,'info');
+  }
+  saveData();closeModal();renderClubs();
+}
+
+function openUserModal(id){
+  var u=id?DEMO_USERS.find(function(x){return x.id===id;}):null;
+  var modal=document.getElementById('modal');if(!modal)return;
+  var roleOpts=Object.keys(ROLES).map(function(r){return '<option value="'+r+'"'+(u&&u.role===r?' selected':'')+'>'+ROLES[r].ico+' '+ROLES[r].label+'</option>';}).join('');
+  var clubOpts='<option value="">— Aucun club —</option>'+DEMO_CLUBS.map(function(c){return '<option value="'+c.id+'"'+(u&&u.club_id===c.id?' selected':'')+'>'+c.name+'</option>';}).join('');
+  var catOpts='<option value="">— Toutes catégories —</option>'+CATEGORIES.map(function(cat){return '<option value="'+cat+'"'+(u&&u.category_id===cat?' selected':'')+'>'+cat+'</option>';}).join('');
+  modal.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeModal()">'
+    +'<div style="background:#141410;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(520px,96vw);max-height:88vh;overflow-y:auto">'
+      +'<div style="position:sticky;top:0;background:#141410;border-bottom:1px solid rgba(212,175,55,.12);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;z-index:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#D4AF37">'+(u?'Modifier':'Nouvel')+' utilisateur</div>'
+        +'<button onclick="closeModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:18px">×</button>'
+      +'</div>'
+      +'<div style="padding:18px 20px">'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+          +'<div class="mf"><label class="ml">Prénom *</label><input class="mi" id="u-prenom" type="text" value="'+(u?u.prenom:'')+'"></div>'
+          +'<div class="mf"><label class="ml">Nom *</label><input class="mi" id="u-nom" type="text" value="'+(u?u.nom:'')+'"></div>'
+        +'</div>'
+        +'<div class="mf"><label class="ml">Email *</label><input class="mi" id="u-email" type="email" value="'+(u?u.email:'')+'" placeholder="prenom.nom@club.fr"></div>'
+        +'<div class="mf"><label class="ml">Rôle *</label><select class="mi" id="u-role" onchange="updateRoleContext()">'+roleOpts+'</select></div>'
+        +'<div id="role-context">'
+        +'<div class="mf"><label class="ml">Club</label><select class="mi" id="u-club">'+clubOpts+'</select></div>'
+        +'<div class="mf"><label class="ml">Catégorie (si coach)</label><select class="mi" id="u-cat">'+catOpts+'</select></div>'
+        +'</div>'
+        +(u?'':'<div class="mf"><label class="ml">Mot de passe temporaire</label><input class="mi" id="u-pwd" type="text" placeholder="Auto-généré si vide"><p style="font-size:10px;color:#444;margin-top:3px">L\'utilisateur recevra un email pour définir son mot de passe.</p></div>')
+        +'<div id="u-err" style="min-height:16px;font-size:11px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:8px"></div>'
+        +'<div style="display:flex;gap:10px">'
+          +'<button onclick="saveUser(\''+( u?u.id:''  )+'\')" style="flex:1;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:11px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">'+(u?'Enregistrer':'Créer')+'</button>'
+          +'<button onclick="closeModal()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:11px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px">Annuler</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+  modal.style.display='block';
+}
+
+function updateRoleContext(){
+  var role=(document.getElementById('u-role')||{}).value;
+  var ctx=document.getElementById('role-context');if(!ctx)return;
+  var showCat=role==='coach';
+  var showClub=role!=='superadmin'&&role!=='scout';
+  if(ctx.querySelector('#u-cat'))ctx.querySelector('#u-cat').parentElement.style.display=showCat?'block':'none';
+  if(ctx.querySelector('#u-club'))ctx.querySelector('#u-club').parentElement.style.display=showClub?'block':'none';
+}
+
+function saveUser(id){
+  var prenom=((document.getElementById('u-prenom')||{}).value||'').trim();
+  var nom=((document.getElementById('u-nom')||{}).value||'').trim();
+  var email=((document.getElementById('u-email')||{}).value||'').trim();
+  var role=(document.getElementById('u-role')||{}).value;
+  if(!prenom||!nom||!email){var e=document.getElementById('u-err');if(e)e.textContent='Tous les champs obligatoires.';return;}
+  var club_id=(document.getElementById('u-club')||{}).value||null;
+  var cat=(document.getElementById('u-cat')||{}).value||null;
+  if(id){
+    var u=DEMO_USERS.find(function(x){return x.id===id;});if(!u)return;
+    u.prenom=prenom;u.nom=nom;u.email=email;u.role=role;u.club_id=club_id;u.category_id=cat;
+    addAudit('Modification utilisateur',prenom+' '+nom+' → '+ROLES[role].label,'info');
+  } else {
+    DEMO_USERS.push({id:'u'+Date.now(),prenom:prenom,nom:nom,email:email,role:role,club_id:club_id,category_id:cat,actif:true,last_login:'—'});
+    addAudit('Création utilisateur',prenom+' '+nom+' ('+ROLES[role].label+')','info');
+  }
+  saveData();closeModal();renderUsers();
+}
+
+function closeModal(){var m=document.getElementById('modal');if(m)m.style.display='none';}
+
+function init(){
+  loadData();
+  showView('dashboard',document.getElementById('nav-dashboard'));
+}
+init();
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>

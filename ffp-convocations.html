@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Convocations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.cv-tab{padding:8px 18px;background:transparent;border:1px solid rgba(212,175,55,.15);border-radius:8px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.cv-tab:hover{border-color:rgba(212,175,55,.3);color:#FBCB57}
+.cv-tab.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.45);color:#D4AF37}
+.card{background:#0A0800;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px}
+.fi{background:#0D0B05;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s;line-height:1.5}
+.fi:focus{border-color:rgba(212,175,55,.4)}.fi option{background:#0D0B05}
+.fl{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#444;display:block;margin-bottom:4px}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(212,175,55,.08);margin-bottom:5px;transition:all .2s;background:transparent}
+.prow.is-tit{border-color:rgba(75,200,138,.3);background:rgba(75,200,138,.04)}
+.prow.is-remp{border-color:rgba(96,168,208,.3);background:rgba(96,168,208,.04)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:768px){.resp-grid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap"><a href="ffp-dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Convocations</div></div></a><div style="margin-left:auto;display:flex;gap:6px"><a href="ffp-match.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Matchs</a><a href="ffp-messagerie.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Messagerie</a><a href="ffp-dashboard.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">← Dashboard</a></div></header>
+<div style="max-width:1200px;margin:0 auto;padding:18px 20px;position:relative;z-index:1"><div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(16px,2.5vw,24px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:6px">Convocations</div><button id="tab-setup" class="cv-tab on" onclick="showPhase('setup');renderSetup()">📋 Nouvelle</button><button id="tab-preview" class="cv-tab" onclick="if(CONVOC.titulaires.length)showPhase('preview')">👁 Aperçu</button><button id="tab-sent" class="cv-tab" onclick="showPhase('sent')" style="color:rgba(75,200,138,.7)">✅ Envoyée</button><button id="tab-history" class="cv-tab" onclick="renderHistory();showPhase('history')">🕑 Historique</button></div><div id="phase-setup"><div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start" class="resp-grid"><div><div class="card" style="border-top:3px solid #D4AF37;margin-bottom:12px"><div class="ct">Informations du match</div><div style="display:flex;flex-direction:column;gap:10px"><div><label class="fl">Intitulé</label><input class="fi" id="cv-titre" type="text" placeholder="Ex: FFP vs AS Voltaire"></div><div><label class="fl">Adversaire *</label><input class="fi" id="cv-adv" type="text" placeholder="Nom de l'équipe adverse"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label class="fl">Date *</label><input class="fi" id="cv-date" type="date"></div><div><label class="fl">Heure match</label><input class="fi" id="cv-heure" type="text" value="18h00" placeholder="18h00"></div></div><div><label class="fl">Type</label><select class="fi" id="cv-type"><option value="championnat">Championnat</option><option value="coupe">Coupe</option><option value="amical">Amical</option><option value="tournoi">Tournoi</option></select></div><div><label class="fl">Lieu du match</label><input class="fi" id="cv-lieu" type="text" value="Terrain principal" placeholder="Adresse ou nom du terrain"></div></div></div><div class="card" style="margin-bottom:12px"><div class="ct">Rendez-vous</div><div style="display:flex;flex-direction:column;gap:10px"><div><label class="fl">Heure de RDV</label><input class="fi" id="cv-rdv" type="text" value="17h15" placeholder="Ex: 17h15"></div><div><label class="fl">Lieu de RDV</label><input class="fi" id="cv-lieu-rdv" type="text" value="Terrain principal — vestiaires"></div><div><label class="fl">Tenue requise</label><input class="fi" id="cv-tenue" type="text" value="Tenue officielle FFP (maillot, short, chaussettes, protège-tibias)"></div></div></div><div class="card"><div class="ct">Message du coach</div><textarea class="fi" id="cv-note" rows="4" style="resize:vertical" placeholder="Note personnalisée aux parents (optionnel)..."></textarea></div></div><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px"><div class="ct" style="margin:0">Sélection de l'effectif</div><div id="squad-summary" style="font-family:Montserrat,sans-serif;font-size:11px;color:#888"></div></div><div id="squad-grid" style="max-height:580px;overflow-y:auto"></div><div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap"><button onclick="goPreview()" style="flex:1;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s" onmouseover="this.style.boxShadow='0 0 20px rgba(212,175,55,.4)'" onmouseout="this.style.boxShadow='none'">📋 Générer la convocation →</button></div></div></div></div><div id="phase-preview" style="display:none"><div id="convoc-preview"></div></div><div id="phase-sent" style="display:none"></div><div id="phase-history" style="display:none"><div id="history-list"></div></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — MODULE CONVOCATIONS
+// Sélection joueurs → PDF officiel → Envoi parents
+// ══════════════════════════════════════════════════════
+
+var LS_CONVOC   = 'ffp_convocations';
+var LS_MESSAGES = 'ffp_messages';
+var LS_SESSION  = 'ffp_session';
+
+var PN=['Thomas','Arthur','Sacha','Kylian','Léo','Hugo','Mathieu','Théo','Enzo','Nathan',
+        'Lucas','Antoine','Maxime','Julien','Baptiste','Romain','Pierre','Clément','Nicolas','Valentin',
+        'Alexis','Quentin','Louis','Gabriel','Tom','Noa','Liam','Yanis','Ryan','Axel'];
+var NN=['Bernard','Morel','Renard','Faure','Dubois','Martin','Laurent','Simon','Leroy','Dupont',
+        'Moreau','Petit','Richard','Robert','Durand','Leblanc','Garnier','Girard','Boyer','Rousseau',
+        'Chevalier','André','Michel','Henry','Gilles','Roux','François','Blanc','Guérin','Robin'];
+var POS=['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif',
+         'Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
+var POS_SH={'Gardien':'GK','Défenseur Central':'DC','Latéral Droit':'LD','Latéral Gauche':'LG',
+            'Milieu Défensif':'MD','Milieu Central':'MC','Milieu Offensif':'MO',
+            'Ailier Droit':'AD','Ailier Gauche':'AG','Avant-Centre':'AC'};
+var PROFS=['elite','elite','good','good','good','good','good',
+           'average','average','average','average','average','average','average','average',
+           'developing','developing','developing','developing','developing','developing','developing',
+           'beginner','beginner','beginner','beginner','beginner','beginner','beginner','beginner'];
+var BASE={elite:8.4,good:7.0,average:5.6,developing:4.4,beginner:3.2};
+
+function rng(s){var x=s;return function(){x=(x*1664525+1013904223)>>>0;return x/0xFFFFFFFF;};}
+function mkPlayer(i){
+  var r=rng(i*7919+31337);var b=BASE[PROFS[i]];var v=function(){return +Math.max(1,Math.min(10,b+(r()*4-2))).toFixed(1);};
+  var sc={t:v(),p:v(),ta:v(),m:v(),c:v()};
+  var g=+(sc.t*.3+sc.p*.25+sc.ta*.2+sc.m*.15+sc.c*.1).toFixed(2);
+  return{id:i,prenom:PN[i],nom:NN[i],poste:POS[Math.floor(r()*POS.length)],numero:i+1,global:g,code_parent:String(1001+i)};
+}
+var ALL_PLAYERS=[];for(var _i=0;_i<30;_i++){ALL_PLAYERS.push(mkPlayer(_i));}
+ALL_PLAYERS.sort(function(a,b){return b.global-a.global;});
+
+// ── State ──
+var CONVOC = {
+  id:'',match_titre:'',adversaire:'',date:'',heure_match:'18h00',
+  type:'championnat',lieu:'Terrain principal',
+  heure_rdv:'17h15',lieu_rdv:'Terrain principal — vestiaires',
+  tenue:'Tenue officielle FFP (maillot, short, chaussettes)',
+  note_coach:'',titulaires:[],remplacants:[],
+  statut:'brouillon'
+};
+var PHASE = 'setup'; // setup | preview | sent
+var SESSION = null;
+
+// ── Session ──
+function getSession(){
+  try{var r=localStorage.getItem(LS_SESSION);if(!r)return null;var d=JSON.parse(r);if(d._exp&&Date.now()>d._exp)return null;return d;}catch(e){return null;}
+}
+
+// ── Convoc storage ──
+function loadConvocs(){try{return JSON.parse(localStorage.getItem(LS_CONVOC)||'[]');}catch(e){return [];}}
+function saveConvoc(c){
+  var list=loadConvocs();var idx=list.findIndex(function(x){return x.id===c.id;});
+  if(idx>=0)list[idx]=c;else list.unshift(c);
+  try{localStorage.setItem(LS_CONVOC,JSON.stringify(list));}catch(e){}
+}
+function genId(){return 'cv_'+Date.now();}
+
+// ── Phase navigation ──
+function showPhase(p){
+  PHASE=p;
+  ['setup','preview','sent','history'].forEach(function(ph){
+    var el=document.getElementById('phase-'+ph);if(el)el.style.display='none';
+  });
+  var el=document.getElementById('phase-'+p);if(el)el.style.display='block';
+  document.querySelectorAll('.cv-tab').forEach(function(b){b.classList.remove('on');});
+  var btn=document.getElementById('tab-'+p);if(btn)btn.classList.add('on');
+}
+
+// ── Render setup ──
+function renderSetup(){
+  var el=document.getElementById('squad-select');if(!el)return;
+
+  // Sort by position group then score
+  var posOrder={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,
+    'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  var sorted=ALL_PLAYERS.slice().sort(function(a,b){
+    var pa=posOrder[a.poste]||5,pb=posOrder[b.poste]||5;
+    return pa!==pb?pa-pb:b.global-a.global;
+  });
+
+  // Auto-select 11 best (already in CONVOC if previously filled)
+  if(!CONVOC.titulaires.length){
+    var autoTits=ALL_PLAYERS.slice(0,11).map(function(p){return p.id;});
+    CONVOC.titulaires=autoTits;
+    var autoRemps=ALL_PLAYERS.slice(11,16).map(function(p){return p.id;});
+    CONVOC.remplacants=autoRemps;
+  }
+
+  el.innerHTML=sorted.map(function(p){
+    var isTit=CONVOC.titulaires.indexOf(p.id)>=0;
+    var isRemp=CONVOC.remplacants.indexOf(p.id)>=0;
+    var sc=p.global>=7.5?'#4BC88A':p.global>=6?'#D4AF37':'#888';
+    return '<div class="prow'+(isTit?' is-tit':isRemp?' is-remp':'')+'" id="pr-'+p.id+'">'
+      +'<div style="display:flex;align-items:center;gap:8px;flex:1">'
+        +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#333;min-width:24px">#'+p.numero+'</span>'
+        +'<div style="width:30px;height:30px;border-radius:50%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#D4AF37;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div>'
+          +'<div style="font-size:9px;color:#666">'+POS_SH[p.poste]+'</div>'
+        +'</div>'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:'+sc+'">'+p.global+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:5px;flex-shrink:0">'
+        +'<label style="display:flex;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid rgba(75,200,138,'+(isTit?'.4':'.15')+');background:rgba(75,200,138,'+(isTit?'.1':'.03')+');transition:all .2s">'
+          +'<input type="checkbox" data-id="'+p.id+'" data-role="tit" '+(isTit?'checked':'')+' onchange="togglePlayer('+p.id+',\'tit\')" style="accent-color:#4BC88A;cursor:pointer"> <span style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:'+(isTit?'#4BC88A':'#888')+';text-transform:uppercase">Tit.</span>'
+        +'</label>'
+        +'<label style="display:flex;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid rgba(96,168,208,'+(isRemp?'.4':'.15')+');background:rgba(96,168,208,'+(isRemp?'.1':'.03')+');transition:all .2s">'
+          +'<input type="checkbox" data-id="'+p.id+'" data-role="remp" '+(isRemp?'checked':'')+' onchange="togglePlayer('+p.id+',\'remp\')" style="accent-color:#60A8D0;cursor:pointer"> <span style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:'+(isRemp?'#60A8D0':'#888')+';text-transform:uppercase">Remp.</span>'
+        +'</label>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  updateSquadSummary();
+}
+
+function togglePlayer(id,role){
+  var oppRole=role==='tit'?'remp':'tit';
+  // Remove from opposite if present
+  if(role==='tit'){CONVOC.remplacants=CONVOC.remplacants.filter(function(x){return x!==id;});}
+  else{CONVOC.titulaires=CONVOC.titulaires.filter(function(x){return x!==id;});}
+  // Toggle in current
+  var arr=role==='tit'?CONVOC.titulaires:CONVOC.remplacants;
+  var idx=arr.indexOf(id);
+  if(idx>=0){arr.splice(idx,1);}else{
+    if(role==='tit'&&arr.length>=16){alert('Maximum 16 titulaires.');var cb=document.querySelector('[data-id="'+id+'"][data-role="tit"]');if(cb)cb.checked=false;return;}
+    if(role==='remp'&&arr.length>=8){alert('Maximum 8 remplaçants.');var cb2=document.querySelector('[data-id="'+id+'"][data-role="remp"]');if(cb2)cb2.checked=false;return;}
+    arr.push(id);
+  }
+  // Sync opposite checkbox
+  var oppCb=document.querySelector('[data-id="'+id+'"][data-role="'+oppRole+'"]');
+  if(oppCb)oppCb.checked=false;
+  // Update row style
+  var row=document.getElementById('pr-'+id);
+  if(row){
+    row.className='prow'+(CONVOC.titulaires.indexOf(id)>=0?' is-tit':CONVOC.remplacants.indexOf(id)>=0?' is-remp':'');
+  }
+  updateSquadSummary();
+}
+
+function updateSquadSummary(){
+  var el=document.getElementById('squad-summary');if(!el)return;
+  var t=CONVOC.titulaires.length,r=CONVOC.remplacants.length;
+  var hasGK=CONVOC.titulaires.some(function(id){var p=ALL_PLAYERS.find(function(x){return x.id===id;});return p&&p.poste==='Gardien';});
+  el.innerHTML='<span style="color:#4BC88A;font-weight:700">'+t+'</span> titulaires'
+    +' · <span style="color:#60A8D0;font-weight:700">'+r+'</span> remplaçants'
+    +(t<7?'<span style="color:#E24B4A;margin-left:8px;font-weight:600">⚠ Minimum 7 requis</span>':'')
+    +(!hasGK&&t>0?'<span style="color:#FBCB57;margin-left:8px;font-weight:600">⚠ Aucun gardien sélectionné</span>':'');
+}
+
+function readSetupForm(){
+  var g=function(id){return ((document.getElementById(id)||{}).value||'').trim();};
+  CONVOC.match_titre=g('cv-titre')||'Match FFP';
+  CONVOC.adversaire=g('cv-adv')||'Adversaire';
+  CONVOC.date=g('cv-date')||new Date().toISOString().slice(0,10);
+  CONVOC.heure_match=g('cv-heure')||'18h00';
+  CONVOC.type=(document.getElementById('cv-type')||{}).value||'championnat';
+  CONVOC.lieu=g('cv-lieu')||'Terrain principal';
+  CONVOC.heure_rdv=g('cv-rdv')||'17h15';
+  CONVOC.lieu_rdv=g('cv-lieu-rdv')||'Terrain principal — vestiaires';
+  CONVOC.tenue=g('cv-tenue')||'Tenue officielle FFP';
+  CONVOC.note_coach=g('cv-note');
+}
+
+function goPreview(){
+  readSetupForm();
+  if(CONVOC.titulaires.length<7){alert('Sélectionnez au moins 7 titulaires.');return;}
+  if(!CONVOC.adversaire||CONVOC.adversaire==='Adversaire'){alert('Renseignez le nom de l\'adversaire.');return;}
+  if(!CONVOC.id)CONVOC.id=genId();
+  saveConvoc(CONVOC);
+  showPhase('preview');
+  renderPreview();
+}
+
+// ── Render preview ──
+function renderPreview(){
+  var el=document.getElementById('convoc-preview');if(!el)return;
+  var tits=CONVOC.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var remps=CONVOC.remplacants.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+
+  // Sort tits by position
+  var posOrd={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,
+    'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  tits.sort(function(a,b){return (posOrd[a.poste]||5)-(posOrd[b.poste]||5);});
+
+  var dateStr=CONVOC.date?new Date(CONVOC.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
+  var typeLabel={championnat:'Championnat',coupe:'Coupe',amical:'Match amical',tournoi:'Tournoi'}[CONVOC.type]||CONVOC.type;
+
+  el.innerHTML=
+  // Document preview card
+  '<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 40px rgba(0,0,0,.5);max-width:700px;margin:0 auto">'
+    // Header bande dorée
+    +'<div style="background:linear-gradient(135deg,#1A1200,#2C2000);padding:24px 30px;text-align:center;border-bottom:4px solid #D4AF37">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;letter-spacing:3px;text-transform:uppercase;color:#D4AF37;margin-bottom:4px">FOOT FACTORY PRO</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(212,175,55,.6)">CONVOCATION OFFICIELLE</div>'
+    +'</div>'
+    // Match info
+    +'<div style="background:#FAFAF5;padding:20px 30px;border-bottom:1px solid #E8E0CC">'
+      +'<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;text-align:center">'
+        +'<div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:15px;color:#1A1200">FOOT FACTORY PRO</div><div style="font-size:11px;color:#888;font-family:Montserrat,sans-serif;font-weight:600">Catégorie U12</div></div>'
+        +'<div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;color:#C8961E">VS</div></div>'
+        +'<div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:15px;color:#1A1200">'+CONVOC.adversaire.toUpperCase()+'</div><div style="font-size:11px;color:#888;font-family:Montserrat,sans-serif;font-weight:600">Adversaire</div></div>'
+      +'</div>'
+    +'</div>'
+    // Details grid
+    +'<div style="background:#fff;padding:18px 30px;border-bottom:1px solid #EEE">'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'
+      +[
+        ['📅','Date',dateStr],
+        ['⏰','Coup d\'envoi',CONVOC.heure_match],
+        ['📍','Lieu',CONVOC.lieu],
+        ['🕐','RDV',CONVOC.heure_rdv],
+        ['🗺️','Lieu RDV',CONVOC.lieu_rdv],
+        ['👕','Tenue',CONVOC.tenue],
+      ].map(function(d){
+        return '<div style="background:#FAFAF5;border:1px solid #E8E0CC;border-radius:8px;padding:10px 12px">'
+          +'<div style="font-size:14px;margin-bottom:4px">'+d[0]+'</div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:2px">'+d[1]+'</div>'
+          +'<div style="font-size:11px;font-weight:600;color:#1A1200;line-height:1.3">'+d[2]+'</div>'
+        +'</div>';
+      }).join('')
+      +'</div>'
+    +'</div>'
+    // Players list
+    +'<div style="padding:18px 30px 14px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#1A1200;border-bottom:2px solid #D4AF37;padding-bottom:6px;margin-bottom:12px">Joueurs convoqués</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">'
+      +tits.map(function(p){
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8F5EE;border:1px solid #E8E0CC;border-left:3px solid #D4AF37;border-radius:5px">'
+          +'<span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;color:#C8961E;min-width:24px">'+p.numero+'</span>'
+          +'<div style="flex:1"><div style="font-weight:700;font-size:12px;color:#1A1200">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#888;font-family:Montserrat,sans-serif">'+p.poste+'</div></div>'
+          +'<span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#888">'+POS_SH[p.poste]+'</span>'
+        +'</div>';
+      }).join('')
+      +'</div>'
+      +(remps.length?'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px;border-top:1px solid #EEE;padding-top:10px">Remplaçants</div>'
+        +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">'
+        +remps.map(function(p){
+          return '<div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#F5F5F5;border:1px solid #E0E0E0;border-left:3px solid #60A8D0;border-radius:5px">'
+            +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#60A8D0;min-width:18px">'+p.numero+'</span>'
+            +'<div><div style="font-weight:600;font-size:11px;color:#333">'+p.prenom+' '+p.nom+'</div><div style="font-size:9px;color:#888;font-family:Montserrat,sans-serif">'+POS_SH[p.poste]+'</div></div>'
+          +'</div>';
+        }).join('')
+        +'</div>':'')
+    +'</div>'
+    // Coach note
+    +(CONVOC.note_coach?'<div style="background:#FFFDF5;border-top:1px solid #E8E0CC;padding:14px 30px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#C8961E;margin-bottom:6px">Message du coach</div>'
+      +'<p style="font-size:12px;color:#444;line-height:1.7;font-style:italic">'+CONVOC.note_coach+'</p>'
+    +'</div>':'')
+    // Footer
+    +'<div style="background:linear-gradient(135deg,#1A1200,#2C2000);padding:14px 30px;display:flex;justify-content:space-between;align-items:center">'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:10px;color:rgba(212,175,55,.6);letter-spacing:1px">FOOT FACTORY PRO · SAISON 2026-27</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:10px;color:rgba(212,175,55,.6)">'+tits.length+' joueurs convoqués</div>'
+    +'</div>'
+  +'</div>'
+  // Actions
+  +'<div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center">'
+    +'<button onclick="exportConvocPDF()" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:12px 24px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s">📄 Exporter PDF</button>'
+    +'<button onclick="sendConvocMessages()" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:8px;color:#4BC88A;padding:12px 24px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase">✉️ Envoyer aux parents</button>'
+    +'<button onclick="showPhase(\'setup\')" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#888;padding:12px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600">← Modifier</button>'
+  +'</div>';
+}
+
+// ── Export PDF ──
+function exportConvocPDF(){
+  var tits=CONVOC.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var remps=CONVOC.remplacants.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var posOrd={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  tits.sort(function(a,b){return (posOrd[a.poste]||5)-(posOrd[b.poste]||5);});
+  var dateStr=CONVOC.date?new Date(CONVOC.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
+  var w=window.open('','_blank');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Convocation FFP</title>'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#111;background:#fff}'
+    +'.page{max-width:700px;margin:0 auto;padding:20px}'
+    +'.hdr{background:linear-gradient(135deg,#1A1200,#2C2000);padding:20px;text-align:center;color:#D4AF37;margin-bottom:0}'
+    +'.hdr h1{font-size:20px;letter-spacing:3px;text-transform:uppercase}'
+    +'.hdr p{font-size:10px;letter-spacing:3px;text-transform:uppercase;opacity:.6;margin-top:4px}'
+    +'.vs{background:#FAFAF5;padding:16px;border-bottom:3px solid #D4AF37;text-align:center;display:flex;justify-content:space-around;align-items:center}'
+    +'.team{font-weight:900;font-size:14px;letter-spacing:1px;text-transform:uppercase}'
+    +'.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px;border-bottom:1px solid #eee}'
+    +'.cell{background:#F8F5EE;border:1px solid #E8E0CC;border-radius:5px;padding:8px}'
+    +'.cell .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;font-weight:700;margin-bottom:2px}'
+    +'.cell .val{font-size:11px;font-weight:600}'
+    +'.players{padding:14px}'
+    +'.section-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;color:#C8961E;border-bottom:2px solid #D4AF37;padding-bottom:4px;margin-bottom:10px}'
+    +'.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px}'
+    +'.prow{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#F8F5EE;border:1px solid #E8E0CC;border-left:3px solid #D4AF37;border-radius:4px}'
+    +'.rrow{display:flex;align-items:center;gap:6px;padding:5px 8px;background:#F5F5F5;border:1px solid #E0E0E0;border-left:3px solid #60A8D0;border-radius:4px}'
+    +'.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}'
+    +'.num{font-weight:800;font-size:12px;color:#C8961E;min-width:20px}'
+    +'.pname{font-weight:700;font-size:11px;flex:1}'
+    +'.ppos{font-size:9px;color:#888;font-weight:600}'
+    +'.ftr{background:linear-gradient(135deg,#1A1200,#2C2000);padding:12px;text-align:center;color:rgba(212,175,55,.5);font-size:10px;letter-spacing:1px}'
+    +'@media print{.noprint{display:none}}</style></head><body>'
+    +'<div class="noprint" style="padding:10px;display:flex;gap:8px"><button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:5px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:12px">🖨️ Imprimer</button><button onclick="window.close()" style="background:#eee;border:none;border-radius:5px;padding:8px 16px;cursor:pointer">Fermer</button></div>'
+    +'<div class="page">'
+    +'<div class="hdr"><h1>Foot Factory Pro</h1><p>Convocation officielle — '+(CONVOC.type||'')+'</p></div>'
+    +'<div class="vs"><div class="team">Foot Factory Pro</div><div style="font-weight:900;font-size:18px;color:#C8961E">VS</div><div class="team">'+CONVOC.adversaire+'</div></div>'
+    +'<div class="grid3">'
+    +[['📅 Date',dateStr],['⏰ Coup d\'envoi',CONVOC.heure_match],['📍 Lieu',CONVOC.lieu],['🕐 RDV',CONVOC.heure_rdv],['🗺️ Lieu RDV',CONVOC.lieu_rdv],['👕 Tenue',CONVOC.tenue]].map(function(d){return '<div class="cell"><div class="lbl">'+d[0]+'</div><div class="val">'+d[1]+'</div></div>';}).join('')
+    +'</div>'
+    +'<div class="players"><div class="section-title">Titulaires ('+tits.length+')</div><div class="pgrid">'
+    +tits.map(function(p){return '<div class="prow"><span class="num">'+p.numero+'</span><div><div class="pname">'+p.prenom+' '+p.nom+'</div><div class="ppos">'+p.poste+'</div></div><span class="ppos">'+POS_SH[p.poste]+'</span></div>';}).join('')
+    +'</div>'
+    +(remps.length?'<div class="section-title" style="margin-top:10px">Remplaçants ('+remps.length+')</div><div class="rgrid">'
+      +remps.map(function(p){return '<div class="rrow"><span class="num" style="color:#60A8D0">'+p.numero+'</span><div><div class="pname">'+p.prenom+' '+p.nom+'</div><div class="ppos">'+POS_SH[p.poste]+'</div></div></div>';}).join('')
+      +'</div>':'')
+    +(CONVOC.note_coach?'<div style="margin-top:14px;padding:12px;background:#FFFDF5;border:1px solid #E8E0CC;border-radius:6px"><div class="section-title" style="color:#C8961E">Message du coach</div><p style="font-style:italic;font-size:12px;color:#555;line-height:1.7;margin-top:6px">'+CONVOC.note_coach+'</p></div>':'')
+    +'</div>'
+    +'<div class="ftr">Foot Factory Pro · Saison 2026-27 · Document officiel</div>'
+    +'</div></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+// ── Send messages to parents ──
+function sendConvocMessages(){
+  var tits=CONVOC.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var remps=CONVOC.remplacants.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var allPlayers=tits.concat(remps);
+  var dateStr=CONVOC.date?new Date(CONVOC.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):'';
+  var sujet='Convocation — '+CONVOC.match_titre+' — '+dateStr;
+  var corps='Bonjour,\n\nVotre enfant est convoqué pour le match suivant :\n\n'
+    +'• Adversaire : '+CONVOC.adversaire+'\n'
+    +'• Date : '+dateStr+'\n'
+    +'• Coup d\'envoi : '+CONVOC.heure_match+'\n'
+    +'• Rendez-vous : '+CONVOC.heure_rdv+' — '+CONVOC.lieu_rdv+'\n'
+    +'• Lieu : '+CONVOC.lieu+'\n'
+    +'• Tenue : '+CONVOC.tenue+'\n'
+    +(CONVOC.note_coach?'\nMessage du coach :\n'+CONVOC.note_coach+'\n':'')
+    +'\nMerci de confirmer la présence de votre enfant.\n\nCordialement,\nLe staff Foot Factory Pro';
+
+  var messages=[];try{messages=JSON.parse(localStorage.getItem(LS_MESSAGES)||'[]');}catch(e){}
+  var sess=getSession();
+  var coachName=sess?(sess.prenom||'Coach')+' '+(sess.nom||''):'Coach FFP';
+  var now=Date.now();
+  allPlayers.forEach(function(p,idx){
+    var role=CONVOC.titulaires.indexOf(p.id)>=0?'Titulaire':'Remplaçant';
+    var personalBody=corps+'\n\n['+p.prenom+' — '+role+' · #'+p.numero+']';
+    messages.unshift({id:'cv_'+now+'_'+idx,from:'coach',from_name:coachName,
+      to:String(1001+p.id),to_label:'Parent de '+p.prenom+' '+p.nom,
+      subject:sujet,body:personalBody,ts:now+idx,read_by:['coach'],priority:'haute',tag:'convocation'});
+  });
+  try{localStorage.setItem(LS_MESSAGES,JSON.stringify(messages));}catch(e){}
+  CONVOC.statut='envoyée';saveConvoc(CONVOC);
+  showPhase('sent');renderSent(allPlayers.length);
+}
+
+// ── Sent confirmation ──
+function renderSent(count){
+  var el=document.getElementById('phase-sent');if(!el)return;
+  el.innerHTML='<div style="text-align:center;padding:50px 20px">'
+    +'<div style="font-size:56px;margin-bottom:16px">✅</div>'
+    +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;background:linear-gradient(135deg,#4BC88A,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px">Convocation envoyée !</div>'
+    +'<p style="font-size:14px;color:#888;margin-bottom:6px">'+count+' message'+(count>1?'s':'')+' envoyé'+(count>1?'s':'')+' aux parents.</p>'
+    +'<p style="font-size:12px;color:#444;margin-bottom:28px">Visible dans <a href="ffp-messagerie.html" style="color:#D4AF37">la messagerie</a> pour chaque parent concerné.</p>'
+    +'<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+      +'<button onclick="newConvoc()" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:12px 22px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Nouvelle convocation</button>'
+      +'<a href="ffp-messagerie.html" style="display:inline-flex;align-items:center;background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:8px;color:#4BC88A;padding:12px 20px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-decoration:none;text-transform:uppercase">✉️ Voir messagerie →</a>'
+      +'<button onclick="renderHistory();showPhase(\'history\')" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#888;padding:12px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600">Historique</button>'
+    +'</div>'
+  +'</div>';
+}
+
+// ── History ──
+function renderHistory(){
+  var el=document.getElementById('phase-history');if(!el)return;
+  var list=loadConvocs();
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#444;font-size:13px">Aucune convocation enregistrée.</div>';return;}
+  el.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'
+    +list.map(function(c){
+      var sc=c.statut==='envoyée'?'#4BC88A':'#D4AF37';
+      return '<div style="background:#0A0800;border:1px solid rgba(212,175,55,.12);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:600">'+c.match_titre+'</div>'
+        +'<div style="font-size:11px;color:#888;margin-top:2px">'+c.adversaire+' · '+c.date+'</div></div>'
+        +'<div style="display:flex;gap:8px;align-items:center">'
+          +'<span style="font-size:10px;background:'+sc+'22;border:1px solid '+sc+'44;border-radius:8px;padding:2px 9px;color:'+sc+';font-family:Montserrat,sans-serif;font-weight:700">'+c.statut+'</span>'
+          +'<span style="font-size:11px;color:#444;font-family:Montserrat,sans-serif">'+c.titulaires.length+' tit · '+c.remplacants.length+' remp</span>'
+          +'<button onclick="loadConvoc(\''+c.id+'\')" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#D4AF37;padding:5px 10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase">Recharger</button>'
+          +'<button onclick="exportFromHistory(\''+c.id+'\')" style="background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:6px;color:#60A8D0;padding:5px 10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase">PDF</button>'
+        +'</div>'
+      +'</div>';
+    }).join('')
+  +'</div>';
+}
+
+function loadConvoc(id){
+  var list=loadConvocs();var c=list.find(function(x){return x.id===id;});
+  if(!c)return;
+  CONVOC=c;showPhase('setup');
+  setTimeout(function(){
+    var fields={titre:'cv-titre',adversaire:'cv-adv',date:'cv-date',heure_match:'cv-heure',
+      type:'cv-type',lieu:'cv-lieu',heure_rdv:'cv-rdv',lieu_rdv:'cv-lieu-rdv',tenue:'cv-tenue',note_coach:'cv-note'};
+    Object.keys(fields).forEach(function(k){
+      var el=document.getElementById(fields[k]);if(el&&CONVOC[k])el.value=CONVOC[k];
+    });
+    renderSetup();
+  },100);
+}
+
+function exportFromHistory(id){
+  var list=loadConvocs();var c=list.find(function(x){return x.id===id;});
+  if(!c)return;var prev=CONVOC;CONVOC=c;exportConvocPDF();CONVOC=prev;
+}
+
+function newConvoc(){
+  CONVOC={id:'',match_titre:'',adversaire:'',date:new Date().toISOString().slice(0,10),heure_match:'18h00',
+    type:'championnat',lieu:'Terrain principal',heure_rdv:'17h15',lieu_rdv:'Terrain principal — vestiaires',
+    tenue:'Tenue officielle FFP (maillot, short, chaussettes, protège-tibias)',note_coach:'',
+    titulaires:[],remplacants:[],statut:'brouillon'};
+  var autoTits=ALL_PLAYERS.slice(0,11).map(function(p){return p.id;});
+  CONVOC.titulaires=autoTits;
+  CONVOC.remplacants=ALL_PLAYERS.slice(11,16).map(function(p){return p.id;});
+  showPhase('setup');
+  var dateEl=document.getElementById('cv-date');if(dateEl)dateEl.value=CONVOC.date;
+  renderSetup();
+}
+
+function init(){
+  SESSION=getSession();
+  newConvoc();
+  renderHistory();
+}
+init();
+
+var dateEl=document.getElementById("cv-date");if(dateEl)dateEl.value=new Date().toISOString().slice(0,10);
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>

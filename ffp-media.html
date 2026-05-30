@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Media &amp; AI Scout Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--gold:#D4AF37;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(212,175,55,.03),transparent 70%);z-index:0}
+.mcard{background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:12px;position:relative;z-index:1}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
+.vtab{padding:8px 16px;background:transparent;border:1px solid rgba(212,175,55,.15);border-radius:7px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.vtab:hover{border-color:rgba(212,175,55,.3);color:#FBCB57}
+.vtab.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.45);color:#D4AF37}
+.vsec{display:none}
+.srch{background:#111;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:7px 11px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:12px;outline:none;width:100%;transition:border-color .2s}
+.srch:focus{border-color:rgba(212,175,55,.35)}
+.srch::placeholder{color:#333}
+.fsel{background:#111;border:1px solid rgba(212,175,55,.12);border-radius:7px;padding:6px 8px;color:#888;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;outline:none;width:100%;cursor:pointer}
+.fsel option{background:#111}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:700px){.sidebar{display:none}.resp-1{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
+<a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:32px;filter:drop-shadow(0 0 7px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37,#E6E6E6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Media &amp; AI Scout</div></div></a><div style="display:flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap"><div style="display:flex;gap:6px"><span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:2px 9px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700">🤖 YOLOv8</span><span style="font-size:9px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:2px 9px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:700">📹 OpenCV</span><span style="font-size:9px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;padding:2px 9px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700">🎙️ Whisper</span></div><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 52px)"><div class="sidebar" style="border-right:1px solid rgba(212,175,55,.1);padding:14px 12px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;background:#050402"><div style="margin-bottom:12px"><input class="srch" id="player-search" type="text" placeholder="Rechercher..." oninput="SEARCH_Q=this.value;renderPlayerList()"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><select class="fsel" onchange="FILTER_TEAM=this.value;renderPlayerList()"><option value="">Équipes</option><option value="Équipe 1">Équipe 1</option><option value="Équipe 2">Équipe 2</option><option value="Équipe 3">Équipe 3</option></select><select class="fsel" onchange="FILTER_POS=this.value;renderPlayerList()"><option value="">Postes</option></select></div><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px" id="player-count">30 joueurs</div><div id="player-list"></div></div><div id="main-view" style="padding:18px 20px;overflow-y:auto;position:relative;z-index:1"><div id="player-hdr"></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><button class="vtab on" onclick="setView('profil',this)">👤 Profil</button><button class="vtab" onclick="setView('highlights',this)">🎬 Highlights</button><button class="vtab" onclick="setView('stats',this)">📊 Stats</button><button class="vtab" onclick="setView('cv',this)">📋 CV Sportif</button><button class="vtab" onclick="setView('scout',this)" style="color:rgba(160,96,224,.8)">🔍 Scout</button></div><div id="vs-profil" class="vsec"></div><div id="vs-highlights" class="vsec"></div><div id="vs-stats" class="vsec"></div><div id="vs-cv" class="vsec"></div><div id="vs-scout" class="vsec"></div></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — MEDIA PLATFORM v2 (30 joueurs)
+// ══════════════════════════════════════════════════════
+
+// ── Données de base ──
+var PN = ['Thomas','Arthur','Sacha','Kylian','Léo','Hugo','Mathieu','Théo','Enzo','Nathan',
+          'Lucas','Antoine','Maxime','Julien','Baptiste','Romain','Pierre','Clément','Nicolas','Valentin',
+          'Alexis','Quentin','Louis','Gabriel','Tom','Noa','Liam','Yanis','Ryan','Axel'];
+var NN = ['Bernard','Morel','Renard','Faure','Dubois','Martin','Laurent','Simon','Leroy','Dupont',
+          'Moreau','Petit','Richard','Robert','Durand','Leblanc','Garnier','Girard','Boyer','Rousseau',
+          'Chevalier','André','Michel','Henry','Gilles','Roux','François','Blanc','Guérin','Robin'];
+var POS = ['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif',
+           'Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
+var POS_SH = {
+  'Gardien':'GK','Défenseur Central':'DC','Latéral Droit':'LD','Latéral Gauche':'LG',
+  'Milieu Défensif':'MD','Milieu Central':'MC','Milieu Offensif':'MO',
+  'Ailier Droit':'AD','Ailier Gauche':'AG','Avant-Centre':'AC'
+};
+var PROFILS = ['elite','elite','good','good','good','good','good',
+               'average','average','average','average','average','average','average','average',
+               'developing','developing','developing','developing','developing','developing','developing',
+               'beginner','beginner','beginner','beginner','beginner','beginner','beginner','beginner'];
+var BASE_SCORES = {elite:8.4,good:7.0,average:5.6,developing:4.4,beginner:3.2};
+var POTENTIAL = {elite:'Elite',good:'Confirmé',average:'Développement',developing:'Formation',beginner:'Débutant'};
+var POT_COLOR = {elite:'#4BC88A',good:'#D4AF37',average:'#60A8D0',developing:'#C89020',beginner:'#888'};
+var MATCH_NAMES = [
+  'FFP vs FC Horizon','FFP vs AS Voltaire','FFP vs CS Municipal',
+  'Tournoi Régional U12','Tournoi de l\'Amitié','Coupe District',
+  'Stage Présaison','Stage Technique','Entraînement Intensif',
+  'Championnat J1','Championnat J2','Championnat J3'
+];
+var TAG_POOL = {
+  technique:['Technique','Dribble','Contrôle','Passe clé','Frappe'],
+  physique:['Vitesse','Pressing','Sprint','Endurance','Duel'],
+  tactique:['Positionnement','Vision','Leadership','Organisation'],
+  mental:['Combativité','Concentration','Réaction'],
+  culture:['Fair-play','Communication']
+};
+var MATCH_TYPES = ['match','match','match','tournoi','tournoi','stage'];
+var MATCH_ICO = {match:'⚽',tournoi:'🏆',stage:'🎯',entrainement:'🏃'};
+var AI_SIMILAR = {
+  'Gardien':'Style Ter Stegen jeune — Gardien libéro',
+  'Défenseur Central':'Style Konaté — Défenseur physique et technique',
+  'Latéral Droit':'Style Trent Alexander-Arnold — Latéral offensif',
+  'Latéral Gauche':'Style Theo Hernandez — Latéral percutant',
+  'Milieu Défensif':'Style Casemiro — Sentinelle récupératrice',
+  'Milieu Central':'Style Pedri — Milieu créatif et technique',
+  'Milieu Offensif':'Style Bellingham — Box-to-box offensif',
+  'Ailier Droit':'Style Saka — Ailier technique et percutant',
+  'Ailier Gauche':'Style Vinicius Jr — Ailier explosif et dribbleur',
+  'Avant-Centre':'Style Mbappé jeune — Finisseur explosif'
+};
+var CLUBS_PREC = [
+  'AS Voltaire U11','FC Lumière U11','CS Municipal U11','Étoile Sportive U11',
+  'Racing Club U11','US Horizon U11','AC Émeraude U11','FC Phénix U11'
+];
+
+// ── PRNG ──
+function rng(s){ var x=s; return function(){ x=(x*1664525+1013904223)>>>0; return x/0xFFFFFFFF; }; }
+
+function clamp(v){ return Math.max(1,Math.min(10,v)); }
+
+// ── Générer un joueur ──
+function mkPlayer(i){
+  var r = rng(i*7919+31337);
+  var prof = PROFILS[i];
+  var base = BASE_SCORES[prof];
+  var v = function(){ return +clamp(base+(r()*4-2)).toFixed(1); };
+  var poste = POS[Math.floor(r()*POS.length)];
+  var naissance = new Date(2013 - Math.floor(r()*2), Math.floor(r()*12), Math.floor(r()*28)+1);
+  var scores = {
+    technique:{controle:v(),dribble:v(),frappe:v(),passe:v(),tete:v()},
+    physique:{vitesse:v(),endurance:v(),force:v(),coordination:v(),souplesse:v()},
+    tactique:{positionnement:v(),lecture:v(),pressing:v()},
+    mental:{motivation:v(),concentration:v(),combativite:v(),leadership:v(),stress:v()},
+    culture:{reglesFIFA:v(),nutrition:v(),scolaire:v(),ethique:v()}
+  };
+  var catAvg = function(c){ var vals=Object.values(scores[c]); return vals.reduce(function(a,b){return a+b;},0)/vals.length; };
+  var catScores = {
+    technique:+catAvg('technique').toFixed(2),
+    physique:+catAvg('physique').toFixed(2),
+    tactique:+catAvg('tactique').toFixed(2),
+    mental:+catAvg('mental').toFixed(2),
+    culture:+catAvg('culture').toFixed(2)
+  };
+  var global = +(catScores.technique*.3+catScores.physique*.25+catScores.tactique*.2+catScores.mental*.15+catScores.culture*.1).toFixed(2);
+  var rank = i+1;
+  var equipe = rank<=10?'Équipe 1':rank<=20?'Équipe 2':'Équipe 3';
+
+  // Generate highlights
+  var hlCount = Math.floor(r()*3)+1; // 1-3 highlights
+  var highlights = [];
+  for(var h=0;h<hlCount;h++){
+    var mtype = MATCH_TYPES[Math.floor(r()*MATCH_TYPES.length)];
+    var mname = MATCH_NAMES[Math.floor(r()*MATCH_NAMES.length)];
+    // Tags based on best categories
+    var bestCat = Object.keys(catScores).sort(function(a,b){return catScores[b]-catScores[a];})[0];
+    var tags = TAG_POOL[bestCat].slice(0,2+Math.floor(r()*2));
+    var aiScore = +Math.min(10,Math.max(6,global+r()*2-0.5)).toFixed(1);
+    var views = Math.floor(r()*400)+20;
+    var mins = Math.floor(r()*4)+1;
+    var secs = Math.floor(r()*59);
+    var dur = mins+':'+(secs<10?'0':'')+secs;
+    var month = 6+Math.floor(r()*4);
+    var day = 1+Math.floor(r()*28);
+    highlights.push({
+      id:'h'+i+'_'+h,
+      match:mname,
+      date:'2026-'+(month<10?'0':'')+month+'-'+(day<10?'0':'')+day,
+      type:mtype,
+      thumbnail:MATCH_ICO[mtype]||'⚽',
+      duration:dur,
+      tags:tags,
+      description:tags.join(' + ')+' — Performance '+aiScore+'/10',
+      ai_score:aiScore,
+      views:views
+    });
+  }
+
+  // Palmares (only for good+ players)
+  var palmares = [];
+  if(prof==='elite'||prof==='good'){
+    palmares.push({annee:2026,titre:'Tournoi Régional U12 — '+(rank<=3?'1er':rank<=8?'2e':'Participation'),ico:rank<=3?'🥇':rank<=8?'🥈':'🏅'});
+  }
+  if(r()>0.6){ palmares.push({annee:2025,titre:'Coupe District U11 — Participation',ico:'🏅'}); }
+
+  // CV
+  var clubPrec = CLUBS_PREC[Math.floor(r()*CLUBS_PREC.length)];
+  var cv = [
+    {periode:'2026—',club:'Foot Factory Pro',cat:'U12',role:(rank<=10?'Titulaire':'Remplaçant')},
+    {periode:'2024—2026',club:clubPrec,cat:'U11',role:'Titulaire'},
+    {periode:'2022—2024',club:'École de foot locale',cat:'U9',role:'Découverte'}
+  ];
+
+  // Stats saison
+  var stats = {
+    matchs:Math.floor(r()*8)+10,
+    buts:Math.floor(r()*12),
+    passes:Math.floor(r()*10),
+    minutes:Math.floor(r()*400)+800,
+    duels_gagnes:Math.floor(catScores.physique*8+r()*15),
+    distance_km:Math.floor(r()*40)+100,
+    vitesse_max:+(20+r()*8).toFixed(1),
+    note_moy:+global.toFixed(1)
+  };
+  stats.buts_par_match = +(stats.buts/stats.matchs).toFixed(2);
+
+  // AI analysis
+  var aiAnalysis = {
+    profil: poste==='Avant-Centre'?'Finisseur naturel. Démarquage instinctif et finition efficace.':
+            poste.includes('Milieu')?'Profil box-to-box. Moteur du jeu avec vision panoramique.':
+            poste.includes('Défenseur')||poste.includes('Latéral')?'Profil défensif solide. Leadership en zone defensive.':
+            poste==='Gardien'?'Gardien moderne. Relance propre, grande sérénité dans les buts.':
+            'Profil technique polyvalent. Forte capacité d\'adaptation.',
+    forces: Object.keys(catScores).sort(function(a,b){return catScores[b]-catScores[a];}).slice(0,2).map(function(c){return c+' '+catScores[c]+'/10';}).join(' · '),
+    progression: Object.keys(catScores).sort(function(a,b){return catScores[a]-catScores[b];}).slice(0,2).map(function(c){return c+' à développer';}).join(' · '),
+    heatmap_zones: poste.includes('Ailier')||poste.includes('Latéral')?['Couloir','Demi-espace']:
+                   poste.includes('Avant')?['Surface de réparation','Axe central']:
+                   poste==='Gardien'?['Surface de but','Zone de relance']:
+                   ['Centre gauche','Axe central'],
+    potentiel: POTENTIAL[prof],
+    potColor: POT_COLOR[prof],
+    similarite: AI_SIMILAR[poste]||'Profil polyvalent'
+  };
+
+  return {
+    id:i+1, prenom:PN[i], nom:NN[i],
+    numero_licence:'FIFA-2024-FR-'+String(847000+i*127).padStart(7,'0'),
+    date_naissance:naissance.toISOString().slice(0,10),
+    nationalite:'🇫🇷 Française',
+    taille:148+Math.floor(r()*20), poids:38+Math.floor(r()*18),
+    poste:poste, pied:r()>0.2?'Droit':'Gauche',
+    numero_maillot:rank,
+    club_actuel:'Foot Factory Pro', club_precedent:clubPrec,
+    scores:catScores, global:global, rank:rank, equipe:equipe,
+    profil:prof, highlights:highlights, palmares:palmares,
+    stats_saison:stats, ai_analysis:aiAnalysis, cv:cv
+  };
+}
+
+// ── Générer les 30 joueurs ──
+var ALL_PLAYERS = [];
+for(var _i=0;_i<30;_i++){ ALL_PLAYERS.push(mkPlayer(_i)); }
+ALL_PLAYERS.sort(function(a,b){return b.global-a.global;});
+ALL_PLAYERS.forEach(function(p,i){p.rank=i+1;p.equipe=i<10?'Équipe 1':i<20?'Équipe 2':'Équipe 3';});
+
+// ── State ──
+var CUR = ALL_PLAYERS[0];
+var CUR_VIEW = 'profil';
+var GAL_FILTER = 'all';
+var SEARCH_Q = '';
+var FILTER_POS = '';
+var FILTER_TEAM = '';
+var PIPELINE_RUNNING = false;
+
+// ── Player list ──
+function renderPlayerList(){
+  var el=document.getElementById('player-list'); if(!el)return;
+  var q=SEARCH_Q.toLowerCase();
+  var filtered=ALL_PLAYERS.filter(function(p){
+    var nameMatch=(p.prenom+' '+p.nom).toLowerCase().indexOf(q)>=0;
+    var posMatch=!FILTER_POS||p.poste===FILTER_POS;
+    var teamMatch=!FILTER_TEAM||p.equipe===FILTER_TEAM;
+    return nameMatch&&posMatch&&teamMatch;
+  });
+  el.innerHTML=filtered.map(function(p){
+    var active=p.id===CUR.id;
+    var sc=p.global>=7.5?'#4BC88A':p.global>=6?'#D4AF37':p.global>=5?'#C89020':'#888';
+    return '<div class="pcard'+(active?' active':'')+'" onclick="selectPlayer('+p.id+')" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:5px;border:1px solid '+(active?'rgba(212,175,55,.4)':'rgba(212,175,55,.08)')+';background:'+(active?'rgba(212,175,55,.07)':'transparent')+';transition:all .2s" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=\''+(active?'rgba(212,175,55,.07)':'transparent')+'\'">'
+      +'<div style="width:32px;height:32px;border-radius:50%;background:'+(active?'rgba(212,175,55,.15)':'rgba(212,175,55,.06)')+';border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#D4AF37;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div>'
+      +'<div style="font-size:9px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+POS_SH[p.poste]+' · '+p.equipe+'</div></div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:'+sc+';flex-shrink:0">'+p.global.toFixed(1)+'</div>'
+      +'</div>';
+  }).join('')||'<div style="text-align:center;padding:20px;color:#444;font-size:12px">Aucun résultat</div>';
+}
+
+function selectPlayer(id){
+  CUR=ALL_PLAYERS.find(function(p){return p.id===id;})||CUR;
+  GAL_FILTER='all';
+  renderAll();
+  // scroll top
+  var mv=document.getElementById('main-view');if(mv)mv.scrollTop=0;
+}
+
+// ── Tabs ──
+function setView(v,btn){
+  CUR_VIEW=v;
+  document.querySelectorAll('.vtab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  document.querySelectorAll('.vsec').forEach(function(s){s.style.display='none';});
+  var s=document.getElementById('vs-'+v);if(s)s.style.display='block';
+}
+
+function renderAll(){
+  renderPlayerList();
+  renderHeader();
+  renderProfil();
+  renderHighlights();
+  renderStats();
+  renderCV();
+  renderScout();
+}
+
+// ── Header ──
+function renderHeader(){
+  var p=CUR; var el=document.getElementById('player-hdr');if(!el)return;
+  var sc=p.global>=7.5?'#4BC88A':p.global>=6?'#D4AF37':'#E24B4A';
+  var age=new Date().getFullYear()-new Date(p.date_naissance).getFullYear();
+  var cats=['technique','physique','tactique','mental','culture'];
+  var bars=cats.map(function(c){
+    var v=p.scores[c];var col=v>=7.5?'#4BC88A':v>=6?'#D4AF37':'#888';
+    return '<div style="display:flex;align-items:center;gap:5px">'
+      +'<div style="font-size:9px;color:#666;min-width:28px;font-family:Montserrat,sans-serif;font-weight:700;text-transform:uppercase">'+c.slice(0,4)+'</div>'
+      +'<div style="flex:1;height:3px;background:#222;border-radius:2px;overflow:hidden"><div style="height:100%;background:'+col+';border-radius:2px;width:'+(v*10)+'%"></div></div>'
+      +'<div style="font-size:10px;font-family:Montserrat,sans-serif;font-weight:700;color:'+col+';min-width:26px;text-align:right">'+v.toFixed(1)+'</div>'
+      +'</div>';
+  }).join('');
+  var hlViews=p.highlights.reduce(function(s,h){return s+h.views;},0);
+  el.innerHTML='<div style="background:linear-gradient(135deg,#0D0B05,#141208);border:1px solid rgba(212,175,55,.3);border-radius:14px;overflow:hidden;margin-bottom:16px">'
+    +'<div style="height:3px;background:linear-gradient(to right,'+p.ai_analysis.potColor+',#FBCB57,'+p.ai_analysis.potColor+')"></div>'
+    +'<div style="padding:18px 22px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">'
+      +'<div style="position:relative;flex-shrink:0">'
+        +'<div style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#1A1200,#2A1E00);border:2px solid rgba(212,175,55,.4);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:24px;color:#D4AF37;box-shadow:0 0 20px rgba(212,175,55,.15)">'+p.prenom[0]+p.nom[0]+'</div>'
+        +'<div style="position:absolute;bottom:2px;right:2px;background:#D4AF37;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#000;font-family:Montserrat,sans-serif;border:2px solid #000">'+p.numero_maillot+'</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:180px">'
+        +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+p.prenom+' '+p.nom+'</div>'
+          +'<span style="background:'+p.ai_analysis.potColor+'22;border:1px solid '+p.ai_analysis.potColor+'55;border-radius:10px;padding:2px 9px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:'+p.ai_analysis.potColor+';text-transform:uppercase">'+p.ai_analysis.potentiel+'</span>'
+        +'</div>'
+        +'<div style="font-size:11px;color:#888;margin-bottom:6px">'+p.poste+' · Pied '+p.pied+' · '+age+' ans · '+p.taille+'cm</div>'
+        +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;margin-bottom:8px">'+p.nationalite+' · <span style="color:#60A8D0">'+p.numero_licence+'</span></div>'
+        +'<div style="font-size:11px;color:#666;font-style:italic;background:rgba(0,0,0,.3);border-radius:5px;padding:4px 8px;display:inline-block">"'+p.ai_analysis.similarite+'"</div>'
+      +'</div>'
+      +'<div style="text-align:center;flex-shrink:0">'
+        +'<div style="background:#0A0800;border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px">'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:28px;color:'+sc+';line-height:1">'+p.global.toFixed(2)+'</div>'
+          +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">Score IA</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:10px;justify-content:center">'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#FBCB57">#'+p.rank+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Rang</div></div>'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">'+p.highlights.length+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Clips</div></div>'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">'+hlViews+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Vues</div></div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="min-width:160px;flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center">'+bars+'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// ── Profil ──
+function renderProfil(){
+  var p=CUR; var el=document.getElementById('vs-profil');if(!el)return;
+  // Radar SVG
+  var cats5=['TECH','PHYS','TACT','MENT','CULT'];
+  var vals5=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture];
+  var CX=140,CY=130,R=95;
+  var ang5=cats5.map(function(_,i){return -Math.PI/2+i*2*Math.PI/5;});
+  var pt5=function(v,i){return [CX+R*(v/10)*Math.cos(ang5[i]),CY+R*(v/10)*Math.sin(ang5[i])];};
+  var radar='<svg viewBox="0 0 280 260" width="100%" style="max-width:260px">'
+    +[2,4,6,8,10].map(function(g){return '<polygon points="'+ang5.map(function(_,i){return pt5(g,i).join(',');}).join(' ')+'" fill="none" stroke="rgba(212,175,55,0.06)" stroke-width="1"/>';}).join('')
+    +ang5.map(function(_,i){var xy=pt5(10,i);return '<line x1="'+CX+'" y1="'+CY+'" x2="'+xy[0].toFixed(1)+'" y2="'+xy[1].toFixed(1)+'" stroke="rgba(212,175,55,0.08)" stroke-width="1"/>';}).join('')
+    +'<polygon points="'+vals5.map(function(v,i){return pt5(v,i).join(',');}).join(' ')+'" fill="rgba(212,175,55,0.1)" stroke="#D4AF37" stroke-width="2.5"/>'
+    +vals5.map(function(v,i){var xy=pt5(v,i);return '<circle cx="'+xy[0].toFixed(1)+'" cy="'+xy[1].toFixed(1)+'" r="4.5" fill="#D4AF37" stroke="#000" stroke-width="1.5"/>';}).join('')
+    +cats5.map(function(c,i){var xy=pt5(13,i);return '<text x="'+xy[0].toFixed(1)+'" y="'+xy[1].toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#666" font-family="Montserrat,sans-serif" font-weight="700">'+c+'</text>';}).join('')
+    +'</svg>';
+
+  var pal=p.palmares.length?'<div class="mcard"><div class="ct">🏆 Palmarès</div>'
+    +p.palmares.map(function(t){return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(212,175,55,.03);border:1px solid rgba(212,175,55,.08);border-radius:8px;margin-bottom:6px"><div style="font-size:16px">'+t.ico+'</div><div style="flex:1;font-size:12px;font-weight:600">'+t.titre+'</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#D4AF37">'+t.annee+'</div></div>';}).join('')
+    +'</div>':'';
+
+  el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+    +'<div>'
+      +'<div class="mcard"><div class="ct">Radar compétences</div><div style="display:flex;justify-content:center">'+radar+'</div></div>'
+      +pal
+    +'</div>'
+    +'<div>'
+      +'<div class="mcard" style="border-top:3px solid #60A8D0">'
+        +'<div class="ct" style="color:#60A8D0">🤖 Analyse IA</div>'
+        +'<p style="font-size:13px;color:#888;line-height:1.7;margin-bottom:12px">'+p.ai_analysis.profil+'</p>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'
+          +'<div style="background:rgba(75,200,138,.05);border:1px solid rgba(75,200,138,.15);border-radius:7px;padding:9px 10px"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#4BC88A;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Forces</div><p style="font-size:11px;color:#888;line-height:1.6">'+p.ai_analysis.forces+'</p></div>'
+          +'<div style="background:rgba(226,75,74,.05);border:1px solid rgba(226,75,74,.15);border-radius:7px;padding:9px 10px"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#E24B4A;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Progression</div><p style="font-size:11px;color:#888;line-height:1.6">'+p.ai_analysis.progression+'</p></div>'
+        +'</div>'
+        +'<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);border-radius:7px;padding:9px 10px">'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#D4AF37;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Zones heatmap IA</div>'
+          +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+p.ai_analysis.heatmap_zones.map(function(z){return '<span style="font-size:10px;color:#D4AF37;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:2px 8px">'+z+'</span>';}).join('')+'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// ── Highlights ──
+function renderHighlights(){
+  var p=CUR; var el=document.getElementById('vs-highlights');if(!el)return;
+  var filtered=p.highlights.filter(function(h){return GAL_FILTER==='all'||h.type===GAL_FILTER;});
+
+  var filterBtns=['all','match','tournoi','stage'].map(function(f){
+    var lbl={all:'Tous',match:'Matchs',tournoi:'Tournois',stage:'Stages'}[f];
+    var on=GAL_FILTER===f;
+    return '<button onclick="GAL_FILTER=\''+f+'\';renderHighlights()" style="padding:6px 13px;background:'+(on?'rgba(212,175,55,.15)':'transparent')+';border:1px solid rgba(212,175,55,'+(on?'.4':'.15')+');border-radius:6px;color:'+(on?'#D4AF37':'#888')+';cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s">'+lbl+'</button>';
+  }).join('');
+
+  var cards=filtered.map(function(h){
+    var tc={match:'#D4AF37',tournoi:'#A060E0',stage:'#60A8D0',entrainement:'#4BC88A'}[h.type]||'#888';
+    var ac=h.ai_score>=9?'#4BC88A':h.ai_score>=8?'#D4AF37':'#C89020';
+    return '<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .2s" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(212,175,55,.35)\';this.style.boxShadow=\'0 8px 20px rgba(212,175,55,.1)\'" onmouseout="this.style.transform=\'none\';this.style.borderColor=\'rgba(212,175,55,.12)\';this.style.boxShadow=\'none\'">'
+      +'<div style="position:relative;background:linear-gradient(135deg,#1A1200,#0A0800);height:120px;display:flex;align-items:center;justify-content:center">'
+        +'<div style="font-size:38px;opacity:.65">'+h.thumbnail+'</div>'
+        +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'
+          +'<div style="width:42px;height:42px;border-radius:50%;background:rgba(212,175,55,.12);border:2px solid rgba(212,175,55,.45);display:flex;align-items:center;justify-content:center">'
+            +'<div style="width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:14px solid #D4AF37;margin-left:4px"></div>'
+          +'</div>'
+        +'</div>'
+        +'<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.8);border-radius:3px;padding:2px 5px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#F0F0F0">'+h.duration+'</div>'
+        +'<div style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.85);border:1px solid '+ac+';border-radius:5px;padding:2px 6px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;color:'+ac+'">IA '+h.ai_score+'</div></div>'
+        +'<div style="position:absolute;top:6px;left:6px;background:'+tc+';border-radius:3px;padding:1px 6px"><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#000;text-transform:uppercase">'+h.type+'</div></div>'
+      +'</div>'
+      +'<div style="padding:10px 12px">'
+        +'<div style="font-size:11px;font-weight:600;margin-bottom:3px;line-height:1.3">'+h.match+'</div>'
+        +'<div style="font-size:10px;color:#888;margin-bottom:6px">'+h.description+'</div>'
+        +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">'+h.tags.map(function(t){return '<span style="font-size:8px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:1px 6px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:600">'+t+'</span>';}).join('')+'</div>'
+        +'<div style="display:flex;justify-content:space-between;font-family:Montserrat,sans-serif;font-size:9px;color:#444"><span>'+h.date.slice(5).replace('-','/')+'</span><span>👁 '+h.views+'</span></div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  // Upload panel
+  var uploadPanel='<div id="upload-panel" class="mcard" style="border:1px dashed rgba(96,168,208,.35);background:rgba(96,168,208,.03);margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+      +'<div style="flex:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#60A8D0;margin-bottom:3px">📹 Ajouter une vidéo — Pipeline IA automatique</div>'
+        +'<div style="font-size:11px;color:#888">Formats : MP4 · MOV · AVI · MKV · Durée max : 90min</div>'
+      +'</div>'
+      +'<label for="vid-upload" style="background:linear-gradient(135deg,#60A8D0,#4080B0);color:#fff;border:none;border-radius:6px;padding:10px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;display:inline-block">+ Uploader</label>'
+      +'<input type="file" id="vid-upload" accept="video/*,.mp4,.mov,.avi,.mkv" style="display:none" onchange="startPipeline(this)">'
+    +'</div>'
+    +'<div id="pipeline-progress" style="display:none;margin-top:14px"></div>'
+  +'</div>';
+
+  el.innerHTML=uploadPanel
+    +'<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">'+filterBtns+'</div>'
+    +(filtered.length
+      ?'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">'+cards+'</div>'
+      :'<div style="text-align:center;padding:40px;color:#444"><div style="font-size:32px;margin-bottom:8px">🎬</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Aucun highlight</div></div>');
+}
+
+// ── Pipeline IA simulation ──
+var PIPELINE_STEPS = [
+  {ico:'📦',label:'Extraction vidéo',sub:'FFmpeg · Décodage H.264/H.265',col:'#60A8D0',duration:1400},
+  {ico:'🎯',label:'YOLOv8 — Détection',sub:'Joueurs · Ballon · Arbitres · Buts',col:'#A060E0',duration:1800},
+  {ico:'📍',label:'OpenCV Tracking',sub:'Trajectoires · Heatmap · Vitesse',col:'#D4AF37',duration:1600},
+  {ico:'✂️',label:'PySceneDetect',sub:'Découpe scènes · Moments clés · Transitions',col:'#FBCB57',duration:1500},
+  {ico:'🎙️',label:'Whisper AI',sub:'Transcription audio · Commentaires · Émotions',col:'#4BC88A',duration:1700},
+  {ico:'🧠',label:'Scoring IA',sub:'Analyse combinée · Attribution tags · Note finale',col:'#E87060',duration:1200}
+];
+
+function startPipeline(input){
+  if(PIPELINE_RUNNING)return;
+  PIPELINE_RUNNING=true;
+  var file=input.files&&input.files[0];
+  var name=file?file.name:'video_inconnu.mp4';
+  var panel=document.getElementById('pipeline-progress');
+  if(!panel)return;
+  panel.style.display='block';
+
+  var stepsHtml=PIPELINE_STEPS.map(function(s,i){
+    return '<div id="ps-'+i+'" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:6px;opacity:.4;transition:all .3s">'
+      +'<div style="font-size:18px;width:28px;text-align:center">'+s.ico+'</div>'
+      +'<div style="flex:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:'+s.col+'">'+s.label+'</div>'
+        +'<div style="font-size:10px;color:#444;margin-top:1px">'+s.sub+'</div>'
+      +'</div>'
+      +'<div id="ps-st-'+i+'" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;color:#444">En attente</div>'
+    +'</div>';
+  }).join('');
+
+  panel.innerHTML='<div style="background:rgba(96,168,208,.05);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:14px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#60A8D0">Pipeline IA en cours — '+name+'</div>'
+      +'<div id="ps-pct" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#D4AF37">0%</div>'
+    +'</div>'
+    +'<div style="height:3px;background:#1A1A1A;border-radius:2px;overflow:hidden;margin-bottom:12px"><div id="ps-bar" style="height:100%;background:linear-gradient(to right,#60A8D0,#D4AF37);border-radius:2px;width:0%;transition:width .5s"></div></div>'
+    +stepsHtml
+    +'<div id="ps-result" style="display:none"></div>'
+  +'</div>';
+
+  var step=0;
+  var totalMs=PIPELINE_STEPS.reduce(function(s,x){return s+x.duration;},0);
+  var elapsed=0;
+
+  function runStep(i){
+    if(i>=PIPELINE_STEPS.length){
+      completePipeline(name);
+      return;
+    }
+    var s=PIPELINE_STEPS[i];
+    var el=document.getElementById('ps-'+i);
+    var st=document.getElementById('ps-st-'+i);
+    if(el){el.style.opacity='1';el.style.borderColor='rgba('+s.col.replace('#','').match(/.{2}/g).map(function(h){return parseInt(h,16);}).join(',')+', 0.3)';}
+    if(st){st.style.color=s.col;st.textContent='⟳ En cours...';}
+    setTimeout(function(){
+      if(st){st.style.color='#4BC88A';st.textContent='✓ OK';}
+      elapsed+=s.duration;
+      var pct=Math.round(elapsed/totalMs*100);
+      var bar=document.getElementById('ps-bar');var pctEl=document.getElementById('ps-pct');
+      if(bar)bar.style.width=pct+'%';
+      if(pctEl)pctEl.textContent=pct+'%';
+      runStep(i+1);
+    },s.duration);
+  }
+  runStep(0);
+}
+
+function completePipeline(filename){
+  PIPELINE_RUNNING=false;
+  var aiScore=+(7+Math.random()*2.5).toFixed(1);
+  var types=['match','tournoi','stage'];
+  var newType=types[Math.floor(Math.random()*types.length)];
+  var newH={
+    id:'h_upload_'+Date.now(),
+    match:filename.replace(/\.[^.]+$/,'').replace(/_/g,' ')||'Match importé',
+    date:new Date().toISOString().slice(0,10),
+    type:newType,
+    thumbnail:MATCH_ICO[newType],
+    duration:Math.floor(Math.random()*4+1)+':'+(Math.random()>.5?'30':'00'),
+    tags:['Auto-généré','IA','Highlight'],
+    description:'Highlight généré automatiquement par le pipeline IA',
+    ai_score:aiScore,
+    views:0
+  };
+  CUR.highlights.unshift(newH);
+  var res=document.getElementById('ps-result');
+  if(res){
+    res.style.display='block';
+    res.innerHTML='<div style="margin-top:10px;background:rgba(75,200,138,.08);border:1px solid rgba(75,200,138,.25);border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px">'
+      +'<div style="font-size:24px">✅</div>'
+      +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#4BC88A;margin-bottom:3px">Traitement terminé — Score IA : '+aiScore+'/10</div>'
+      +'<div style="font-size:11px;color:#888">'+newH.tags.join(' · ')+'</div></div>'
+      +'<button onclick="GAL_FILTER=\'all\';renderHighlights()" style="margin-left:auto;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Voir →</button>'
+    +'</div>';
+  }
+  setTimeout(renderHighlights,300);
+}
+
+// ── Stats ──
+function renderStats(){
+  var p=CUR; var el=document.getElementById('vs-stats');if(!el)return;
+  var s=p.stats_saison;
+  var kpis=[
+    {l:'Matchs',v:s.matchs,i:'⚽',c:'#D4AF37'},
+    {l:'Buts',v:s.buts,i:'🎯',c:'#4BC88A'},
+    {l:'Passes D.',v:s.passes,i:'👟',c:'#60A8D0'},
+    {l:'Vitesse max',v:s.vitesse_max+'km/h',i:'⚡',c:'#FBCB57'},
+    {l:'Distance',v:s.distance_km+'km',i:'🏃',c:'#C89020'},
+    {l:'Duels %',v:s.duels_gagnes+'%',i:'💪',c:'#4BC88A'}
+  ];
+  var kHtml=kpis.map(function(k){
+    return '<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.1);border-radius:9px;padding:12px 10px;text-align:center;position:relative;overflow:hidden" onmouseover="this.style.borderColor=\'rgba(212,175,55,.3)\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.1)\'">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+k.c+'"></div>'
+      +'<div style="font-size:18px;margin-bottom:4px">'+k.i+'</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:'+k.c+';line-height:1;margin-bottom:2px">'+k.v+'</div>'
+      +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">'+k.l+'</div>'
+    +'</div>';
+  }).join('');
+  var cats=['Technique','Physique','Tactique','Mental','Culture'];
+  var vals=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture];
+  var catBars=cats.map(function(c,i){
+    var v=vals[i];var col=v>=7.5?'#4BC88A':v>=6?'#D4AF37':'#888';
+    return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600;color:'+col+'">'+c+'</span><span style="font-family:Montserrat,sans-serif;font-weight:700;color:'+col+'">'+v+'/10</span></div><div style="height:5px;background:#1A1A1A;border-radius:3px;overflow:hidden"><div style="height:100%;background:'+col+';border-radius:3px;width:'+(v*10)+'%;transition:width .8s"></div></div></div>';
+  }).join('');
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px">'+kHtml+'</div>'
+    +'<div class="mcard"><div class="ct">Scores par catégorie</div>'+catBars+'</div>';
+}
+
+// ── CV ──
+function renderCV(){
+  var p=CUR; var el=document.getElementById('vs-cv');if(!el)return;
+  var dob=new Date(p.date_naissance);
+  var age=new Date().getFullYear()-dob.getFullYear();
+  var timeline=p.cv.map(function(c,i){
+    return '<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+      +'<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">'
+        +'<div style="width:9px;height:9px;border-radius:50%;background:#D4AF37;margin-top:4px;box-shadow:0 0 6px rgba(212,175,55,.5)"></div>'
+        +(i<p.cv.length-1?'<div style="flex:1;width:1px;background:rgba(212,175,55,.15);margin:4px 0"></div>':'')
+      +'</div>'
+      +'<div style="flex:1;padding-bottom:4px">'
+        +'<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">'
+          +'<div style="font-size:12px;font-weight:600">'+c.club+'</div>'
+          +'<span style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:1px 7px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#D4AF37">'+c.cat+'</span>'
+          +'<span style="background:rgba(96,168,208,.08);border:1px solid rgba(96,168,208,.15);border-radius:8px;padding:1px 7px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;color:#60A8D0">'+c.role+'</span>'
+        +'</div>'
+        +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">'+c.periode+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  var licence='<div style="background:#0D0B05;border:2px solid rgba(212,175,55,.25);border-radius:12px;padding:18px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#D4AF37">Foot Factory Pro</div>'
+      +'<div style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:3px 9px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase">2026-27</div>'
+    +'</div>'
+    +'<div style="background:rgba(212,175,55,.04);border-radius:7px;padding:10px;margin-bottom:10px;display:flex;align-items:center;gap:10px">'
+      +'<div style="width:40px;height:40px;border-radius:50%;background:rgba(212,175,55,.1);border:1.5px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#D4AF37">'+p.prenom[0]+p.nom[0]+'</div>'
+      +'<div><div style="font-size:13px;font-weight:700">'+p.prenom+' '+p.nom+'</div><div style="font-size:11px;color:#888;margin-top:1px">'+p.poste+'</div></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:11px;color:#888;margin-bottom:8px">'
+      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:1px">Né(e) le</div>'+dob.toLocaleDateString('fr-FR')+'</div>'
+      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:1px">Âge</div>'+age+' ans</div>'
+    +'</div>'
+    +'<div style="border-top:1px solid rgba(212,175,55,.1);padding-top:8px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:3px">N° Licence FIFA</div>'
+      +'<div style="font-family:monospace;font-size:11px;color:#60A8D0;letter-spacing:1px">'+p.numero_licence+'</div>'
+    +'</div>'
+  +'</div>';
+  el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+    +'<div class="mcard"><div class="ct">Parcours</div>'+timeline+'</div>'
+    +'<div class="mcard"><div class="ct">Carte de licence</div>'+licence+'</div>'
+  +'</div>';
+}
+
+// ── Scout ──
+function renderScout(){
+  var p=CUR; var el=document.getElementById('vs-scout');if(!el)return;
+  var cats=['Technique','Physique','Tactique','Mental','Culture'];
+  var vals=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture];
+  var cols=['#D4AF37','#60A8D0','#4BC88A','#A060E0','#FBCB57'];
+  var bars=cats.map(function(c,i){
+    var v=vals[i];var col=cols[i];
+    return '<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:600;color:'+col+'">'+c+'</span><span style="font-family:Montserrat,sans-serif;font-weight:700;color:'+col+'">'+v+'/10</span></div><div style="height:5px;background:#1A1A1A;border-radius:3px;overflow:hidden"><div style="height:100%;background:'+col+';border-radius:3px;width:'+(v*10)+'%;transition:width .8s"></div></div></div>';
+  }).join('');
+  el.innerHTML='<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px">'
+    +'<div style="font-size:20px">🔍</div>'
+    +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#D4AF37;margin-bottom:2px">Fiche Recruteur — Confidentielle</div><div style="font-size:11px;color:#888">Généré par IA · Foot Factory Pro · '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
+    +'<div style="margin-left:auto;display:flex;gap:8px">'
+      +'<button onclick="window.print()" style="background:rgba(96,168,208,.1);border:1px solid rgba(96,168,208,.3);border-radius:6px;color:#60A8D0;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">🖨️ Print</button>'
+      +'<button onclick="exportScout()" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:6px;color:#E87060;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">📄 PDF</button>'
+    +'</div>'
+  +'</div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+    +'<div class="mcard">'+bars+'</div>'
+    +'<div class="mcard">'
+      +'<div class="ct">Évaluation</div>'
+      +'<p style="font-size:13px;color:#888;line-height:1.7;margin-bottom:10px">'+p.ai_analysis.profil+'</p>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px;background:rgba(212,175,55,.04);border-radius:7px;margin-bottom:8px">'
+        +'<div style="font-size:12px;color:#888">Potentiel</div>'
+        +'<div style="background:'+p.ai_analysis.potColor+';color:#000;border-radius:5px;padding:3px 10px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800">'+p.ai_analysis.potentiel+'</div>'
+      +'</div>'
+      +'<div style="font-size:11px;color:#666;font-style:italic">'+p.ai_analysis.similarite+'</div>'
+    +'</div>'
+  +'</div>'
+  +'<div class="mcard" style="margin-top:0"><div class="ct">Statistiques saison</div>'
+    +'<div style="display:flex;gap:14px;flex-wrap:wrap">'+
+    [['Matchs',p.stats_saison.matchs],['Buts',p.stats_saison.buts],['Passes D.',p.stats_saison.passes],['Score IA',p.global],['Vitesse max',p.stats_saison.vitesse_max+'km/h']].map(function(k){
+      return '<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#F0F0F0">'+k[1]+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">'+k[0]+'</div></div>';
+    }).join('')+'</div>'
+  +'</div>';
+}
+
+function exportScout(){
+  var p=CUR;
+  var w=window.open('','_blank');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Scout — '+p.prenom+' '+p.nom+'</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;max-width:760px;margin:0 auto;padding:24px}'
+    +'.title{font-size:16px;font-weight:900;color:#B8900F;letter-spacing:2px;text-transform:uppercase}'
+    +'.btn{background:#D4AF37;color:#000;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-weight:700;font-size:12px;margin:0 4px}'
+    +'table{width:100%;border-collapse:collapse;margin:12px 0}'
+    +'td,th{padding:7px 8px;border-bottom:1px solid #eee;font-size:11px}'
+    +'th{font-weight:700;color:#888;text-transform:uppercase;font-size:10px}'
+    +'</style></head><body>'
+    +'<div class="no-print" style="margin-bottom:16px">'
+    +'<button class="btn" onclick="window.print()">Imprimer / PDF</button>'
+    +'<button onclick="window.close()" style="background:#eee;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-size:12px">Fermer</button>'
+    +'</div>'
+    +'<div class="title">Foot Factory Pro · Fiche Recruteur</div>'
+    +'<p style="color:#888;font-size:10px;margin:4px 0 16px">'+new Date().toLocaleDateString('fr-FR')+' · Confidentiel · Usage scouting uniquement</p>'
+    +'<table><tr><th colspan="4">Identité</th></tr>'
+    +'<tr><th>Nom</th><td><strong>'+p.prenom+' '+p.nom+'</strong></td><th>Poste</th><td>'+p.poste+'</td></tr>'
+    +'<tr><th>Licence</th><td colspan="3" style="color:#1a6a9a">'+p.numero_licence+'</td></tr>'
+    +'<tr><th>Taille</th><td>'+p.taille+'cm</td><th>Équipe</th><td>'+p.equipe+'</td></tr></table>'
+    +'<table><tr><th colspan="3">Scores IA</th></tr>'
+    +['Technique','Physique','Tactique','Mental','Culture'].map(function(c,i){
+      var v=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture][i];
+      return '<tr><td>'+c+'</td><td><strong>'+v+'/10</strong></td><td>'+(v>=8?'Excellent':v>=7?'Très bien':v>=6?'Bien':v>=5?'Correct':'À développer')+'</td></tr>';
+    }).join('')
+    +'<tr style="background:#fffdf0"><td><strong>Score global</strong></td><td style="font-weight:900;font-size:14px;color:#B8900F"><strong>'+p.global+'/10</strong></td><td style="font-weight:700;color:'+p.ai_analysis.potColor+'">'+p.ai_analysis.potentiel+'</td></tr></table>'
+    +'<p><strong>Analyse :</strong> '+p.ai_analysis.profil+'</p>'
+    +'<p style="color:#666;font-style:italic;margin-top:6px">'+p.ai_analysis.similarite+'</p>'
+    +'<p style="margin-top:18px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel</p>'
+    +'</body></html>';
+  w.document.write(html); w.document.close();
+}
+
+function init(){
+  renderAll();
+  setView('profil',document.querySelector('.vtab'));
+}
+init();
+
+
+var posSelects=document.querySelectorAll('.fsel');
+if(posSelects[1]){
+  var positions=['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif','Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
+  positions.forEach(function(pos){
+    var opt=document.createElement('option');opt.value=pos;opt.textContent=pos;
+    posSelects[1].appendChild(opt);
+  });
+}
+var pcEl=document.getElementById('player-count');
+if(pcEl){
+  var origRPL=renderPlayerList;
+  renderPlayerList=function(){
+    origRPL();
+    var q=SEARCH_Q.toLowerCase();
+    var count=ALL_PLAYERS.filter(function(p){
+      return (p.prenom+' '+p.nom).toLowerCase().indexOf(q)>=0
+        &&(!FILTER_POS||p.poste===FILTER_POS)
+        &&(!FILTER_TEAM||p.equipe===FILTER_TEAM);
+    }).length;
+    pcEl.textContent=count+' joueur'+(count>1?'s':'');
+  };
+  renderPlayerList();
+}
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>

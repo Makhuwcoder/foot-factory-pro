@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Tableau de bord</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.dcard{background:#0A0800;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:0}
+.dct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:0}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:700px){.resp-grid{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:56px;flex-wrap:wrap"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:34px;filter:drop-shadow(0 0 8px rgba(212,175,55,.45))"/><div style="line-height:1.2"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:rgba(212,175,55,.5);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Tableau de bord</div></div></a><nav style="display:flex;gap:4px;align-items:center;flex:1;justify-content:center;flex-wrap:wrap"><a href="ffp-coach.html" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;transition:all .2s" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#888'">Coach</a><a href="ffp-media.html" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;transition:all .2s" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#888'">Media</a><a href="ffp-match.html" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;transition:all .2s" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#888'">Matchs</a><a href="ffp-messagerie.html" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;transition:all .2s" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#888'">Messages</a><a href="ffp-scout.html" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;transition:all .2s" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='#888'">Scout</a></nav><div id="session-pill" style="flex-shrink:0"></div></header>
+<div style="max-width:1200px;margin:0 auto;padding:22px 20px;position:relative;z-index:1"><div id="dashboard-content"></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — TABLEAU DE BORD UNIFIÉ
+// S'adapte au rôle : coach / parent / scout
+// ══════════════════════════════════════════════════════
+
+var LS_SESSION  = 'ffp_session';
+var LS_EVAL     = 'ffp_eval';
+var LS_EVENTS   = 'ffp_events';
+var LS_MESSAGES = 'ffp_messages';
+var LS_MATCHES  = 'ffp_matches';
+var LS_SHORTLIST= 'ffp_scout_shortlist';
+
+var PN=['Thomas','Arthur','Sacha','Kylian','Léo','Hugo','Mathieu','Théo','Enzo','Nathan',
+        'Lucas','Antoine','Maxime','Julien','Baptiste','Romain','Pierre','Clément','Nicolas','Valentin',
+        'Alexis','Quentin','Louis','Gabriel','Tom','Noa','Liam','Yanis','Ryan','Axel'];
+var NN=['Bernard','Morel','Renard','Faure','Dubois','Martin','Laurent','Simon','Leroy','Dupont',
+        'Moreau','Petit','Richard','Robert','Durand','Leblanc','Garnier','Girard','Boyer','Rousseau',
+        'Chevalier','André','Michel','Henry','Gilles','Roux','François','Blanc','Guérin','Robin'];
+var POS=['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif',
+         'Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
+
+function rng(s){var x=s;return function(){x=(x*1664525+1013904223)>>>0;return x/0xFFFFFFFF;};}
+function mkPlayer(i){
+  var r=rng(i*7919+31337);var b=[8.4,8.4,7,7,7,7,7,5.6,5.6,5.6,5.6,5.6,5.6,5.6,5.6,4.4,4.4,4.4,4.4,4.4,4.4,4.4,3.2,3.2,3.2,3.2,3.2,3.2,3.2,3.2][i];
+  var v=function(){return +Math.max(1,Math.min(10,b+(r()*4-2))).toFixed(1);};
+  var sc={t:v(),p:v(),ta:v(),m:v(),c:v()};
+  var g=+(sc.t*.3+sc.p*.25+sc.ta*.2+sc.m*.15+sc.c*.1).toFixed(2);
+  return{id:i,prenom:PN[i],nom:NN[i],poste:POS[Math.floor(r()*POS.length)],numero:i+1,global:g,
+    scores:{technique:sc.t,physique:sc.p,tactique:sc.ta,mental:sc.m,culture:sc.c}};
+}
+var ALL_PLAYERS=[];for(var _i=0;_i<30;_i++){ALL_PLAYERS.push(mkPlayer(_i));}
+ALL_PLAYERS.sort(function(a,b){return b.global-a.global;});
+ALL_PLAYERS.forEach(function(p,i){p.rank=i+1;});
+
+// ── Helpers ──
+function fmtDate(ts){
+  var d=new Date(ts);var now=new Date();var diff=Math.floor((now-d)/1000);
+  if(diff<60)return 'à l\'instant';if(diff<3600)return Math.floor(diff/60)+'min';
+  if(diff<86400)return Math.floor(diff/3600)+'h';
+  var days=Math.floor(diff/86400);return days===1?'hier':days+'j';
+}
+function fmtDateShort(ts){
+  return new Date(ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+}
+function scoreCol(s){return s>=7.5?'#4BC88A':s>=6?'#D4AF37':s>=5?'#C89020':'#888';}
+
+// ── Session ──
+function getSession(){
+  try{var r=localStorage.getItem(LS_SESSION);if(!r)return null;var d=JSON.parse(r);if(d._exp&&Date.now()>d._exp)return null;return d;}catch(e){return null;}
+}
+function clearSession(){
+  try{localStorage.removeItem(LS_SESSION);}catch(e){}
+  window.location.href='ffp-login.html';
+}
+
+// ── Data helpers ──
+function getMessages(){
+  try{return JSON.parse(localStorage.getItem(LS_MESSAGES)||'[]');}catch(e){return [];}
+}
+function getMatches(){
+  try{return JSON.parse(localStorage.getItem(LS_MATCHES)||'[]');}catch(e){return [];}
+}
+function getEvents(){
+  try{
+    var raw=localStorage.getItem(LS_EVENTS);
+    if(!raw){
+      // Génère des événements démo
+      var evts=[];var types=['match','entrainement','tournoi','stage','réunion'];
+      var lieux=['Terrain principal','Terrain annexe','Gymnase','Salle de réunion','Complexe sportif'];
+      for(var i=0;i<8;i++){
+        var d=new Date();d.setDate(d.getDate()+i*3+Math.floor(Math.random()*3));
+        var r2=rng(i*1337+42);
+        evts.push({id:'ev'+i,type:types[Math.floor(r2()*types.length)],
+          titre:['Match FFP vs AS Voltaire','Entraînement technique','Tournoi Régional U12',
+            'Stage présaison','Réunion parents','Match retour','Entraînement physique','Coupe District'][i],
+          date:d.toISOString().slice(0,10),heure:['17h30','18h00','09h00','08h30','19h00','16h00','17h30','14h00'][i],
+          lieu:lieux[Math.floor(r2()*lieux.length)]});
+      }
+      return evts;
+    }
+    return JSON.parse(raw);
+  }catch(e){return [];}
+}
+function getUnreadCount(session){
+  var msgs=getMessages();
+  var id=session.role==='coach'?'coach':'parent_'+(session.player_code||'');
+  return msgs.filter(function(m){
+    var visible=session.role==='coach'?(m.from==='parent'):(m.from==='coach'&&(m.to==='all'||m.to===session.player_code));
+    return visible&&m.read_by.indexOf(id)<0;
+  }).length;
+}
+
+// ── COACH DASHBOARD ──────────────────────────────────────────────
+function renderCoachDashboard(session, el){
+  var players=ALL_PLAYERS;
+  var matches=getMatches();
+  var events=getEvents();
+  var unread=getUnreadCount(session);
+  var upcoming=events.filter(function(e){return new Date(e.date)>=new Date();}).slice(0,4);
+  var recentMatches=matches.slice(0,3);
+
+  // Eval progress
+  try{var ev=JSON.parse(localStorage.getItem(LS_EVAL)||'{}');
+    var evalDone=Object.keys(ev).length;}catch(e){var evalDone=0;}
+
+  var avgScore=+(players.reduce(function(s,p){return s+p.global;},0)/players.length).toFixed(2);
+  var topPlayers=players.slice(0,5);
+
+  var kpis=[
+    {l:'Joueurs',v:players.length,i:'⚽',c:'#D4AF37',href:'ffp-coach.html'},
+    {l:'Évalués',v:evalDone,i:'📊',c:'#4BC88A',href:'ffp-coach.html'},
+    {l:'Score moyen',v:avgScore,i:'🎯',c:'#60A8D0',href:'ffp-media.html'},
+    {l:'Non lus',v:unread,i:'✉️',c:unread>0?'#E24B4A':'#888',href:'ffp-messagerie.html'},
+    {l:'Matchs',v:matches.length,i:'🏆',c:'#A060E0',href:'ffp-match.html'},
+    {l:'Événements',v:upcoming.length,i:'📅',c:'#C89020',href:'ffp-vie-club.html'},
+  ];
+
+  el.innerHTML=
+  // Welcome
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">'
+    +'<div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(18px,3vw,26px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Bonjour, '+(session.prenom||'Coach')+'</div>'
+      +'<div style="font-size:13px;color:#888;margin-top:2px">'+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>'
+    +'</div>'
+    +(unread>0?'<a href="ffp-messagerie.html" style="text-decoration:none;background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:20px">✉️</span><span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#E24B4A">'+unread+' non lu</span></a>':'')
+  +'</div>'
+
+  // KPIs
+  +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">'
+  +kpis.map(function(k){
+    return '<a href="'+k.href+'" style="text-decoration:none;background:#0A0800;border:1px solid rgba(212,175,55,.1);border-radius:10px;padding:14px;display:block;position:relative;overflow:hidden;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(212,175,55,.35)\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.1)\';this.style.transform=\'none\'">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+k.c+'"></div>'
+      +'<div style="font-size:20px;margin-bottom:5px">'+k.i+'</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;color:'+k.c+';line-height:1;margin-bottom:2px">'+k.v+'</div>'
+      +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px">'+k.l+'</div>'
+    +'</a>';
+  }).join('')
+  +'</div>'
+
+  // 2 columns
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+
+    // Top joueurs
+    +'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Top 5 joueurs</div>'
+        +'<a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Voir tout →</a>'
+      +'</div>'
+      +topPlayers.map(function(p){
+        var sc=scoreCol(p.global);
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:10px;color:#333;min-width:18px">#'+p.rank+'</div>'
+          +'<div style="width:30px;height:30px;border-radius:50%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#D4AF37;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+p.poste+'</div></div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:'+sc+'">'+p.global+'</div>'
+        +'</div>';
+      }).join('')
+    +'</div>'
+
+    // Événements à venir
+    +'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Prochains événements</div>'
+        +'<a href="ffp-vie-club.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Agenda →</a>'
+      +'</div>'
+      +(upcoming.length?upcoming.map(function(e){
+        var col={match:'#D4AF37',entrainement:'#4BC88A',tournoi:'#A060E0',stage:'#60A8D0',réunion:'#C89020'}[e.type]||'#888';
+        var ico={match:'⚽',entrainement:'🏃',tournoi:'🏆',stage:'🎯',réunion:'📋'}[e.type]||'📅';
+        return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:center">'
+          +'<div style="text-align:center;min-width:38px;background:'+col+'22;border:1px solid '+col+'44;border-radius:7px;padding:5px 4px">'
+            +'<div style="font-size:14px">'+ico+'</div>'
+          +'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+e.titre+'</div>'
+          +'<div style="font-size:10px;color:#666">'+e.date.slice(5).replace('-','/')+(e.heure?' · '+e.heure:'')+(e.lieu?' · '+e.lieu:'')+'</div></div>'
+        +'</div>';
+      }).join(''):'<div style="text-align:center;padding:20px;color:#333;font-size:12px">Aucun événement à venir</div>')
+    +'</div>'
+
+    // Derniers matchs
+    +(recentMatches.length?'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Derniers matchs</div>'
+        +'<a href="ffp-match.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Nouveau match →</a>'
+      +'</div>'
+      +recentMatches.map(function(m){
+        var res=m.score_home>m.score_away?'V':m.score_home===m.score_away?'N':'D';
+        var rc={'V':'#4BC88A','N':'#D4AF37','D':'#E24B4A'}[res];
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+          +'<div style="width:26px;height:26px;border-radius:50%;background:'+rc+'22;border:1px solid '+rc+'44;display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;color:'+rc+';flex-shrink:0">'+res+'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+m.titre+'</div><div style="font-size:10px;color:#666">'+m.date+'</div></div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#F0F0F0">'+m.score_home+'—'+m.score_away+'</div>'
+        +'</div>';
+      }).join('')
+    +'</div>':'')
+
+    // Accès rapide
+    +'<div class="dcard">'
+      +'<div class="dct">Accès rapide</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+      +[
+        ['ffp-coach.html','🏟️','Espace Coach','#D4AF37'],
+        ['ffp-media.html','🎬','Media Platform','#A060E0'],
+        ['ffp-match.html','⚽','Module Matchs','#4BC88A'],
+        ['ffp-messagerie.html','✉️','Messagerie'+(unread>0?' ('+unread+')':''),'#E24B4A'],
+        ['ffp-scout.html','🔍','Scout Platform','#60A8D0'],
+        ['ffp-convocations.html','📋','Convocations','#4BC88A'],
+        ['ffp-vie-club.html','📅','Vie du Club','#C89020'],
+      ].map(function(lnk){
+        return '<a href="'+lnk[0]+'" style="display:flex;align-items:center;gap:7px;padding:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor=\''+lnk[3]+'44\';this.style.background=\''+lnk[3]+'0D\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,.05)\';this.style.background=\'rgba(255,255,255,.02)\'">'
+          +'<span style="font-size:18px">'+lnk[1]+'</span>'
+          +'<span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:'+lnk[3]+';text-transform:uppercase;letter-spacing:.5px">'+lnk[2]+'</span>'
+        +'</a>';
+      }).join('')
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// ── PARENT DASHBOARD ─────────────────────────────────────────────
+function renderParentDashboard(session, el){
+  var code=session.player_code||'';
+  var idx=parseInt(code)-1001;
+  var player=ALL_PLAYERS.find(function(p){return p.id===idx;})||ALL_PLAYERS[0];
+  var unread=getUnreadCount(session);
+  var events=getEvents().filter(function(e){return new Date(e.date)>=new Date();}).slice(0,4);
+
+  el.innerHTML=
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">'
+    +'<div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(18px,3vw,26px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Bonjour !</div>'
+      +'<div style="font-size:13px;color:#888;margin-top:2px">Espace parents · '+new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</div>'
+    +'</div>'
+    +(unread>0?'<a href="ffp-messagerie.html" style="text-decoration:none;background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">✉️</span><span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#E24B4A">'+unread+' non lu'+(unread>1?'s':'')+'</span></a>':'')
+  +'</div>'
+
+  // Player card
+  +'<div class="dcard" style="border-top:3px solid '+(player.global>=7.5?'#4BC88A':player.global>=6?'#D4AF37':'#888')+';margin-bottom:16px">'
+    +'<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">'
+      +'<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#1A1200,#2A1E00);border:2px solid rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;color:#D4AF37;flex-shrink:0">'+player.prenom[0]+player.nom[0]+'</div>'
+      +'<div style="flex:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+player.prenom+' '+player.nom+'</div>'
+        +'<div style="font-size:12px;color:#888">'+player.poste+' · #'+player.numero+' · Équipe '+(idx<10?'1':idx<20?'2':'3')+'</div>'
+      +'</div>'
+      +'<div style="text-align:center">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:32px;color:'+scoreCol(player.global)+'">'+player.global+'</div>'
+        +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Score IA</div>'
+        +'<div style="font-size:10px;color:#888;margin-top:3px">#'+player.rank+' / '+ALL_PLAYERS.length+'</div>'
+      +'</div>'
+    +'</div>'
+    // Mini bars
+    +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px">'
+    +[['Tech',player.scores.technique,'#D4AF37'],['Phys',player.scores.physique,'#60A8D0'],['Tact',player.scores.tactique,'#A060E0'],['Ment',player.scores.mental,'#C89020'],['Cult',player.scores.culture,'#4BC88A']].map(function(s){
+      return '<div style="text-align:center">'
+        +'<div style="height:4px;background:#1A1A1A;border-radius:2px;overflow:hidden;margin-bottom:4px"><div style="height:100%;background:'+s[2]+';border-radius:2px;width:'+(s[1]*10)+'%"></div></div>'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:'+s[2]+'">'+s[1]+'</div>'
+        +'<div style="font-size:9px;color:#444">'+s[0]+'</div>'
+      +'</div>';
+    }).join('')
+    +'</div>'
+  +'</div>'
+
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+    // Événements
+    +'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Prochains événements</div>'
+        +'<a href="ffp-vie-club.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Voir tout →</a>'
+      +'</div>'
+      +(events.length?events.map(function(e){
+        var col={match:'#D4AF37',entrainement:'#4BC88A',tournoi:'#A060E0',stage:'#60A8D0',réunion:'#C89020'}[e.type]||'#888';
+        return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:center">'
+          +'<div style="min-width:36px;text-align:center;background:'+col+'15;border:1px solid '+col+'33;border-radius:7px;padding:6px 4px">'
+            +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:'+col+'">'+e.date.slice(8)+'</div>'
+            +'<div style="font-size:9px;color:#444">'+['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(e.date.slice(5,7))-1]+'</div>'
+          +'</div>'
+          +'<div><div style="font-size:12px;font-weight:600">'+e.titre+'</div><div style="font-size:10px;color:#666">'+(e.heure||'')+(e.lieu?' · '+e.lieu:'')+'</div></div>'
+        +'</div>';
+      }).join(''):'<div style="text-align:center;padding:20px;color:#333;font-size:12px">Aucun événement</div>')
+    +'</div>'
+    // Accès rapide
+    +'<div class="dcard">'
+      +'<div class="dct">Accès rapide</div>'
+      +'<div style="display:flex;flex-direction:column;gap:8px">'
+      +[
+        ['ffp-parents.html','🫂','Fiche de '+player.prenom,'#D4AF37'],
+        ['ffp-messagerie.html','✉️','Messagerie'+(unread>0?' · '+unread+' non lu':''),'#E24B4A'],
+        ['ffp-media.html','🎬','Profil media','#A060E0'],
+        ['ffp-convocations.html','📋','Convocations','#4BC88A'],
+        ['ffp-vie-club.html','📅','Vie du Club','#C89020'],
+      ].map(function(lnk){
+        return '<a href="'+lnk[0]+'" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:9px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor=\''+lnk[3]+'44\';this.style.background=\''+lnk[3]+'0D\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,.05)\';this.style.background=\'rgba(255,255,255,.02)\'">'
+          +'<span style="font-size:20px">'+lnk[1]+'</span>'
+          +'<span style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:'+lnk[3]+'">'+lnk[2]+'</span>'
+          +'<span style="margin-left:auto;color:#444;font-size:12px">→</span>'
+        +'</a>';
+      }).join('')
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// ── SCOUT DASHBOARD ──────────────────────────────────────────────
+function renderScoutDashboard(session, el){
+  var slIds=[];
+  try{slIds=JSON.parse(localStorage.getItem(LS_SHORTLIST)||'[]');}catch(e){}
+  var shortlist=slIds.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var top10=ALL_PLAYERS.slice(0,10);
+
+  el.innerHTML=
+  '<div style="margin-bottom:20px">'
+    +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(18px,3vw,26px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Espace Recruteur</div>'
+    +'<div style="font-size:13px;color:#888;margin-top:2px">Bienvenue, '+(session.prenom||'Scout')+' · '+(session.club||'Recruteur indépendant')+'</div>'
+  +'</div>'
+
+  +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">'
+  +[
+    {l:'Ma shortlist',v:shortlist.length,i:'★',c:'#D4AF37',href:'ffp-scout.html'},
+    {l:'Joueurs dispo.',v:ALL_PLAYERS.length,i:'👥',c:'#4BC88A',href:'ffp-scout.html'},
+    {l:'Score moyen',v:+(ALL_PLAYERS.reduce(function(s,p){return s+p.global;},0)/ALL_PLAYERS.length).toFixed(2),i:'📊',c:'#60A8D0',href:'ffp-scout.html'},
+  ].map(function(k){
+    return '<a href="'+k.href+'" style="text-decoration:none;background:#0A0800;border:1px solid rgba(212,175,55,.1);border-radius:10px;padding:16px;display:block;position:relative;overflow:hidden;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(212,175,55,.3)\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.1)\'">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+k.c+'"></div>'
+      +'<div style="font-size:22px;margin-bottom:6px">'+k.i+'</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:26px;color:'+k.c+';margin-bottom:2px">'+k.v+'</div>'
+      +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">'+k.l+'</div>'
+    +'</a>';
+  }).join('')
+  +'</div>'
+
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    // Shortlist
+    +'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Ma Shortlist ('+shortlist.length+')</div>'
+        +'<a href="ffp-scout.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Gérer →</a>'
+      +'</div>'
+      +(shortlist.length?shortlist.slice(0,6).map(function(p){
+        var sc=scoreCol(p.global);
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+          +'<div style="width:30px;height:30px;border-radius:50%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#D4AF37;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+p.poste+'</div></div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:'+sc+'">'+p.global+'</div>'
+          +'<span style="font-size:12px;color:#D4AF37">★</span>'
+        +'</div>';
+      }).join('')+'<a href="ffp-scout.html" style="display:block;margin-top:10px;text-align:center;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:7px;padding:8px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none;text-transform:uppercase">Voir ma shortlist complète →</a>'
+      :'<div style="text-align:center;padding:30px;color:#333"><div style="font-size:28px;margin-bottom:8px">★</div><div style="font-size:12px;font-family:Montserrat,sans-serif">Shortlist vide</div><a href="ffp-scout.html" style="display:inline-block;margin-top:10px;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:8px 16px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;text-decoration:none;text-transform:uppercase">Explorer les joueurs →</a></div>')
+    +'</div>'
+
+    // Top joueurs
+    +'<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+        +'<div class="dct">Meilleurs profils IA</div>'
+        +'<a href="ffp-scout.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37;text-decoration:none">Tous les joueurs →</a>'
+      +'</div>'
+      +top10.slice(0,6).map(function(p){
+        var sc=scoreCol(p.global);
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:10px;color:#333;min-width:18px">#'+p.rank+'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+p.poste+'</div></div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:'+sc+'">'+p.global+'</div>'
+        +'</div>';
+      }).join('')
+    +'</div>'
+  +'</div>';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+function init(){
+  var session=getSession();
+  var content=document.getElementById('dashboard-content');
+
+  if(!session){
+    // Not logged in — show login options
+    if(content){
+      content.innerHTML='<div style="text-align:center;padding:60px 20px">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;color:#D4AF37;margin-bottom:12px">Accédez à votre espace</div>'
+        +'<p style="color:#888;margin-bottom:28px;font-size:14px">Connectez-vous pour accéder à votre tableau de bord personnalisé</p>'
+        +'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">'
+          +'<a href="ffp-login.html?role=coach" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:9px;padding:14px 28px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none">🏟️ Coach</a>'
+          +'<a href="ffp-login.html?role=parent" style="background:transparent;color:#D4AF37;border:1px solid rgba(212,175,55,.4);border-radius:9px;padding:14px 28px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;text-decoration:none">🫂 Parents</a>'
+          +'<a href="ffp-scout.html" style="background:transparent;color:#60A8D0;border:1px solid rgba(96,168,208,.4);border-radius:9px;padding:14px 28px;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;text-decoration:none">🔍 Scout</a>'
+        +'</div>'
+      +'</div>';
+    }
+    // Update header
+    var pill=document.getElementById('session-pill');
+    if(pill)pill.innerHTML='<a href="ffp-login.html" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:7px 14px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-decoration:none">Connexion →</a>';
+    return;
+  }
+
+  // Update header with session info
+  var pill=document.getElementById('session-pill');
+  var role=session.role;var roleInfo={coach:{ico:'🏟️',col:'#4BC88A',label:'Coach'},parent:{ico:'🫂',col:'#A060E0',label:'Parent'},scout:{ico:'🔍',col:'#60A8D0',label:'Scout'}}[role]||{ico:'👤',col:'#888',label:role};
+  if(pill){
+    pill.innerHTML='<div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="display:flex;align-items:center;gap:6px;background:'+roleInfo.col+'15;border:1px solid '+roleInfo.col+'44;border-radius:8px;padding:5px 11px">'
+        +'<span style="font-size:14px">'+roleInfo.ico+'</span>'
+        +'<div style="line-height:1.2"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:'+roleInfo.col+'">'+( session.prenom||'')+' '+(session.nom||'')+'</div>'
+        +'<div style="font-size:9px;color:#444;text-transform:uppercase;font-family:Montserrat,sans-serif;font-weight:600">'+roleInfo.label+'</div></div>'
+      +'</div>'
+      +'<button onclick="clearSession()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#888;padding:5px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;text-transform:uppercase">Déco.</button>'
+    +'</div>';
+  }
+
+  // Render by role
+  if(!content)return;
+  if(role==='coach')renderCoachDashboard(session,content);
+  else if(role==='parent')renderParentDashboard(session,content);
+  else if(role==='scout')renderScoutDashboard(session,content);
+  else content.innerHTML='<div style="text-align:center;padding:40px;color:#888">Rôle non reconnu.</div>';
+}
+
+init();
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>

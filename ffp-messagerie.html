@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Messagerie</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--gold:#D4AF37;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
+.main{flex:1;display:grid;grid-template-columns:260px 340px 1fr;overflow:hidden;min-height:0}
+/* Sidebar */
+.sidebar{border-right:1px solid rgba(212,175,55,.1);display:flex;flex-direction:column;background:#050402}
+.sidebar-hdr{padding:14px 14px 10px;border-bottom:1px solid rgba(212,175,55,.08)}
+.msg-tab{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;background:transparent;border:none;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;text-align:left;border-radius:6px;margin-bottom:3px}
+.msg-tab:hover{background:rgba(212,175,55,.05);color:#FBCB57}
+.msg-tab.on{background:rgba(212,175,55,.1);color:#D4AF37}
+.compose-btn{width:calc(100% - 28px);margin:0 14px 10px;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:11px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.compose-btn:hover{box-shadow:0 0 18px rgba(212,175,55,.4);transform:translateY(-1px)}
+/* List panel */
+.list-panel{border-right:1px solid rgba(212,175,55,.08);display:flex;flex-direction:column;min-height:0}
+.list-hdr{padding:12px 14px;border-bottom:1px solid rgba(212,175,55,.08);flex-shrink:0}
+.srch{background:#0D0B05;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:8px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:12px;outline:none;width:100%;transition:border-color .2s}
+.srch:focus{border-color:rgba(212,175,55,.35)}.srch::placeholder{color:#333}
+#msg-list{flex:1;overflow-y:auto}
+/* Read panel */
+.read-panel{overflow-y:auto;min-height:0}
+/* Compose fields */
+.c-field{margin-bottom:12px}
+.c-lbl{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#444;display:block;margin-bottom:5px}
+.c-inp{background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s;line-height:1.5}
+.c-inp:focus{border-color:rgba(212,175,55,.4)}.c-inp option{background:#0A0800}
+/* Scrollbar */
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:768px){.main{grid-template-columns:1fr}.sidebar{display:none}.list-panel{max-height:40vh}}
+</style>
+</head>
+<body>
+<div class="app"><header style="background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);padding:0 16px;display:flex;align-items:center;gap:10px;height:52px;flex-shrink:0">
+<a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Messagerie</div></div></a><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><div id="session-pill"></div><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-parents.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Parents</a></div></header><div class="main"><div class="sidebar"><div class="sidebar-hdr"><button class="compose-btn" onclick="showCompose()">✉️ Nouveau message</button><button id="tab-inbox" class="msg-tab on" onclick="renderInbox()" id="tab-inbox"><span style="font-size:16px">📥</span><span style="flex:1">Boîte de réception</span><span id="unread-badge" style="display:none;background:#D4AF37;color:#000;border-radius:50%;min-width:18px;height:18px;font-size:10px;font-family:Montserrat,sans-serif;font-weight:800;align-items:center;justify-content:center;padding:0 3px"></span></button><button id="tab-sent" class="msg-tab" onclick="renderSent()"><span style="font-size:16px">📤</span><span>Envoyés</span></button><button id="tab-compose" class="msg-tab" onclick="showCompose()"><span style="font-size:16px">✏️</span><span>Rédiger</span></button></div><div style="padding:10px 14px;border-bottom:1px solid rgba(212,175,55,.05)"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Accès rapide</div><a href="ffp-coach.html" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;text-decoration:none;color:#888;font-size:11px;transition:all .2s;margin-bottom:3px" onmouseover="this.style.background='rgba(212,175,55,.05)';this.style.color='#D4AF37'" onmouseout="this.style.background='transparent';this.style.color='#888'"><span>🏟️</span>Espace Coach</a><a href="ffp-parents.html" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;text-decoration:none;color:#888;font-size:11px;transition:all .2s;margin-bottom:3px" onmouseover="this.style.background='rgba(212,175,55,.05)';this.style.color='#D4AF37'" onmouseout="this.style.background='transparent';this.style.color='#888'"><span>🫂</span>Espace Parents</a><a href="ffp-vie-club.html" style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;text-decoration:none;color:#888;font-size:11px;transition:all .2s" onmouseover="this.style.background='rgba(212,175,55,.05)';this.style.color='#D4AF37'" onmouseout="this.style.background='transparent';this.style.color='#888'"><span>📅</span>Vie du Club</a></div><div style="margin:10px 14px;padding:10px 12px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);border-radius:8px;font-size:10px;color:#666;line-height:1.7"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:9px;color:#D4AF37;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">ℹ️ Partage local</div>Les messages sont partagés via localStorage entre tous les fichiers du même dossier.</div></div><div class="list-panel"><div class="list-hdr"><input class="srch" type="text" placeholder="🔍 Rechercher..." oninput="searchMessages(this.value)"></div><div id="msg-list"></div></div><div class="read-panel" id="read-panel"></div></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — MODULE MESSAGERIE
+// Coach ↔ Parents via localStorage partagé
+// ══════════════════════════════════════════════════════
+
+var LS_MSG     = 'ffp_messages';
+var LS_SESSION = 'ffp_session';
+
+var PN = ['Thomas','Arthur','Sacha','Kylian','Léo','Hugo','Mathieu','Théo','Enzo','Nathan',
+          'Lucas','Antoine','Maxime','Julien','Baptiste','Romain','Pierre','Clément','Nicolas','Valentin',
+          'Alexis','Quentin','Louis','Gabriel','Tom','Noa','Liam','Yanis','Ryan','Axel'];
+var NN = ['Bernard','Morel','Renard','Faure','Dubois','Martin','Laurent','Simon','Leroy','Dupont',
+          'Moreau','Petit','Richard','Robert','Durand','Leblanc','Garnier','Girard','Boyer','Rousseau',
+          'Chevalier','André','Michel','Henry','Gilles','Roux','François','Blanc','Guérin','Robin'];
+
+// ── Demo messages ──
+var DEMO_MSGS = [
+  {id:'dm1',from:'coach',from_name:'Coach Principal',to:'all',to_label:'Tous les parents',
+   subject:'Convocation — Tournoi Régional 19 juillet',
+   body:'Bonjour à tous,\n\nVotre enfant est convoqué pour le tournoi régional U12 le 19 juillet à 08h00 au Complexe La Plaine.\n\nMerci de confirmer la présence de votre enfant avant le 15 juillet.\n\nTenue officielle obligatoire. Prévoir pic-nic et boisson.\n\nCordialement,\nLe staff Foot Factory Pro',
+   ts:Date.now()-7*86400000,read_by:[],priority:'haute',tag:'convocation'},
+  {id:'dm2',from:'coach',from_name:'Coach Principal',to:'1001',to_label:'Parents de Thomas Bernard',
+   subject:'Bilan individuel — Thomas B.',
+   body:'Bonjour,\n\nJe souhaitais vous partager le bilan de Thomas suite aux 3 dernières semaines d\'entraînement.\n\nIl réalise d\'excellentes prestations en milieu de terrain, sa vision du jeu progresse remarquablement.\n\nPoints à travailler : renforcement du pied gauche et gestion du pressing adverse.\n\nJe reste disponible pour en discuter.\n\nCordialement',
+   ts:Date.now()-3*86400000,read_by:['parent_1001'],priority:'normale',tag:'bilan'},
+  {id:'dm3',from:'parent',from_name:'Parent de Thomas B.',from_code:'1001',to:'coach',to_label:'Coach',
+   subject:'Re: Bilan individuel — Thomas B.',
+   body:'Bonjour Coach,\n\nMerci pour ce retour très détaillé. Nous sommes ravis de la progression de Thomas.\n\nNous travaillerons le pied gauche à la maison comme vous le suggérez.\n\nBonne journée',
+   ts:Date.now()-2*86400000,read_by:['coach'],priority:'normale',tag:'réponse'},
+  {id:'dm4',from:'coach',from_name:'Coach Principal',to:'all',to_label:'Tous les parents',
+   subject:'Séance annulée — Vendredi 25 juillet',
+   body:'Bonjour,\n\nEn raison des fortes chaleurs annoncées, la séance de vendredi 25 juillet est annulée.\n\nProchaine séance : mardi 29 juillet à 17h30 comme d\'habitude.\n\nMerci de votre compréhension.',
+   ts:Date.now()-1*86400000,read_by:[],priority:'urgente',tag:'annulation'},
+];
+
+// ── State ──
+var SESSION = null;
+var MESSAGES = [];
+var CURRENT_MSG = null;
+var VIEW = 'inbox'; // inbox | sent | compose | read
+
+// ── Session ──
+function getSession(){
+  try{var r=localStorage.getItem(LS_SESSION);if(!r)return null;var d=JSON.parse(r);if(d._exp&&Date.now()>d._exp)return null;return d;}catch(e){return null;}
+}
+
+// ── Messages ──
+function loadMessages(){
+  try{
+    var raw=localStorage.getItem(LS_MSG);
+    MESSAGES=raw?JSON.parse(raw):JSON.parse(JSON.stringify(DEMO_MSGS));
+    if(!raw){localStorage.setItem(LS_MSG,JSON.stringify(MESSAGES));}
+    MESSAGES.sort(function(a,b){return b.ts-a.ts;});
+  }catch(e){MESSAGES=JSON.parse(JSON.stringify(DEMO_MSGS));}
+}
+function saveMessages(){
+  try{localStorage.setItem(LS_MSG,JSON.stringify(MESSAGES));}catch(e){}
+}
+function genId(){return 'msg_'+Date.now()+'_'+Math.floor(Math.random()*1000);}
+
+function fmtDate(ts){
+  var d=new Date(ts);
+  var now=new Date();
+  var diff=Math.floor((now-d)/1000);
+  if(diff<60)return 'à l\'instant';
+  if(diff<3600)return Math.floor(diff/60)+' min';
+  if(diff<86400)return Math.floor(diff/3600)+'h';
+  if(diff<7*86400){var j=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];return j[d.getDay()];}
+  return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+}
+function fmtDateFull(ts){
+  return new Date(ts).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+var PRIORITY_INFO = {
+  normale:  {label:'Normale',  col:'#888',   bg:'rgba(136,136,136,.1)'},
+  haute:    {label:'Haute',    col:'#D4AF37', bg:'rgba(212,175,55,.1)'},
+  urgente:  {label:'Urgente',  col:'#E24B4A', bg:'rgba(226,75,74,.1)'}
+};
+var TAG_INFO = {
+  convocation:{label:'Convocation',col:'#4BC88A'},
+  bilan:      {label:'Bilan',      col:'#60A8D0'},
+  annulation: {label:'Annulation', col:'#E24B4A'},
+  réponse:    {label:'Réponse',    col:'#A060E0'},
+  général:    {label:'Général',    col:'#D4AF37'},
+  information:{label:'Information',col:'#C89020'}
+};
+
+// ── Inbox / Sent ──
+function getInbox(){
+  var isCoach = SESSION && SESSION.role==='coach';
+  return MESSAGES.filter(function(m){
+    if(isCoach){
+      return m.from==='parent'||(m.from==='coach'&&m.to==='all');
+    } else {
+      var code = SESSION?SESSION.player_code:'';
+      return m.from==='coach'&&(m.to==='all'||m.to===code);
+    }
+  });
+}
+function getSent(){
+  var isCoach = SESSION && SESSION.role==='coach';
+  return MESSAGES.filter(function(m){
+    if(isCoach) return m.from==='coach';
+    else{var code=SESSION?SESSION.player_code:'';return m.from==='parent'&&m.from_code===code;}
+  });
+}
+function getUnread(){
+  var isCoach = SESSION && SESSION.role==='coach';
+  var id = isCoach?'coach':(SESSION?('parent_'+SESSION.player_code):'');
+  return MESSAGES.filter(function(m){
+    var visible = isCoach?(m.from==='parent'):((m.from==='coach')&&(m.to==='all'||m.to===(SESSION?SESSION.player_code:'')));
+    return visible && m.read_by.indexOf(id)<0;
+  }).length;
+}
+
+function markRead(msgId){
+  var m=MESSAGES.find(function(x){return x.id===msgId;});
+  if(!m)return;
+  var id=SESSION?(SESSION.role==='coach'?'coach':'parent_'+(SESSION.player_code||'')):'anon';
+  if(m.read_by.indexOf(id)<0){m.read_by.push(id);saveMessages();}
+}
+
+// ── Render list ──
+function renderList(list, emptyMsg){
+  var el=document.getElementById('msg-list');if(!el)return;
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:#333">'
+      +'<div style="font-size:32px;margin-bottom:10px">📭</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">'+emptyMsg+'</div>'
+      +'</div>';
+    return;
+  }
+  var readId=SESSION?(SESSION.role==='coach'?'coach':'parent_'+(SESSION.player_code||'')):'anon';
+  el.innerHTML=list.map(function(m){
+    var unread=m.read_by.indexOf(readId)<0;
+    var pri=PRIORITY_INFO[m.priority]||PRIORITY_INFO.normale;
+    var tag=TAG_INFO[m.tag]||TAG_INFO.général;
+    var isActive=CURRENT_MSG&&CURRENT_MSG.id===m.id;
+    return '<div onclick="openMsg(\''+m.id+'\')" style="display:flex;gap:10px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;transition:background .1s;background:'+(isActive?'rgba(212,175,55,.07)':unread?'rgba(212,175,55,.03)':'transparent')+';border-left:3px solid '+(isActive?'#D4AF37':unread?'rgba(212,175,55,.4)':'transparent')+'" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=\''+(isActive?'rgba(212,175,55,.07)':unread?'rgba(212,175,55,.03)':'transparent')+'\'">'
+      +'<div style="width:36px;height:36px;border-radius:50%;background:'+(m.from==='coach'?'rgba(212,175,55,.12)':'rgba(96,168,208,.12)')+';border:1px solid '+(m.from==='coach'?'rgba(212,175,55,.25)':'rgba(96,168,208,.25)')+';display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">'
+        +(m.from==='coach'?'🏟️':'🫂')
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;gap:8px">'
+          +'<div style="font-size:12px;font-weight:'+(unread?'700':'500')+';color:'+(unread?'#F0F0F0':'#888')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+m.from_name+'</div>'
+          +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;flex-shrink:0">'+fmtDate(m.ts)+'</div>'
+        +'</div>'
+        +'<div style="font-size:12px;font-weight:'+(unread?'600':'400')+';color:'+(unread?'#E0E0E0':'#666')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">'+m.subject+'</div>'
+        +'<div style="display:flex;gap:5px;align-items:center">'
+          +(unread?'<div style="width:6px;height:6px;border-radius:50%;background:#D4AF37;flex-shrink:0"></div>':'')
+          +'<span style="font-size:9px;background:'+tag.col+'22;border:1px solid '+tag.col+'44;border-radius:8px;padding:1px 7px;color:'+tag.col+';font-family:Montserrat,sans-serif;font-weight:600">'+tag.label+'</span>'
+          +(m.priority!=='normale'?'<span style="font-size:9px;background:'+pri.bg+';border:1px solid '+pri.col+'33;border-radius:8px;padding:1px 7px;color:'+pri.col+';font-family:Montserrat,sans-serif;font-weight:600">'+pri.label+'</span>':'')
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function renderInbox(){
+  VIEW='inbox';
+  updateNavTabs();
+  renderList(getInbox(),'Boîte de réception vide');
+  CURRENT_MSG=null;
+  var rp=document.getElementById('read-panel');if(rp)rp.innerHTML=emptyReadPanel();
+}
+function renderSent(){
+  VIEW='sent';
+  updateNavTabs();
+  renderList(getSent(),'Aucun message envoyé');
+  CURRENT_MSG=null;
+  var rp=document.getElementById('read-panel');if(rp)rp.innerHTML=emptyReadPanel();
+}
+function updateNavTabs(){
+  document.querySelectorAll('.msg-tab').forEach(function(b){b.classList.remove('on');});
+  var btn=document.getElementById('tab-'+VIEW);if(btn)btn.classList.add('on');
+  var ub=document.getElementById('unread-badge');
+  var n=getUnread();if(ub)ub.style.display=n>0?'inline-flex':'none',ub.textContent=n;
+}
+
+function emptyReadPanel(){
+  return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;color:#333">'
+    +'<div style="font-size:40px;margin-bottom:12px">✉️</div>'
+    +'<div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Sélectionnez un message</div>'
+    +'</div>';
+}
+
+// ── Open message ──
+function openMsg(id){
+  var m=MESSAGES.find(function(x){return x.id===id;});if(!m)return;
+  CURRENT_MSG=m;
+  markRead(id);
+  updateNavTabs();
+  if(VIEW==='inbox')renderList(getInbox(),'');
+  else renderList(getSent(),'');
+
+  var rp=document.getElementById('read-panel');if(!rp)return;
+  var pri=PRIORITY_INFO[m.priority]||PRIORITY_INFO.normale;
+  var tag=TAG_INFO[m.tag]||TAG_INFO.général;
+  var isCoach=SESSION&&SESSION.role==='coach';
+  var canReply = (isCoach&&m.from==='parent')||(!isCoach&&m.from==='coach');
+
+  rp.innerHTML='<div style="height:100%;display:flex;flex-direction:column">'
+    // Header
+    +'<div style="padding:16px 20px;border-bottom:1px solid rgba(212,175,55,.12);flex-shrink:0">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap">'
+        +'<div style="font-size:16px;font-weight:700;line-height:1.3;flex:1">'+m.subject+'</div>'
+        +'<div style="display:flex;gap:6px;flex-shrink:0">'
+          +(canReply?'<button onclick="replyMsg(\''+id+'\')" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:6px;color:#D4AF37;padding:6px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">↩ Répondre</button>':'')
+          +'<button onclick="deleteMsg(\''+id+'\')" style="background:transparent;border:1px solid rgba(226,75,74,.2);border-radius:6px;color:#E24B4A;padding:6px 10px;cursor:pointer;font-size:12px" title="Supprimer">🗑</button>'
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">'
+        +'<div style="display:flex;align-items:center;gap:7px">'
+          +'<div style="width:32px;height:32px;border-radius:50%;background:'+(m.from==='coach'?'rgba(212,175,55,.12)':'rgba(96,168,208,.12)')+';border:1px solid '+(m.from==='coach'?'rgba(212,175,55,.25)':'rgba(96,168,208,.25)')+';display:flex;align-items:center;justify-content:center;font-size:14px">'+(m.from==='coach'?'🏟️':'🫂')+'</div>'
+          +'<div><div style="font-size:11px;font-weight:600">'+m.from_name+'</div><div style="font-size:10px;color:#444">→ '+m.to_label+'</div></div>'
+        +'</div>'
+        +'<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">'
+          +'<span style="font-size:9px;background:'+tag.col+'22;border:1px solid '+tag.col+'44;border-radius:8px;padding:2px 8px;color:'+tag.col+';font-family:Montserrat,sans-serif;font-weight:600">'+tag.label+'</span>'
+          +(m.priority!=='normale'?'<span style="font-size:9px;background:'+pri.bg+';border:1px solid '+pri.col+'33;border-radius:8px;padding:2px 8px;color:'+pri.col+';font-family:Montserrat,sans-serif;font-weight:600">'+pri.label+'</span>':'')
+          +'<span style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">'+fmtDateFull(m.ts)+'</span>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+    // Body
+    +'<div style="flex:1;overflow-y:auto;padding:20px;font-size:13px;line-height:1.9;color:#C0C0C0;white-space:pre-wrap">'+m.body+'</div>'
+    // Thread replies
+    +(getThread(id).length?renderThread(id):'')
+  +'</div>';
+}
+
+function getThread(parentId){
+  var m=MESSAGES.find(function(x){return x.id===parentId;});if(!m)return[];
+  var subj='Re: '+m.subject.replace(/^Re:\s*/,'');
+  return MESSAGES.filter(function(x){return x.id!==parentId&&x.subject===subj;}).sort(function(a,b){return a.ts-b.ts;});
+}
+function renderThread(parentId){
+  var thread=getThread(parentId);if(!thread.length)return '';
+  return '<div style="border-top:1px solid rgba(212,175,55,.1);padding:14px 20px;background:rgba(0,0,0,.2)">'
+    +'<div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Échanges ('+thread.length+')</div>'
+    +thread.map(function(r){
+      return '<div style="display:flex;gap:10px;margin-bottom:12px">'
+        +'<div style="width:28px;height:28px;border-radius:50%;background:'+(r.from==='coach'?'rgba(212,175,55,.1)':'rgba(96,168,208,.1)')+';border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">'+(r.from==='coach'?'🏟️':'🫂')+'</div>'
+        +'<div style="flex:1;background:rgba(255,255,255,.025);border-radius:8px;padding:10px 12px">'
+          +'<div style="display:flex;justify-content:space-between;margin-bottom:5px">'
+            +'<div style="font-size:11px;font-weight:600;color:#D4AF37">'+r.from_name+'</div>'
+            +'<div style="font-size:10px;color:#444">'+fmtDate(r.ts)+'</div>'
+          +'</div>'
+          +'<div style="font-size:12px;color:#AAA;line-height:1.7;white-space:pre-wrap">'+r.body+'</div>'
+        +'</div>'
+      +'</div>';
+    }).join('')
+  +'</div>';
+}
+
+// ── Reply ──
+function replyMsg(id){
+  var m=MESSAGES.find(function(x){return x.id===id;});if(!m)return;
+  showCompose({
+    to: m.from==='coach'?'coach':m.from_code||'',
+    to_label: m.from_name,
+    subject: 'Re: '+m.subject.replace(/^Re:\s*/,''),
+    reply_to: id
+  });
+}
+
+// ── Compose ──
+function showCompose(prefill){
+  prefill=prefill||{};
+  VIEW='compose';
+  updateNavTabs();
+  var isCoach=SESSION&&SESSION.role==='coach';
+  var rp=document.getElementById('read-panel');if(!rp)return;
+
+  // Recipient options for coach
+  var recipOpts='';
+  if(isCoach){
+    recipOpts='<option value="all">📢 Tous les parents</option>';
+    for(var i=0;i<30;i++){
+      var code=String(1001+i);
+      recipOpts+='<option value="'+code+'"'+(prefill.to===code?' selected':'')+'>'+PN[i]+' '+NN[i]+'</option>';
+    }
+  }
+
+  var tagOpts=Object.keys(TAG_INFO).map(function(k){
+    return '<option value="'+k+'">'+TAG_INFO[k].label+'</option>';
+  }).join('');
+  var priOpts=Object.keys(PRIORITY_INFO).map(function(k){
+    return '<option value="'+k+'">'+PRIORITY_INFO[k].label+'</option>';
+  }).join('');
+
+  rp.innerHTML='<div style="height:100%;display:flex;flex-direction:column">'
+    +'<div style="padding:14px 18px;border-bottom:1px solid rgba(212,175,55,.12);font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#D4AF37;flex-shrink:0">✉️ Nouveau message</div>'
+    +'<div style="flex:1;overflow-y:auto;padding:18px">'
+      +(isCoach?
+        '<div class="c-field"><label class="c-lbl">Destinataire</label><select class="c-inp" id="c-to"><option value="all">📢 Tous les parents</option>'+recipOpts+'</select></div>'
+        :'<div class="c-field"><label class="c-lbl">À</label><input class="c-inp" value="Coach" disabled></div>'
+      )
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+        +'<div class="c-field"><label class="c-lbl">Catégorie</label><select class="c-inp" id="c-tag">'+tagOpts+'</select></div>'
+        +'<div class="c-field"><label class="c-lbl">Priorité</label><select class="c-inp" id="c-pri">'+priOpts+'</select></div>'
+      +'</div>'
+      +'<div class="c-field"><label class="c-lbl">Objet *</label><input class="c-inp" id="c-subject" type="text" value="'+((prefill.subject||'')).replace(/"/g,'&quot;')+'" placeholder="Objet du message"></div>'
+      +'<div class="c-field"><label class="c-lbl">Message *</label><textarea class="c-inp" id="c-body" rows="10" style="resize:vertical;min-height:180px" placeholder="Votre message..."></textarea></div>'
+      +'<div id="c-err" style="min-height:16px;font-size:11px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:10px"></div>'
+      +'<div style="display:flex;gap:10px;flex-wrap:wrap">'
+        +'<button onclick="sendMessage()" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:11px 22px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s">Envoyer →</button>'
+        +'<button onclick="renderInbox()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:11px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600">Annuler</button>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+
+  // Pre-fill body if reply
+  if(prefill.body){var ta=document.getElementById('c-body');if(ta)ta.value=prefill.body;}
+}
+
+function sendMessage(){
+  var isCoach=SESSION&&SESSION.role==='coach';
+  var subject=((document.getElementById('c-subject')||{}).value||'').trim();
+  var body=((document.getElementById('c-body')||{}).value||'').trim();
+  var err=document.getElementById('c-err');
+  if(err)err.textContent='';
+  if(!subject||!body){if(err)err.textContent='Objet et message sont obligatoires.';return;}
+
+  var to,to_label,from,from_name,from_code;
+  if(isCoach){
+    to=(document.getElementById('c-to')||{}).value||'all';
+    to_label=to==='all'?'Tous les parents':PN[parseInt(to.slice(-4))-1001]+' '+NN[parseInt(to.slice(-4))-1001]||'Parent';
+    from='coach';from_name=(SESSION.prenom||'Coach')+' '+(SESSION.nom||'');from_code=null;
+  } else {
+    to='coach';to_label='Coach';
+    from='parent';from_name='Parent de '+(SESSION.prenom||'');
+    from_code=SESSION.player_code||'';
+  }
+
+  var tag=((document.getElementById('c-tag')||{}).value||'général');
+  var pri=((document.getElementById('c-pri')||{}).value||'normale');
+
+  var msg={id:genId(),from:from,from_name:from_name,from_code:from_code||undefined,
+    to:to,to_label:to_label,subject:subject,body:body,
+    ts:Date.now(),read_by:[from==='coach'?'coach':'parent_'+(from_code||'')],
+    priority:pri,tag:tag};
+
+  MESSAGES.unshift(msg);
+  saveMessages();
+  updateNavTabs();
+  VIEW='sent';
+  renderSent();
+  openMsg(msg.id);
+  // Show success
+  var srp=document.getElementById('read-panel');
+  if(srp){
+    var succ=document.createElement('div');
+    succ.style.cssText='position:absolute;top:16px;right:16px;background:#0D1A0D;border:1px solid rgba(75,200,138,.3);border-radius:8px;padding:8px 14px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#4BC88A;z-index:10;animation:fadeIn .3s ease';
+    succ.textContent='✓ Message envoyé';
+    var panelParent=srp.parentElement;if(panelParent){panelParent.style.position='relative';panelParent.appendChild(succ);}
+    setTimeout(function(){if(succ.parentElement)succ.parentElement.removeChild(succ);},3000);
+  }
+}
+
+function deleteMsg(id){
+  if(!confirm('Supprimer ce message ?'))return;
+  MESSAGES=MESSAGES.filter(function(m){return m.id!==id;});
+  saveMessages();CURRENT_MSG=null;
+  if(VIEW==='sent')renderSent();else renderInbox();
+  var rp=document.getElementById('read-panel');if(rp)rp.innerHTML=emptyReadPanel();
+}
+
+// ── Search ──
+function searchMessages(q){
+  q=q.toLowerCase().trim();
+  if(!q){if(VIEW==='sent')renderSent();else renderInbox();return;}
+  var all=MESSAGES.filter(function(m){
+    return m.subject.toLowerCase().indexOf(q)>=0||m.body.toLowerCase().indexOf(q)>=0||m.from_name.toLowerCase().indexOf(q)>=0;
+  });
+  renderList(all,'Aucun résultat');
+}
+
+// ── Init ──
+function init(){
+  SESSION=getSession();
+  loadMessages();
+
+  // Update header
+  var hp=document.getElementById('session-pill');
+  if(hp&&SESSION){
+    hp.innerHTML='<div style="display:flex;align-items:center;gap:7px">'
+      +'<div style="width:28px;height:28px;border-radius:50%;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.25);display:flex;align-items:center;justify-content:center;font-size:13px">'+(SESSION.role==='coach'?'🏟️':'🫂')+'</div>'
+      +'<div style="line-height:1.2"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37">'+(SESSION.prenom||'')+'</div>'
+      +'<div style="font-size:9px;color:#444;text-transform:uppercase;font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:.5px">'+(SESSION.role==='coach'?'Coach':'Parent')+'</div></div>'
+    +'</div>';
+  }
+
+  updateNavTabs();
+  renderInbox();
+  var rp=document.getElementById('read-panel');if(rp)rp.innerHTML=emptyReadPanel();
+}
+init();
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>

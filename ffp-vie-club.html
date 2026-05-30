@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Vie du Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="ffp-icon-192.png">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+:root{--gold:#D4AF37;--gl:#FBCB57;--bd:1px solid rgba(212,175,55,.13);--glow:0 0 22px rgba(212,175,55,.18)}
+#stats-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.stat-chip{background:#141414;border:var(--bd);border-radius:9px;padding:10px 16px;text-align:center;transition:all .2s;min-width:80px}
+.stat-chip:hover{box-shadow:var(--glow)}
+.stat-gold{border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.06)}
+.stat-n{font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;color:#D4AF37;line-height:1}
+.stat-l{font-size:9px;color:#888;font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:3px}
+.view-btn{padding:7px 16px;background:#141414;border:var(--bd);border-radius:8px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;transition:all .2s}
+.view-btn:hover{border-color:rgba(212,175,55,.3);color:#FBCB57}
+.view-btn.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.4);color:#D4AF37}
+.btn-gold{background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:11px 20px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s;flex:1}
+.btn-gold:hover{box-shadow:0 0 18px rgba(212,175,55,.4);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:11px 16px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600}
+#ev-container{display:flex;flex-direction:column;gap:6px}
+.month-sep{font-family:'Montserrat',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(212,175,55,.5);margin:14px 0 6px;padding-left:4px;border-left:2px solid rgba(212,175,55,.3)}
+.month-sep:first-child{margin-top:0}
+.ev-card{background:#111;border:1px solid rgba(255,255,255,.04);border-radius:9px;padding:13px 14px;display:flex;align-items:flex-start;gap:12px;border-left:3px solid #D4AF37;transition:background .15s}
+.ev-card:hover{background:rgba(212,175,55,.03)}
+.ev-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ev-body{flex:1;min-width:0}
+.ev-tags{display:flex;gap:6px;align-items:center;margin-bottom:4px;flex-wrap:wrap}
+.ev-tag{font-size:9px;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:10px;border:1px solid transparent}
+.ev-oblig{font-size:9px;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#E24B4A;background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.2);border-radius:10px;padding:2px 7px}
+.ev-title{font-size:13px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:#888}
+.ev-desc{font-size:11px;color:#666;margin-top:5px;font-style:italic}
+.ev-actions{display:flex;gap:5px;flex-shrink:0}
+.ev-btn{background:transparent;border-radius:5px;padding:5px 8px;cursor:pointer;font-size:12px;transition:all .2s}
+.ev-edit{border:1px solid rgba(212,175,55,.2);color:#D4AF37}.ev-edit:hover{border-color:#D4AF37}
+.ev-del{border:1px solid rgba(226,75,74,.2);color:#E24B4A}.ev-del:hover{border-color:#E24B4A}
+.grid-nav{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.grid-nav-btn{background:#141414;border:var(--bd);border-radius:6px;color:#D4AF37;padding:7px 14px;cursor:pointer;font-size:15px;font-weight:700;transition:all .2s}
+.grid-nav-btn:hover{border-color:#D4AF37}
+.grid-month{flex:1;text-align:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;color:#D4AF37;letter-spacing:1px}
+.gpill{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:4px 12px;font-family:'Montserrat',sans-serif;font-size:11px;color:#D4AF37;font-weight:600}
+.grid-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+.grid-dh{text-align:center;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#444;padding:6px 0}
+.grid-cells{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.grid-cell{min-height:88px;background:#111;border:1px solid rgba(255,255,255,.04);border-radius:6px;padding:5px 4px;cursor:pointer;transition:all .15s;overflow:hidden}
+.grid-cell:hover{background:rgba(212,175,55,.06);border-color:rgba(212,175,55,.2)}
+.grid-cell.today{background:rgba(212,175,55,.05);border-color:rgba(212,175,55,.25)}
+.grid-cell.sel{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.45)}
+.grid-cell.empty{background:#0A0A0A;cursor:default}
+.grid-daynum{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#888;margin-bottom:3px;display:flex;align-items:center;gap:3px}
+.grid-cell.today .grid-daynum{color:#D4AF37;font-weight:900}
+.grid-dot-red{width:5px;height:5px;border-radius:50%;background:#E24B4A;display:inline-block}
+.grid-pill{font-size:8px;background:rgba(212,175,55,.08);color:#D4AF37;border-radius:2px;padding:2px 3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Montserrat',sans-serif;font-weight:600}
+.grid-detail{margin-top:12px;background:#141414;border:var(--bd);border-radius:10px;overflow:hidden}
+.grid-detail-hdr{padding:11px 14px;border-bottom:var(--bd);display:flex;align-items:center;justify-content:space-between}
+#form-modal{display:none}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal-box{background:#141414;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(580px,96vw);max-height:90vh;overflow-y:auto}
+.modal-hdr{background:#141414;border-bottom:1px solid rgba(212,175,55,.15);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1}
+.modal-close{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#888;padding:5px 10px;cursor:pointer;font-size:16px}
+.modal-body{padding:20px 22px}
+.form-field{margin-bottom:12px}
+.form-field label{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;display:block;margin-bottom:5px}
+.form-input{background:#1A1A1A;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.form-input:focus{border-color:rgba(212,175,55,.45)}
+.form-input option{background:#1A1A1A}
+.form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0}
+.pt2{display:flex;align-items:center;gap:11px;margin-bottom:16px;flex-wrap:wrap}
+.pt2 h2{font-family:'Montserrat',sans-serif;font-weight:700;font-size:16px}
+.dv{flex:1;height:1px;background:linear-gradient(to right,rgba(212,175,55,.2),transparent)}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.23);border-radius:2px}
+@media(max-width:680px){.form-grid2,.form-grid4{grid-template-columns:1fr 1fr}.ev-meta{gap:6px}}</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:52px">
+  <a href="ffp-accueil.html" style="display:flex;align-items:center;gap:10px;padding:7px 0;text-decoration:none;flex-shrink:0">
+    <img src="data:image/webp;base64,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" style="height:34px;filter:drop-shadow(0 0 8px rgba(212,175,55,.4))"/>
+    <div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37,#E6E6E6);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div>
+    <div style="font-size:8px;font-weight:600;letter-spacing:2px;color:#D4AF37;font-family:Montserrat,sans-serif;text-transform:uppercase">Vie du Club</div></div></a>
+  <span id="hdr-badge" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.28);border-radius:12px;padding:3px 10px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#D4AF37">U12 · 2026-27</span>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+    <div style="position:relative"><select id="cat-sel" onchange="setCat(this)" style="appearance:none;background:rgba(212,175,55,.07);color:#D4AF37;border:1px solid rgba(212,175,55,.3);border-radius:4px;padding:7px 30px 7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;outline:none"><option value="U6">U6</option><option value="U7">U7</option><option value="U8">U8</option><option value="U9">U9</option><option value="U10">U10</option><option value="U11">U11</option><option value="U12" selected>U12</option><option value="U13">U13</option><option value="U14">U14</option><option value="U15">U15</option><option value="U16">U16</option><option value="U17">U17</option><option value="U18">U18</option><option value="U19">U19</option><option value="U20">U20</option></select>
+    <div style="position:absolute;right:9px;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #D4AF37;pointer-events:none"></div></div>
+    <a href="ffp-accueil.html" style="border:1px solid rgba(212,175,55,.28);border-radius:6px;color:#888;padding:6px 12px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;text-decoration:none;white-space:nowrap">&#8592; Accueil</a>
+  </div></header>
+<main style="max-width:1100px;margin:0 auto;padding:22px 20px">
+  <div style="background:linear-gradient(135deg,rgba(212,175,55,.07),rgba(212,175,55,.02));border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:20px 24px;margin-bottom:18px;border-top:3px solid #D4AF37;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <span style="font-size:32px">🏟️</span>
+    <div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Vie du Club</div>
+    <div style="font-size:12px;color:#888;margin-top:3px">Matchs · Tournois · Entraînements · Stages · Événements</div></div>
+    <div style="text-align:center;flex-shrink:0"><div id="hero-cat" style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;color:#D4AF37">U12</div>
+    <div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;letter-spacing:1px;text-transform:uppercase">Saison 2026-27</div></div>
+  </div>
+  <div id="stats-bar"></div>
+  <div class="pt2">
+    <h2>Calendrier des événements</h2><div class="dv"></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <button class="view-btn on" onclick="setView('list',this)">📋 Liste</button>
+      <button class="view-btn" onclick="setView('grid',this)">📅 Calendrier</button>
+      <button onclick="goToday()" style="background:transparent;border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#888;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all .2s" onmouseover="this.style.borderColor='#D4AF37';this.style.color='#D4AF37'" onmouseout="this.style.borderColor='rgba(212,175,55,.2)';this.style.color='#888'">Aujourd'hui</button>
+      <button onclick="openForm(null)" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:7px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Ajouter</button>
+    </div>
+  </div>
+  <div id="ev-container"></div>
+</main>
+<div id="form-modal"></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — ffp-vie-club.js
+// ══════════════════════════════════════════════════════
+
+var LS_EVENTS = 'ffp_events';
+var CAT = 'U12';
+
+var DEMO_EVENTS = [
+  {id:'e01',type:'match',       title:'Match amical — FC Horizon',            date:'2026-07-05',time:'10:00',end_date:'2026-07-05',end_time:'12:00',location:'Terrain principal',desc:'Tenue domicile',mandatory:true},
+  {id:'e02',type:'entrainement',title:'Reprise — Tests physiques',             date:'2026-07-08',time:'17:30',end_date:'2026-07-08',end_time:'19:00',location:'Terrain 2',desc:'Présence obligatoire',mandatory:true},
+  {id:'e03',type:'entrainement',title:'Technique — Passes et contrôles',       date:'2026-07-10',time:'17:30',end_date:'2026-07-10',end_time:'19:00',location:'Terrain principal',desc:'',mandatory:false},
+  {id:'e04',type:'stage',       title:'Stage technique estival',               date:'2026-07-14',time:'09:00',end_date:'2026-07-18',end_time:'12:00',location:'Centre sportif municipal',desc:'5 jours · Sur inscription',mandatory:false},
+  {id:'e05',type:'tournoi',     title:"Tournoi de l'Amitié — District Nord",  date:'2026-07-19',time:'08:00',end_date:'2026-07-19',end_time:'18:00',location:'Complexe La Plaine',desc:'6 équipes · Journée complète',mandatory:false},
+  {id:'e06',type:'evenement',   title:'Journée cohésion — Karting',            date:'2026-07-23',time:'14:00',end_date:'2026-07-23',end_time:'18:00',location:'Karting les Pins',desc:'Optionnel',mandatory:false},
+  {id:'e07',type:'entrainement',title:'Tactique — Organisation défensive',     date:'2026-07-29',time:'17:30',end_date:'2026-07-29',end_time:'19:00',location:'Terrain principal',desc:'',mandatory:false},
+  {id:'e08',type:'entrainement',title:'Jeu en espace réduit — Pressing',       date:'2026-07-31',time:'17:30',end_date:'2026-07-31',end_time:'19:00',location:'Terrain 2',desc:'',mandatory:false},
+  {id:'e09',type:'match',       title:'Match amical — AS Voltaire',            date:'2026-08-02',time:'10:30',end_date:'2026-08-02',end_time:'12:30',location:'Terrain adverse',desc:'Covoiturage organisé',mandatory:false},
+  {id:'e10',type:'stage',       title:'Stage spécifique gardiens de but',      date:'2026-08-04',time:'09:00',end_date:'2026-08-08',end_time:'12:00',location:"Centre d'entraînement",desc:'Sur inscription',mandatory:false},
+  {id:'e11',type:'entrainement',title:'Préparation physique présaison',        date:'2026-08-12',time:'17:30',end_date:'2026-08-12',end_time:'19:00',location:'Terrain principal',desc:'',mandatory:false},
+  {id:'e12',type:'tournoi',     title:'Tournoi présaison — Coupe du district', date:'2026-08-16',time:'08:00',end_date:'2026-08-16',end_time:'18:00',location:'Stade municipal',desc:'8 équipes',mandatory:false},
+  {id:'e13',type:'evenement',   title:'Réunion parents-coaches',               date:'2026-08-23',time:'10:00',end_date:'2026-08-23',end_time:'12:00',location:'Salle des sports',desc:'Présence souhaitée',mandatory:false},
+  {id:'e14',type:'entrainement',title:'Tactique — Système 4-3-3',              date:'2026-08-26',time:'17:30',end_date:'2026-08-26',end_time:'19:00',location:'Terrain principal',desc:'',mandatory:false},
+  {id:'e15',type:'match',       title:'1er match officiel de championnat',     date:'2026-09-06',time:'10:00',end_date:'2026-09-06',end_time:'12:00',location:'À domicile',desc:'Tenue officielle',mandatory:true},
+  {id:'e16',type:'evenement',   title:"Photo officielle de l'équipe",          date:'2026-09-14',time:'09:00',end_date:'2026-09-14',end_time:'10:30',location:'Terrain principal',desc:'Tenue officielle complète',mandatory:false}
+];
+
+var TYPES = {
+  match:        {label:'Match',         ico:'⚽', color:'#D4AF37', bg:'rgba(212,175,55,.12)', border:'rgba(212,175,55,.3)'},
+  tournoi:      {label:'Tournoi',       ico:'🏆', color:'#A060E0', bg:'rgba(130,80,200,.12)', border:'rgba(130,80,200,.3)'},
+  entrainement: {label:'Entraînement',  ico:'🏃', color:'#4BC88A', bg:'rgba(75,200,138,.1)',  border:'rgba(75,200,138,.3)'},
+  stage:        {label:'Stage',         ico:'🎯', color:'#60A8D0', bg:'rgba(96,168,208,.1)',  border:'rgba(96,168,208,.3)'},
+  evenement:    {label:'Événement',     ico:'🎉', color:'#C89020', bg:'rgba(200,130,32,.1)',  border:'rgba(200,130,32,.3)'}
+};
+
+var MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
+var EVENTS = [];
+var VIEW = 'list'; // 'list' | 'grid'
+var GRID_YEAR = 2026;
+var GRID_MONTH = 6; // 0-based
+var SELECTED_DAY = null;
+var EDITING_ID = null;
+
+// ── Load / Save ──
+function loadEvents() {
+  try {
+    var raw = localStorage.getItem(LS_EVENTS);
+    if (raw) {
+      EVENTS = JSON.parse(raw);
+    } else {
+      EVENTS = JSON.parse(JSON.stringify(DEMO_EVENTS));
+      saveEvents();
+    }
+  } catch(e) {
+    EVENTS = JSON.parse(JSON.stringify(DEMO_EVENTS));
+  }
+  EVENTS.sort(function(a,b){ return a.date.localeCompare(b.date)||a.time.localeCompare(b.time); });
+}
+
+function saveEvents() {
+  try { localStorage.setItem(LS_EVENTS, JSON.stringify(EVENTS)); } catch(e) {}
+}
+
+function genId() { return 'ev_' + Date.now() + '_' + Math.floor(Math.random()*1000); }
+
+// ── Date formatting ──
+function fmtDate(d) {
+  if(!d) return '';
+  var p = d.split('-');
+  if(p.length < 3) return d;
+  return parseInt(p[2]) + ' ' + MOIS[parseInt(p[1])-1] + ' ' + p[0];
+}
+function fmtRange(ev) {
+  if(!ev.end_date || ev.end_date === ev.date) return fmtDate(ev.date);
+  return fmtDate(ev.date) + ' → ' + fmtDate(ev.end_date);
+}
+function monthKey(d) { return d ? d.slice(0,7) : ''; }
+
+// ── Stats bar ──
+function renderStats() {
+  var sb = document.getElementById('stats-bar');
+  if(!sb) return;
+  var types = ['match','tournoi','entrainement','stage','evenement'];
+  var total = EVENTS.length;
+  var html = '<div class="stat-chip stat-gold">'
+    + '<div class="stat-n">' + total + '</div>'
+    + '<div class="stat-l">Total</div>'
+    + '</div>';
+  types.forEach(function(t) {
+    var n = EVENTS.filter(function(e){ return e.type===t; }).length;
+    var ty = TYPES[t] || TYPES.evenement;
+    html += '<div class="stat-chip" style="border-color:' + ty.border + '">'
+      + '<div style="font-size:16px;margin-bottom:3px">' + ty.ico + '</div>'
+      + '<div class="stat-n" style="color:' + ty.color + ';font-size:18px">' + n + '</div>'
+      + '<div class="stat-l">' + ty.label + 's</div>'
+      + '</div>';
+  });
+  sb.innerHTML = html;
+}
+
+// ── Event card (list view) ──
+function eventCard(ev) {
+  var ty = TYPES[ev.type] || TYPES.evenement;
+  return '<div class="ev-card" style="border-left-color:' + ty.color + '">'
+    + '<div class="ev-icon" style="background:' + ty.bg + '">' + ty.ico + '</div>'
+    + '<div class="ev-body">'
+      + '<div class="ev-tags">'
+        + '<span class="ev-tag" style="color:' + ty.color + ';border-color:' + ty.border + '">' + ty.label + '</span>'
+        + (ev.mandatory ? '<span class="ev-oblig">Obligatoire</span>' : '')
+      + '</div>'
+      + '<div class="ev-title">' + ev.title + '</div>'
+      + '<div class="ev-meta">'
+        + '<span>📅 ' + fmtRange(ev) + '</span>'
+        + (ev.time ? '<span>🕐 ' + ev.time + (ev.end_time ? ' → ' + ev.end_time : '') + '</span>' : '')
+        + (ev.location ? '<span>📍 ' + ev.location + '</span>' : '')
+      + '</div>'
+      + (ev.desc ? '<div class="ev-desc">' + ev.desc + '</div>' : '')
+    + '</div>'
+    + '<div class="ev-actions">'
+      + '<button class="ev-btn ev-edit" onclick="openForm(\'' + ev.id + '\')">✏️</button>'
+      + '<button class="ev-btn ev-del" onclick="deleteEvent(\'' + ev.id + '\')">🗑</button>'
+    + '</div>'
+  + '</div>';
+}
+
+// ── Render list ──
+function renderList() {
+  var container = document.getElementById('ev-container');
+  if(!container) return;
+  if(EVENTS.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:48px;color:#444">'
+      + '<div style="font-size:36px;margin-bottom:12px">📅</div>'
+      + '<div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucun événement</div>'
+      + '<div style="font-size:12px;margin-top:6px">Cliquez <strong style="color:#D4AF37">+ Ajouter</strong> pour créer le premier événement</div>'
+      + '</div>';
+    return;
+  }
+  // Group by month
+  var groups = {};
+  var order = [];
+  EVENTS.forEach(function(ev) {
+    var mk = monthKey(ev.date);
+    if(!groups[mk]) { groups[mk] = []; order.push(mk); }
+    groups[mk].push(ev);
+  });
+  var html = '';
+  order.forEach(function(mk) {
+    var parts = mk.split('-');
+    var label = MOIS[parseInt(parts[1])-1] + ' ' + parts[0];
+    html += '<div class="month-sep">' + label + '</div>';
+    groups[mk].forEach(function(ev) { html += eventCard(ev); });
+  });
+  container.innerHTML = html;
+}
+
+// ── Render grid ──
+function renderGrid() {
+  var container = document.getElementById('ev-container');
+  if(!container) return;
+  var year = GRID_YEAR, month = GRID_MONTH;
+  var monthStr = year + '-' + String(month+1).padStart(2,'0');
+  var mEvts = EVENTS.filter(function(ev){ return ev.date.startsWith(monthStr)||((ev.end_date||ev.date).startsWith(monthStr)); });
+  var today = new Date();
+  var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  var firstDay = new Date(year, month, 1).getDay();
+  var firstMon = (firstDay+6)%7;
+  var daysInMonth = new Date(year, month+1, 0).getDate();
+
+  var html = '<div class="grid-nav">'
+    + '<button class="grid-nav-btn" onclick="gridPrev()">‹</button>'
+    + '<div class="grid-month">' + MOIS[month] + ' ' + year + '</div>'
+    + '<button class="grid-nav-btn" onclick="gridNext()">›</button>'
+    + '<span class="gpill">' + mEvts.length + ' événement' + (mEvts.length!==1?'s':'') + '</span>'
+    + '</div>';
+
+  // Day headers
+  html += '<div class="grid-days">';
+  JOURS.forEach(function(j){ html += '<div class="grid-dh">' + j + '</div>'; });
+  html += '</div>';
+
+  // Grid cells
+  html += '<div class="grid-cells">';
+  for(var i=0;i<firstMon;i++) html += '<div class="grid-cell empty"></div>';
+
+  for(var d=1; d<=daysInMonth; d++) {
+    var ds = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var dayEvts = EVENTS.filter(function(ev){ return ds>=ev.date&&ds<=(ev.end_date||ev.date); });
+    var isToday = ds===todayStr;
+    var isSel = SELECTED_DAY===ds;
+    html += '<div class="grid-cell'+(isToday?' today':'')+(isSel?' sel':'')+'" onclick="selectDay(\''+ds+'\''+')">';
+    html += '<div class="grid-daynum">' + d + (dayEvts.some(function(e){return e.mandatory;})?'<span class="grid-dot-red"></span>':'') + '</div>';
+    dayEvts.slice(0,3).forEach(function(ev){
+      var ty=TYPES[ev.type]||TYPES.evenement;
+      html += '<div class="grid-pill" style="background:'+ty.bg+';color:'+ty.color+';border-left:2px solid '+ty.color+'">'+ty.ico+' '+ev.title+'</div>';
+    });
+    if(dayEvts.length>3) html += '<div style="font-size:9px;color:#666;font-family:Montserrat,sans-serif">+' + (dayEvts.length-3) + '</div>';
+    html += '</div>';
+  }
+  // Fill remaining cells
+  var total = firstMon+daysInMonth;
+  var rem = total%7; if(rem>0) for(var j=0;j<7-rem;j++) html += '<div class="grid-cell empty"></div>';
+  html += '</div>';
+
+  // Selected day detail
+  if(SELECTED_DAY) {
+    var selEvts = EVENTS.filter(function(ev){ return SELECTED_DAY>=ev.date&&SELECTED_DAY<=(ev.end_date||ev.date); });
+    html += '<div class="grid-detail">'
+      + '<div class="grid-detail-hdr"><span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#D4AF37">' + fmtDate(SELECTED_DAY) + '</span>'
+      + '<button onclick="openForm(null)" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase">+ Ajouter</button>'
+      + '</div>';
+    if(selEvts.length===0) {
+      html += '<div style="padding:16px;text-align:center;color:#444;font-size:12px">Aucun événement ce jour</div>';
+    } else {
+      selEvts.forEach(function(ev){ html += eventCard(ev); });
+    }
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function gridPrev() {
+  if(GRID_MONTH===0){GRID_MONTH=11;GRID_YEAR--;}else GRID_MONTH--;
+  SELECTED_DAY=null; renderView();
+}
+function gridNext() {
+  if(GRID_MONTH===11){GRID_MONTH=0;GRID_YEAR++;}else GRID_MONTH++;
+  SELECTED_DAY=null; renderView();
+}
+function selectDay(ds) {
+  SELECTED_DAY = SELECTED_DAY===ds?null:ds;
+  renderView();
+}
+
+// ── Toggle view ──
+function setView(v, btn) {
+  VIEW = v;
+  document.querySelectorAll('.view-btn').forEach(function(b){ b.classList.remove('on'); });
+  if(btn&&btn.classList) btn.classList.add('on');
+  SELECTED_DAY = null;
+  renderView();
+}
+
+function goToday() {
+  var now = new Date();
+  GRID_YEAR = now.getFullYear(); GRID_MONTH = now.getMonth();
+  SELECTED_DAY = null;
+  if(VIEW==='grid') renderView();
+  else {
+    // Scroll to today's month in list
+    var todayMk = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    renderView();
+    var seps = document.querySelectorAll('.month-sep');
+    seps.forEach(function(s){ if(s.textContent.indexOf(MOIS[now.getMonth()])>=0) s.scrollIntoView({behavior:'smooth'}); });
+  }
+}
+
+function renderView() {
+  renderStats();
+  if(VIEW==='grid') renderGrid();
+  else renderList();
+}
+
+// ── Add/Edit form ──
+function openForm(evtId) {
+  EDITING_ID = evtId;
+  var ev = evtId ? EVENTS.find(function(e){ return e.id===evtId; }) : null;
+  var modal = document.getElementById('form-modal');
+  if(!modal) return;
+  var typeOpts = Object.keys(TYPES).map(function(k){
+    return '<option value="'+k+'"'+(ev&&ev.type===k?' selected':'')+'>'+TYPES[k].ico+' '+TYPES[k].label+'</option>';
+  }).join('');
+  modal.innerHTML = '<div class="modal-bg" onclick="if(event.target===this)closeForm()">'
+    +'<div class="modal-box">'
+      +'<div class="modal-hdr">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#D4AF37">'+(ev?'Modifier':'Nouvel événement')+'</div>'
+        +'<button onclick="closeForm()" class="modal-close">×</button>'
+      +'</div>'
+      +'<div class="modal-body">'
+        +'<div class="form-grid2">'
+          +'<div class="form-field"><label>Type</label><select class="form-input" id="f-type">'+typeOpts+'</select></div>'
+          +'<div class="form-field"><label>Obligatoire ?</label><select class="form-input" id="f-mand"><option value="0">Non</option><option value="1"'+(ev&&ev.mandatory?' selected':'')+'>Oui</option></select></div>'
+        +'</div>'
+        +'<div class="form-field"><label>Titre *</label><input class="form-input" id="f-title" type="text" value="'+(ev?ev.title:'')+'" placeholder="Ex: Match amical — FC Horizon"></div>'
+        +'<div class="form-grid4">'
+          +'<div class="form-field"><label>Date début *</label><input class="form-input" id="f-date" type="date" value="'+(ev?ev.date:SELECTED_DAY||'')+'">'+'</div>'
+          +'<div class="form-field"><label>Heure début</label><input class="form-input" id="f-time" type="time" value="'+(ev?ev.time:'')+'">'+'</div>'
+          +'<div class="form-field"><label>Date fin</label><input class="form-input" id="f-edate" type="date" value="'+(ev?ev.end_date||ev.date:'')+'">'+'</div>'
+          +'<div class="form-field"><label>Heure fin</label><input class="form-input" id="f-etime" type="time" value="'+(ev?ev.end_time||'':'')+'">'+'</div>'
+        +'</div>'
+        +'<div class="form-field"><label>Lieu</label><input class="form-input" id="f-loc" type="text" value="'+(ev?ev.location||'':'')+'" placeholder="Ex: Terrain principal"></div>'
+        +'<div class="form-field"><label>Description / Infos</label><textarea class="form-input" id="f-desc" rows="2" style="resize:vertical">'+(ev?ev.desc||'':'')+'</textarea></div>'
+        +'<div id="f-err" style="min-height:18px;font-size:12px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:10px"></div>'
+        +'<div style="display:flex;gap:10px">'
+          +'<button onclick="saveForm()" class="btn-gold">'+( ev?'Enregistrer':'Ajouter')+'</button>'
+          +'<button onclick="closeForm()" class="btn-ghost">Annuler</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+  modal.style.display = 'block';
+}
+
+function closeForm() {
+  var m = document.getElementById('form-modal');
+  if(m) m.style.display = 'none';
+  EDITING_ID = null;
+}
+
+function saveForm() {
+  var title = (document.getElementById('f-title')||{}).value||'';
+  var date  = (document.getElementById('f-date')||{}).value||'';
+  title = title.trim();
+  if(!title||!date) {
+    var fe=document.getElementById('f-err'); if(fe) fe.textContent='Titre et date sont obligatoires.';
+    return;
+  }
+  var ev = {
+    id: EDITING_ID || genId(),
+    type:     (document.getElementById('f-type')||{}).value||'evenement',
+    mandatory:(document.getElementById('f-mand')||{}).value==='1',
+    title:    title,
+    date:     date,
+    time:     (document.getElementById('f-time')||{}).value||'',
+    end_date: (document.getElementById('f-edate')||{}).value||date,
+    end_time: (document.getElementById('f-etime')||{}).value||'',
+    location: (document.getElementById('f-loc')||{}).value||'',
+    desc:     (document.getElementById('f-desc')||{}).value||''
+  };
+  if(EDITING_ID) {
+    var idx = EVENTS.findIndex(function(e){ return e.id===EDITING_ID; });
+    if(idx>=0) EVENTS[idx] = ev; else EVENTS.push(ev);
+  } else {
+    EVENTS.push(ev);
+  }
+  EVENTS.sort(function(a,b){ return a.date.localeCompare(b.date)||a.time.localeCompare(b.time); });
+  saveEvents();
+  closeForm();
+  // Navigate to the event's month in grid view
+  if(date) { var p=date.split('-'); GRID_YEAR=+p[0]; GRID_MONTH=+p[1]-1; }
+  renderView();
+}
+
+function deleteEvent(evtId) {
+  if(!confirm('Supprimer cet événement ?')) return;
+  EVENTS = EVENTS.filter(function(e){ return e.id!==evtId; });
+  saveEvents();
+  SELECTED_DAY = null;
+  renderView();
+}
+
+function setCat(sel) {
+  CAT = sel.value;
+  var b = document.getElementById('hdr-badge'); if(b) b.textContent = CAT+' · 2026-27';
+  var h = document.getElementById('hero-cat'); if(h) h.textContent = CAT;
+}
+
+// ── INIT ──
+function init() {
+  loadEvents();
+  // Auto-navigate to next event month
+  var now = new Date();
+  var todayStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var upcoming = EVENTS.filter(function(e){ return e.date >= todayStr; });
+  if(upcoming.length > 0) {
+    var p = upcoming[0].date.split('-');
+    GRID_YEAR = +p[0]; GRID_MONTH = +p[1]-1;
+  }
+  renderView();
+}
+
+init();
+
+</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('ffp-sw.js').catch(function(){});</script>
+</body>
+</html>

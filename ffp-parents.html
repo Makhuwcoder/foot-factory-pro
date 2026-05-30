@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Espace Parents</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 52px);padding:24px;position:relative;z-index:1}
+.login-card{background:#0A0D10;border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:36px 40px;width:min(400px,92vw);text-align:center;box-shadow:0 0 60px rgba(212,175,55,.06)}
+.pin-box{width:54px;height:64px;background:#111;border:2px solid rgba(212,175,55,.2);border-radius:10px;font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:#D4AF37;text-align:center;outline:none;caret-color:transparent;transition:border-color .2s}
+.pin-box:focus{border-color:rgba(212,175,55,.7);box-shadow:0 0 12px rgba(212,175,55,.2)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Espace Parents</div></div></a><div style="margin-left:auto;display:flex;gap:6px;align-items:center"><button id="logout-btn" onclick="clearSession()" style="display:none;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#888;padding:5px 11px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;text-transform:uppercase">Déconnexion</button><a href="ffp-messagerie.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">✉️ Messages</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
+<div id="s-login" class="screen" style="display:flex"><img src="data:image/webp;base64,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" style="width:min(90px,22vw);margin-bottom:14px;filter:drop-shadow(0 0 18px rgba(212,175,55,.4))"/><div class="login-card"><div style="font-size:26px;margin-bottom:10px">🫂</div><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:4px">Espace Parents</div><p style="font-size:12px;color:#888;margin-bottom:20px;line-height:1.6">Entrez le code à 4 chiffres<br>fourni par votre coach</p><div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:8px;padding:8px 12px;margin-bottom:16px;font-size:11px;color:#888;text-align:left">Code démo : <strong style="color:#D4AF37">1001</strong> à <strong style="color:#D4AF37">1030</strong></div><div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px"><input class="pin-box" id="d0" type="text" maxlength="1" inputmode="numeric" autocomplete="off"><input class="pin-box" id="d1" type="text" maxlength="1" inputmode="numeric" autocomplete="off"><input class="pin-box" id="d2" type="text" maxlength="1" inputmode="numeric" autocomplete="off"><input class="pin-box" id="d3" type="text" maxlength="1" inputmode="numeric" autocomplete="off"></div><div id="p-err" style="display:none;color:#E24B4A;font-size:12px;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:10px"></div><button onclick="loginWithCode(PIN_CODE.join(''))" style="width:100%;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Accéder à mon espace →</button></div></div>
+<div id="s-view" style="display:none;position:relative;z-index:1"><div style="max-width:1100px;margin:0 auto;padding:20px 18px"><div id="view-content"></div></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — ESPACE PARENTS v3 (fixed)
+// Code parent = 1001 + index original (0-29)
+// ══════════════════════════════════════════════════════
+var LS_SESSION  = 'ffp_session';
+var LS_MESSAGES = 'ffp_messages';
+var LS_EVENTS   = 'ffp_events';
+
+var PN=['Thomas','Arthur','Sacha','Kylian','Léo','Hugo','Mathieu','Théo','Enzo','Nathan',
+        'Lucas','Antoine','Maxime','Julien','Baptiste','Romain','Pierre','Clément','Nicolas','Valentin',
+        'Alexis','Quentin','Louis','Gabriel','Tom','Noa','Liam','Yanis','Ryan','Axel'];
+var NN=['Bernard','Morel','Renard','Faure','Dubois','Martin','Laurent','Simon','Leroy','Dupont',
+        'Moreau','Petit','Richard','Robert','Durand','Leblanc','Garnier','Girard','Boyer','Rousseau',
+        'Chevalier','André','Michel','Henry','Gilles','Roux','François','Blanc','Guérin','Robin'];
+var POS=['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif',
+         'Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
+var PROFS=['elite','elite','good','good','good','good','good',
+           'average','average','average','average','average','average','average','average',
+           'developing','developing','developing','developing','developing','developing','developing',
+           'beginner','beginner','beginner','beginner','beginner','beginner','beginner','beginner'];
+var BASE={elite:8.4,good:7.0,average:5.6,developing:4.4,beginner:3.2};
+var POT={elite:'Elite',good:'Confirmé',average:'Développement',developing:'Formation',beginner:'Débutant'};
+var POT_COL={elite:'#4BC88A',good:'#D4AF37',average:'#60A8D0',developing:'#C89020',beginner:'#888'};
+var EXERCISES={
+  technique:['Jonglerie 3×2min','Passes contre mur 10min','Contrôle balle de l\'air','Dribble slalom 5×'],
+  physique:['Course fartlek 20min','Gainage 3×30s','Sauts latéraux 3×15','Sprint navette 6×'],
+  tactique:['Vidéo 15min avant match','Exercice positionnement','Communication équipe'],
+  mental:['Visualisation positive 5min','Routine pré-match','Journal de performance'],
+  culture:['Lecture règlement FIFA','Nutrition : fruits avant entraînement','Sommeil 9h minimum']
+};
+
+function rng(s){var x=s;return function(){x=(x*1664525+1013904223)>>>0;return x/0xFFFFFFFF;};}
+function clamp(v){return Math.max(1,Math.min(10,+v.toFixed(1)));}
+
+// CODE = 1001 + original_index (fixe, indépendant du tri)
+function playerCode(idx){return String(1001+idx);}
+
+function mkPlayer(i){
+  var r=rng(i*7919+31337);
+  var b=BASE[PROFS[i]];
+  var v=function(){return +clamp(b+(r()*4-2)).toFixed(1);};
+  var poste=POS[Math.floor(r()*POS.length)];
+  var naissance=new Date(2013-Math.floor(r()*2),Math.floor(r()*12),Math.floor(r()*28)+1);
+  var sc={
+    technique:{controle:v(),dribble:v(),frappe:v(),passe:v(),tete:v()},
+    physique:{vitesse:v(),endurance:v(),force:v(),coordination:v(),souplesse:v()},
+    tactique:{positionnement:v(),lecture:v(),pressing:v()},
+    mental:{motivation:v(),concentration:v(),combativite:v(),leadership:v(),stress:v()},
+    culture:{reglesFIFA:v(),nutrition:v(),scolaire:v(),ethique:v()}
+  };
+  var avg=function(c){var vals=Object.values(sc[c]);return vals.reduce(function(a,b){return a+b;},0)/vals.length;};
+  var cats={
+    technique:+avg('technique').toFixed(2),physique:+avg('physique').toFixed(2),
+    tactique:+avg('tactique').toFixed(2),mental:+avg('mental').toFixed(2),culture:+avg('culture').toFixed(2)
+  };
+  var global=+(cats.technique*.3+cats.physique*.25+cats.tactique*.2+cats.mental*.15+cats.culture*.1).toFixed(2);
+  return{
+    idx:i,code:playerCode(i),
+    prenom:PN[i],nom:NN[i],poste:poste,numero:i+1,
+    dob:naissance.toISOString().slice(0,10),
+    age:new Date().getFullYear()-naissance.getFullYear(),
+    taille:148+Math.floor(r()*20),poids:38+Math.floor(r()*18),
+    pied:r()>0.2?'Droit':'Gauche',
+    scores:cats,details:sc,global:global,prof:PROFS[i]
+  };
+}
+
+var ALL_PLAYERS=[];
+for(var _i=0;_i<30;_i++){ALL_PLAYERS.push(mkPlayer(_i));}
+
+// Sort for ranking but keep original index/code
+var sorted=ALL_PLAYERS.slice().sort(function(a,b){return b.global-a.global;});
+sorted.forEach(function(p,i){p.rank=i+1;p.equipe='Équipe '+(i<10?'1':i<20?'2':'3');});
+
+// ── State ──
+var CURRENT = null;
+var PIN_CODE = ['','','',''];
+
+// ── Session ──
+function getSession(){
+  try{var r=localStorage.getItem(LS_SESSION);if(!r)return null;var d=JSON.parse(r);if(d._exp&&Date.now()>d._exp){localStorage.removeItem(LS_SESSION);return null;}return d;}catch(e){return null;}
+}
+function saveSession(code){
+  var sess={role:'parent',player_code:code,_exp:Date.now()+24*60*60*1000};
+  try{localStorage.setItem(LS_SESSION,JSON.stringify(sess));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(LS_SESSION);}catch(e){}window.location.href='ffp-accueil.html';}
+
+// ── Login ──
+function loginWithCode(code){
+  var player=ALL_PLAYERS.find(function(p){return p.code===code;});
+  if(!player){showLoginErr('Code incorrect. Vérifiez avec votre coach.');return;}
+  CURRENT=player;
+  saveSession(code);
+  showView();
+}
+
+function showLoginErr(msg){
+  var e=document.getElementById('p-err');if(e){e.textContent=msg;e.style.display='block';}
+  PIN_CODE=['','','',''];
+  updatePinDisplay();
+  var d=document.getElementById('d0');if(d)d.focus();
+}
+
+function clearErr(){
+  var e=document.getElementById('p-err');if(e){e.textContent='';e.style.display='none';}
+}
+
+// ── PIN input ──
+function setupPIN(){
+  for(var i=0;i<4;i++){
+    (function(idx){
+      var el=document.getElementById('d'+idx);if(!el)return;
+      el.addEventListener('keydown',function(e){
+        if(e.key>='0'&&e.key<='9'){
+          PIN_CODE[idx]=e.key;
+          el.value=e.key;
+          clearErr();
+          if(idx<3){var next=document.getElementById('d'+(idx+1));if(next)next.focus();}
+          else{
+            var code=PIN_CODE.join('');
+            if(code.length===4)setTimeout(function(){loginWithCode(code);},150);
+          }
+          e.preventDefault();
+        } else if(e.key==='Backspace'){
+          PIN_CODE[idx]='';el.value='';
+          if(idx>0){var prev=document.getElementById('d'+(idx-1));if(prev){prev.value='';prev.focus();}}
+          e.preventDefault();
+        } else if(e.key==='Enter'){
+          var code=PIN_CODE.join('');if(code.length===4)loginWithCode(code);
+        }
+      });
+      el.addEventListener('click',function(){el.select();});
+    })(i);
+  }
+}
+
+function updatePinDisplay(){
+  for(var i=0;i<4;i++){var el=document.getElementById('d'+i);if(el)el.value=PIN_CODE[i]||'';}
+}
+
+// ── Screen toggle ──
+function showLogin(){
+  var l=document.getElementById('s-login');var v=document.getElementById('s-view');
+  if(l)l.style.display='flex';if(v)v.style.display='none';
+  var lb=document.getElementById('logout-btn');if(lb)lb.style.display='none';
+}
+function showView(){
+  var l=document.getElementById('s-login');var v=document.getElementById('s-view');
+  if(l)l.style.display='none';if(v){v.style.display='block';}
+  var lb=document.getElementById('logout-btn');if(lb)lb.style.display='flex';
+  renderPlayer();
+}
+
+// ── Render player profile ──
+function renderPlayer(){
+  var p=CURRENT;if(!p)return;
+  var el=document.getElementById('view-content');if(!el)return;
+  var scCol=function(s){return s>=7.5?'#4BC88A':s>=6?'#D4AF37':s>=5?'#C89020':'#888';};
+  var gc=scCol(p.global);
+
+  // Find weakest cat for exercises
+  var catKeys=['technique','physique','tactique','mental','culture'];
+  var weakest=catKeys.reduce(function(a,b){return p.scores[a]<p.scores[b]?a:b;});
+  var exercises=EXERCISES[weakest]||EXERCISES.technique;
+
+  // Radar SVG 5 categories
+  var cats5=['TECH','PHYS','TACT','MENT','CULT'];
+  var vals5=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture];
+  var CX=140,CY=130,R=95;
+  var ang5=cats5.map(function(_,i){return -Math.PI/2+i*2*Math.PI/5;});
+  var pt5=function(v,i){return [+(CX+R*(v/10)*Math.cos(ang5[i])).toFixed(1),+(CY+R*(v/10)*Math.sin(ang5[i])).toFixed(1)];};
+  var radarSVG='<svg viewBox="0 0 280 260" width="100%" style="max-width:260px;display:block;margin:0 auto">'
+    +[2,4,6,8,10].map(function(g){return '<polygon points="'+ang5.map(function(_,i){return pt5(g,i).join(',');}).join(' ')+'" fill="none" stroke="rgba(212,175,55,0.07)" stroke-width="1"/>';}).join('')
+    +ang5.map(function(_,i){var xy=pt5(10,i);return '<line x1="'+CX+'" y1="'+CY+'" x2="'+xy[0]+'" y2="'+xy[1]+'" stroke="rgba(212,175,55,0.08)" stroke-width="1"/>';}).join('')
+    +'<polygon points="'+vals5.map(function(v,i){return pt5(v,i).join(',');}).join(' ')+'" fill="rgba(212,175,55,0.12)" stroke="#D4AF37" stroke-width="2.5"/>'
+    +vals5.map(function(v,i){var xy=pt5(v,i);return '<circle cx="'+xy[0]+'" cy="'+xy[1]+'" r="4.5" fill="#D4AF37" stroke="#0A0800" stroke-width="1.5"/>';}).join('')
+    +cats5.map(function(c,i){var xy=pt5(13,i);return '<text x="'+xy[0]+'" y="'+xy[1]+'" text-anchor="middle" dominant-baseline="middle" font-size="9" fill="#666" font-family="Montserrat,sans-serif" font-weight="700">'+c+'</text>';}).join('')
+    +'</svg>';
+
+  // Score bars
+  var catBars=catKeys.map(function(c){
+    var v=p.scores[c];var col=scCol(v);
+    var label={technique:'Technique',physique:'Physique',tactique:'Tactique',mental:'Mental',culture:'Culture football'}[c];
+    return '<div style="margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+        +'<span style="font-size:12px;font-weight:600;color:'+col+'">'+label+'</span>'
+        +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:'+col+'">'+v.toFixed(1)+'/10</span>'
+      +'</div>'
+      +'<div style="height:6px;background:#1A1A1A;border-radius:3px;overflow:hidden">'
+        +'<div style="height:100%;background:'+col+';border-radius:3px;width:'+(v*10)+'%;transition:width 1s ease"></div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+
+  // Events
+  var evtHTML='';
+  try{
+    var rawEvts=localStorage.getItem(LS_EVENTS);
+    var evts=rawEvts?JSON.parse(rawEvts):generateDemoEvents();
+    var upcoming=evts.filter(function(e){return new Date(e.date)>=new Date();}).slice(0,4);
+    var ico={match:'⚽',entrainement:'🏃',tournoi:'🏆',stage:'🎯',réunion:'📋'};
+    var col2={match:'#D4AF37',entrainement:'#4BC88A',tournoi:'#A060E0',stage:'#60A8D0',réunion:'#C89020'};
+    if(upcoming.length){
+      evtHTML=upcoming.map(function(e){
+        var c=col2[e.type]||'#888';
+        return '<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:center">'
+          +'<div style="text-align:center;min-width:38px;background:'+c+'15;border:1px solid '+c+'33;border-radius:7px;padding:6px 4px">'
+            +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:'+c+'">'+e.date.slice(8)+'</div>'
+            +'<div style="font-size:9px;color:#666">'+['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][parseInt(e.date.slice(5,7))-1]+'</div>'
+          +'</div>'
+          +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+e.titre+'</div>'
+          +'<div style="font-size:10px;color:#666">'+(e.heure||'')+(e.lieu?' · '+e.lieu:'')+'</div></div>'
+          +(e.obligatoire?'<span style="font-size:9px;background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.25);border-radius:5px;padding:2px 7px;color:#E24B4A;font-family:Montserrat,sans-serif;font-weight:700">Obligatoire</span>':'')
+        +'</div>';
+      }).join('');
+    } else {evtHTML='<p style="font-size:12px;color:#444;text-align:center;padding:16px">Aucun événement à venir</p>';}
+  }catch(e){evtHTML='<p style="font-size:12px;color:#444;padding:12px">Calendrier indisponible</p>';}
+
+  // Unread messages count
+  var unreadCount=0;
+  try{
+    var msgs=JSON.parse(localStorage.getItem(LS_MESSAGES)||'[]');
+    unreadCount=msgs.filter(function(m){
+      return m.from==='coach'&&(m.to==='all'||m.to===p.code)&&m.read_by.indexOf('parent_'+p.code)<0;
+    }).length;
+  }catch(e){}
+
+  el.innerHTML=
+  // ── Header joueur ──
+  '<div style="background:linear-gradient(135deg,#0D0B05,#141410);border:1px solid rgba(212,175,55,.35);border-radius:14px;padding:20px 22px;margin-bottom:16px;border-top:3px solid '+gc+'">'
+    +'<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
+      +'<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1A1200,#2A1E00);border:2px solid rgba(212,175,55,.4);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;color:#D4AF37;position:relative;flex-shrink:0">'
+        +p.prenom[0]+p.nom[0]
+        +'<div style="position:absolute;bottom:0;right:0;background:#D4AF37;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:9px;color:#000;border:1.5px solid #000">'+p.numero+'</div>'
+      +'</div>'
+      +'<div style="flex:1">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(16px,3vw,22px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:3px">'+p.prenom+' '+p.nom+'</div>'
+        +'<div style="font-size:11px;color:#888;margin-bottom:5px">'+p.poste+' · Pied '+p.pied+' · '+p.age+' ans · '+p.taille+'cm · '+p.poids+'kg</div>'
+        +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+          +'<span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:2px 9px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700">#'+p.rank+' / 30</span>'
+          +'<span style="font-size:9px;background:'+POT_COL[p.prof]+'22;border:1px solid '+POT_COL[p.prof]+'44;border-radius:8px;padding:2px 9px;color:'+POT_COL[p.prof]+';font-family:Montserrat,sans-serif;font-weight:700">'+POT[p.prof]+'</span>'
+          +'<span style="font-size:9px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.15);border-radius:8px;padding:2px 9px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:600">'+p.equipe+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="text-align:center;flex-shrink:0">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:36px;color:'+gc+';line-height:1">'+p.global.toFixed(2)+'</div>'
+        +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:1px">Score IA</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>'
+
+  // ── Grid 2 colonnes ──
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'
+    // Radar
+    +'<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px">Radar compétences</div>'
+      +radarSVG
+    +'</div>'
+    // Score bars
+    +'<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px">Scores détaillés</div>'
+      +catBars
+    +'</div>'
+  +'</div>'
+
+  // ── Programme IA ──
+  +'<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:14px">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#60A8D0">🤖 Programme IA — Semaine en cours</div>'
+      +'<span style="font-size:9px;background:rgba(96,168,208,.08);border:1px solid rgba(96,168,208,.2);border-radius:8px;padding:1px 8px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:600">Focus: '+{technique:'Technique',physique:'Physique',tactique:'Tactique',mental:'Mental',culture:'Culture'}[weakest]+'</span>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">'
+    +exercises.map(function(ex,i){
+      var icos=['🎯','💪','🧠','📚'];
+      return '<div style="display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:rgba(96,168,208,.04);border:1px solid rgba(96,168,208,.1);border-radius:8px">'
+        +'<span style="font-size:16px;flex-shrink:0">'+icos[i%4]+'</span>'
+        +'<span style="font-size:12px;color:#C0C0C0;line-height:1.4">'+ex+'</span>'
+      +'</div>';
+    }).join('')
+    +'</div>'
+  +'</div>'
+
+  // ── Événements + Messagerie ──
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'
+    +'<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37">📅 Événements à venir</div>'
+        +'<a href="ffp-vie-club.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#D4AF37;text-decoration:none">Voir tout →</a>'
+      +'</div>'
+      +evtHTML
+    +'</div>'
+    +'<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px">Accès rapide</div>'
+      +'<div style="display:flex;flex-direction:column;gap:8px">'
+      +'<a href="ffp-messagerie.html" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);border-radius:9px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(212,175,55,.4)\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.15)\'">'
+        +'<span style="font-size:20px">✉️</span>'
+        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#D4AF37">Messagerie</div><div style="font-size:10px;color:#888">Coach ↔ Parents</div></div>'
+        +(unreadCount>0?'<span style="background:#E24B4A;color:#fff;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800">'+unreadCount+'</span>':'')
+      +'</a>'
+      +'<a href="ffp-media.html" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(160,96,224,.04);border:1px solid rgba(160,96,224,.15);border-radius:9px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(160,96,224,.4)\'" onmouseout="this.style.borderColor=\'rgba(160,96,224,.15)\'">'
+        +'<span style="font-size:20px">🎬</span>'
+        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#A060E0">Profil Media</div><div style="font-size:10px;color:#888">Highlights · CV Sportif</div></div>'
+        +'<span style="color:#A060E0;font-size:12px">→</span>'
+      +'</a>'
+      +'<a href="ffp-vie-club.html" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(200,130,32,.04);border:1px solid rgba(200,130,32,.15);border-radius:9px;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor=\'rgba(200,130,32,.4)\'" onmouseout="this.style.borderColor=\'rgba(200,130,32,.15)\'">'
+        +'<span style="font-size:20px">📅</span>'
+        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#C89020">Vie du Club</div><div style="font-size:10px;color:#888">Matchs · Entraînements</div></div>'
+        +'<span style="color:#C89020;font-size:12px">→</span>'
+      +'</a>'
+      +'<button onclick="exportPDF()" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(75,200,138,.04);border:1px solid rgba(75,200,138,.15);border-radius:9px;cursor:pointer;transition:all .2s;width:100%;text-align:left" onmouseover="this.style.borderColor=\'rgba(75,200,138,.4)\'" onmouseout="this.style.borderColor=\'rgba(75,200,138,.15)\'">'
+        +'<span style="font-size:20px">📄</span>'
+        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#4BC88A">Exporter bilan PDF</div><div style="font-size:10px;color:#888">Rapport complet du joueur</div></div>'
+      +'</button>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+function generateDemoEvents(){
+  var types=['match','entrainement','tournoi','stage','réunion'];
+  var titres=['Match FFP vs AS Voltaire','Entraînement technique','Tournoi Régional U12','Stage présaison','Réunion parents','Match retour','Entraînement physique','Coupe District'];
+  var lieux=['Terrain principal','Terrain annexe','Gymnase','Complexe sportif'];
+  var heures=['17h30','18h00','09h00','08h30','19h00','16h00'];
+  var evts=[];
+  for(var i=0;i<6;i++){
+    var d=new Date();d.setDate(d.getDate()+i*5+2);
+    evts.push({id:'ev'+i,type:types[i%types.length],titre:titres[i%titres.length],
+      date:d.toISOString().slice(0,10),heure:heures[i%heures.length],lieu:lieux[i%lieux.length],obligatoire:i<2});
+  }
+  return evts;
+}
+
+// ── Export PDF ──
+function exportPDF(){
+  if(!CURRENT)return;
+  var p=CURRENT;
+  var w=window.open('','_blank');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bilan '+p.prenom+' '+p.nom+'</title>'
+    +'<style>body{font-family:Arial,sans-serif;font-size:12px;max-width:700px;margin:0 auto;padding:24px;color:#111}'
+    +'.hdr{background:#1A1200;color:#D4AF37;padding:16px 20px;border-radius:6px;margin-bottom:16px}'
+    +'.hdr h1{font-size:18px;letter-spacing:2px;text-transform:uppercase;margin:0 0 4px}'
+    +'.hdr p{font-size:10px;opacity:.6;margin:0;letter-spacing:2px}'
+    +'table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:7px 8px;border-bottom:1px solid #eee;font-size:11px}'
+    +'th{font-weight:700;color:#888;text-transform:uppercase;font-size:10px;text-align:left}'
+    +'.score{font-weight:900;color:#B8900F}'
+    +'</style></head><body>'
+    +'<div style="margin-bottom:12px;display:flex;gap:8px"><button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:5px;padding:8px 16px;cursor:pointer;font-weight:700">Imprimer</button><button onclick="window.close()" style="background:#eee;border:none;border-radius:5px;padding:8px 16px;cursor:pointer">Fermer</button></div>'
+    +'<div class="hdr"><h1>Foot Factory Pro</h1><p>Bilan joueur · Saison 2026-27</p></div>'
+    +'<h2 style="color:#B8900F;font-size:16px">'+p.prenom+' '+p.nom+'</h2>'
+    +'<table><tr><th>Poste</th><td>'+p.poste+'</td><th>Âge</th><td>'+p.age+' ans</td></tr>'
+    +'<tr><th>Taille</th><td>'+p.taille+'cm</td><th>Pied</th><td>'+p.pied+'</td></tr>'
+    +'<tr><th>Rang</th><td>#'+p.rank+'/30</td><th>Score IA</th><td class="score">'+p.global.toFixed(2)+'/10</td></tr></table>'
+    +'<h3 style="color:#B8900F;margin:14px 0 8px">Scores par catégorie</h3>'
+    +'<table><thead><tr><th>Catégorie</th><th>Score</th><th>Niveau</th></tr></thead><tbody>'
+    +['Technique','Physique','Tactique','Mental','Culture football'].map(function(c,i){
+      var v=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture][i];
+      var level=v>=8?'Excellent':v>=7?'Très bien':v>=6?'Bien':v>=5?'Correct':'À développer';
+      return '<tr><td>'+c+'</td><td class="score">'+v.toFixed(1)+'/10</td><td>'+level+'</td></tr>';
+    }).join('')
+    +'</tbody></table>'
+    +'<p style="margin-top:20px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Document confidentiel · '+new Date().toLocaleDateString('fr-FR')+'</p>'
+    +'</body></html>';
+  w.document.write(html);w.document.close();
+}
+
+// ── Init ──
+function init(){
+  setupPIN();
+  // Check existing session
+  var sess=getSession();
+  if(sess&&sess.role==='parent'&&sess.player_code){
+    var player=ALL_PLAYERS.find(function(p){return p.code===sess.player_code;});
+    if(player){CURRENT=player;showView();return;}
+  }
+  showLogin();
+  setTimeout(function(){var d=document.getElementById('d0');if(d)d.focus();},200);
+}
+init();
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>
