@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><script>
+<meta charset="UTF-8">
+<script>
+(function(){try{var s=window.location.search;if(s.indexOf('demo=')>=0){var roles={coach:{role:'coach',prenom:'Ahmed',nom:'Benali',_demo:true},parent:{role:'parent',player_code:'1003',prenom:'Parent de',nom:'Kylian Faure',_demo:true},recruteur:{role:'scout',prenom:'Pierre',nom:'Marchetti',_demo:true},directeur:{role:'directeur',prenom:'Jean-Marc',nom:'Roussel',_demo:true}};var role=s.match(/demo=([^&]+)/)[1];var sess=roles[role]||roles.coach;sess._exp=Date.now()+7200000;localStorage.setItem('ffp_session',JSON.stringify(sess));localStorage.setItem('ffp_demo_mode','1');if(role==='recruteur')localStorage.setItem('ffp_scout_session',JSON.stringify(sess));}}catch(e){}})();
+</script><script>
 // ── DEMO MODE INIT (synchrone — avant tout rendu) ──────────────
 (function(){
   var p = new URLSearchParams(window.location.search);
@@ -114,8 +117,8 @@ function ffpAuthGuard(allowedRoles, redirectUrl) {
   }
 }
 
-// Scout session (ffp-scout.html utilise LS_SCOUT_SESS séparé)
-function ffpScoutGuard() {
+// Recruteur session (ffp-scout.html utilise LS_SCOUT_SESS séparé)
+function ffpRecruteurGuard() {
   try {
     var raw = localStorage.getItem('ffp_scout_session');
     if (!raw) return null;
@@ -140,6 +143,7 @@ function ffpScoutGuard() {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ffp-supabase.js"></script>
 <script>
+
 // ══════════════════════════════════════════════════════
 // FOOT FACTORY PRO — MODULE MATCHS
 // Setup → Live → Rapport
@@ -682,42 +686,13 @@ function exportRapportPDF(){
     +'</tbody></table>'
     +(MATCH.rapport_texte?'<h3 style="color:#B8900F;margin-top:14px">Analyse du coach</h3><p>'+MATCH.rapport_texte+'</p>':'')
     +'<p style="margin-top:20px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel · '+new Date().toLocaleDateString('fr-FR')+'</p>'
-    +'
+    +'</body></html>';
+  w.document.write(html);w.document.close();
+}
+</script>
 <script>
-// DÉMO
-function exitDemo(){try{localStorage.removeItem("ffp_session");localStorage.removeItem("ffp_scout_session");localStorage.removeItem("ffp_demo_mode");localStorage.removeItem("ffp_events");localStorage.removeItem("ffp_messages");}catch(e){}window.location.href="ffp-accueil.html";}
-
-// ── Bannière mode démo (à injecter sur toutes les pages) ─────────
-(function(){
-  if (localStorage.getItem('ffp_demo_mode') !== '1') return;
-  var banner = document.createElement('div');
-  banner.id = 'ffp-demo-banner';
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;'
-    + 'background:linear-gradient(135deg,rgba(10,8,0,.97),rgba(20,16,0,.97));'
-    + 'border-top:1px solid rgba(212,175,55,.3);padding:8px 16px;'
-    + 'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px';
-  banner.innerHTML = '<div style="display:flex;align-items:center;gap:10px">'
-    + '<span style="background:rgba(75,200,138,.15);border:1px solid rgba(75,200,138,.4);'
-    + 'border-radius:6px;padding:2px 9px;font-family:Montserrat,sans-serif;font-size:9px;'
-    + 'font-weight:700;color:#4BC88A;letter-spacing:1px;text-transform:uppercase">⚡ MODE DÉMO</span>'
-    + '<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#888;">'
-    + 'Données fictives · AS Voltaire Paris · Session 2h</span></div>'
-    + '<div style="display:flex;gap:8px">'
-    + '<a href="ffp-demo.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;'
-    + 'color:#D4AF37;text-decoration:none;border:1px solid rgba(212,175,55,.2);border-radius:5px;padding:4px 9px">'
-    + '← Changer de profil</a>'
-    + '<a href="ffp-pricing.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;'
-    + 'background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:4px 10px;text-decoration:none">'
-    + 'Créer un compte →</a>'
-    + '<button onclick="exitDemo()" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;'
-    + 'background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;'
-    + 'color:#444;padding:4px 9px;cursor:pointer">✕ Quitter démo</button>'
-    + '</div>';
-  document.body.appendChild(banner);
-  // Ajouter padding-bottom pour ne pas masquer le contenu
-  document.body.style.paddingBottom = (banner.offsetHeight + 8) + 'px';
-})();
-
+function exitDemo(){try{['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}window.location.href='ffp-accueil.html';}
+(function(){if(localStorage.getItem('ffp_demo_mode')!=='1'&&window.location.search.indexOf('demo=')<0)return;var b=document.createElement('div');b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(10,8,0,.97);border-top:1px solid rgba(212,175,55,.3);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px';b.innerHTML='<span style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#4BC88A;background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:5px;padding:2px 8px">⚡ MODE DÉMO</span><div style="display:flex;gap:6px"><a href="ffp-demo.html" style="font-size:9px;color:#D4AF37;text-decoration:none;font-family:Montserrat,sans-serif;font-weight:700;border:1px solid rgba(212,175,55,.2);border-radius:5px;padding:3px 8px">← Profils</a><a href="ffp-pricing.html" style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:800;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:3px 8px;text-decoration:none">Créer un compte →</a><button onclick="exitDemo()" style="background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;color:#444;padding:3px 7px;cursor:pointer;font-size:9px">✕</button></div>';document.body.appendChild(b);})();
 </script>
 </body></html>';
   w.document.write(html);w.document.close();

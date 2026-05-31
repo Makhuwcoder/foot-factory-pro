@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"><script>
+<meta charset="UTF-8">
+<script>
+(function(){try{var s=window.location.search;if(s.indexOf('demo=')>=0){var roles={coach:{role:'coach',prenom:'Ahmed',nom:'Benali',_demo:true},parent:{role:'parent',player_code:'1003',prenom:'Parent de',nom:'Kylian Faure',_demo:true},recruteur:{role:'scout',prenom:'Pierre',nom:'Marchetti',_demo:true},directeur:{role:'directeur',prenom:'Jean-Marc',nom:'Roussel',_demo:true}};var role=s.match(/demo=([^&]+)/)[1];var sess=roles[role]||roles.coach;sess._exp=Date.now()+7200000;localStorage.setItem('ffp_session',JSON.stringify(sess));localStorage.setItem('ffp_demo_mode','1');if(role==='recruteur')localStorage.setItem('ffp_scout_session',JSON.stringify(sess));}}catch(e){}})();
+</script><script>
 // ── DEMO MODE INIT (synchrone — avant tout rendu) ──────────────
 (function(){
   var p = new URLSearchParams(window.location.search);
@@ -111,8 +114,8 @@ function ffpAuthGuard(allowedRoles, redirectUrl) {
   }
 }
 
-// Scout session (ffp-scout.html utilise LS_SCOUT_SESS séparé)
-function ffpScoutGuard() {
+// Recruteurs session (ffp-scout.html utilise LS_SCOUT_SESS séparé)
+function ffpRecruteursGuard() {
   try {
     var raw = localStorage.getItem('ffp_scout_session');
     if (!raw) return null;
@@ -138,7 +141,7 @@ function ffpScoutGuard() {
 
   // Vérifier session scout (ffp-scout.html)
   if (!sess) {
-    sess = ffpScoutGuard();
+    sess = ffpRecruteursGuard();
   }
 
   // Aucune session valide → login
@@ -154,6 +157,7 @@ function ffpScoutGuard() {
 <a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">FOOT FACTORY PRO</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a><div style="display:flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap"><div style="display:flex;gap:6px"><span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:2px 9px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700">🤖 YOLOv8</span><span style="font-size:9px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:2px 9px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:700">📹 OpenCV</span><span style="font-size:9px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;padding:2px 9px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700">🎙️ Whisper</span></div><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
 <div style="display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 52px)"><div class="sidebar" style="border-right:1px solid rgba(212,175,55,.1);padding:14px 12px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;background:#050402"><div style="margin-bottom:12px"><input class="srch" id="player-search" type="text" placeholder="Rechercher..." oninput="SEARCH_Q=this.value;renderPlayerList()"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><select class="fsel" onchange="FILTER_TEAM=this.value;renderPlayerList()"><option value="">Équipes</option><option value="Équipe 1">Équipe 1</option><option value="Équipe 2">Équipe 2</option><option value="Équipe 3">Équipe 3</option></select><select class="fsel" onchange="FILTER_POS=this.value;renderPlayerList()"><option value="">Postes</option></select></div><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px" id="player-count">30 joueurs</div><div id="player-list"></div></div><div id="main-view" style="padding:18px 20px;overflow-y:auto;position:relative;z-index:1"><div id="player-hdr"></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><button class="vtab on" onclick="setView('profil',this)">👤 Profil</button><button class="vtab" onclick="setView('highlights',this)">🎬 Highlights</button><button class="vtab" onclick="setView('stats',this)">📊 Stats</button><button class="vtab" onclick="setView('cv',this)">📋 CV Sportif</button><button class="vtab" onclick="setView('scout',this)" style="color:rgba(160,96,224,.8)">🔍 Recruteurs</button></div><div id="vs-profil" class="vsec"></div><div id="vs-highlights" class="vsec"></div><div id="vs-stats" class="vsec"></div><div id="vs-cv" class="vsec"></div><div id="vs-scout" class="vsec"></div></div></div>
 <script>
+
 // ══════════════════════════════════════════════════════
 // FOOT FACTORY PRO — MEDIA PLATFORM v2 (30 joueurs)
 // ══════════════════════════════════════════════════════
@@ -395,7 +399,7 @@ function renderAll(){
   renderHighlights();
   renderStats();
   renderCV();
-  renderScout();
+  renderRecruteurs();
 }
 
 // ── Header ──
@@ -716,8 +720,8 @@ function renderCV(){
   +'</div>';
 }
 
-// ── Scout ──
-function renderScout(){
+// ── Recruteurs ──
+function renderRecruteurs(){
   var p=CUR; var el=document.getElementById('vs-scout');if(!el)return;
   var cats=['Technique','Physique','Tactique','Mental','Culture'];
   var vals=[p.scores.technique,p.scores.physique,p.scores.tactique,p.scores.mental,p.scores.culture];
@@ -731,7 +735,7 @@ function renderScout(){
     +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#D4AF37;margin-bottom:2px">Fiche Recruteur — Confidentielle</div><div style="font-size:11px;color:#888">Généré par IA · Foot Factory Pro · '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
     +'<div style="margin-left:auto;display:flex;gap:8px">'
       +'<button onclick="window.print()" style="background:rgba(96,168,208,.1);border:1px solid rgba(96,168,208,.3);border-radius:6px;color:#60A8D0;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">🖨️ Print</button>'
-      +'<button onclick="exportScout()" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:6px;color:#E87060;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">📄 PDF</button>'
+      +'<button onclick="exportRecruteurs()" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:6px;color:#E87060;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">📄 PDF</button>'
     +'</div>'
   +'</div>'
   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
@@ -754,10 +758,10 @@ function renderScout(){
   +'</div>';
 }
 
-function exportScout(){
+function exportRecruteurs(){
   var p=CUR;
   var w=window.open('','_blank');
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Scout — '+p.prenom+' '+p.nom+'</title>'
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Recruteurs — '+p.prenom+' '+p.nom+'</title>'
     +'<style>body{font-family:Arial,sans-serif;font-size:12px;color:#111;max-width:760px;margin:0 auto;padding:24px}'
     +'.title{font-size:16px;font-weight:900;color:#B8900F;letter-spacing:2px;text-transform:uppercase}'
     +'.btn{background:#D4AF37;color:#000;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-weight:700;font-size:12px;margin:0 4px}'
@@ -784,42 +788,13 @@ function exportScout(){
     +'<p><strong>Analyse :</strong> '+p.ai_analysis.profil+'</p>'
     +'<p style="color:#666;font-style:italic;margin-top:6px">'+p.ai_analysis.similarite+'</p>'
     +'<p style="margin-top:18px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel</p>'
-    +'
+    +'</body></html>';
+  w.document.write(html);w.document.close();
+}
+</script>
 <script>
-// DÉMO
-function exitDemo(){try{localStorage.removeItem("ffp_session");localStorage.removeItem("ffp_scout_session");localStorage.removeItem("ffp_demo_mode");localStorage.removeItem("ffp_events");localStorage.removeItem("ffp_messages");}catch(e){}window.location.href="ffp-accueil.html";}
-
-// ── Bannière mode démo (à injecter sur toutes les pages) ─────────
-(function(){
-  if (localStorage.getItem('ffp_demo_mode') !== '1') return;
-  var banner = document.createElement('div');
-  banner.id = 'ffp-demo-banner';
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;'
-    + 'background:linear-gradient(135deg,rgba(10,8,0,.97),rgba(20,16,0,.97));'
-    + 'border-top:1px solid rgba(212,175,55,.3);padding:8px 16px;'
-    + 'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px';
-  banner.innerHTML = '<div style="display:flex;align-items:center;gap:10px">'
-    + '<span style="background:rgba(75,200,138,.15);border:1px solid rgba(75,200,138,.4);'
-    + 'border-radius:6px;padding:2px 9px;font-family:Montserrat,sans-serif;font-size:9px;'
-    + 'font-weight:700;color:#4BC88A;letter-spacing:1px;text-transform:uppercase">⚡ MODE DÉMO</span>'
-    + '<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#888;">'
-    + 'Données fictives · AS Voltaire Paris · Session 2h</span></div>'
-    + '<div style="display:flex;gap:8px">'
-    + '<a href="ffp-demo.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;'
-    + 'color:#D4AF37;text-decoration:none;border:1px solid rgba(212,175,55,.2);border-radius:5px;padding:4px 9px">'
-    + '← Changer de profil</a>'
-    + '<a href="ffp-pricing.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;'
-    + 'background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:4px 10px;text-decoration:none">'
-    + 'Créer un compte →</a>'
-    + '<button onclick="exitDemo()" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;'
-    + 'background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;'
-    + 'color:#444;padding:4px 9px;cursor:pointer">✕ Quitter démo</button>'
-    + '</div>';
-  document.body.appendChild(banner);
-  // Ajouter padding-bottom pour ne pas masquer le contenu
-  document.body.style.paddingBottom = (banner.offsetHeight + 8) + 'px';
-})();
-
+function exitDemo(){try{['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}window.location.href='ffp-accueil.html';}
+(function(){if(localStorage.getItem('ffp_demo_mode')!=='1'&&window.location.search.indexOf('demo=')<0)return;var b=document.createElement('div');b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(10,8,0,.97);border-top:1px solid rgba(212,175,55,.3);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px';b.innerHTML='<span style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#4BC88A;background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:5px;padding:2px 8px">⚡ MODE DÉMO</span><div style="display:flex;gap:6px"><a href="ffp-demo.html" style="font-size:9px;color:#D4AF37;text-decoration:none;font-family:Montserrat,sans-serif;font-weight:700;border:1px solid rgba(212,175,55,.2);border-radius:5px;padding:3px 8px">← Profils</a><a href="ffp-pricing.html" style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:800;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:3px 8px;text-decoration:none">Créer un compte →</a><button onclick="exitDemo()" style="background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;color:#444;padding:3px 7px;cursor:pointer;font-size:9px">✕</button></div>';document.body.appendChild(b);})();
 </script>
 </body></html>';
   w.document.write(html); w.document.close();

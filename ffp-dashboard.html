@@ -379,7 +379,7 @@ function renderParentDashboard(session, el){
 }
 
 // ── SCOUT DASHBOARD ──────────────────────────────────────────────
-function renderScoutDashboard(session, el){
+function renderRecruteursDashboard(session, el){
   var slIds=[];
   try{slIds=JSON.parse(localStorage.getItem(LS_SHORTLIST)||'[]');}catch(e){}
   var shortlist=slIds.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
@@ -388,7 +388,7 @@ function renderScoutDashboard(session, el){
   el.innerHTML=
   '<div style="margin-bottom:20px">'
     +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(18px,3vw,26px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Espace Recruteur</div>'
-    +'<div style="font-size:13px;color:#888;margin-top:2px">Bienvenue, '+(session.prenom||'Scout')+' · '+(session.club||'Recruteur indépendant')+'</div>'
+    +'<div style="font-size:13px;color:#888;margin-top:2px">Bienvenue, '+(session.prenom||'Recruteurs')+' · '+(session.club||'Recruteur indépendant')+'</div>'
   +'</div>'
 
   +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">'
@@ -469,7 +469,7 @@ function init(){
 
   // Update header with session info
   var pill=document.getElementById('session-pill');
-  var role=session.role;var roleInfo={coach:{ico:'🏟️',col:'#4BC88A',label:'Coach'},parent:{ico:'🫂',col:'#A060E0',label:'Parent'},scout:{ico:'🔍',col:'#60A8D0',label:'Scout'}}[role]||{ico:'👤',col:'#888',label:role};
+  var role=session.role;var roleInfo={coach:{ico:'🏟️',col:'#4BC88A',label:'Coach'},parent:{ico:'🫂',col:'#A060E0',label:'Parent'},scout:{ico:'🔍',col:'#60A8D0',label:'Recruteurs'}}[role]||{ico:'👤',col:'#888',label:role};
   if(pill){
     pill.innerHTML='<div style="display:flex;align-items:center;gap:8px">'
       +'<div style="display:flex;align-items:center;gap:6px;background:'+roleInfo.col+'15;border:1px solid '+roleInfo.col+'44;border-radius:8px;padding:5px 11px">'
@@ -485,7 +485,7 @@ function init(){
   if(!content)return;
   if(role==='coach')renderCoachDashboard(session,content);
   else if(role==='parent')renderParentDashboard(session,content);
-  else if(role==='scout')renderScoutDashboard(session,content);
+  else if(role==='scout')renderRecruteursDashboard(session,content);
   else content.innerHTML='<div style="text-align:center;padding:40px;color:#888">Rôle non reconnu.</div>';
 }
 
