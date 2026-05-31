@@ -33,6 +33,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 </head>
 <body>
 <script>
+(function(){
+  // FFP AUTH GUARD v3 — synchrone
+  var LS='ffp_session',LSC='ffp_scout_session';
+  var roles=['coach','directeur','parent'];
+  function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
+  var s=get(LS);
+  if(!s&&roles.indexOf('scout')>=0){s=get(LSC);if(s)try{localStorage.setItem(LS,JSON.stringify(s));}catch(e){}}
+  if(!s){window.location.replace('ffp-login.html');return;}
+  if(roles.length>0&&roles.indexOf(s.role)<0){window.location.replace('ffp-login.html');return;}
+})();
+</script>
+<script>
 // ── FFP AUTH GUARD (inline synchrone) ──
 (function(){
   var LS = 'ffp_session';
