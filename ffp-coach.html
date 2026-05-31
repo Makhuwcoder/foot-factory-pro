@@ -1,7 +1,60 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"><script>
+// ── DEMO MODE INIT (synchrone — avant tout rendu) ──────────────
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('demo');
+  if (!role) {
+    // Vérifier si une session démo existe déjà
+    try {
+      var raw = localStorage.getItem('ffp_session');
+      if (raw) { var s = JSON.parse(raw); if (s && s._demo) role = s.role; }
+    } catch(e) {}
+  }
+  if (!role) return;
+
+  var DEMO_CLUB_ID = 'demo-club-001';
+  var EXP = Date.now() + 7200000; // 2h
+
+  var sessions = {
+    coach: { role:'coach', prenom:'Ahmed', nom:'Benali',
+      club_id:DEMO_CLUB_ID, category_id:'U12', _demo:true, _exp:EXP },
+    parent: { role:'parent', player_code:'1003', prenom:'Parent de',
+      nom:'Kylian Faure', _demo:true, _exp:EXP },
+    recruteur: { role:'scout', prenom:'Pierre', nom:'Marchetti',
+      club:'AS Monaco Academy', _demo:true, _exp:EXP },
+    directeur: { role:'directeur', prenom:'Jean-Marc', nom:'Roussel',
+      club_id:DEMO_CLUB_ID, _demo:true, _exp:EXP },
+    scout: { role:'scout', prenom:'Pierre', nom:'Marchetti',
+      club:'AS Monaco Academy', _demo:true, _exp:EXP }
+  };
+
+  var sess = sessions[role] || sessions[role.replace('scout','recruteur')];
+  if (!sess) return;
+
+  try {
+    localStorage.setItem('ffp_session', JSON.stringify(sess));
+    localStorage.setItem('ffp_demo_mode', '1');
+    if (role === 'recruteur' || role === 'scout') {
+      localStorage.setItem('ffp_scout_session', JSON.stringify(sess));
+    }
+    // Données démo
+    var now = new Date();
+    function futur(j){ var d=new Date(now); d.setDate(d.getDate()+j); return d.toISOString().slice(0,10); }
+    var events = [
+      {id:'dv1',type:'match',titre:'AS Voltaire vs FC Belleville',date:futur(3),heure:'18h00',lieu:'Terrain Voltaire',obligatoire:true,is_public:true},
+      {id:'dv2',type:'entrainement',titre:'Entraînement technique',date:futur(1),heure:'17h30',lieu:'Terrain annexe',obligatoire:false,is_public:true},
+      {id:'dv3',type:'tournoi',titre:'Tournoi Ligue Paris U12',date:futur(10),heure:'09h00',lieu:'Stade Charléty',obligatoire:true,is_public:true},
+      {id:'dv4',type:'reunion',titre:'Réunion parents de saison',date:futur(18),heure:'19h00',lieu:'Salle Voltaire',obligatoire:false,is_public:true},
+      {id:'dv5',type:'match',titre:'AS Voltaire vs ES Ménilmontant',date:futur(24),heure:'15h00',lieu:'Terrain adverse',obligatoire:true,is_public:true}
+    ];
+    if (!localStorage.getItem('ffp_events')) localStorage.setItem('ffp_events', JSON.stringify(events));
+  } catch(e) {}
+})();
+</script>
+
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FFP — Espace Coach</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
