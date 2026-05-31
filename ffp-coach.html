@@ -1075,13 +1075,8 @@ function exportPDF(pid){
     html+='<div class="ai-section"><div class="section-title" style="margin-bottom:10px">✦ Programme IA personnalisé</div><div class="ai-text">'+aiText.slice(0,1500)+(aiText.length>1500?'\n[...]':'')+'</div></div>';
   }
 
-  html+='<div class="footer">Foot Factory Pro · Confidentiel · Pour usage pédagogique uniquement</div>v</div>';
-}
-
-
-
-</script>
-</body></html>';
+  html+='<div class="footer">Foot Factory Pro · Confidentiel · Pour usage pédagogique uniquement</div>';
+  html+='</body></html>';
 
   printWindow.document.write(html);
   printWindow.document.close();
@@ -2280,6 +2275,8 @@ try { init(); }         catch(e) {
   document.body.prepend(eb);
   console.error("init error:", e);
 }
+</script>
+
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
 </body>
