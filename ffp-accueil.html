@@ -240,9 +240,9 @@ footer { border-top:1px solid rgba(212,175,55,.1); padding:40px 24px 30px;
       </div>
     </a>
     <nav class="hdr-nav">
-      <a href="#modules" class="hdr-link" onclick="scrollTo('modules');return false">Modules</a>
-      <a href="#ai" class="hdr-link" onclick="scrollTo('ai-section');return false">IA Platform</a>
-      <a href="#piliers" class="hdr-link" onclick="scrollTo('piliers-section');return false">Les 6 Piliers</a>
+      <a href="#modules" class="hdr-link" onclick=\"ffpScroll('modules')\";return false">Modules</a>
+      <a href="#ai" class="hdr-link" onclick=\"ffpScroll('ai-section')\";return false">IA Platform</a>
+      <a href="#piliers" class="hdr-link" onclick=\"ffpScroll('piliers-section')\";return false">Les 6 Piliers</a>
       <a href="ffp-media.html" class="hdr-link">Media</a>
       <a href="ffp-scout.html" class="hdr-link">Scout</a>
       <a href="ffp-match.html" class="hdr-link">Matchs</a>
@@ -289,7 +289,7 @@ footer { border-top:1px solid rgba(212,175,55,.1); padding:40px 24px 30px;
       <span style="font-size:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:4px 12px;color:#888;font-family:Montserrat,sans-serif;font-weight:600">📱 PWA</span>
     </div>
   </div>
-  <div class="hero-scroll" onclick="scrollTo('stats-section')">
+  <div class="hero-scroll" onclick=\"ffpScroll('stats-section')\"">
     <span>Découvrir</span>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,55,.5)" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
@@ -491,7 +491,7 @@ function initScrollAnim() {
 }
 
 // ── Smooth scroll ──
-function scrollTo(id) {
+function ffpScroll(id) {
   var el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
