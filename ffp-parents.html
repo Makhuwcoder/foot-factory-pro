@@ -18,8 +18,51 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 .pin-box:focus{border-color:rgba(212,175,55,.7);box-shadow:0 0 12px rgba(212,175,55,.2)}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
 </style>
+<script src="ffp-auth.js"></script>
 </head>
 <body>
+<script>
+// ── FFP AUTH GUARD (inline synchrone) ──
+(function(){
+  var LS = 'ffp_session';
+  var LS_SC = 'ffp_scout_session';
+  var roles = ['parent'];
+  
+  // Mode démo: ?demo=... → laisser passer (ffp-auth.js gère la session)
+  if (window.location.search.indexOf('demo=') >= 0) return;
+  
+  // Vérifier session
+  function getSess(key) {
+    try {
+      var r = localStorage.getItem(key);
+      if (!r) return null;
+      var d = JSON.parse(r);
+      if (!d) return null;
+      if (d._exp && Date.now() > d._exp) { localStorage.removeItem(key); return null; }
+      return d;
+    } catch(e) { return null; }
+  }
+  
+  var sess = getSess(LS);
+  
+  // Scout: accepter aussi ffp_scout_session
+  if (!sess && roles.indexOf('scout') >= 0) {
+    sess = getSess(LS_SC);
+    if (sess) { localStorage.setItem(LS, JSON.stringify(sess)); }
+  }
+  
+  // Pas de session → login
+  if (!sess) {
+    window.location.replace('ffp-login.html');
+    return;
+  }
+  
+  // Mauvais rôle → login
+  if (roles.length > 0 && roles.indexOf(sess.role) < 0) {
+    window.location.replace('ffp-login.html');
+  }
+})();
+</script>
 <script>
 (function(){
   try{
