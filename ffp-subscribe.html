@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Paiement</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,175,55,.05),transparent 60%);z-index:0}
+.wrap{max-width:500px;margin:0 auto;padding:60px 20px;position:relative;z-index:1;text-align:center}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none"><img src="data:image/webp;base64,UklGRk4MAABXRUJQVlA4WAoAAAAQAAAAMgAAKwAAQUxQSNgEAAABoC3Jtmnban2MsXlsc+PYtm3burZt27Zt2zaObZ+rvdccaA9rrrn2/YOImAD8/woDT4ER/L+itDFGG2OMFohM3h3GA2KkwkQbJBcl9T+8vHJhIQBdMWIASNH4U6598Kl7b7hoSf96gEK1+R+u3fDLTY2hK0A0UDDmjt8iJjz0RQ9p9DU3tO465/2dk6Cz0kD9i9aTpLNRrPVkK732i6LbDIDnOR46C42Cs/aQ3jpnHWNDKvoZp+wH3t52QYdZh3mokagkojH0V9J675ieOnLob5J8CX9unvkcSXvx5Id5PkwCEZxD2uA9eeTT65b0Km1Yr0Hn/lNvXpQbnd/vBf5X9hWAr7+HyiSiHqL3wZG/rmyC5FUPdQF+J39CFX3fHmQWrZ5hRE/+MT0PgNFKKRGltVHYNB945Z6j3xgJ/Po7JIPB44zoGV1cBdAKiQ0e+q1yrzMB9eRlz/B6mDiDSxjRcfcoQAuyVGj27/Y9/XV1zCBTraFiNMbR0nNTO+QbnbXKwXLyFgDPBp4AjXSlau8M3nNbS1T4soP85dHV/PtoVEcc7qcNLjUIptbIESOzHNSzW9tihRYnv//Dh6dVx/LfK4sAJm9k8HQ8HfmYzgp9GDmIHf4JeRwMkNP/D3rHj8XkYLZLuSy95bqaIsooo24hI7+pUATVbmUIPvSENphDR4YYH2vD/lIoABCU/Ga94xRo5L0cnOPr0DBYRsts/QgYxCocTW/DM9DQv9A7jhEDg6NoA/d/8+G773/x8++r/1y7+o+5yFVKpYk02knHg7UgbVP03JAniLO8HhUtci+d52iYhfSWV8EkkVyDFsVFRUUti4pKioqKWrTRaQpjGKJwMcxtdJ5joZOgAEtSkfPpzrkUn81RMS0OMOLL0B/SsawZJBGG2cDMnj/XRpog50tX7r+G/EDH9VUS3YTSfd6GdB+CCwfbQCFdyZskDxRgGz2/zE10dZXNTOxHQyNWpP/4sYtW5mMTHX8oTHRF/eNWLls0d/7i2XPnLZm3ahoUsv6eln/mJboB2QoyKty/+tfV94j+iJbbaie6XLJJqPAJybeh76PlvmKoDI4XYtAN190Qf91Vt66ApCljcvG2L/NfVVMn0tKOFZ3gbJzOpPu7Skzse3QhfFmnpwueF0IlOBrH2jIbpZen9naGAqDQeumSZYVv0QWmJuZvoOX3VSBxnvNxPC0zLoCGaJ0nJ5Bs/DKd5472uCNEtGOgM02L2btv/4E9e2+CRvxyW24bvkLrwkkKfeg9n4aKCxyN4xjxqHZdurUprSwiqNazd/8aK+jY8BWmeB+Uwhe0wY+HzmICYkVyZAHJmbPjuLaxKIMRdJ4/VlW5cUNjpqocpZQAwKLwX5g6k46NX/FHJkABGi/Set6CvLiBMVOgAaBKtVqFc1nOiZPpWPMZ3qOVAEqaHAjOcyFiwmA5nhEnwSitqq7ev//hqWnjGf4ds+O75lAAoDHROx/KV+EYWsehWMGIo5Be5TD58hSWc+o4urJ/d/aCQqzG0QyWW/Vypri3Dd6i4xA06dy5c6NdIbw0leWcPpYpppZCI6PByc6H1Wo5uX1I3sv05FDcxsBpG8nnJrOcE/qT+1ZASSbk4Pgy7shdyl0j8SgtyRG4JaTClI3k0xOZ4uLruH4uFGIBVlA4IFAHAADwIQCdASozACwAPi0ShkKhoQ3+qgAMAWJbACdMoR+N6P5glRfsH3v45EvXYh+v+6P3V/032Afk32APyH6gHmA/kH9y/cD3qv7B6ivQA/W71hfUL9AD+Gf270uP24+Bz9qv23+A/9cP/NdPPBHveeGfWbjjsy/vv5eebN4A+/j+H8hm8Gcv/l/+A+3L9QOkn6weg7+df3780venv+/qP92/0nuCfyH+a/4n+5/uZ/wPiR/uPLp87f6v3Bf45/Jv8r/fv7t/y/8r/+for9fP7M+wh+tY55zxUN2KMtYjP8fSBjybKLEUk9/IDdOWu9F7r/r6HQlsuPCbQD5bf+nAzEAcGG9pnaOF3qgKIc2qrWH/1Qxn4ijDleAAAP7/T/S3Y8WUhE1TJ7oTXmC8DYTaOTxLeBSUfMDp/0FNGg0ZoGONbMShJGSbv1D3rql1SB5bjcaWSCMR0vT+f94dFWx7Z2q19l3cZH5zmh2uthSWVl0m9uCyMo+fwtZTv4d1YEyXHUIT9rDLNc91tS9fI3AmWPL4kblqaZEq9YQK3pwgiwycjVQYrizGrAIOddMVf07ZXJhNa/9/cU/KI4cUJv9rK5DlJN80jxUr2b3HDcCNEyiUP3His4jxinuEuLk2OdbLtyB7m2D267A9c8fNKC1T88ttUA39UziYDlFDHLkKTFUsySn4/QFCPbybiY+r0PPShsADnJeHiMfF95DtJ1fa0BRP5pBhcl6n8Rpa0iUdpvk2FPJUz6MaeOcTF1TUbqoH2Ybggq9O60F9QkfvmtLeYnHa0kQ2GV8HvKsjkxVyRXH9uUMO2+SRO7TlDKpPsrDbzPH/PSl6tGp6GZ8VGe/K3QwXVX1CmUrztzI7KMCKevywnKzVnmfzj7KxK+YHnh0GmfLR++1QNcBDmBO2Wxax7ok9HPrvz4FWHxSdyIuvCRjltQjuJmYDhhePmPfgdRpAiV+p8tDoLUnvZUIiMC2Bf85mk369cJ+DNWp6vZQPUZybw27HuaXVtWgDRaNdD+aEESFz72ptyAEP/3bl//+7PlhnEmKwWmn3H3w6i4Q7VWcpNcK++IMIldXd+5P+CPM3cOMgMmI10zII/4Uk8M6NRlXllg+jE3DFMiRjiv43uXz8G+Gdz+8d6zxgY6NtNlHa9A9IzlrZ1x+5NtICvx3BCjKu1Dfj4SuiajXgSpNf/JY8Vq5MXw5W0VRiAgJHmXdfi/6OdzhWryUrLwM1V//tr5+Eku4K0XerBvwt9of1P2ydxHKXML1kTAOCi0a3v3+MHp6dpo02feaWzQhG7MJTBgF9EXnJUxCxfJ8C+n1R90NPxDePlPHTNaFA+n5sBEK6RK5heaSjWJuKDxqc4iVtY5VZkZryzQVW/gVa9LXUJa7KXYZfGGnN3rrRTEer7HzNGE5o2YxlzuGSPout2YkWU+NG+2HhfWOZD9H8CG8EdN8UUnlHykTbRn+ZDBYXk8SKr+YYhtPowu2o31Y4YFKCTfU9ttdAc+Xg9LT8CoOXySiFG3LW1HfMlIbLL73gpfBxraQZo3pTohR+7nWWo/Ro8InqVT131fzDCRbMPNyC3NjjgnxfhUeWqo83KQx38ROdB95h7U1fBAQS41xUUeQAfOh9fNZNeqOv6EOgeAMA4ZRBcTZLC+Br4aCX0qSt/Ff2q2fjBGO2Xx2l/o5oUO/8PqL+F08f08b3nmL5VUaecp/h2zy1FKZzuFenaRR7hLeUzVVpKAfmRPVfnmVkdEE/vrZ7zS3fBd8Dm2RBZWVQBNh+67GYOdYVFJj4T7892efmfxYDJBYtLSDI1qpgbaEUnvnk37T3mSkVJLS0GbrjxMssa1YhWBtHP6Z7qzQhyJN+Q/4w61RuGUVgt7FGYRgT3wKCg98R4q+OauETWPPuPpd/SXVmh98VM7MD/Cyhi+fcpUWXc8Rio2cAoRzwJpd4E+EUemxRc5qleaKYL1Dq4DT5xLLzwtYyzQXDmZH3nFURxL1R1RPXGXwYVYraomINI5h9kWv08PG+GHMWYveouxXj5vmL8wIsuYTJebVmFcezJCbLYzR8ksjCXNwOpk21b5w0y7/QhNg7GHv52b1N027cDnuCzD3Xavt74bZ5f3sTQbxQ2HqnMMOGnXd0F08xgIp99dwFzXdGA7/NS/5GLZcjmxINXHi0+XCqceX2wgwklkH9vYkLKwRdAkzHsM6fX/XPzyjxPHxiZ/X7eYd9noOAFtTVPAIr4Umj7xvO3KEaTHpD3izQsCyJYcQ96IvdzlZDF/io+AkDv8HPg50FFuqK1GZeP9z/1IXKECRQqXs43OKXHjzRPtVDhdIBBV7r69FzTIei79GnxE7/cyMsIs8BUO71GjZTM7KPmKd6/5c6oKl2lVpHvd0DL90ttuf9wN2959Iu609YsB23txrKsIB7RNFFv8KfLD/zdPD3IOJRCd25CoPvOX0ieQqAs03by1nn26VHoZmsun3tHRy7x6chgTYFt95GU2/+acfwAyXzAAA=" style="height:30px"/><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div></a></header>
+<div class="wrap"><img src="data:image/webp;base64,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" style="width:70px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(212,175,55,.5))"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">Paiement sécurisé</div><div style="background:#0A0800;border:2px solid rgba(212,175,55,.3);border-radius:14px;padding:28px;margin:24px 0"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:6px">Votre abonnement</div><div id="plan-name" style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:#F0F0F0;margin-bottom:4px">—</div><div style="display:flex;align-items:baseline;justify-content:center;gap:4px;margin-bottom:8px"><span id="plan-amount" style="font-family:Montserrat,sans-serif;font-weight:900;font-size:40px;color:#D4AF37">—</span><span id="plan-period" style="font-size:14px;color:#888">/mois</span></div><div id="plan-desc" style="font-size:12px;color:#888;margin-bottom:16px">—</div><div style="border-top:1px solid rgba(212,175,55,.1);padding-top:14px;font-size:11px;color:#666;line-height:1.8"><div>Compte : <strong style="color:#C0C0C0" id="plan-email">—</strong></div><div id="plan-club-row">Club : <strong style="color:#C0C0C0" id="plan-club">—</strong></div></div></div><button onclick="goToStripe()" style="width:100%;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:10px;padding:16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:14px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;transition:all .25s;margin-bottom:16px" onmouseover="this.style.boxShadow='0 0 28px rgba(212,175,55,.5)'" onmouseout="this.style.boxShadow='none'">🔒 Payer avec Stripe →</button><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px"><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#444"><span>🔒</span>SSL 256-bit</div><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#444"><span>💳</span>PCI-DSS Stripe</div><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#444"><span>🇪🇺</span>RGPD</div><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#444"><span>↩️</span>Résiliable</div></div><p style="font-size:11px;color:#333;line-height:1.7">Vous serez redirigé vers la page de paiement sécurisée Stripe.<br>Aucune donnée bancaire n'est stockée sur nos serveurs.</p><div style="margin-top:24px"><a href="ffp-pricing.html" style="font-family:Montserrat,sans-serif;font-size:11px;color:#444;text-decoration:none">← Retour aux tarifs</a></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FFP — PAGE PAIEMENT (attente clés Stripe)
+// ══════════════════════════════════════════════════════
+
+var PLANS = {
+  club_base:     { name:'Club Starter',       amount:'29,90', period:'mois', desc:'3 coachs inclus · 14j essai gratuit' },
+  parent_solo:   { name:'Parent Solo',        amount:'20,00', period:'an',   desc:'Accès fiche joueur + messagerie' },
+  parent_joueur: { name:'Parent + Joueur',    amount:'25,00', period:'an',   desc:'Profil joueur visible recruteurs' },
+  scout_solo:    { name:'Scout Solo',         amount:'29,90', period:'mois', desc:'1 club · Validation requise' },
+  scout_multi5:  { name:'Scout Multi',        amount:'99,00', period:'mois', desc:'5 clubs · Validation requise' },
+  scout_premium: { name:'Scout Premium',      amount:'160,00','period':'mois', desc:'10 clubs · Support dédié' }
+};
+
+function getParam(name) {
+  var url = new URL(window.location.href);
+  return url.searchParams.get(name) || '';
+}
+
+function init() {
+  var plan = getParam('plan') || 'club_base';
+  var coaches = parseInt(getParam('coaches')) || 3;
+  var email = getParam('email');
+  var club = getParam('club');
+  var info = PLANS[plan] || PLANS.club_base;
+
+  // Calculer montant réel (club avec coaches supplémentaires)
+  var amount = info.amount;
+  if (plan === 'club_base' && coaches > 3) {
+    var extra = coaches - 3;
+    amount = (29.90 + extra).toFixed(2).replace('.', ',');
+  }
+
+  // Afficher les infos
+  var planName = document.getElementById('plan-name');
+  var planAmount = document.getElementById('plan-amount');
+  var planPeriod = document.getElementById('plan-period');
+  var planDesc = document.getElementById('plan-desc');
+  var planEmail = document.getElementById('plan-email');
+  var planClub = document.getElementById('plan-club');
+
+  if (planName) planName.textContent = info.name;
+  if (planAmount) planAmount.textContent = amount + '€';
+  if (planPeriod) planPeriod.textContent = '/' + info.period;
+  if (planDesc) planDesc.textContent = info.desc;
+  if (planEmail && email) planEmail.textContent = email;
+  if (planClub && club) planClub.textContent = club;
+}
+
+function goToStripe() {
+  var plan = getParam('plan') || 'club_base';
+  // PLACEHOLDER — à remplacer par vos Payment Links Stripe
+  // Format: https://buy.stripe.com/VOTRE_PAYMENT_LINK
+  var STRIPE_LINKS = {
+    club_base:     'https://buy.stripe.com/REMPLACER_CLUB_BASE',
+    parent_solo:   'https://buy.stripe.com/REMPLACER_PARENT_SOLO',
+    parent_joueur: 'https://buy.stripe.com/REMPLACER_PARENT_JOUEUR',
+    scout_solo:    'https://buy.stripe.com/REMPLACER_SCOUT_SOLO',
+    scout_multi5:  'https://buy.stripe.com/REMPLACER_SCOUT_MULTI',
+    scout_premium: 'https://buy.stripe.com/REMPLACER_SCOUT_PREMIUM'
+  };
+  var email = getParam('email');
+  var link = STRIPE_LINKS[plan] || STRIPE_LINKS.club_base;
+  if (email) link += '?prefilled_email=' + encodeURIComponent(email);
+  window.location.href = link;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>

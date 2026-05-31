@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Créer un compte Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,175,55,.05),transparent 60%);z-index:0}
+.wrap{max-width:680px;margin:0 auto;padding:40px 20px;position:relative;z-index:1}
+.card{background:#0A0800;border:1px solid rgba(212,175,55,.2);border-radius:14px;padding:32px 36px;margin-bottom:20px}
+.step-panel{display:none}
+.fi{background:#111318;border:1px solid rgba(212,175,55,.18);border-radius:8px;padding:10px 14px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.fi:focus{border-color:rgba(212,175,55,.5)}
+.fi option{background:#111}
+.fl{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#444;display:block;margin-bottom:4px}
+.btn{background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:13px 24px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;transition:all .25s}
+.btn:hover{box-shadow:0 0 24px rgba(212,175,55,.4)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,.1);color:#888;border-radius:8px;padding:11px 20px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600}
+.err{color:#E24B4A;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;min-height:16px;margin-bottom:8px}
+.prog-wrap{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:32px}
+.prog-step{display:flex;align-items:center;gap:0}
+.prog-done,.prog-active,.prog-todo{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;transition:all .3s}
+.prog-done{background:#4BC88A;color:#000}
+.prog-active{background:#D4AF37;color:#000;box-shadow:0 0 16px rgba(212,175,55,.4)}
+.prog-todo{background:#1A1A1A;color:#444;border:1px solid #333}
+.prog-line{width:60px;height:2px;background:#222;transition:background .3s}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.cat-label{display:flex;align-items:center;gap:6px;background:#111;border:1px solid rgba(212,175,55,.1);border-radius:6px;padding:7px 10px;cursor:pointer;font-size:11px;transition:all .2s}
+.cat-label:hover{border-color:rgba(212,175,55,.3)}
+.cat-check:checked + .cat-label{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.4);color:#D4AF37}
+.consent-row{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#0D0B05;border:1px solid rgba(212,175,55,.1);border-radius:8px;margin-bottom:8px}
+.consent-row input[type=checkbox]{accent-color:#D4AF37;width:16px;height:16px;flex-shrink:0;margin-top:2px}
+.consent-row label{font-size:12px;color:#C0C0C0;line-height:1.6;cursor:pointer}
+.consent-row label a{color:#D4AF37;text-decoration:none}
+.price-tag{background:linear-gradient(135deg,#0D0A00,#1A1400);border:1px solid rgba(212,175,55,.3);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.price-amount{font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;color:#D4AF37}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Création compte Club</div></div></a><div style="margin-left:auto"><a href="ffp-login.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:5px 10px">Déjà un compte →</a></div></header>
+<div class="wrap">
+<div style="text-align:center;margin-bottom:28px"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px">Créer un compte Club</div><p style="font-size:12px;color:#888">14 jours d'essai gratuit · Sans engagement · Résiliable à tout moment</p></div><div class="prog-wrap"><div class="prog-step"><div id="prog-1" class="prog-active">1</div></div><div class="prog-line" id="pline-1"></div><div class="prog-step"><div id="prog-2" class="prog-todo">2</div></div><div class="prog-line" id="pline-2"></div><div class="prog-step"><div id="prog-3" class="prog-todo">3</div></div></div><div style="display:flex;justify-content:space-around;font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#444;margin-bottom:28px"><span>Club</span><span style="margin-left:40px">Administrateur</span><span>Paiement</span></div><div id="step-1" class="step-panel" style="display:block"><div class="card"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#D4AF37;margin-bottom:4px">Informations du club</div><p style="font-size:12px;color:#888;margin-bottom:22px">Ces informations seront visibles dans votre espace administrateur.</p><div style="display:flex;flex-direction:column;gap:14px"><div><label class="fl">Nom du club *</label><input class="fi" id="club-name" type="text" placeholder="Ex: AS Saint-Denis U12"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="fl">Ville *</label><input class="fi" id="club-ville" type="text" placeholder="Paris"></div><div><label class="fl">Région</label><input class="fi" id="club-region" type="text" placeholder="Île-de-France"></div></div><div><label class="fl">Catégories</label><div class="cat-grid"><label style="display:contents"><input type="checkbox" class="cat-check" value="U6" style="display:none"><span class="cat-label">U6</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U7" style="display:none"><span class="cat-label">U7</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U8" style="display:none"><span class="cat-label">U8</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U9" style="display:none"><span class="cat-label">U9</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U10" style="display:none"><span class="cat-label">U10</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U11" style="display:none"><span class="cat-label">U11</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U12" style="display:none"><span class="cat-label">U12</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U13" style="display:none"><span class="cat-label">U13</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U14" style="display:none"><span class="cat-label">U14</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U15" style="display:none"><span class="cat-label">U15</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U16" style="display:none"><span class="cat-label">U16</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U17" style="display:none"><span class="cat-label">U17</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="U18" style="display:none"><span class="cat-label">U18</span></label><label style="display:contents"><input type="checkbox" class="cat-check" value="Senior" style="display:none"><span class="cat-label">Senior</span></label></div></div><div><label class="fl">Nombre de coachs (3 inclus, max 50)</label><input class="fi" id="nb-coaches" type="range" min="3" max="50" value="3" oninput="updateCoachCount(this.value)" style="padding:0;background:transparent;border:none;cursor:pointer"><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><span style="font-size:12px;color:#888"><span id="coach-display">3</span> coachs</span><span id="coach-price" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D4AF37">29,90€/mois</span></div></div></div><div class="err" id="err-1"></div><button class="btn" onclick="nextStep(2)" style="margin-top:8px;width:100%">Étape suivante →</button></div></div><div id="step-2" class="step-panel"><div class="card"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#D4AF37;margin-bottom:4px">Compte administrateur</div><p style="font-size:12px;color:#888;margin-bottom:22px">Ce compte aura les droits complets sur votre club.</p><div style="display:flex;flex-direction:column;gap:14px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label class="fl">Prénom *</label><input class="fi" id="admin-prenom" type="text" placeholder="Jean"></div><div><label class="fl">Nom *</label><input class="fi" id="admin-nom" type="text" placeholder="Dupont"></div></div><div><label class="fl">Email *</label><input class="fi" id="admin-email" type="email" placeholder="jean.dupont@monclub.fr"></div><div><label class="fl">Mot de passe *</label><div style="position:relative"><input class="fi" id="admin-pwd" type="password" placeholder="8 caractères minimum" style="padding-right:44px"><button onclick="toggleEye('admin-pwd')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#444">👁</button></div><div style="font-size:10px;color:#444;margin-top:4px">Minimum 8 caractères · Recommandé: majuscule + chiffre</div></div><div><label class="fl">Téléphone (optionnel)</label><input class="fi" id="admin-tel" type="tel" placeholder="+33 6 00 00 00 00"></div></div><div class="err" id="err-2"></div><div style="display:flex;gap:10px;margin-top:8px"><button class="btn-back" onclick="nextStep(1)">← Retour</button><button class="btn" onclick="nextStep(3)" style="flex:1">Étape suivante →</button></div></div></div><div id="step-3" class="step-panel"><div class="card"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#D4AF37;margin-bottom:16px">Récapitulatif & Paiement</div><div class="price-tag" style="margin-bottom:20px"><div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:4px">Plan Club Starter</div><div style="font-size:12px;color:#C0C0C0">14 jours d'essai gratuit inclus</div></div><div><div class="price-amount" id="final-price">29,90€</div><div style="font-size:10px;color:#888;font-family:Montserrat,sans-serif">/mois · Sans engagement</div></div></div><div style="background:#0D0B05;border:1px solid rgba(212,175,55,.1);border-radius:8px;padding:14px 16px;margin-bottom:20px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px">Ce qui est inclus</div><div style="font-size:12px;color:#C0C0C0;display:flex;flex-direction:column;gap:6px"><div>✅ <span id="inc-coaches">3</span> accès coachs</div><div>✅ Tous les modules FFP (matchs, convocations, media, scout...)</div><div>✅ Stockage illimité des évaluations et données joueurs</div><div>✅ Support email prioritaire</div><div>✅ Paiement sécurisé Stripe (PCI-DSS)</div></div></div><div style="margin-bottom:20px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#D4AF37;margin-bottom:12px">Consentements obligatoires *</div><div class="consent-row"><input type="checkbox" id="consent-cgv"><label for="consent-cgv">J'ai lu et j'accepte les <a href="ffp-legal.html" target="_blank">Conditions Générales de Vente</a> et les <a href="ffp-legal.html" target="_blank">Mentions légales</a> de Foot Factory Pro.</label></div><div class="consent-row"><input type="checkbox" id="consent-rgpd"><label for="consent-rgpd">J'accepte la <a href="ffp-legal.html" target="_blank">Politique de confidentialité</a> et le traitement de mes données personnelles par Foot Factory Pro conformément au RGPD.</label></div><div class="consent-row" style="border-color:rgba(255,255,255,.06)"><input type="checkbox" id="consent-marketing"><label for="consent-marketing"><span style="color:#888">Optionnel</span> — J'accepte de recevoir des actualités et offres de Foot Factory Pro par email. Désinscription possible à tout moment.</label></div></div><div class="err" id="err-3"></div><div style="display:flex;gap:10px"><button class="btn-back" onclick="nextStep(2)">← Retour</button><button class="btn" id="submit-btn" onclick="submitRegistration()" style="flex:1">Créer mon compte et procéder au paiement →</button></div><p style="font-size:10px;color:#444;text-align:center;margin-top:12px;line-height:1.6">🔒 Paiement sécurisé par Stripe · Aucune carte stockée sur nos serveurs · Résiliable à tout moment</p></div></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FFP — INSCRIPTION NOUVEAU CLUB
+// ══════════════════════════════════════════════════════
+
+var CONSENT_VERSION = '1.0';
+var STEP = 1;
+
+function nextStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
+  document.querySelectorAll('.step-panel').forEach(function(p){p.style.display='none';});
+  document.getElementById('step-'+n).style.display='block';
+  STEP = n;
+  updateProgress(n);
+}
+
+function updateProgress(n) {
+  [1,2,3].forEach(function(i){
+    var el = document.getElementById('prog-'+i);
+    if (!el) return;
+    if (i < n) { el.className='prog-done'; el.textContent='✓'; }
+    else if (i === n) { el.className='prog-active'; el.textContent=i; }
+    else { el.className='prog-todo'; el.textContent=i; }
+  });
+}
+
+function validateStep1() {
+  var club = (document.getElementById('club-name')||{}).value||'';
+  var ville = (document.getElementById('club-ville')||{}).value||'';
+  var err = document.getElementById('err-1');
+  if (!club.trim()||!ville.trim()) {
+    if(err) err.textContent='Nom et ville sont obligatoires.';
+    return false;
+  }
+  if(err) err.textContent='';
+  return true;
+}
+
+function validateStep2() {
+  var prenom=(document.getElementById('admin-prenom')||{}).value||'';
+  var nom=(document.getElementById('admin-nom')||{}).value||'';
+  var email=(document.getElementById('admin-email')||{}).value||'';
+  var pwd=(document.getElementById('admin-pwd')||{}).value||'';
+  var err=document.getElementById('err-2');
+  if(!prenom.trim()||!nom.trim()||!email.trim()||!pwd.trim()){
+    if(err)err.textContent='Tous les champs sont obligatoires.';return false;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(err)err.textContent='Email invalide.';return false;
+  }
+  if(pwd.length<8){
+    if(err)err.textContent='Mot de passe : 8 caractères minimum.';return false;
+  }
+  if(err)err.textContent='';
+  return true;
+}
+
+function toggleEye(inputId) {
+  var inp = document.getElementById(inputId);
+  if(!inp) return;
+  inp.type = inp.type==='password'?'text':'password';
+}
+
+function updateCoachCount(val) {
+  var n = parseInt(val)||3;
+  var extra = Math.max(0,n-3);
+  var monthly = 29.90 + extra;
+  var el = document.getElementById('coach-price');
+  if(el) el.textContent = monthly.toFixed(2).replace('.',',')+'€/mois';
+  var el2 = document.getElementById('coach-display');
+  if(el2) el2.textContent = n;
+}
+
+async function submitRegistration() {
+  var btn = document.getElementById('submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='Création en cours...';}
+
+  // Vérifier consentements obligatoires
+  var cgv = document.getElementById('consent-cgv');
+  var rgpd = document.getElementById('consent-rgpd');
+  var err = document.getElementById('err-3');
+
+  if(!cgv||!cgv.checked||!rgpd||!rgpd.checked){
+    if(err)err.textContent='Vous devez accepter les conditions et la politique de confidentialité.';
+    if(btn){btn.disabled=false;btn.textContent='Créer mon compte et procéder au paiement →';}
+    return;
+  }
+
+  // Collecter données
+  var data = {
+    club_name: (document.getElementById('club-name')||{}).value||'',
+    club_ville: (document.getElementById('club-ville')||{}).value||'',
+    club_region: (document.getElementById('club-region')||{}).value||'',
+    club_categories: Array.from(document.querySelectorAll('.cat-check:checked')).map(function(c){return c.value;}),
+    nb_coaches: parseInt((document.getElementById('nb-coaches')||{}).value||'3')||3,
+    admin_prenom: (document.getElementById('admin-prenom')||{}).value||'',
+    admin_nom: (document.getElementById('admin-nom')||{}).value||'',
+    admin_email: (document.getElementById('admin-email')||{}).value||'',
+    admin_pwd: (document.getElementById('admin-pwd')||{}).value||'',
+    plan: 'club_base',
+    consent_cgv: true,
+    consent_rgpd: true,
+    consent_marketing: !!(document.getElementById('consent-marketing')||{}).checked,
+    consent_version: CONSENT_VERSION,
+    consent_timestamp: new Date().toISOString()
+  };
+
+  // Sauvegarder en localStorage (Supabase Auth + Stripe à connecter)
+  try { localStorage.setItem('ffp_pending_registration', JSON.stringify(data)); } catch(e) {}
+
+  // Rediriger vers paiement Stripe
+  // PLACEHOLDER : remplacer par votre Payment Link Stripe
+  window.location.href = 'ffp-subscribe.html?plan=club_base&coaches=' + data.nb_coaches
+    + '&email=' + encodeURIComponent(data.admin_email)
+    + '&club=' + encodeURIComponent(data.club_name);
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', function(){
+  updateProgress(1);
+  updateCoachCount(3);
+});
+
+
+// Sync prix final à l'étape 3
+document.addEventListener('DOMContentLoaded', function(){
+  var nb = document.getElementById('nb-coaches');
+  if(nb){
+    nb.addEventListener('input', function(){
+      var n=parseInt(this.value)||3;
+      var extra=Math.max(0,n-3);
+      var monthly=29.90+extra;
+      var fp=document.getElementById('final-price');
+      if(fp)fp.textContent=monthly.toFixed(2).replace('.',',')+'€';
+      var ic=document.getElementById('inc-coaches');
+      if(ic)ic.textContent=n;
+    });
+  }
+});
+
+</script>
+</body>
+</html>
