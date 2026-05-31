@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Superadmin</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37;--gold-l:#FBCB57;--bg:#050400;--bg2:#0A0800;--bg3:#111006;--text:#F0EEE8;--muted:#888;--border:rgba(212,175,55,.12);--red:#E24B4A;--green:#4BC88A;--blue:#60A8D0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text)}
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,175,55,.06),transparent 60%)}
+.login-card{background:var(--bg2);border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:40px;width:min(400px,92vw);text-align:center}
+.inp{width:100%;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;margin-bottom:10px;transition:border-color .2s}
+.inp:focus{border-color:rgba(212,175,55,.5)}
+.btn-gold{width:100%;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .25s}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,175,55,.3)}
+/* LAYOUT */
+.app{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-brand{font-family:'Montserrat',sans-serif;font-weight:900;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-sub{font-size:8px;color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.nav-items{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;margin-bottom:2px;transition:all .2s;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.nav-item:hover{background:rgba(212,175,55,.06);color:var(--text)}
+.nav-item.active{background:rgba(212,175,55,.1);color:var(--gold);border:1px solid rgba(212,175,55,.2)}
+.nav-ico{width:20px;text-align:center;font-size:14px}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.main{margin-left:220px;padding:24px;min-height:100vh}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.page-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;text-transform:uppercase}
+.live-badge{display:flex;align-items:center;gap:6px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green);background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:5px;padding:4px 10px}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi-val{font-family:'Montserrat',sans-serif;font-weight:900;font-size:32px;line-height:1;margin-bottom:4px}
+.kpi-lbl{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.kpi-trend{font-size:10px;font-weight:600;margin-top:6px}
+/* TABLE */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gold)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 14px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)}
+tr:hover td{background:rgba(212,175,55,.02)}
+tr:last-child td{border-bottom:none}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:2px 8px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-green{background:rgba(75,200,138,.12);color:var(--green);border:1px solid rgba(75,200,138,.3)}
+.badge-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.3)}
+.badge-red{background:rgba(226,75,74,.12);color:var(--red);border:1px solid rgba(226,75,74,.3)}
+.badge-blue{background:rgba(96,168,208,.12);color:var(--blue);border:1px solid rgba(96,168,208,.3)}
+.badge-gray{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+/* FORMS */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.form-input{background:#111;border:1px solid rgba(212,175,55,.2);border-radius:7px;padding:9px 12px;color:var(--text);font-size:12px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:rgba(212,175,55,.5)}
+.btn-sm{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000}
+.btn-danger{background:rgba(226,75,74,.15);color:var(--red);border:1px solid rgba(226,75,74,.3)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+/* SEARCH */
+.search-bar{display:flex;gap:8px;align-items:center}
+.search-inp{background:#111;border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text);font-size:12px;outline:none;min-width:200px}
+.search-inp:focus{border-color:rgba(212,175,55,.3)}
+/* CHART placeholder */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px}
+.chart-bar{flex:1;background:rgba(212,175,55,.2);border-radius:3px 3px 0 0;transition:all .3s;cursor:pointer;position:relative}
+.chart-bar:hover{background:rgba(212,175,55,.5)}
+.chart-bar .tooltip{display:none;position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:#000;color:var(--gold);padding:2px 6px;border-radius:4px;font-size:9px;white-space:nowrap;font-family:'Montserrat',sans-serif;font-weight:700}
+.chart-bar:hover .tooltip{display:block}
+/* RESPONSIVE */
+@media(max-width:768px){.sidebar{width:60px}.sidebar-brand,.sidebar-sub,.nav-item span{display:none}.main{margin-left:60px}.form-row{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+.page{display:none}.page.active{display:block}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-wrap" class="login-wrap">
+  <div class="login-card">
+    <img src="data:image/webp;base64,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" style="height:50px;filter:drop-shadow(0 0 12px rgba(212,175,55,.5));margin-bottom:16px">
+    <div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#D4AF37;margin-bottom:4px">Superadmin</div>
+    <div style="font-size:11px;color:#555;font-family:Montserrat,sans-serif;margin-bottom:24px;letter-spacing:1px;text-transform:uppercase">Accès restreint — Propriétaire uniquement</div>
+    <input class="inp" id="admin-pass" type="password" placeholder="Mot de passe administrateur" autocomplete="current-password">
+    <div id="login-err" style="min-height:16px;font-size:11px;margin-bottom:8px"></div>
+    <button class="btn-gold" onclick="adminLogin()">Accéder au tableau de bord →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="data:image/webp;base64,UklGRk4MAABXRUJQVlA4WAoAAAAQAAAAMgAAKwAAQUxQSNgEAAABoC3Jtmnban2MsXlsc+PYtm3burZt27Zt2zaObZ+rvdccaA9rrrn2/YOImAD8/woDT4ER/L+itDFGG2OMFohM3h3GA2KkwkQbJBcl9T+8vHJhIQBdMWIASNH4U6598Kl7b7hoSf96gEK1+R+u3fDLTY2hK0A0UDDmjt8iJjz0RQ9p9DU3tO465/2dk6Cz0kD9i9aTpLNRrPVkK732i6LbDIDnOR46C42Cs/aQ3jpnHWNDKvoZp+wH3t52QYdZh3mokagkojH0V9J675ieOnLob5J8CX9unvkcSXvx5Id5PkwCEZxD2uA9eeTT65b0Km1Yr0Hn/lNvXpQbnd/vBf5X9hWAr7+HyiSiHqL3wZG/rmyC5FUPdQF+J39CFX3fHmQWrZ5hRE/+MT0PgNFKKRGltVHYNB945Z6j3xgJ/Po7JIPB44zoGV1cBdAKiQ0e+q1yrzMB9eRlz/B6mDiDSxjRcfcoQAuyVGj27/Y9/XV1zCBTraFiNMbR0nNTO+QbnbXKwXLyFgDPBp4AjXSlau8M3nNbS1T4soP85dHV/PtoVEcc7qcNLjUIptbIESOzHNSzW9tihRYnv//Dh6dVx/LfK4sAJm9k8HQ8HfmYzgp9GDmIHf4JeRwMkNP/D3rHj8XkYLZLuSy95bqaIsooo24hI7+pUATVbmUIPvSENphDR4YYH2vD/lIoABCU/Ga94xRo5L0cnOPr0DBYRsts/QgYxCocTW/DM9DQv9A7jhEDg6NoA/d/8+G773/x8++r/1y7+o+5yFVKpYk02knHg7UgbVP03JAniLO8HhUtci+d52iYhfSWV8EkkVyDFsVFRUUti4pKioqKWrTRaQpjGKJwMcxtdJ5joZOgAEtSkfPpzrkUn81RMS0OMOLL0B/SsawZJBGG2cDMnj/XRpog50tX7r+G/EDH9VUS3YTSfd6GdB+CCwfbQCFdyZskDxRgGz2/zE10dZXNTOxHQyNWpP/4sYtW5mMTHX8oTHRF/eNWLls0d/7i2XPnLZm3ahoUsv6eln/mJboB2QoyKty/+tfV94j+iJbbaie6XLJJqPAJybeh76PlvmKoDI4XYtAN190Qf91Vt66ApCljcvG2L/NfVVMn0tKOFZ3gbJzOpPu7Skzse3QhfFmnpwueF0IlOBrH2jIbpZen9naGAqDQeumSZYVv0QWmJuZvoOX3VSBxnvNxPC0zLoCGaJ0nJ5Bs/DKd5472uCNEtGOgM02L2btv/4E9e2+CRvxyW24bvkLrwkkKfeg9n4aKCxyN4xjxqHZdurUprSwiqNazd/8aK+jY8BWmeB+Uwhe0wY+HzmICYkVyZAHJmbPjuLaxKIMRdJ4/VlW5cUNjpqocpZQAwKLwX5g6k46NX/FHJkABGi/Set6CvLiBMVOgAaBKtVqFc1nOiZPpWPMZ3qOVAEqaHAjOcyFiwmA5nhEnwSitqq7ev//hqWnjGf4ds+O75lAAoDHROx/KV+EYWsehWMGIo5Be5TD58hSWc+o4urJ/d/aCQqzG0QyWW/Vypri3Dd6i4xA06dy5c6NdIbw0leWcPpYpppZCI6PByc6H1Wo5uX1I3sv05FDcxsBpG8nnJrOcE/qT+1ZASSbk4Pgy7shdyl0j8SgtyRG4JaTClI3k0xOZ4uLruH4uFGIBVlA4IFAHAADwIQCdASozACwAPi0ShkKhoQ3+qgAMAWJbACdMoR+N6P5glRfsH3v45EvXYh+v+6P3V/032Afk32APyH6gHmA/kH9y/cD3qv7B6ivQA/W71hfUL9AD+Gf270uP24+Bz9qv23+A/9cP/NdPPBHveeGfWbjjsy/vv5eebN4A+/j+H8hm8Gcv/l/+A+3L9QOkn6weg7+df3780venv+/qP92/0nuCfyH+a/4n+5/uZ/wPiR/uPLp87f6v3Bf45/Jv8r/fv7t/y/8r/+for9fP7M+wh+tY55zxUN2KMtYjP8fSBjybKLEUk9/IDdOWu9F7r/r6HQlsuPCbQD5bf+nAzEAcGG9pnaOF3qgKIc2qrWH/1Qxn4ijDleAAAP7/T/S3Y8WUhE1TJ7oTXmC8DYTaOTxLeBSUfMDp/0FNGg0ZoGONbMShJGSbv1D3rql1SB5bjcaWSCMR0vT+f94dFWx7Z2q19l3cZH5zmh2uthSWVl0m9uCyMo+fwtZTv4d1YEyXHUIT9rDLNc91tS9fI3AmWPL4kblqaZEq9YQK3pwgiwycjVQYrizGrAIOddMVf07ZXJhNa/9/cU/KI4cUJv9rK5DlJN80jxUr2b3HDcCNEyiUP3His4jxinuEuLk2OdbLtyB7m2D267A9c8fNKC1T88ttUA39UziYDlFDHLkKTFUsySn4/QFCPbybiY+r0PPShsADnJeHiMfF95DtJ1fa0BRP5pBhcl6n8Rpa0iUdpvk2FPJUz6MaeOcTF1TUbqoH2Ybggq9O60F9QkfvmtLeYnHa0kQ2GV8HvKsjkxVyRXH9uUMO2+SRO7TlDKpPsrDbzPH/PSl6tGp6GZ8VGe/K3QwXVX1CmUrztzI7KMCKevywnKzVnmfzj7KxK+YHnh0GmfLR++1QNcBDmBO2Wxax7ok9HPrvz4FWHxSdyIuvCRjltQjuJmYDhhePmPfgdRpAiV+p8tDoLUnvZUIiMC2Bf85mk369cJ+DNWp6vZQPUZybw27HuaXVtWgDRaNdD+aEESFz72ptyAEP/3bl//+7PlhnEmKwWmn3H3w6i4Q7VWcpNcK++IMIldXd+5P+CPM3cOMgMmI10zII/4Uk8M6NRlXllg+jE3DFMiRjiv43uXz8G+Gdz+8d6zxgY6NtNlHa9A9IzlrZ1x+5NtICvx3BCjKu1Dfj4SuiajXgSpNf/JY8Vq5MXw5W0VRiAgJHmXdfi/6OdzhWryUrLwM1V//tr5+Eku4K0XerBvwt9of1P2ydxHKXML1kTAOCi0a3v3+MHp6dpo02feaWzQhG7MJTBgF9EXnJUxCxfJ8C+n1R90NPxDePlPHTNaFA+n5sBEK6RK5heaSjWJuKDxqc4iVtY5VZkZryzQVW/gVa9LXUJa7KXYZfGGnN3rrRTEer7HzNGE5o2YxlzuGSPout2YkWU+NG+2HhfWOZD9H8CG8EdN8UUnlHykTbRn+ZDBYXk8SKr+YYhtPowu2o31Y4YFKCTfU9ttdAc+Xg9LT8CoOXySiFG3LW1HfMlIbLL73gpfBxraQZo3pTohR+7nWWo/Ro8InqVT131fzDCRbMPNyC3NjjgnxfhUeWqo83KQx38ROdB95h7U1fBAQS41xUUeQAfOh9fNZNeqOv6EOgeAMA4ZRBcTZLC+Br4aCX0qSt/Ff2q2fjBGO2Xx2l/o5oUO/8PqL+F08f08b3nmL5VUaecp/h2zy1FKZzuFenaRR7hLeUzVVpKAfmRPVfnmVkdEE/vrZ7zS3fBd8Dm2RBZWVQBNh+67GYOdYVFJj4T7892efmfxYDJBYtLSDI1qpgbaEUnvnk37T3mSkVJLS0GbrjxMssa1YhWBtHP6Z7qzQhyJN+Q/4w61RuGUVgt7FGYRgT3wKCg98R4q+OauETWPPuPpd/SXVmh98VM7MD/Cyhi+fcpUWXc8Rio2cAoRzwJpd4E+EUemxRc5qleaKYL1Dq4DT5xLLzwtYyzQXDmZH3nFURxL1R1RPXGXwYVYraomINI5h9kWv08PG+GHMWYveouxXj5vmL8wIsuYTJebVmFcezJCbLYzR8ksjCXNwOpk21b5w0y7/QhNg7GHv52b1N027cDnuCzD3Xavt74bZ5f3sTQbxQ2HqnMMOGnXd0F08xgIp99dwFzXdGA7/NS/5GLZcjmxINXHi0+XCqceX2wgwklkH9vYkLKwRdAkzHsM6fX/XPzyjxPHxiZ/X7eYd9noOAFtTVPAIr4Umj7xvO3KEaTHpD3izQsCyJYcQ96IvdzlZDF/io+AkDv8HPg50FFuqK1GZeP9z/1IXKECRQqXs43OKXHjzRPtVDhdIBBV7r69FzTIei79GnxE7/cyMsIs8BUO71GjZTM7KPmKd6/5c6oKl2lVpHvd0DL90ttuf9wN2959Iu609YsB23txrKsIB7RNFFv8KfLD/zdPD3IOJRCd25CoPvOX0ieQqAs03by1nn26VHoZmsun3tHRy7x6chgTYFt95GU2/+acfwAyXzAAA=" style="height:26px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))">
+      <div>
+        <div class="sidebar-brand">FFP Admin</div>
+        <div class="sidebar-sub">Superadmin</div>
+      </div>
+    </div>
+    <nav class="nav-items">
+      <div class="nav-item active" data-page="dashboard" onclick="loadPage('dashboard')">
+        <span class="nav-ico">📊</span><span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="clubs" onclick="loadPage('clubs')">
+        <span class="nav-ico">🏟️</span><span>Clubs</span>
+      </div>
+      <div class="nav-item" data-page="users" onclick="loadPage('users')">
+        <span class="nav-ico">👥</span><span>Utilisateurs</span>
+      </div>
+      <div class="nav-item" data-page="stats" onclick="loadPage('stats')">
+        <span class="nav-ico">📈</span><span>Statistiques</span>
+      </div>
+      <div class="nav-item" data-page="security" onclick="loadPage('security')">
+        <span class="nav-ico">🔒</span><span>Sécurité</span>
+      </div>
+      <div style="border-top:1px solid var(--border);margin:8px 0;padding-top:8px">
+        <div class="nav-item" onclick="window.open('https://www.footfactorypro.com','_blank')">
+          <span class="nav-ico">🌐</span><span>Plateforme</span>
+        </div>
+        <div class="nav-item" onclick="window.open('https://www.footfactorypro.shop','_blank')">
+          <span class="nav-ico">🛒</span><span>Boutique</span>
+        </div>
+        <div class="nav-item" onclick="window.open('https://app.supabase.com','_blank')">
+          <span class="nav-ico">🗄️</span><span>Supabase</span>
+        </div>
+        <div class="nav-item" onclick="window.open('https://dashboard.stripe.com','_blank')">
+          <span class="nav-ico">💳</span><span>Stripe</span>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-sm btn-ghost" style="width:100%" onclick="adminLogout()">← Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="top-bar">
+      <div class="page-title" id="page-title">Tableau de bord</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="live-badge"><span class="dot-live"></span>Live Supabase</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:10px;color:var(--muted)" id="admin-time"></div>
+        <button class="btn-sm btn-ghost" onclick="loadPage(CURRENT_PAGE)">↻ Actualiser</button>
+      </div>
+    </div>
+    
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-clubs" class="page"></div>
+    <div id="page-users" class="page"></div>
+    <div id="page-stats" class="page"></div>
+    <div id="page-security" class="page"></div>
+  </main>
+
+</div>
+
+<script>
+
+var SUPABASE_URL = 'https://qpabgwskavglvojhuzeq.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_n814zGkCNq7wnSoro8w1Zg_ln31penJ';
+var ADMIN_PASS = 'FFP@Admin2026!';
+var CURRENT_PAGE = 'dashboard';
+
+// ── Auth admin ──────────────────────────────────────────────────
+function adminLogin() {
+  var pass = document.getElementById('admin-pass').value;
+  var err = document.getElementById('login-err');
+  if (pass === ADMIN_PASS) {
+    try { sessionStorage.setItem('ffp_admin', '1'); } catch(e) {}
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadPage('dashboard');
+  } else {
+    err.textContent = 'Mot de passe incorrect.';
+    err.style.color = '#E24B4A';
+  }
+}
+
+function adminLogout() {
+  try { sessionStorage.removeItem('ffp_admin'); } catch(e) {}
+  location.reload();
+}
+
+// ── Supabase fetch ──────────────────────────────────────────────
+async function sb(table, params) {
+  try {
+    var url = SUPABASE_URL + '/rest/v1/' + table + '?' + (params || 'limit=500&order=created_at.desc');
+    var res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      }
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch(e) { return []; }
+}
+
+async function sbCount(table) {
+  try {
+    var url = SUPABASE_URL + '/rest/v1/' + table + '?select=count';
+    var res = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'count=exact'
+      }
+    });
+    var count = res.headers.get('content-range');
+    if (count) return parseInt(count.split('/')[1]) || 0;
+    var data = await res.json();
+    return Array.isArray(data) ? data.length : 0;
+  } catch(e) { return 0; }
+}
+
+// ── Navigation ──────────────────────────────────────────────────
+function loadPage(page) {
+  CURRENT_PAGE = page;
+  document.querySelectorAll('.nav-item').forEach(function(n) {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.toggle('active', p.id === 'page-' + page);
+  });
+  var titles = {
+    dashboard:'Tableau de bord',clubs:'Clubs & Abonnements',
+    users:'Utilisateurs',stats:'Statistiques',security:'Sécurité'
+  };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'clubs') loadClubs();
+  else if (page === 'users') loadUsers();
+  else if (page === 'stats') loadStats();
+  else if (page === 'security') loadSecurity();
+}
+
+// ── DASHBOARD ───────────────────────────────────────────────────
+async function loadDashboard() {
+  var el = document.getElementById('page-dashboard');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px">Chargement...</div>';
+  
+  var [clubs, profiles, joueurs] = await Promise.all([
+    sb('clubs'), sb('profiles'), sb('joueurs','limit=1&select=count')
+  ]);
+  
+  var coaches = profiles.filter(function(p){return p.role==='coach';});
+  var parents = profiles.filter(function(p){return p.role==='parent';});
+  var scouts = profiles.filter(function(p){return p.role==='scout'||p.role==='recruteur';});
+  
+  el.innerHTML = `
+    <div class="kpi-grid">
+      ${kpi('Clubs actifs', clubs.length, '#D4AF37', '🏟️', '+2 ce mois')}
+      ${kpi('Coaches', coaches.length, '#4BC88A', '🏅', '')}
+      ${kpi('Parents', parents.length, '#A060E0', '🫂', '')}
+      ${kpi('Recruteurs', scouts.length, '#60A8D0', '🔍', '')}
+      ${kpi('Profils total', profiles.length, '#FBCB57', '👥', '')}
+      ${kpi('MRR estimé', '–', '#4BC88A', '💶', 'Stripe à config.')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Clubs récents</span></div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Club</th><th>Ville</th><th>Créé</th></tr>
+            ${clubs.slice(0,8).map(function(c){return '<tr><td>'+c.name+'</td><td style="color:var(--muted)">'+( c.ville||'–')+'</td><td style="color:var(--muted);font-size:10px">'+(c.created_at?c.created_at.slice(0,10):'–')+'</td></tr>';}).join('')||'<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Aucun club</td></tr>'}
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Utilisateurs récents</span></div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Nom</th><th>Rôle</th><th>Créé</th></tr>
+            ${profiles.slice(0,8).map(function(p){return '<tr><td>'+(p.prenom||'')+' '+(p.nom||p.username||'–')+'</td><td>'+(roleBadge(p.role))+'</td><td style="color:var(--muted);font-size:10px">'+(p.created_at?p.created_at.slice(0,10):'–')+'</td></tr>';}).join('')||'<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Aucun profil</td></tr>'}
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Activité 7 derniers jours (simulé)</span>
+      </div>
+      <div style="padding:16px 18px">
+        <div class="chart-bar-wrap">
+          ${[45,62,38,71,55,83,67].map(function(v,i){var days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];return '<div class="chart-bar" style="height:'+(v)+'%"><div class="tooltip">'+v+' visites</div></div>';}).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          ${['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(function(d){return '<span style="font-size:9px;color:var(--muted);font-family:Montserrat,sans-serif">'+d+'</span>';}).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function kpi(label, val, color, ico, trend) {
+  return '<div class="kpi-card" style="border-top-color:'+color+'">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+    + '<div><div class="kpi-val" style="color:'+color+'">'+val+'</div>'
+    + '<div class="kpi-lbl">'+label+'</div>'
+    + (trend?'<div class="kpi-trend" style="color:var(--muted)">'+trend+'</div>':'')
+    + '</div><div style="font-size:24px;opacity:.4">'+ico+'</div></div></div>';
+}
+
+function roleBadge(role) {
+  var map = {coach:'badge-gold',parent:'badge-blue',scout:'badge-green',recruteur:'badge-green',directeur:'badge-red',superadmin:'badge-red'};
+  var cls = map[role] || 'badge-gray';
+  return '<span class="badge '+cls+'">'+( role||'–')+'</span>';
+}
+
+// ── CLUBS ───────────────────────────────────────────────────────
+async function loadClubs() {
+  var el = document.getElementById('page-clubs');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px">Chargement...</div>';
+  
+  var clubs = await sb('clubs');
+  
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">${clubs.length} clubs</span>
+        <div class="search-bar">
+          <input class="search-inp" id="club-search" placeholder="Rechercher..." oninput="filterTable('club-tbody','club-search')">
+          <button class="btn-sm btn-primary" onclick="showAddClub()">+ Ajouter</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>ID</th><th>Nom</th><th>Ville</th><th>Catégorie</th><th>Créé</th><th>Actions</th></tr>
+          <tbody id="club-tbody">
+          ${clubs.map(function(c){return '<tr>'
+            +'<td style="color:var(--muted);font-size:10px;font-family:monospace">'+c.id.slice(0,8)+'...</td>'
+            +'<td style="font-weight:600">'+c.name+'</td>'
+            +'<td style="color:var(--muted)">'+( c.ville||'–')+'</td>'
+            +'<td><span class="badge badge-gold">'+(c.categorie||'–')+'</span></td>'
+            +'<td style="color:var(--muted);font-size:10px">'+(c.created_at?c.created_at.slice(0,10):'–')+'</td>'
+            +'<td><button class="btn-sm btn-ghost" onclick="viewClub(\'' + c.id + '\')">Voir</button></td>'
+            +'</tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Aucun club dans Supabase</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ── USERS ───────────────────────────────────────────────────────
+async function loadUsers() {
+  var el = document.getElementById('page-users');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px">Chargement...</div>';
+  
+  var profiles = await sb('profiles');
+  
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">${profiles.length} utilisateurs</span>
+        <div class="search-bar">
+          <select class="search-inp" onchange="filterByRole(this.value)" style="min-width:120px">
+            <option value="">Tous les rôles</option>
+            <option value="coach">Coach</option>
+            <option value="parent">Parent</option>
+            <option value="scout">Recruteur</option>
+            <option value="directeur">Directeur</option>
+          </select>
+          <input class="search-inp" id="user-search" placeholder="Rechercher..." oninput="filterTable('user-tbody','user-search')">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Nom</th><th>Username</th><th>Rôle</th><th>Club</th><th>Créé</th><th>Actions</th></tr>
+          <tbody id="user-tbody">
+          ${profiles.map(function(p){return '<tr data-role="'+(p.role||'')+'">'
+            +'<td style="font-weight:600">'+(p.prenom||'')+' '+(p.nom||'–')+'</td>'
+            +'<td style="font-family:monospace;font-size:11px;color:var(--muted)">'+(p.username||'–')+'</td>'
+            +'<td>'+roleBadge(p.role)+'</td>'
+            +'<td style="color:var(--muted);font-size:11px">'+(p.club_id?p.club_id.slice(0,8)+'...':'–')+'</td>'
+            +'<td style="color:var(--muted);font-size:10px">'+(p.created_at?p.created_at.slice(0,10):'–')+'</td>'
+            +'<td style="display:flex;gap:4px">'
+            +'<button class="btn-sm btn-ghost" onclick="viewUser(\'' + p.id + '\')">Voir</button>'
+            +'<button class="btn-sm btn-danger" onclick="resetPass(\'' + p.id + '\',\'' + (p.username||'') + '\')">Reset</button>'
+            +'</td></tr>';}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">Aucun utilisateur</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ── STATS ───────────────────────────────────────────────────────
+async function loadStats() {
+  var el = document.getElementById('page-stats');
+  var [clubs, profiles, joueurs] = await Promise.all([
+    sb('clubs'), sb('profiles'), sb('joueurs','limit=500')
+  ]);
+  
+  var roles = {};
+  profiles.forEach(function(p){ roles[p.role] = (roles[p.role]||0)+1; });
+  
+  el.innerHTML = `
+    <div class="kpi-grid">
+      ${Object.keys(roles).map(function(r){return kpi(r, roles[r], '#D4AF37', '👤', '');}).join('')}
+      ${kpi('Joueurs total', joueurs.length, '#4BC88A', '⚽', '')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Répartition des rôles</span></div>
+        <div style="padding:18px">
+          ${Object.keys(roles).map(function(r){
+            var pct = Math.round(roles[r]/profiles.length*100);
+            return '<div style="margin-bottom:12px">'
+              +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+              +'<span style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">'+r+'</span>'
+              +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:var(--gold)">'+roles[r]+' ('+pct+'%)</span>'
+              +'</div>'
+              +'<div style="height:4px;background:#1A1A1A;border-radius:2px">'
+              +'<div style="height:100%;background:linear-gradient(90deg,#D4AF37,#FBCB57);border-radius:2px;width:'+pct+'%"></div>'
+              +'</div></div>';
+          }).join('')||'<p style="color:var(--muted);font-size:12px">Aucune donnée</p>'}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Infos plateforme</span></div>
+        <div style="padding:18px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${[
+              ['URL production','footfactorypro.com'],
+              ['Supabase projet','qpabgwskavglvojhuzeq'],
+              ['Région Supabase','EU West (Irlande)'],
+              ['GitHub repo','Makhuwcoder/foot-factory-pro'],
+              ['Hébergement','Vercel Hobby'],
+              ['Boutique','footfactorypro.shop'],
+            ].map(function(r){return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">'
+              +'<span style="font-size:11px;color:var(--muted)">'+r[0]+'</span>'
+              +'<span style="font-size:11px;font-family:monospace;color:var(--text)">'+r[1]+'</span>'
+              +'</div>';}).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── SECURITY ────────────────────────────────────────────────────
+async function loadSecurity() {
+  var el = document.getElementById('page-security');
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Changer mon mot de passe admin</span></div>
+        <div style="padding:18px">
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Nouveau mot de passe</label>
+            <input class="form-input" type="password" id="new-pass" placeholder="Min. 12 caractères">
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label class="form-label">Confirmer</label>
+            <input class="form-input" type="password" id="confirm-pass" placeholder="Répéter le mot de passe">
+          </div>
+          <button class="btn-sm btn-primary" onclick="changeAdminPass()">Mettre à jour</button>
+          <div id="pass-msg" style="margin-top:8px;font-size:11px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Accès & Clés API</span></div>
+        <div style="padding:18px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            ${[
+              ['Stripe PK','pk_live_...MCvKRK','badge-green'],
+              ['Supabase URL','qpabgwskavglvojhuzeq.supabase.co','badge-blue'],
+              ['Supabase Key (pub)','sb_publishable_...','badge-gold'],
+              ['Vercel','Hobby — footfactorypro.com','badge-gray'],
+            ].map(function(r){return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">'
+              +'<span style="font-size:11px;color:var(--muted)">'+r[0]+'</span>'
+              +'<span class="badge '+r[2]+'" style="font-size:9px">'+r[1]+'</span>'
+              +'</div>';}).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-header"><span class="card-title">⚠️ Actions sensibles</span></div>
+      <div style="padding:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-sm btn-danger" onclick="if(confirm('Vider le cache Vercel ?'))alert('Action manuelle sur vercel.com')">Vider cache Vercel</button>
+        <button class="btn-sm btn-ghost" onclick="window.open('https://app.supabase.com','_blank')">Ouvrir Supabase</button>
+        <button class="btn-sm btn-ghost" onclick="window.open('https://dashboard.stripe.com','_blank')">Ouvrir Stripe</button>
+        <button class="btn-sm btn-ghost" onclick="window.open('https://vercel.com/dashboard','_blank')">Ouvrir Vercel</button>
+        <button class="btn-sm btn-ghost" onclick="window.open('https://github.com/Makhuwcoder/foot-factory-pro','_blank')">Ouvrir GitHub</button>
+      </div>
+    </div>
+  `;
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────
+function filterTable(tbodyId, inputId) {
+  var q = document.getElementById(inputId).value.toLowerCase();
+  document.querySelectorAll('#'+tbodyId+' tr').forEach(function(tr){
+    var text = tr.textContent.toLowerCase();
+    tr.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+function filterByRole(role) {
+  document.querySelectorAll('#user-tbody tr').forEach(function(tr){
+    tr.style.display = (!role || tr.dataset.role === role) ? '' : 'none';
+  });
+}
+
+function viewUser(id) {
+  alert('Profil Supabase ID: ' + id + '\n\nVoir dans: app.supabase.com → Table Editor → profiles');
+}
+
+function viewClub(id) {
+  alert('Club ID: ' + id + '\n\nVoir dans: app.supabase.com → Table Editor → clubs');
+}
+
+function resetPass(id, username) {
+  if (confirm('Réinitialiser le mot de passe de ' + username + ' ?')) {
+    // En production: appel Supabase Admin API
+    alert('Pour réinitialiser:\n1. Aller sur app.supabase.com\n2. Authentication → Users\n3. Trouver: ' + username + '@footfactorypro.app\n4. Actions → Reset password');
+  }
+}
+
+function changeAdminPass() {
+  var np = document.getElementById('new-pass').value;
+  var cp = document.getElementById('confirm-pass').value;
+  var msg = document.getElementById('pass-msg');
+  if (np.length < 12) { msg.style.color='var(--red)'; msg.textContent='Minimum 12 caractères.'; return; }
+  if (np !== cp) { msg.style.color='var(--red)'; msg.textContent='Les mots de passe ne correspondent pas.'; return; }
+  ADMIN_PASS = np;
+  msg.style.color='var(--green)'; msg.textContent='✓ Mot de passe mis à jour (session uniquement).';
+}
+
+function showAddClub() {
+  alert('Ajout de club: utilisez Supabase directement (app.supabase.com → Table Editor → clubs → Insert row)');
+}
+
+// ── INIT ────────────────────────────────────────────────────────
+(function() {
+  try { if (sessionStorage.getItem('ffp_admin') === '1') {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadPage('dashboard');
+  } } catch(e) {}
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      var lw = document.getElementById('login-wrap');
+      if (lw && lw.style.display !== 'none') adminLogin();
+    }
+  });
+})();
+
+// Horloge
+setInterval(function(){
+  var el=document.getElementById('admin-time');
+  if(el)el.textContent=new Date().toLocaleTimeString('fr-FR');
+},1000);
+</script>
+</body>
+</html>
