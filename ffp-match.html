@@ -629,7 +629,44 @@ function exportRapportPDF(){
     +'</tbody></table>'
     +(MATCH.rapport_texte?'<h3 style="color:#B8900F;margin-top:14px">Analyse du coach</h3><p>'+MATCH.rapport_texte+'</p>':'')
     +'<p style="margin-top:20px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel · '+new Date().toLocaleDateString('fr-FR')+'</p>'
-    +'</body></html>';
+    +'
+<script>
+// DÉMO
+function exitDemo(){try{localStorage.removeItem("ffp_session");localStorage.removeItem("ffp_scout_session");localStorage.removeItem("ffp_demo_mode");localStorage.removeItem("ffp_events");localStorage.removeItem("ffp_messages");}catch(e){}window.location.href="ffp-accueil.html";}
+
+// ── Bannière mode démo (à injecter sur toutes les pages) ─────────
+(function(){
+  if (localStorage.getItem('ffp_demo_mode') !== '1') return;
+  var banner = document.createElement('div');
+  banner.id = 'ffp-demo-banner';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;'
+    + 'background:linear-gradient(135deg,rgba(10,8,0,.97),rgba(20,16,0,.97));'
+    + 'border-top:1px solid rgba(212,175,55,.3);padding:8px 16px;'
+    + 'display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px';
+  banner.innerHTML = '<div style="display:flex;align-items:center;gap:10px">'
+    + '<span style="background:rgba(75,200,138,.15);border:1px solid rgba(75,200,138,.4);'
+    + 'border-radius:6px;padding:2px 9px;font-family:Montserrat,sans-serif;font-size:9px;'
+    + 'font-weight:700;color:#4BC88A;letter-spacing:1px;text-transform:uppercase">⚡ MODE DÉMO</span>'
+    + '<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#888;">'
+    + 'Données fictives · AS Voltaire Paris · Session 2h</span></div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<a href="ffp-demo.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;'
+    + 'color:#D4AF37;text-decoration:none;border:1px solid rgba(212,175,55,.2);border-radius:5px;padding:4px 9px">'
+    + '← Changer de profil</a>'
+    + '<a href="ffp-pricing.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;'
+    + 'background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:4px 10px;text-decoration:none">'
+    + 'Créer un compte →</a>'
+    + '<button onclick="exitDemo()" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;'
+    + 'background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:5px;'
+    + 'color:#444;padding:4px 9px;cursor:pointer">✕ Quitter démo</button>'
+    + '</div>';
+  document.body.appendChild(banner);
+  // Ajouter padding-bottom pour ne pas masquer le contenu
+  document.body.style.paddingBottom = (banner.offsetHeight + 8) + 'px';
+})();
+
+</script>
+</body></html>';
   w.document.write(html);w.document.close();
 }
 

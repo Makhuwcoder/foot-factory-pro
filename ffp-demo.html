@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP — Démo Interactive</title>
+<meta name="description" content="Essayez Foot Factory Pro sans inscription — démo interactive avec données réalistes">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(212,175,55,.07),transparent 60%);z-index:0}
+.hero{position:relative;z-index:1;text-align:center;padding:60px 20px 40px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,.1);
+  border:1px solid rgba(212,175,55,.3);border-radius:20px;padding:5px 14px;
+  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:#D4AF37;margin-bottom:20px}
+.badge::before{content:'';width:7px;height:7px;border-radius:50%;
+  background:#4BC88A;box-shadow:0 0 8px #4BC88A;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+.personas{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  max-width:1100px;margin:0 auto 50px;padding:0 20px}
+.persona{background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:16px;
+  padding:28px 22px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;text-align:center}
+.persona::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.persona:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.persona.coach:hover{border-color:rgba(212,175,55,.5);box-shadow:0 20px 60px rgba(212,175,55,.1)}
+.persona.parent:hover{border-color:rgba(160,96,224,.5);box-shadow:0 20px 60px rgba(160,96,224,.1)}
+.persona.recruteur:hover{border-color:rgba(96,168,208,.5);box-shadow:0 20px 60px rgba(96,168,208,.1)}
+.persona.directeur:hover{border-color:rgba(75,200,138,.5);box-shadow:0 20px 60px rgba(75,200,138,.1)}
+.avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:28px;margin:0 auto 14px;border:2px solid rgba(212,175,55,.2)}
+.persona-name{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;
+  margin-bottom:3px;color:#F0F0F0}
+.persona-role{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.persona-desc{font-size:11px;color:#888;line-height:1.7;margin-bottom:18px}
+.persona-features{list-style:none;text-align:left;margin-bottom:20px}
+.persona-features li{font-size:11px;color:#C0C0C0;padding:3px 0;
+  display:flex;align-items:center;gap:6px}
+.persona-features li::before{content:'→';color:#D4AF37;font-weight:700;flex-shrink:0}
+.btn-demo{width:100%;padding:11px;border:none;border-radius:8px;cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:1.5px;text-transform:uppercase;transition:all .25s}
+.btn-gold{background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000}
+.btn-purple{background:linear-gradient(135deg,#A060E0,#C080FF);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#4080C0,#60A8D0);color:#fff}
+.btn-green{background:linear-gradient(135deg,#2A9060,#4BC88A);color:#fff}
+.data-strip{background:#0A0800;border-top:1px solid rgba(212,175,55,.1);
+  border-bottom:1px solid rgba(212,175,55,.1);padding:16px 20px;
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:50px}
+.stat-item{text-align:center}
+.stat-val{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;
+  color:#D4AF37;display:block}
+.stat-lbl{font-size:10px;color:#888;font-family:'Montserrat',sans-serif;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  max-width:900px;margin:0 auto 50px;padding:0 20px}
+.feature-card{background:#0A0800;border:1px solid rgba(212,175,55,.1);
+  border-radius:10px;padding:16px 18px}
+.feature-ico{font-size:24px;margin-bottom:8px}
+.feature-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;
+  color:#D4AF37;margin-bottom:5px}
+.feature-desc{font-size:11px;color:#888;line-height:1.6}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:900px){.personas{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.personas{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0"><img src="data:image/webp;base64,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" style="height:30px;filter:drop-shadow(0 0 6px rgba(212,175,55,.4))"/><div style="line-height:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Foot Factory Pro</div><div style="font-size:8px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase">Espace Démo</div></div></a><div style="margin-left:auto;display:flex;gap:8px;align-items:center"><div style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:8px;padding:4px 12px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#4BC88A;letter-spacing:1px;text-transform:uppercase">⚡ DÉMO LIVE</div><a href="ffp-pricing.html" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:6px 12px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:.5px">Créer un compte</a></div></header>
+<div class="hero"><div class="badge">⚡ Mode Démo Interactif</div><img src="data:image/webp;base64,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" style="width:min(100px,25vw);margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(212,175,55,.5))"><h1 style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(22px,4vw,42px);background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Foot Factory Pro</h1><p style="font-family:Montserrat,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,.5);margin-bottom:12px">ANALYSER · DÉVELOPPER · PERFORMER</p><p style="font-size:14px;color:#888;max-width:560px;margin:0 auto 40px;line-height:1.8">Choisissez un profil pour explorer la plateforme avec des données réalistes. Aucun compte requis — tout est pré-rempli.</p></div>
+<div class="personas"><div class="persona coach" onclick="startDemo('coach')"><div class="avatar" style="background:linear-gradient(135deg,#1A1200,#2A1E00);border-color:rgba(212,175,55,.3)">🏟️</div><div class="persona-name">Ahmed Benali</div><div class="persona-role" style="color:#D4AF37">Coach U12</div><div class="persona-desc">Entraîneur principal de la catégorie U12 — AS Voltaire Paris</div><ul class="persona-features"><li>30 joueurs avec fiches IA complètes</li><li>Évaluations et bilans générés</li><li>Messagerie parents active</li><li>Convocations et matchs</li><li>Statistiques et classement</li></ul><button class="btn-demo btn-gold">🏟️ Vue Coach →</button></div><div class="persona parent" onclick="startDemo('parent')"><div class="avatar" style="background:linear-gradient(135deg,#1A0030,#280040);border-color:rgba(160,96,224,.3)">🫂</div><div class="persona-name">Famille Faure</div><div class="persona-role" style="color:#A060E0">Parent · Kylian #4</div><div class="persona-desc">Parents de Kylian Faure — Milieu offensif, 10 ans, U12</div><ul class="persona-features"><li>Fiche complète de Kylian</li><li>Radar IA et scores détaillés</li><li>Messages du coach</li><li>Prochains événements</li><li>Programme d'entraînement</li></ul><button class="btn-demo btn-purple">🫂 Vue Parent →</button></div><div class="persona recruteur" onclick="startDemo('recruteur')"><div class="avatar" style="background:linear-gradient(135deg,#001830,#002040);border-color:rgba(96,168,208,.3)">🔍</div><div class="persona-name">Pierre Marchetti</div><div class="persona-role" style="color:#60A8D0">Recruteur · AS Monaco</div><div class="persona-desc">Responsable recrutement U12-U14 — AS Monaco Academy</div><ul class="persona-features"><li>30 profils filtrables et comparables</li><li>Shortlist personnalisée</li><li>CV sportifs PDF</li><li>Comparaison multi-joueurs</li><li>Highlights et stats</li></ul><button class="btn-demo btn-blue">🔍 Vue Recruteur →</button></div><div class="persona directeur" onclick="startDemo('directeur')"><div class="avatar" style="background:linear-gradient(135deg,#001A10,#002A18);border-color:rgba(75,200,138,.3)">🏛️</div><div class="persona-name">Jean-Marc Roussel</div><div class="persona-role" style="color:#4BC88A">Directeur de club</div><div class="persona-desc">Directeur sportif — AS Voltaire Paris, toutes catégories</div><ul class="persona-features"><li>Vue multi-catégories</li><li>Gestion des accès et rôles</li><li>Approbation des recruteurs</li><li>Abonnements et facturation</li><li>Logs et sécurité</li></ul><button class="btn-demo btn-green">🏛️ Vue Directeur →</button></div></div>
+<div class="data-strip"><span class="stat-item"><span class="stat-val">30</span><span class="stat-lbl">Joueurs</span></span><span class="stat-item"><span class="stat-val">9</span><span class="stat-lbl">Modules</span></span><span class="stat-item"><span class="stat-val">IA</span><span class="stat-lbl">Pipeline</span></span><span class="stat-item"><span class="stat-val">100%</span><span class="stat-lbl">Données fictives</span></span><span class="stat-item"><span class="stat-val">RGPD</span><span class="stat-lbl">Conforme</span></span></div>
+<div style="text-align:center;margin-bottom:24px;position:relative;z-index:1"><h2 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:#D4AF37;margin-bottom:6px">Ce que vous allez découvrir</h2><p style="font-size:12px;color:#888">Tous les modules sont accessibles et fonctionnels</p></div><div class="features-grid"><div class="feature-card"><div class="feature-ico">🤖</div><div class="feature-title">Pipeline IA</div><div class="feature-desc">Évaluations automatiques, radar de compétences, recommandations d'entraînement personnalisées</div></div><div class="feature-card"><div class="feature-ico">📊</div><div class="feature-title">Statistiques avancées</div><div class="feature-desc">Classements, courbes de progression, comparaisons entre joueurs et entre équipes</div></div><div class="feature-card"><div class="feature-ico">✉️</div><div class="feature-title">Messagerie sécurisée</div><div class="feature-desc">Communication directe Coach ↔ Parents, priorités, tags, historique complet</div></div><div class="feature-card"><div class="feature-ico">📋</div><div class="feature-title">Convocations</div><div class="feature-desc">Sélection des joueurs, génération PDF officiel, envoi automatique aux parents</div></div><div class="feature-card"><div class="feature-ico">⚽</div><div class="feature-title">Module Matchs</div><div class="feature-desc">Feuille de match en direct, statistiques temps réel, rapport post-match</div></div><div class="feature-card"><div class="feature-ico">🎬</div><div class="feature-title">Media Platform</div><div class="feature-desc">Highlights vidéo, CV sportif exportable, galerie médias par joueur</div></div></div>
+<div style="text-align:center;padding:30px 20px 50px;position:relative;z-index:1"><div style="background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:20px 28px;display:inline-block;margin-bottom:24px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px">Données de démonstration</div><p style="font-size:12px;color:#444;line-height:1.7;max-width:500px">⚠️ Toutes les données affichées sont <strong style="color:#888">100% fictives</strong>. Les noms, scores et informations ne correspondent à aucune personne réelle. La démo dure 2h puis se réinitialise.</p></div><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a href="ffp-pricing.html" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:8px;padding:12px 24px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none">🚀 Créer mon compte →</a><a href="ffp-accueil.html" style="background:transparent;color:#888;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:12px 20px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-decoration:none">← Retour à l'accueil</a></div></div>
+<script>
+// ══════════════════════════════════════════════════════
+// FOOT FACTORY PRO — DÉMO MODE
+// Injection session + données fictives en localStorage
+// ══════════════════════════════════════════════════════
+
+var DEMO_CLUB = {
+  id: 'demo-club-001',
+  name: 'AS Voltaire Paris',
+  ville: 'Paris 11e',
+  categorie: 'U12',
+  saison: '2026-27'
+};
+
+var DEMO_SESSIONS = {
+  coach: {
+    role: 'coach',
+    prenom: 'Ahmed',
+    nom: 'Benali',
+    username: 'demo_coach',
+    club_id: DEMO_CLUB.id,
+    category_id: 'U12',
+    _demo: true,
+    _exp: Date.now() + 2 * 60 * 60 * 1000  // 2h
+  },
+  parent: {
+    role: 'parent',
+    player_code: '1003',                    // Kylian Faure
+    prenom: 'Parent de',
+    nom: 'Kylian Faure',
+    _demo: true,
+    _exp: Date.now() + 2 * 60 * 60 * 1000
+  },
+  recruteur: {
+    role: 'scout',
+    prenom: 'Pierre',
+    nom: 'Marchetti',
+    username: 'demo_scout',
+    club: 'AS Monaco Academy',
+    _demo: true,
+    _exp: Date.now() + 2 * 60 * 60 * 1000
+  },
+  directeur: {
+    role: 'directeur',
+    prenom: 'Jean-Marc',
+    nom: 'Roussel',
+    username: 'demo_dir',
+    club_id: DEMO_CLUB.id,
+    _demo: true,
+    _exp: Date.now() + 2 * 60 * 60 * 1000
+  }
+};
+
+var DEMO_EVENTS = [
+  { id:'dev1', type:'match',        titre:'AS Voltaire vs FC Belleville',  date: futur(3),  heure:'18h00', lieu:'Terrain Voltaire',   obligatoire:true,  is_public:true },
+  { id:'dev2', type:'entrainement', titre:'Entraînement technique',        date: futur(1),  heure:'17h30', lieu:'Terrain annexe',     obligatoire:false, is_public:true },
+  { id:'dev3', type:'tournoi',      titre:'Tournoi Ligue Paris – U12',     date: futur(10), heure:'09h00', lieu:'Stade Charléty',     obligatoire:true,  is_public:true },
+  { id:'dev4', type:'reunion',      titre:'Réunion parents de saison',     date: futur(18), heure:'19h00', lieu:'Salle Voltaire',     obligatoire:false, is_public:true },
+  { id:'dev5', type:'match',        titre:'AS Voltaire vs ES Ménilmontant', date: futur(24), heure:'15h00', lieu:'Terrain adverse',    obligatoire:true,  is_public:true },
+  { id:'dev6', type:'stage',        titre:'Stage Présaison – 3 jours',    date: futur(30), heure:'08h30', lieu:'Centre national',    obligatoire:true,  is_public:true },
+];
+
+var DEMO_MESSAGES = [
+  { id:'dm1', from:'coach', from_name:'Coach Ahmed Benali', to:'1003',
+    to_label:'Parent de Kylian', subject:'Bilan mi-saison — Kylian Faure',
+    body:'Bonjour,\n\nJe souhaitais vous faire un point sur la progression de Kylian ce trimestre.\n\nSes points forts : technique de balle excellente (8,4/10), leadership naturel sur le terrain, très bon état d\'esprit à l\'entraînement.\n\nPoint à travailler : endurance sur la durée du match — nous allons intégrer un travail spécifique en janvier.\n\nKylian est l\'un des éléments les plus prometteurs de notre groupe U12. Continuez à l\'encourager !\n\nCordialement,\nCoach Ahmed Benali — AS Voltaire Paris',
+    ts: Date.now() - 86400000, read_by:['coach'], priority:'normale', tag:'bilan' },
+  { id:'dm2', from:'coach', from_name:'Coach Ahmed Benali', to:'all',
+    to_label:'Tous les parents',
+    subject:'Convocation — Match AS Voltaire vs FC Belleville',
+    body:'Bonjour à tous,\n\nVotre enfant est convoqué pour le match de championnat :\n\n• Adversaire : FC Belleville\n• Date : Samedi prochain\n• Coup d\'envoi : 18h00\n• Rendez-vous : 17h15 — Vestiaires Terrain Voltaire\n• Tenue : Maillot domicile, short noir, chaussettes rouge\n\nPrésence obligatoire. Merci de confirmer par retour de message.\n\nCoach Ahmed Benali',
+    ts: Date.now() - 3600000*2, read_by:['coach'], priority:'haute', tag:'convocation' },
+  { id:'dm3', from:'parent', from_name:'Parent de Kylian', from_code:'1003',
+    to:'coach', to_label:'Coach Benali',
+    subject:'Re: Convocation — Match AS Voltaire vs FC Belleville',
+    body:'Bonjour Coach,\n\nKylian sera présent à 17h15. Merci pour le suivi personnalisé tout au long de la saison.\n\nBonne continuation,\nFamille Faure',
+    ts: Date.now() - 3600000, read_by:['parent_1003','coach'], priority:'normale', tag:'réponse' },
+];
+
+function futur(jours) {
+  var d = new Date();
+  d.setDate(d.getDate() + jours);
+  return d.toISOString().slice(0, 10);
+}
+
+function injectDemoData() {
+  try {
+    // Événements
+    localStorage.setItem('ffp_events', JSON.stringify(DEMO_EVENTS));
+    // Messages
+    localStorage.setItem('ffp_messages', JSON.stringify(DEMO_MESSAGES));
+    // Flag démo
+    localStorage.setItem('ffp_demo_mode', '1');
+  } catch(e) {}
+}
+
+function startDemo(role) {
+  var sess = DEMO_SESSIONS[role];
+  if (!sess) return;
+  // Rafraîchir l'expiration
+  sess._exp = Date.now() + 2 * 60 * 60 * 1000;
+  try {
+    localStorage.setItem('ffp_session', JSON.stringify(sess));
+    if (role === 'recruteur') {
+      localStorage.setItem('ffp_scout_session', JSON.stringify(sess));
+    }
+  } catch(e) {}
+  injectDemoData();
+  var destinations = {
+    coach:     'ffp-coach.html',
+    parent:    'ffp-parents.html',
+    recruteur: 'ffp-scout.html',
+    directeur: 'ffp-admin.html'
+  };
+  window.location.href = destinations[role] || 'ffp-dashboard.html';
+}
+
+function exitDemo() {
+  try {
+    localStorage.removeItem('ffp_session');
+    localStorage.removeItem('ffp_scout_session');
+    localStorage.removeItem('ffp_demo_mode');
+    localStorage.removeItem('ffp_events');
+    localStorage.removeItem('ffp_messages');
+  } catch(e) {}
+  window.location.href = 'ffp-accueil.html';
+}
+
+</script>
+</body>
+</html>
