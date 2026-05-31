@@ -789,9 +789,8 @@ function exportRecruteurs(){
     +'<p style="margin-top:18px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel</p>'
     +'</body></html>';
   w.document.write(html);w.document.close();
-}
-</script>
-</body></html>';
+
+  html += '</body></html>';
   w.document.write(html); w.document.close();
 }
 
@@ -825,6 +824,8 @@ if(pcEl){
   };
   renderPlayerList();
 }
+
+</script>
 
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>

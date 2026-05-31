@@ -687,9 +687,8 @@ function exportRapportPDF(){
     +'<p style="margin-top:20px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel · '+new Date().toLocaleDateString('fr-FR')+'</p>'
     +'</body></html>';
   w.document.write(html);w.document.close();
-}
-</script>
-</body></html>';
+
+  html += '</body></html>';
   w.document.write(html);w.document.close();
 }
 
@@ -773,6 +772,8 @@ newMatch = function(){
     if(at)at.textContent=MATCH.adversaire;
   }
 };
+
+</script>
 
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>

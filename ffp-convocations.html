@@ -405,9 +405,8 @@ function exportConvocPDF(){
     +'<div class="ftr">Foot Factory Pro · Saison 2026-27 · Document officiel</div>'
     +'</div></body></html>';
   w.document.write(html);w.document.close();
-}
-</script>
-</body></html>';
+
+  html += '</body></html>';
   w.document.write(html);w.document.close();
 }
 
@@ -522,6 +521,8 @@ function init(){
 init();
 
 var dateEl=document.getElementById("cv-date");if(dateEl)dateEl.value=new Date().toISOString().slice(0,10);
+</script>
+
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
 </body>
