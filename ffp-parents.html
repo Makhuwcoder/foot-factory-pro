@@ -252,6 +252,14 @@ function showView(){
 function renderPlayer(){
   var p=CURRENT;if(!p)return;
   var el=document.getElementById('view-content');if(!el)return;
+  // Injecter la section confirmations AVANT la fiche
+  if (!document.getElementById('section-confirmations')) {
+    var confDiv = document.createElement('div');
+    confDiv.id = 'section-confirmations';
+    confDiv.style.cssText = 'background:#0A0800;border:1px solid rgba(212,175,55,.15);border-radius:12px;padding:16px;margin-bottom:16px;display:none';
+    el.parentNode.insertBefore(confDiv, el);
+  }
+  renderConfirmationsParent();
   var scCol=function(s){return s>=7.5?'#4BC88A':s>=6?'#D4AF37':s>=5?'#C89020':'#888';};
   var gc=scCol(p.global);
 
@@ -514,6 +522,214 @@ function exitDemo(){
     +'</div>';
   document.body.appendChild(b);
 })();
+
+// ══════════════════════════════════════════════════════════════
+// CONFIRMATION DE PRÉSENCE — Côté Parent
+// ══════════════════════════════════════════════════════════════
+
+function loadConfirmationsPending(codeParent) {
+  try {
+    var all = JSON.parse(localStorage.getItem('ffp_confirmations_pending') || '[]');
+    // Filtrer les convocations où ce parent a un joueur convoqué
+    return all.filter(function(c) {
+      return c.joueurs && c.joueurs.some(function(j) {
+        return String(j.code_parent) === String(codeParent);
+      });
+    });
+  } catch(e) { return []; }
+}
+
+function getReponseParent(convocId, joueurId) {
+  try {
+    var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
+    var rep = all[convocId] || {};
+    return rep[joueurId] || null;
+  } catch(e) { return null; }
+}
+
+function setReponseParent(convocId, joueurId, statut, motif) {
+  try {
+    var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
+    if (!all[convocId]) all[convocId] = {};
+    all[convocId][joueurId] = {
+      statut: statut,
+      motif: motif || '',
+      par: 'parent',
+      ts: Date.now()
+    };
+    localStorage.setItem('ffp_reponses', JSON.stringify(all));
+    // Recharger la section confirmations
+    renderConfirmationsParent();
+  } catch(e) {}
+}
+
+function renderConfirmationsParent() {
+  var el = document.getElementById('section-confirmations');
+  if (!el || !CURRENT) return;
+  
+  var codeParent = CURRENT.code_parent || CURRENT.code;
+  var convocs = loadConfirmationsPending(codeParent);
+  
+  // Filtrer uniquement les convocations futures (ou récentes < 24h)
+  var now = Date.now();
+  var actives = convocs.filter(function(c) {
+    if (!c.date) return true;
+    var d = new Date(c.date + 'T23:59:00').getTime();
+    return d >= now - 86400000; // garder 24h après
+  });
+  
+  if (!actives.length) {
+    el.style.display = 'none';
+    return;
+  }
+  
+  el.style.display = 'block';
+  
+  var out = '<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:12px;display:flex;align-items:center;gap:8px">'
+    + '✅ Confirmations de présence'
+    + '<span style="background:#E24B4A;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:900">'
+    + actives.filter(function(c){
+        var j = c.joueurs && c.joueurs.find(function(jj){ return String(jj.code_parent)===String(codeParent); });
+        return j && !getReponseParent(c.id, j.id);
+      }).length
+    + '</span></div>';
+  
+  actives.forEach(function(c) {
+    var joueur = c.joueurs && c.joueurs.find(function(j) { return String(j.code_parent) === String(codeParent); });
+    if (!joueur) return;
+    
+    var reponse = getReponseParent(c.id, joueur.id);
+    var dateStr = c.date ? new Date(c.date + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}) : '–';
+    
+    // Couleur selon statut
+    var bgCard = reponse 
+      ? (reponse.statut === 'present' ? 'rgba(75,200,138,.05)' : reponse.statut === 'absent' ? 'rgba(226,75,74,.05)' : 'rgba(212,175,55,.05)')
+      : 'rgba(212,175,55,.03)';
+    var borderCard = reponse
+      ? (reponse.statut === 'present' ? 'rgba(75,200,138,.3)' : reponse.statut === 'absent' ? 'rgba(226,75,74,.3)' : 'rgba(212,175,55,.3)')
+      : 'rgba(212,175,55,.15)';
+    
+    // Détecter le type de confirmant
+    var ct = c.confirmant_type || 'parent';
+    var ctInfo = ct === 'parent' 
+      ? '<span style="font-size:9px;color:#A060E0">Confirmation requise du parent (cat. ' + c.categorie + ')</span>'
+      : '<span style="font-size:9px;color:#4BC88A">Confirmation joueur ou parent (cat. ' + c.categorie + ')</span>';
+    
+    out += '<div id="convoc-card-' + c.id + '" style="background:' + bgCard + ';border:1px solid ' + borderCard + ';border-radius:12px;padding:16px;margin-bottom:10px">';
+    
+    // Header de la convocation
+    out += '<div style="margin-bottom:10px">'
+      + '<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#F0EEE8;margin-bottom:2px">' + (c.titre || 'Convocation') + '</div>'
+      + '<div style="font-size:11px;color:#888;margin-bottom:4px">' + dateStr + ' à ' + (c.heure || '') + '</div>'
+      + ctInfo
+      + '</div>';
+    
+    // Détails compact
+    out += '<div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:11px;color:#888;display:grid;grid-template-columns:1fr 1fr;gap:4px">'
+      + '<div>📍 <strong style="color:#ccc">' + (c.lieu || '–') + '</strong></div>'
+      + '<div>🕐 RDV ' + (c.heure_rdv || '–') + '</div>'
+      + '<div>👕 ' + (c.tenue || '–') + '</div>'
+      + '<div>📍 ' + (c.lieu_rdv || '–') + '</div>'
+      + (c.note_coach ? '<div style="grid-column:span 2;margin-top:4px;color:#D4AF37">💬 ' + c.note_coach + '</div>' : '')
+      + '</div>';
+    
+    // Statut actuel ou boutons de confirmation
+    if (reponse) {
+      var statusColor = {present:'#4BC88A', absent:'#E24B4A', incertain:'#D4AF37'}[reponse.statut] || '#888';
+      var statusIco = {present:'✅', absent:'❌', incertain:'⚠️'}[reponse.statut] || '⏳';
+      var statusLabel = {present:'Présent(e)', absent:'Absent(e)', incertain:'Incertain(e)'}[reponse.statut] || '';
+      
+      out += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+        + '<div style="font-size:13px;color:' + statusColor + ';font-weight:600">' + statusIco + ' ' + joueur.prenom + ' est ' + statusLabel + '</div>';
+      if (reponse.motif) {
+        out += '<div style="font-size:11px;color:#555">Motif : ' + reponse.motif + '</div>';
+      }
+      // Bouton modifier
+      out += '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" onclick="annulerReponse(this)" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#888;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;padding:4px 10px;cursor:pointer;text-transform:uppercase">Modifier</button>'
+        + '</div>';
+    } else {
+      // Boutons de confirmation
+      out += '<div style="margin-bottom:8px">'
+        + '<div style="font-size:11px;color:#D4AF37;font-weight:600;margin-bottom:8px">⚡ Répondre pour ' + joueur.prenom + ' ' + joueur.nom + '</div>'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+        + '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" data-statut="present" onclick="confirmerPresenceBtn(this)" style="flex:1;min-width:80px;background:linear-gradient(135deg,#1F7A4A,#4BC88A);color:#fff;border:none;border-radius:8px;padding:10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800">✅ Présent(e)</button>'
+        + '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" data-statut="absent" onclick="showMotifFormBtn(this)" style="flex:1;min-width:80px;background:linear-gradient(135deg,#7A1F1F,#E24B4A);color:#fff;border:none;border-radius:8px;padding:10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800">❌ Absent(e)</button>'
+        + '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" data-statut="incertain" onclick="showMotifFormBtn(this)" style="flex:1;min-width:80px;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.3);color:#D4AF37;border-radius:8px;padding:10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800">⚠️ Incertain(e)</button>'
+        + '</div></div>'
+        + '<div id="motif-form-' + c.id + '-' + joueur.id + '" style="display:none;margin-top:8px">'
+        + '<input id="motif-input-' + c.id + '-' + joueur.id + '" type="text" placeholder="Motif (optionnel) : blessure, transport, autre..." style="width:100%;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:7px;padding:9px 12px;color:#F0EEE8;font-size:12px;outline:none;margin-bottom:8px">'
+        + '<div style="display:flex;gap:8px">'
+        + '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" onclick="submitMotifBtn(this)" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:6px;color:#D4AF37;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;padding:6px 16px;cursor:pointer">Confirmer</button>'
+        + '<button data-cid="' + c.id + '" data-jid="' + joueur.id + '" onclick="cancelMotifBtn(this)" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;padding:6px 12px;cursor:pointer">Annuler</button>'
+        + '</div></div>';
+    }
+    
+    out += '</div>'; // card
+  });
+  
+  el.innerHTML = out;
+}
+
+var _pendingMotifConvocId = null;
+var _pendingMotifJoueurId = null;
+var _pendingMotifStatut = null;
+
+function showMotifForm(convocId, joueurId, statut) {
+  _pendingMotifConvocId = convocId;
+  _pendingMotifJoueurId = joueurId;
+  _pendingMotifStatut = statut;
+  var f = document.getElementById('motif-form-' + convocId + '-' + joueurId);
+  if (f) f.style.display = 'block';
+  var inp = document.getElementById('motif-input-' + convocId + '-' + joueurId);
+  if (inp) inp.focus();
+}
+
+function submitMotif(convocId, joueurId) {
+  var inp = document.getElementById('motif-input-' + convocId + '-' + joueurId);
+  var motif = inp ? inp.value : '';
+  setReponseParent(convocId, joueurId, _pendingMotifStatut || 'absent', motif);
+}
+
+function cancelMotif(convocId, joueurId) {
+  var f = document.getElementById('motif-form-' + convocId + '-' + joueurId);
+  if (f) f.style.display = 'none';
+}
+
+function confirmerPresence(convocId, joueurId, statut, motif) {
+  setReponseParent(convocId, joueurId, statut, motif);
+}
+
+// annulerReponse moved to wrapper
+
+// Wrappers data-attribute pour les boutons confirmation
+function confirmerPresenceBtn(btn) {
+  setReponseParent(btn.dataset.cid, btn.dataset.jid, 'present', '');
+}
+function showMotifFormBtn(btn) {
+  _pendingMotifConvocId = btn.dataset.cid;
+  _pendingMotifJoueurId = btn.dataset.jid;
+  _pendingMotifStatut = btn.dataset.statut;
+  var f = document.getElementById('motif-form-' + btn.dataset.cid + '-' + btn.dataset.jid);
+  if (f) { f.style.display = 'block'; var inp = f.querySelector('input'); if (inp) inp.focus(); }
+}
+function submitMotifBtn(btn) {
+  var inp = document.getElementById('motif-input-' + btn.dataset.cid + '-' + btn.dataset.jid);
+  var motif = inp ? inp.value : '';
+  setReponseParent(btn.dataset.cid, btn.dataset.jid, _pendingMotifStatut || 'absent', motif);
+}
+function cancelMotifBtn(btn) {
+  var f = document.getElementById('motif-form-' + btn.dataset.cid + '-' + btn.dataset.jid);
+  if (f) f.style.display = 'none';
+}
+function annulerReponse(btn) {
+  var convocId = btn.dataset.cid; var joueurId = btn.dataset.jid;
+  try {
+    var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
+    if (all[convocId]) { delete all[convocId][joueurId]; }
+    localStorage.setItem('ffp_reponses', JSON.stringify(all));
+    renderConfirmationsParent();
+  } catch(e) {}
+}
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
 </body>
