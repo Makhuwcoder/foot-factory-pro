@@ -443,6 +443,7 @@ function sendConvocMessages(){
       subject:sujet,body:personalBody,ts:now+idx,read_by:['coach'],priority:'haute',tag:'convocation'});
   });
   try{localStorage.setItem(LS_MESSAGES,JSON.stringify(messages));}catch(e){}
+  publierConvocPourConfirmation(CONVOC, ALL_PLAYERS);
   CONVOC.statut='envoyée';saveConvoc(CONVOC);
   showPhase('sent');renderSent(allPlayers.length);
 }
@@ -595,8 +596,30 @@ function renderConfirmations() {
   var ctLabel = ct === 'parent'
     ? '<span style="background:rgba(160,96,224,.15);color:#A060E0;border:1px solid rgba(160,96,224,.3);border-radius:5px;padding:2px 8px;font-size:9px;font-weight:700;font-family:Montserrat,sans-serif;text-transform:uppercase">Catégorie ' + cat + ' — Confirmation par PARENT</span>'
     : '<span style="background:rgba(75,200,138,.15);color:#4BC88A;border:1px solid rgba(75,200,138,.3);border-radius:5px;padding:2px 8px;font-size:9px;font-weight:700;font-family:Montserrat,sans-serif;text-transform:uppercase">Catégorie ' + cat + ' — Joueur ou Parent</span>';
+  // Mode démo : injecter une convocation de démonstration
   if (!convocs.length) {
-    el.innerHTML = '<div style="text-align:center;padding:50px;color:#555;font-size:13px">Aucune convocation envoyée.</div>'; return;
+    var isDemo = localStorage.getItem('ffp_demo_mode') === '1';
+    if (isDemo) {
+      var demoConvoc = {
+        id: 'demo_conv_001',
+        match_titre: 'Match vs FC Belleville',
+        adversaire: 'FC Belleville',
+        date: new Date(Date.now() + 3*86400000).toISOString().split('T')[0],
+        heure_match: '15:00',
+        lieu: 'Stade Voltaire',
+        heure_rdv: '14:15',
+        lieu_rdv: 'Vestiaires Nord',
+        tenue: 'Maillot Domicile',
+        note_coach: 'Echauffement obligatoire à 14h30',
+        titulaires: [0,1,2,3,4,5,6,7,8,9,10],
+        remplacants: [11,12,13,14]
+      };
+      convocs = [demoConvoc];
+      // Aussi publier pour les parents
+      publierConvocPourConfirmation(demoConvoc, ALL_PLAYERS);
+    } else {
+      el.innerHTML = '<div style="text-align:center;padding:50px;color:#555;font-size:13px">Aucune convocation envoyée.<br>Créez et envoyez une convocation pour voir les confirmations.</div>'; return;
+    }
   }
   var out = '<div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
     + '<div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#D4AF37">Suivi des confirmations</div>'
