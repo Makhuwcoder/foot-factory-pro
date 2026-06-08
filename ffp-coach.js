@@ -1,7 +1,7 @@
-// FOOT FACTORY PRO — Coach JS
+// ONE SPORT — Coach JS
 // AUTH
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — AUTH MODULE v2
+// ONE SPORT — AUTH MODULE v2
 // Session stockée en localStorage (fiable sur file://)
 // ══════════════════════════════════════════════════════
 
@@ -189,7 +189,7 @@ function doLogout(){
 
 // COACH CORE
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — ffp-coach.js  (v2 clean)
+// ONE SPORT — ffp-coach.js  (v2 clean)
 // ══════════════════════════════════════════════════════
 
 var LS_EVAL    = 'ffp_eval';
@@ -246,7 +246,7 @@ function renderDash(){
   var dmet=document.getElementById('d-met');
   if(dmet)dmet.innerHTML=[['Effectif',PL.length,'joueurs','👥'],['Score moyen',ma,'/ 10','📈'],['Élites ≥7.5',elc,'haute perf.','⭐'],['Postes',POS_LIST.length,'couverts','🗺️']].map(function(m){return'<div class="mc"><div class="mbg">'+m[3]+'</div><div class="mlbl">'+m[0]+'</div><div class="mval">'+m[1]+'</div><div class="msub">'+m[2]+'</div></div>';}).join('');
   var dteams=document.getElementById('d-teams');
-  if(dteams)dteams.innerHTML=['Équipe 1','Équipe 2','Équipe 3'].map(function(eq){var mb=PL.filter(function(p){return p.equipe===eq;});return'<div class="tcard"><div class="th '+eh(eq)+'"><span class="tn '+ec(eq)+'">'+eq+'</span><span style="font-size:11px;color:#888">'+mb.length+' joueurs</span></div><div class="tpl">'+mb.map(function(p){return'<div class="tp" onclick="goPl('+p.id+')"><div class="av" style="width:27px;height:27px;font-size:10px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+POS_SHORT[p.poste]+'</div></div><span class="sb '+sc(p.score)+'" style="font-size:11px">'+p.score.toFixed(1)+'</span></div>';}).join('')+'</div></div>';}).join('');
+  if(dteams)dteams.innerHTML=['Équipe 1','Équipe 2','Équipe 3'].map(function(eq){var mb=PL.filter(function(p){return p.equipe===eq;});return'<div class="tcard"><div class="th '+eh(eq)+'"><span class="tn '+ec(eq)+'">'+eq+'</span><span style="font-size:11px;color:#888">'+mb.length+' joueurs</span></div><div class="tpl">'+mb.map(function(p){return'<div class="tp" onclick="goPl('+p.id+')"><div class="av" style="width:27px;height:27px;font-size:10px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#475569">'+POS_SHORT[p.poste]+'</div></div><span class="sb '+sc(p.score)+'" style="font-size:11px">'+p.score.toFixed(1)+'</span></div>';}).join('')+'</div></div>';}).join('');
   // Calendar: show next 5 events from agenda if available, else static
   var dcal=document.getElementById('d-cal');
   if(dcal){
@@ -295,10 +295,10 @@ function renderB(){
   var id=+bsel.value;var p=PL.find(function(x){return x.id===id;})||PL[0];if(!p)return;
   var tb_=tb(p);
   var cats=[['Technique','technique','30%'],['Physique','physique','25%'],['Tactique','tactique','20%'],['Mental','mental','15%'],['Culture','culture','10%']];
-  var bars=cats.map(function(c){return'<div class="bw"><div class="bwl"><span class="ll">'+c[0]+' <span style="font-size:10px;color:#444">'+c[2]+'</span></span><span class="vv">'+cA(p,c[1]).toFixed(2)+'/10</span></div><div class="btr"><div class="bfi" style="width:'+cA(p,c[1])*10+'%"></div></div></div>';}).join('');
-  var str=tb_.top.map(function(t){return'<div class="swr"><div class="swd g"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#444;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
-  var wk=tb_.bot.map(function(t){return'<div class="swr"><div class="swd r"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#444;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
-  var html='<div class="b2"><div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#444;margin-top:3px">Rang #'+p.rank+' · '+p.equipe+'</div></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="pc">'+p.poste+'</span><span class="pc">'+p.sante.taille+'cm</span><span class="pc">'+p.sante.poids+'kg</span><span class="pc">IMC '+p.sante.imc+'</span><span class="pc">'+p.sante.etat+'</span></div><div class="sep"></div><div class="ct">Scores</div>'+bars+'</div><div class="rcrd"><div class="ct" style="align-self:flex-start">Radar</div>'+radarSVG(p)+'<div style="font-size:11px;color:#444;margin-top:4px">Score : <span style="color:#D4AF37;font-weight:700">'+p.score.toFixed(2)+'/10</span></div></div></div><div class="swg"><div class="swc"><div class="swh gd"><div class="swd g" style="width:9px;height:9px"></div><div class="swt g">Points forts</div></div>'+str+'</div><div class="swc"><div class="swh rd"><div class="swd r" style="width:9px;height:9px"></div><div class="swt r">Lacunes</div></div>'+wk+'</div></div><div class="ao" id="aout"><div class="ct">Programme IA</div><div class="at" id="atxt"></div></div>';
+  var bars=cats.map(function(c){return'<div class="bw"><div class="bwl"><span class="ll">'+c[0]+' <span style="font-size:10px;color:#475569">'+c[2]+'</span></span><span class="vv">'+cA(p,c[1]).toFixed(2)+'/10</span></div><div class="btr"><div class="bfi" style="width:'+cA(p,c[1])*10+'%"></div></div></div>';}).join('');
+  var str=tb_.top.map(function(t){return'<div class="swr"><div class="swd g"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
+  var wk=tb_.bot.map(function(t){return'<div class="swr"><div class="swd r"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
+  var html='<div class="b2"><div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#475569;margin-top:3px">Rang #'+p.rank+' · '+p.equipe+'</div></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="pc">'+p.poste+'</span><span class="pc">'+p.sante.taille+'cm</span><span class="pc">'+p.sante.poids+'kg</span><span class="pc">IMC '+p.sante.imc+'</span><span class="pc">'+p.sante.etat+'</span></div><div class="sep"></div><div class="ct">Scores</div>'+bars+'</div><div class="rcrd"><div class="ct" style="align-self:flex-start">Radar</div>'+radarSVG(p)+'<div style="font-size:11px;color:#475569;margin-top:4px">Score : <span style="color:#1565C0;font-weight:700">'+p.score.toFixed(2)+'/10</span></div></div></div><div class="swg"><div class="swc"><div class="swh gd"><div class="swd g" style="width:9px;height:9px"></div><div class="swt g">Points forts</div></div>'+str+'</div><div class="swc"><div class="swh rd"><div class="swd r" style="width:9px;height:9px"></div><div class="swt r">Lacunes</div></div>'+wk+'</div></div><div class="ao" id="aout"><div class="ct">Programme IA</div><div class="at" id="atxt"></div></div>';
   var bcnt=document.getElementById('bcnt');if(bcnt)bcnt.innerHTML=html;
 }
 
@@ -320,11 +320,11 @@ async function genAI(){
   var p=PL.find(function(x){return x.id===+bsel.value;})||PL[0];
   var tb_=tb(p),box=document.getElementById('aout'),txt=document.getElementById('atxt');
   if(!box||!txt)return;box.classList.add('on');txt.textContent='Génération en cours...';
-  var prompt='Coach FOOT FACTORY PRO. Programme 8 semaines été 2026 pour '+p.prenom+' '+p.nom+', '+p.poste+', score '+p.score.toFixed(2)+'/10 (#'+p.rank+'/'+PL.length+'). Points forts: '+tb_.top.map(function(t){return t.k+' '+t.v+'/10';}).join(', ')+'. Lacunes: '+tb_.bot.map(function(t){return t.k+' '+t.v+'/10';}).join(', ')+'. 4 phases. 2 exercices/lacune. Nutrition+culture. Ton motivant 10-12 ans.';
+  var prompt='Coach ONE SPORT. Programme 8 semaines été 2026 pour '+p.prenom+' '+p.nom+', '+p.poste+', score '+p.score.toFixed(2)+'/10 (#'+p.rank+'/'+PL.length+'). Points forts: '+tb_.top.map(function(t){return t.k+' '+t.v+'/10';}).join(', ')+'. Lacunes: '+tb_.bot.map(function(t){return t.k+' '+t.v+'/10';}).join(', ')+'. 4 phases. 2 exercices/lacune. Nutrition+culture. Ton motivant 10-12 ans.';
   try{var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});var d=await r.json();txt.textContent=(d.content&&d.content[0])?d.content[0].text:'Erreur.';}catch(e){txt.textContent='Erreur API: '+e.message;}
 }
 
-function toggleCodes(){var p=document.getElementById('codes-panel');if(!p)return;p.classList.toggle('open');if(p.classList.contains('open')&&!document.getElementById('codes-grid').innerHTML){document.getElementById('codes-grid').innerHTML=PL.map(function(p){return'<div class="code-row"><div><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+p.poste+'</div></div><div class="code-val">'+playerCode(p)+'</div></div>';}).join('');}}
+function toggleCodes(){var p=document.getElementById('codes-panel');if(!p)return;p.classList.toggle('open');if(p.classList.contains('open')&&!document.getElementById('codes-grid').innerHTML){document.getElementById('codes-grid').innerHTML=PL.map(function(p){return'<div class="code-row"><div><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#475569">'+p.poste+'</div></div><div class="code-val">'+playerCode(p)+'</div></div>';}).join('');}}
 
 // ══ AJOUT MANUEL ══
 function getNextId(){var m=99;PL.forEach(function(p){if(p.id>m)m=p.id;});try{var r=localStorage.getItem(LS_CUSTOM);if(r){JSON.parse(r).forEach(function(p){if(p.id>m)m=p.id;});}}catch(e){}return m+1;}
@@ -357,8 +357,8 @@ function getPending(){try{var r=localStorage.getItem(LS_PENDING);return r?JSON.p
 function renderPendingBadge(){var n=getPending().length;var b=document.getElementById('pending-badge');if(b){b.textContent=n>0?n+' demande'+(n>1?'s':'')+' en attente':'Aucune demande';b.style.color=n>0?'#FBCB57':'#D4AF37';b.style.borderColor=n>0?'rgba(251,203,87,.35)':'rgba(212,175,55,.19)';b.style.background=n>0?'rgba(251,203,87,.1)':'rgba(212,175,55,.07)';}var nb=document.getElementById('nb-inscriptions-badge');if(nb)nb.textContent=n>0?' ('+n+')':(n===0&&'')||'';}
 function renderPending(){
   var pending=getPending();var wrap=document.getElementById('pending-list');if(!wrap)return;
-  if(pending.length===0){wrap.innerHTML='<div style="text-align:center;padding:40px;color:#444"><div style="font-size:32px;margin-bottom:12px">📭</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucune demande en attente</div><div style="font-size:12px;margin-top:6px">Les inscriptions des parents apparaîtront ici</div></div>';return;}
-  wrap.innerHTML=pending.map(function(req,idx){return'<div class="pend-card"><div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px"><div class="av" style="width:44px;height:44px;font-size:15px;background:#2A1800;color:#E8C49A;flex-shrink:0">'+req.prenom[0]+req.nom[0]+'</div><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#FBCB57">'+req.prenom+' '+req.nom+'</div><div style="font-size:12px;color:#888;margin-top:2px">'+req.poste+'</div>'+(req.dob?'<div style="font-size:11px;color:#444;margin-top:2px">Né(e) le : '+req.dob+'</div>':'')+(req.taille?'<div style="font-size:11px;color:#444">'+req.taille+'cm · '+req.poids+'kg</div>':'')+'</div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">Soumis le</div><div style="font-size:11px;color:#888">'+new Date(req.submitted_at).toLocaleDateString('fr-FR')+'</div></div></div>'+(req.parent_name?'<div style="font-size:12px;color:#888;margin-bottom:4px">👤 Parent : <strong style="color:#F0F0F0">'+req.parent_name+'</strong>'+(req.parent_contact?' · '+req.parent_contact:'')+'</div>':'')+(req.notes?'<div style="font-size:12px;color:#888;margin-bottom:10px;padding:8px;background:#1A1A1A;border-radius:6px;border-left:2px solid #D4AF37">📝 '+req.notes+'</div>':'')+'<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="validatePlayer('+idx+')" style="background:linear-gradient(135deg,#4BC88A,#2A8A5A);color:#000;border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">✓ Valider et intégrer</button><button onclick="rejectPlayer('+idx+')" style="background:transparent;color:#E24B4A;border:1px solid rgba(226,75,74,.35);border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase">✕ Refuser</button></div></div>';}).join('');
+  if(pending.length===0){wrap.innerHTML='<div style="text-align:center;padding:40px;color:#475569"><div style="font-size:32px;margin-bottom:12px">📭</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucune demande en attente</div><div style="font-size:12px;margin-top:6px">Les inscriptions des parents apparaîtront ici</div></div>';return;}
+  wrap.innerHTML=pending.map(function(req,idx){return'<div class="pend-card"><div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px"><div class="av" style="width:44px;height:44px;font-size:15px;background:#2A1800;color:#E8C49A;flex-shrink:0">'+req.prenom[0]+req.nom[0]+'</div><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#388E3C">'+req.prenom+' '+req.nom+'</div><div style="font-size:12px;color:#888;margin-top:2px">'+req.poste+'</div>'+(req.dob?'<div style="font-size:11px;color:#475569;margin-top:2px">Né(e) le : '+req.dob+'</div>':'')+(req.taille?'<div style="font-size:11px;color:#475569">'+req.taille+'cm · '+req.poids+'kg</div>':'')+'</div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif">Soumis le</div><div style="font-size:11px;color:#888">'+new Date(req.submitted_at).toLocaleDateString('fr-FR')+'</div></div></div>'+(req.parent_name?'<div style="font-size:12px;color:#888;margin-bottom:4px">👤 Parent : <strong style="color:#F0F0F0">'+req.parent_name+'</strong>'+(req.parent_contact?' · '+req.parent_contact:'')+'</div>':'')+(req.notes?'<div style="font-size:12px;color:#888;margin-bottom:10px;padding:8px;background:#1A1A1A;border-radius:6px;border-left:2px solid #D4AF37">📝 '+req.notes+'</div>':'')+'<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="validatePlayer('+idx+')" style="background:linear-gradient(135deg,#4BC88A,#2A8A5A);color:#000;border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">✓ Valider et intégrer</button><button onclick="rejectPlayer('+idx+')" style="background:transparent;color:#E24B4A;border:1px solid rgba(226,75,74,.35);border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase">✕ Refuser</button></div></div>';}).join('');
 }
 function validatePlayer(idx){var pending=getPending();var req=pending[idx];if(!req)return;var def=5.0,newId=getNextId();var newP={id:newId,prenom:req.prenom,nom:req.nom,poste:req.poste,source:'parent',dob:req.dob||'',notes:req.notes||'',technique:{controle:def,dribble:def,frappe:def,passe:def,tete:def},physique:{vitesse:def,endurance:def,force:def,coordination:def,souplesse:def},tactique:{positionnement:def,lecture:def,pressing:def},mental:{motivation:def,concentration:def,combativite:def,leadership:def,stress:def},culture:{reglesFIFA:def,nutrition:def,scolaire:def,ethique:def},sante:{taille:req.taille||145,poids:req.poids||38,imc:+((req.poids||38)/((req.taille||145)/100)**2).toFixed(1),etat:'Bon'}};newP.score=gS(newP);try{var cs=JSON.parse(localStorage.getItem(LS_CUSTOM)||'[]');cs.push(newP);localStorage.setItem(LS_CUSTOM,JSON.stringify(cs));pending.splice(idx,1);localStorage.setItem(LS_PENDING,JSON.stringify(pending));}catch(e){alert('Erreur localStorage');return;}PL.push(newP);sortAndRank();renderDash();renderJ();renderClass();refreshBsel();renderPending();renderPendingBadge();alert('✓ '+newP.prenom+' '+newP.nom+' intégré(e) ! Code parent : '+playerCode(newP));}
 function rejectPlayer(idx){if(!confirm('Refuser cette demande ?'))return;var p=getPending();p.splice(idx,1);try{localStorage.setItem(LS_PENDING,JSON.stringify(p));}catch(e){}renderPending();renderPendingBadge();}
@@ -370,10 +370,10 @@ var SAVED={};var CUR_EVAL=null;
 function loadEvalData(){try{var r=localStorage.getItem(LS_EVAL);if(!r)return;SAVED=JSON.parse(r);}catch(e){}}
 function evalDone(pid){return!!SAVED[pid];}
 function evalCount(){var n=0;for(var k in SAVED)n++;return n;}
-function renderEvalWidget(){var n=evalCount(),tot=PL.length,el=document.getElementById('eval-widget');if(!el)return;var pct=Math.round(n/tot*100);el.innerHTML='<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showTab(\'eval\',null)"><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:5px">Progression des évaluations</div><div style="height:5px;background:#222;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;background:linear-gradient(to right,#D4AF37,#FBCB57);border-radius:3px;width:'+pct+'%;transition:width .5s"></div></div><div style="font-size:12px;color:#888"><span style="color:#D4AF37;font-weight:700">'+n+'</span> / '+tot+' joueurs évalués'+(n===0?' <span style="color:#444;font-style:italic">(scores de démo)</span>':'')+'</div></div><div style="font-size:20px;color:rgba(212,175,55,.4)">→</div></div>';}
-function renderEvalList(){var el=document.getElementById('eval-list');if(!el)return;el.innerHTML=PL.map(function(p){var done=evalDone(p.id),sel=CUR_EVAL===p.id;return'<div class="eval-prow'+(sel?' sel':'')+'" onclick="openEval('+p.id+')"><div class="eval-dot '+(done?'ev-done':'ev-todo')+'"></div><div class="av" style="width:26px;height:26px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+POS_SHORT[p.poste]+' — '+p.equipe+'</div></div><span class="sb '+sc(p.score)+'" style="font-size:10px">'+p.score.toFixed(1)+'</span></div>';}).join('');var ep=document.getElementById('eval-prog');if(ep)ep.textContent=evalCount()+' / '+PL.length+' évalués';var eb=document.getElementById('eval-bar');if(eb)eb.style.width=Math.round(evalCount()/PL.length*100)+'%';}
+function renderEvalWidget(){var n=evalCount(),tot=PL.length,el=document.getElementById('eval-widget');if(!el)return;var pct=Math.round(n/tot*100);el.innerHTML='<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showTab(\'eval\',null)"><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:5px">Progression des évaluations</div><div style="height:5px;background:#222;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;background:linear-gradient(to right,#D4AF37,#FBCB57);border-radius:3px;width:'+pct+'%;transition:width .5s"></div></div><div style="font-size:12px;color:#888"><span style="color:#1565C0;font-weight:700">'+n+'</span> / '+tot+' joueurs évalués'+(n===0?' <span style="color:#475569;font-style:italic">(scores de démo)</span>':'')+'</div></div><div style="font-size:20px;color:rgba(21,101,192,.5)">→</div></div>';}
+function renderEvalList(){var el=document.getElementById('eval-list');if(!el)return;el.innerHTML=PL.map(function(p){var done=evalDone(p.id),sel=CUR_EVAL===p.id;return'<div class="eval-prow'+(sel?' sel':'')+'" onclick="openEval('+p.id+')"><div class="eval-dot '+(done?'ev-done':'ev-todo')+'"></div><div class="av" style="width:26px;height:26px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#475569">'+POS_SHORT[p.poste]+' — '+p.equipe+'</div></div><span class="sb '+sc(p.score)+'" style="font-size:10px">'+p.score.toFixed(1)+'</span></div>';}).join('');var ep=document.getElementById('eval-prog');if(ep)ep.textContent=evalCount()+' / '+PL.length+' évalués';var eb=document.getElementById('eval-bar');if(eb)eb.style.width=Math.round(evalCount()/PL.length*100)+'%';}
 function slGrad(val){var pct=((val-1)/9*100).toFixed(1);return'linear-gradient(to right,#D4AF37 '+pct+'%,#D4AF37 '+pct+'%,#222 '+pct+'%,#222 100%)';}
-function openEval(pid){CUR_EVAL=pid;var p=PL.find(function(x){return x.id===pid;});if(!p)return;renderEvalList();var html='<div class="card" style="padding:0;overflow:hidden"><div style="background:linear-gradient(135deg,rgba(212,175,55,.1),transparent);border-bottom:1px solid rgba(212,175,55,.13);padding:16px 20px;display:flex;align-items:center;gap:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+' — '+p.equipe+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#444;margin-top:3px">Rang #'+p.rank+' / '+PL.length+'</div><div style="font-size:10px;margin-top:2px;font-family:Montserrat,sans-serif;font-weight:600;color:'+(evalDone(pid)?'#4BC88A':'#444')+'">'+(evalDone(pid)?'✓ Évalué':'Non évalué')+'</div></div></div><div style="padding:18px 20px">';ECATS.forEach(function(cat){html+='<div style="margin-bottom:18px"><div class="eval-cat-hdr" style="color:'+cat.col+'">'+cat.ico+' '+cat.lbl+'<span style="margin-left:auto;font-size:11px;color:#444;font-weight:400">Moy: <span id="ca-'+cat.key+'" style="color:'+cat.col+'">–</span></span></div>';cat.params.forEach(function(param){var val=(p[cat.key]&&p[cat.key][param])?p[cat.key][param]:5;html+='<div class="sl-row"><div class="sl-lbl">'+(ELBL[param]||param)+'</div><input type="range" class="sl" min="1" max="10" step="0.5" value="'+val+'" id="sl-'+pid+'-'+cat.key+'-'+param+'" oninput="onSl(this,'+pid+',\''+cat.key+'\',\''+param+'\')" style="background:'+slGrad(val)+'"><div class="sl-val" id="sv-'+pid+'-'+cat.key+'-'+param+'">'+val+'</div></div>';});html+='</div>';});html+='<button class="save-btn" onclick="saveEval('+pid+')">💾 Enregistrer les scores</button><div class="save-ok" id="ok-'+pid+'">✓ Scores enregistrés — classement mis à jour !</div></div></div>';var ef=document.getElementById('eval-form');if(ef)ef.innerHTML=html;ECATS.forEach(function(cat){refreshAvg(pid,cat.key,cat.params);});}
+function openEval(pid){CUR_EVAL=pid;var p=PL.find(function(x){return x.id===pid;});if(!p)return;renderEvalList();var html='<div class="card" style="padding:0;overflow:hidden"><div style="background:linear-gradient(135deg,rgba(212,175,55,.1),transparent);border-bottom:1px solid rgba(212,175,55,.13);padding:16px 20px;display:flex;align-items:center;gap:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+' — '+p.equipe+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#475569;margin-top:3px">Rang #'+p.rank+' / '+PL.length+'</div><div style="font-size:10px;margin-top:2px;font-family:Montserrat,sans-serif;font-weight:600;color:'+(evalDone(pid)?'#4BC88A':'#444')+'">'+(evalDone(pid)?'✓ Évalué':'Non évalué')+'</div></div></div><div style="padding:18px 20px">';ECATS.forEach(function(cat){html+='<div style="margin-bottom:18px"><div class="eval-cat-hdr" style="color:'+cat.col+'">'+cat.ico+' '+cat.lbl+'<span style="margin-left:auto;font-size:11px;color:#475569;font-weight:400">Moy: <span id="ca-'+cat.key+'" style="color:'+cat.col+'">–</span></span></div>';cat.params.forEach(function(param){var val=(p[cat.key]&&p[cat.key][param])?p[cat.key][param]:5;html+='<div class="sl-row"><div class="sl-lbl">'+(ELBL[param]||param)+'</div><input type="range" class="sl" min="1" max="10" step="0.5" value="'+val+'" id="sl-'+pid+'-'+cat.key+'-'+param+'" oninput="onSl(this,'+pid+',\''+cat.key+'\',\''+param+'\')" style="background:'+slGrad(val)+'"><div class="sl-val" id="sv-'+pid+'-'+cat.key+'-'+param+'">'+val+'</div></div>';});html+='</div>';});html+='<button class="save-btn" onclick="saveEval('+pid+')">💾 Enregistrer les scores</button><div class="save-ok" id="ok-'+pid+'">✓ Scores enregistrés — classement mis à jour !</div></div></div>';var ef=document.getElementById('eval-form');if(ef)ef.innerHTML=html;ECATS.forEach(function(cat){refreshAvg(pid,cat.key,cat.params);});}
 function onSl(input,pid,catKey,param){var val=parseFloat(input.value);var sv=document.getElementById('sv-'+pid+'-'+catKey+'-'+param);if(sv)sv.textContent=val.toFixed(1);input.style.background=slGrad(val);var cat=ECATS.find(function(c){return c.key===catKey;});if(cat)refreshAvg(pid,catKey,cat.params);}
 function refreshAvg(pid,catKey,params){var sum=0;params.forEach(function(param){var sl=document.getElementById('sl-'+pid+'-'+catKey+'-'+param);if(sl)sum+=parseFloat(sl.value);});var el=document.getElementById('ca-'+catKey);if(el)el.textContent=(sum/params.length).toFixed(2);}
 function saveEval(pid){var p=PL.find(function(x){return x.id===pid;});if(!p)return;var scores={};ECATS.forEach(function(cat){scores[cat.key]={};cat.params.forEach(function(param){var sl=document.getElementById('sl-'+pid+'-'+cat.key+'-'+param);if(sl){var v=parseFloat(sl.value);scores[cat.key][param]=v;p[cat.key][param]=v;}});});SAVED[pid]=scores;try{localStorage.setItem(LS_EVAL,JSON.stringify(SAVED));}catch(e){}p.score=gS(p);sortAndRank();var ok=document.getElementById('ok-'+pid);if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},3000);}renderEvalList();renderEvalWidget();renderDash();renderJ();renderClass();refreshBsel();openEval(pid);}
@@ -392,7 +392,7 @@ function init(){
 
 // FEATURES
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — FEATURES MODULE
+// ONE SPORT — FEATURES MODULE
 // PDF · Email · Historique · Fiche joueur · Convocations
 // ══════════════════════════════════════════════════════
 
@@ -438,10 +438,10 @@ function histSnapshot(label){
 function renderProgressionChart(pid){
   var p=PL.find(function(x){return x.id===pid;});
   if(!p||FEAT_HISTORY.length===0){
-    return '<div style="text-align:center;padding:20px;color:#444;font-size:12px">Aucun historique disponible.<br>Cliquez « Sauvegarder snapshot » après chaque évaluation.</div>';
+    return '<div style="text-align:center;padding:20px;color:#475569;font-size:12px">Aucun historique disponible.<br>Cliquez « Sauvegarder snapshot » après chaque évaluation.</div>';
   }
   var snaps=FEAT_HISTORY.filter(function(s){return s.scores[pid];});
-  if(snaps.length<1) return '<div style="text-align:center;padding:20px;color:#444;font-size:12px">Aucun snapshot pour ce joueur.</div>';
+  if(snaps.length<1) return '<div style="text-align:center;padding:20px;color:#475569;font-size:12px">Aucun snapshot pour ce joueur.</div>';
 
   // Add current as last point
   var all=snaps.concat([{label:'Actuel',date:new Date().toISOString().slice(0,10),scores:{}}]);
@@ -515,12 +515,12 @@ function renderHistory(){
   if(!wrap)return;
 
   if(FEAT_HISTORY.length===0){
-    wrap.innerHTML='<div style="text-align:center;padding:40px;color:#444"><div style="font-size:32px;margin-bottom:12px">📈</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucun snapshot enregistré</div><div style="font-size:12px;margin-top:8px;line-height:1.6">Allez dans l\'onglet Évaluations, saisissez les scores des joueurs,<br>puis cliquez <strong style="color:#D4AF37">« Sauvegarder snapshot »</strong> pour créer un point de mesure.</div></div>';
+    wrap.innerHTML='<div style="text-align:center;padding:40px;color:#475569"><div style="font-size:32px;margin-bottom:12px">📈</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucun snapshot enregistré</div><div style="font-size:12px;margin-top:8px;line-height:1.6">Allez dans l\'onglet Évaluations, saisissez les scores des joueurs,<br>puis cliquez <strong style="color:#1565C0">« Sauvegarder snapshot »</strong> pour créer un point de mesure.</div></div>';
     return;
   }
 
   // Snapshots list
-  var snapList='<div style="margin-bottom:16px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:10px">Snapshots enregistrés</div>'
+  var snapList='<div style="margin-bottom:16px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:10px">Snapshots enregistrés</div>'
     +FEAT_HISTORY.map(function(s,i){
       var n=Object.keys(s.scores).length;
       var avg_score=n>0?(Object.values(s.scores).reduce(function(a,b){return a+b.total;},0)/n).toFixed(2):'—';
@@ -533,17 +533,17 @@ function renderHistory(){
     +'</div>';
 
   // Player progression selector
-  var playerSel='<div style="margin-bottom:16px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:10px">Courbe de progression individuelle</div>'
+  var playerSel='<div style="margin-bottom:16px"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:10px">Courbe de progression individuelle</div>'
     +'<div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap">'
     +'<select id="hist-player-sel" onchange="renderPlayerProgress(this.value)" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:8px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;flex:1;min-width:200px">'
     +'<option value="">Sélectionner un joueur...</option>'
     +PL.map(function(p){return'<option value="'+p.id+'">#'+p.rank+' '+p.prenom+' '+p.nom+'</option>';}).join('')
     +'</select></div>'
-    +'<div id="hist-chart-wrap" style="background:#141414;border:1px solid rgba(212,175,55,.13);border-radius:10px;padding:16px;min-height:60px"><div style="text-align:center;color:#444;font-size:12px;padding:20px">Sélectionnez un joueur pour afficher sa courbe</div></div>'
+    +'<div id="hist-chart-wrap" style="background:#141414;border:1px solid rgba(212,175,55,.13);border-radius:10px;padding:16px;min-height:60px"><div style="text-align:center;color:#475569;font-size:12px;padding:20px">Sélectionnez un joueur pour afficher sa courbe</div></div>'
     +'</div>';
 
   // Team progression
-  var teamProg='<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:10px">Évolution de l\'équipe (score moyen)</div>'
+  var teamProg='<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:10px">Évolution de l\'équipe (score moyen)</div>'
     +'<div id="hist-team-chart" style="background:#141414;border:1px solid rgba(212,175,55,.13);border-radius:10px;padding:16px">'
     +renderTeamProgressionChart()
     +'</div></div>';
@@ -554,12 +554,12 @@ function renderHistory(){
 function renderPlayerProgress(pid){
   var wrap=document.getElementById('hist-chart-wrap');
   if(!wrap)return;
-  if(!pid){wrap.innerHTML='<div style="text-align:center;color:#444;font-size:12px;padding:20px">Sélectionnez un joueur pour afficher sa courbe</div>';return;}
+  if(!pid){wrap.innerHTML='<div style="text-align:center;color:#475569;font-size:12px;padding:20px">Sélectionnez un joueur pour afficher sa courbe</div>';return;}
   wrap.innerHTML=renderProgressionChart(+pid);
 }
 
 function renderTeamProgressionChart(){
-  if(FEAT_HISTORY.length<2) return '<div style="text-align:center;color:#444;font-size:12px;padding:20px">Minimum 2 snapshots requis pour afficher l\'évolution.</div>';
+  if(FEAT_HISTORY.length<2) return '<div style="text-align:center;color:#475569;font-size:12px;padding:20px">Minimum 2 snapshots requis pour afficher l\'évolution.</div>';
   var snaps=FEAT_HISTORY;
   var W=500,H=160,PAD={t:20,r:20,b:40,l:40};
   var CW=W-PAD.l-PAD.r,CH=H-PAD.t-PAD.b;
@@ -590,12 +590,12 @@ function showSnapshotModal(){
   if(!wrap)return;
   wrap.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeSnapModal()">'
     +'<div style="background:#141414;border:1px solid rgba(212,175,55,.35);border-radius:12px;padding:28px;width:min(400px,94vw)">'
-      +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#D4AF37;margin-bottom:16px">💾 Sauvegarder snapshot</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#1565C0;margin-bottom:16px">💾 Sauvegarder snapshot</div>'
       +'<div style="font-family:Montserrat,sans-serif;font-size:11px;color:#888;margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase">Nom du snapshot</div>'
-      +'<input id="snap-label" type="text" placeholder="Ex: Éval. Toussaint 2026" value="Éval. '+new Date().toLocaleDateString('fr-FR')+'" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:10px 14px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;margin-bottom:16px">'
+      +'<input id="snap-label" type="text" placeholder="Ex: Éval. Toussaint 2026" value="Éval. '+new Date().toLocaleDateString('fr-FR')+'" style="background:#1A1A1A;border:1px solid rgba(21,101,192,.4);border-radius:8px;padding:10px 14px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;margin-bottom:16px">'
       +'<div style="font-size:12px;color:#888;margin-bottom:16px">Enregistre les scores actuels de tous les joueurs évalués ('+evalCount()+' joueurs).</div>'
       +'<div style="display:flex;gap:10px">'
-        +'<button onclick="confirmSnapshot()" style="flex:1;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Sauvegarder</button>'
+        +'<button onclick="confirmSnapshot()" style="flex:1;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:7px;padding:12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Sauvegarder</button>'
         +'<button onclick="closeSnapModal()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:12px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600">Annuler</button>'
       +'</div>'
     +'</div>'
@@ -620,56 +620,56 @@ function showPlayerFiche(pid){
   if(!wrap)return;
 
   var photoHtml=meta.photo
-    ?'<img src="'+meta.photo+'" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(212,175,55,.4)">'
-    :'<div style="width:64px;height:64px;border-radius:50%;background:'+AB[pid%10]+';color:'+AT[pid%10]+';display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:20px;border:2px solid rgba(212,175,55,.4)">'+p.prenom[0]+p.nom[0]+'</div>';
+    ?'<img src="'+meta.photo+'" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(21,101,192,.5)">'
+    :'<div style="width:64px;height:64px;border-radius:50%;background:'+AB[pid%10]+';color:'+AT[pid%10]+';display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:20px;border:2px solid rgba(21,101,192,.5)">'+p.prenom[0]+p.nom[0]+'</div>';
 
   var notesHtml=meta.notes&&meta.notes.length
-    ?meta.notes.slice().reverse().map(function(n){return'<div style="background:#111;border-radius:6px;padding:9px 12px;margin-bottom:6px"><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;margin-bottom:3px">'+n.date+'</div><div style="font-size:12px;line-height:1.6">'+n.text+'</div></div>';}).join('')
-    :'<div style="font-size:12px;color:#444;text-align:center;padding:10px">Aucune note</div>';
+    ?meta.notes.slice().reverse().map(function(n){return'<div style="background:#111;border-radius:6px;padding:9px 12px;margin-bottom:6px"><div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif;margin-bottom:3px">'+n.date+'</div><div style="font-size:12px;line-height:1.6">'+n.text+'</div></div>';}).join('')
+    :'<div style="font-size:12px;color:#475569;text-align:center;padding:10px">Aucune note</div>';
 
   wrap.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto" onclick="if(event.target===this)closeFiche()">'
     +'<div style="background:#141414;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(580px,96vw);max-height:90vh;overflow-y:auto">'
       +'<div style="background:linear-gradient(135deg,rgba(212,175,55,.1),transparent);border-bottom:1px solid rgba(212,175,55,.15);padding:16px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:1;background:#141414">'
         +photoHtml
-        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+' · '+p.equipe+' · Rang #'+p.rank+'</div></div>'
+        +'<div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+' · '+p.equipe+' · Rang #'+p.rank+'</div></div>'
         +'<button onclick="closeFiche()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#888;padding:5px 10px;cursor:pointer;font-size:16px">×</button>'
       +'</div>'
       +'<div style="padding:20px 22px">'
 
         // Photo upload
-        +'<div style="margin-bottom:18px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:8px">📸 Photo</div>'
+        +'<div style="margin-bottom:18px"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:8px">📸 Photo</div>'
         +'<div style="display:flex;align-items:center;gap:12px">'+photoHtml
-        +'<div><input type="file" id="photo-upload" accept="image/*" onchange="uploadPhoto('+pid+',this)" style="display:none"><button onclick="document.getElementById(\'photo-upload\').click()" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.3);border-radius:6px;color:#D4AF37;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Changer la photo</button>'
+        +'<div><input type="file" id="photo-upload" accept="image/*" onchange="uploadPhoto('+pid+',this)" style="display:none"><button onclick="document.getElementById(\'photo-upload\').click()" style="background:rgba(212,175,55,.07);border:1px solid rgba(21,101,192,.4);border-radius:6px;color:#1565C0;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Changer la photo</button>'
         +(meta.photo?'<button onclick="removePhoto('+pid+')" style="background:transparent;border:none;color:#E24B4A;padding:8px;cursor:pointer;font-size:12px;margin-left:6px">✕ Supprimer</button>':'')
         +'</div></div></div>'
 
         // Contact
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">'
-          +'<div><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:6px">✉️ Email parent</div>'
-          +'<input id="fiche-email" type="email" value="'+(meta.email_parent||'')+'" placeholder="parent@email.com" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s" onfocus="this.style.borderColor=\'rgba(212,175,55,.4)\'" onblur="this.style.borderColor=\'rgba(212,175,55,.13)\'"></div>'
-          +'<div><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:6px">📞 Téléphone</div>'
-          +'<input id="fiche-phone" type="tel" value="'+(meta.phone||'')+'" placeholder="06 12 34 56 78" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s" onfocus="this.style.borderColor=\'rgba(212,175,55,.4)\'" onblur="this.style.borderColor=\'rgba(212,175,55,.13)\'"></div>'
+          +'<div><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:6px">✉️ Email parent</div>'
+          +'<input id="fiche-email" type="email" value="'+(meta.email_parent||'')+'" placeholder="parent@email.com" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s" onfocus="this.style.borderColor=\'rgba(21,101,192,.5)\'" onblur="this.style.borderColor=\'rgba(212,175,55,.13)\'"></div>'
+          +'<div><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:6px">📞 Téléphone</div>'
+          +'<input id="fiche-phone" type="tel" value="'+(meta.phone||'')+'" placeholder="06 12 34 56 78" style="background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s" onfocus="this.style.borderColor=\'rgba(21,101,192,.5)\'" onblur="this.style.borderColor=\'rgba(212,175,55,.13)\'"></div>'
         +'</div>'
 
         // Save contact
         +'<div style="display:flex;gap:8px;margin-bottom:20px">'
-          +'<button onclick="saveContact('+pid+')" style="background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.3);border-radius:6px;color:#D4AF37;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Sauvegarder contact</button>'
+          +'<button onclick="saveContact('+pid+')" style="background:rgba(212,175,55,.07);border:1px solid rgba(21,101,192,.4);border-radius:6px;color:#1565C0;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">Sauvegarder contact</button>'
           +'<button onclick="exportPDF('+pid+')" style="background:rgba(226,75,74,.07);border:1px solid rgba(226,75,74,.25);border-radius:6px;color:#E87060;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">📄 Exporter PDF</button>'
           +'<button onclick="emailBilan('+pid+')" style="background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.25);border-radius:6px;color:#60A8D0;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">✉️ Email bilan</button>'
         +'</div>'
 
         // Notes history
         +'<div style="height:1px;background:linear-gradient(to right,transparent,rgba(212,175,55,.15),transparent);margin-bottom:16px"></div>'
-        +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:10px">📝 Notes du coach</div>'
+        +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:10px">📝 Notes du coach</div>'
         +'<div style="display:flex;gap:8px;margin-bottom:10px">'
           +'<textarea id="new-note" rows="2" placeholder="Ajouter une observation, un point de travail..." style="flex:1;background:#1A1A1A;border:1px solid rgba(212,175,55,.13);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:12px;outline:none;resize:vertical"></textarea>'
-          +'<button onclick="addNote('+pid+')" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:9px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;white-space:nowrap;align-self:flex-start">+ Ajouter</button>'
+          +'<button onclick="addNote('+pid+')" style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:8px;padding:9px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;white-space:nowrap;align-self:flex-start">+ Ajouter</button>'
         +'</div>'
         +'<div id="notes-list">'+notesHtml+'</div>'
 
         // Progression chart
         +'<div style="height:1px;background:linear-gradient(to right,transparent,rgba(212,175,55,.15),transparent);margin:16px 0"></div>'
-        +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:10px">📈 Courbe de progression</div>'
+        +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:10px">📈 Courbe de progression</div>'
         +'<div style="background:#111;border-radius:8px;padding:12px">'+renderProgressionChart(pid)+'</div>'
 
       +'</div>'
@@ -705,7 +705,7 @@ function addNote(pid){
   ta.value='';
   var nl=document.getElementById('notes-list');
   if(nl){
-    nl.innerHTML=meta.notes.slice().reverse().map(function(n){return'<div style="background:#111;border-radius:6px;padding:9px 12px;margin-bottom:6px"><div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;margin-bottom:3px">'+n.date+'</div><div style="font-size:12px;line-height:1.6">'+n.text+'</div></div>';}).join('');
+    nl.innerHTML=meta.notes.slice().reverse().map(function(n){return'<div style="background:#111;border-radius:6px;padding:9px 12px;margin-bottom:6px"><div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif;margin-bottom:3px">'+n.date+'</div><div style="font-size:12px;line-height:1.6">'+n.text+'</div></div>';}).join('');
   }
 }
 
@@ -725,21 +725,21 @@ function exportPDF(pid){
     +'body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;font-size:12px}'
     +'.page{max-width:800px;margin:0 auto;padding:24px}'
     +'.header{display:flex;align-items:flex-start;gap:20px;border-bottom:3px solid #D4AF37;padding-bottom:16px;margin-bottom:20px}'
-    +'.logo-area h1{font-size:20px;font-weight:900;letter-spacing:3px;color:#D4AF37;text-transform:uppercase}'
+    +'.logo-area h1{font-size:20px;font-weight:900;letter-spacing:3px;color:#1565C0;text-transform:uppercase}'
     +'.logo-area .sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#888}'
-    +'.logo-area .season{font-size:11px;color:#444;margin-top:4px}'
+    +'.logo-area .season{font-size:11px;color:#475569;margin-top:4px}'
     +'.player-header{display:flex;align-items:center;gap:16px;background:#f8f5ee;border-left:4px solid #D4AF37;padding:14px 16px;margin-bottom:16px;border-radius:4px}'
-    +'.avatar{width:52px;height:52px;border-radius:50%;background:#1A1200;color:#D4AF37;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0}'
+    +'.avatar{width:52px;height:52px;border-radius:50%;background:#1A1200;color:#1565C0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0}'
     +'.pname{font-size:18px;font-weight:900;color:#111}'
     +'.psub{font-size:11px;color:#666;margin-top:2px}'
     +'.score-big{margin-left:auto;text-align:center;background:#D4AF37;color:#000;border-radius:8px;padding:8px 16px}'
     +'.score-big .num{font-size:24px;font-weight:900;line-height:1}'
     +'.score-big .lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase}'
-    +'.section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#D4AF37;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #f0e8d0}'
+    +'.section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1565C0;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #f0e8d0}'
     +'.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}'
     +'.bar-row{margin-bottom:6px}'
     +'.bar-row .labels{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}'
-    +'.bar-row .ll{color:#444}'+'.bar-row .vv{font-weight:700;color:#D4AF37}'
+    +'.bar-row .ll{color:#475569}'+'.bar-row .vv{font-weight:700;color:#1565C0}'
     +'.bar-track{height:6px;background:#e8e0d0;border-radius:3px;overflow:hidden}'
     +'.bar-fill{height:100%;background:linear-gradient(to right,#D4AF37,#FBCB57);border-radius:3px}'
     +'.swot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}'
@@ -757,11 +757,11 @@ function exportPDF(pid){
     // Print button
     +'<div class="no-print" style="margin-bottom:16px;display:flex;gap:10px">'
       +'<button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase">🖨️ Imprimer / Sauvegarder en PDF</button>'
-      +'<button onclick="window.close()" style="background:#f0f0f0;color:#444;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600;font-size:12px">Fermer</button>'
+      +'<button onclick="window.close()" style="background:#f0f0f0;color:#475569;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600;font-size:12px">Fermer</button>'
     +'</div>'
 
     // Header
-    +'<div class="header"><div class="logo-area"><h1>Foot Factory Pro</h1><div class="sub">Analyser · Développer · Performer</div><div class="season">Fiche Bilan · Saison 2026-27 · '+CAT+'</div></div>'
+    +'<div class="header"><div class="logo-area"><h1>One Sport</h1><div class="sub">Connecter · Partager · Progresser</div><div class="season">Fiche Bilan · Saison 2026-27 · '+CAT+'</div></div>'
     +'<div style="margin-left:auto;font-size:9px;color:#888;text-align:right">Généré le '+new Date().toLocaleDateString('fr-FR')+'<br>Code parent : '+playerCode(p)+'</div>'
     +'</div>'
 
@@ -781,7 +781,7 @@ function exportPDF(pid){
     +'</div>'
     +'<div><div class="section-title">Informations détaillées</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
-    +cats.map(function(c){return '<tr><td style="padding:3px 0;color:#444">'+c[0]+'</td><td style="text-align:right;font-weight:700;color:#D4AF37">'+cA(p,c[1]).toFixed(2)+' / 10</td></tr>';}).join('')
+    +cats.map(function(c){return '<tr><td style="padding:3px 0;color:#475569">'+c[0]+'</td><td style="text-align:right;font-weight:700;color:#1565C0">'+cA(p,c[1]).toFixed(2)+' / 10</td></tr>';}).join('')
     +'</table></div></div>'
 
     // Strengths & weaknesses
@@ -798,7 +798,7 @@ function exportPDF(pid){
     html+='<div class="ai-section"><div class="section-title" style="margin-bottom:10px">✦ Programme IA personnalisé</div><div class="ai-text">'+aiText.slice(0,1500)+(aiText.length>1500?'\n[...]':'')+'</div></div>';
   }
 
-  html+='<div class="footer">Foot Factory Pro · Confidentiel · Pour usage pédagogique uniquement</div>'
+  html+='<div class="footer">One Sport · Confidentiel · Pour usage pédagogique uniquement</div>'
     +'</div></body></html>';
 
   printWindow.document.write(html);
@@ -811,17 +811,17 @@ function exportConvocationPDF(evt,playerIds){
   var printWindow=window.open('','_blank');
   var players=playerIds.map(function(id){return PL.find(function(p){return p.id===+id;});}).filter(Boolean);
   var html='<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Convocation</title>'
-    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:12px}.page{max-width:760px;margin:0 auto;padding:24px}.convo-header{border-bottom:3px solid #D4AF37;padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end}.brand{font-size:18px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#D4AF37}.event-box{background:#fffdf5;border:1px solid #e8d090;border-radius:6px;padding:14px 18px;margin-bottom:16px}.event-title{font-size:16px;font-weight:700;margin-bottom:6px}.event-detail{font-size:12px;color:#444;margin-bottom:3px}.player-table{width:100%;border-collapse:collapse;margin-bottom:16px}.player-table th{background:#D4AF37;color:#000;padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase}.player-table td{padding:9px 10px;border-bottom:1px solid #eee;font-size:12px}.instructions{background:#f5f5f5;border-radius:6px;padding:12px 16px;margin-bottom:16px}.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}.sign-box{border-top:1px dashed #ccc;padding-top:8px;font-size:10px;color:#888;text-align:center}.footer{text-align:center;font-size:9px;color:#999;margin-top:20px;border-top:1px solid #eee;padding-top:10px}@media print{.no-print{display:none}@page{margin:1.5cm}}</style>'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:12px}.page{max-width:760px;margin:0 auto;padding:24px}.convo-header{border-bottom:3px solid #D4AF37;padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end}.brand{font-size:18px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#1565C0}.event-box{background:#fffdf5;border:1px solid #e8d090;border-radius:6px;padding:14px 18px;margin-bottom:16px}.event-title{font-size:16px;font-weight:700;margin-bottom:6px}.event-detail{font-size:12px;color:#475569;margin-bottom:3px}.player-table{width:100%;border-collapse:collapse;margin-bottom:16px}.player-table th{background:#D4AF37;color:#000;padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase}.player-table td{padding:9px 10px;border-bottom:1px solid #eee;font-size:12px}.instructions{background:#f5f5f5;border-radius:6px;padding:12px 16px;margin-bottom:16px}.sign-area{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}.sign-box{border-top:1px dashed #ccc;padding-top:8px;font-size:10px;color:#888;text-align:center}.footer{text-align:center;font-size:9px;color:#999;margin-top:20px;border-top:1px solid #eee;padding-top:10px}@media print{.no-print{display:none}@page{margin:1.5cm}}</style>'
     +'</head><body><div class="page">'
     +'<div class="no-print" style="margin-bottom:14px"><button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:700;font-size:13px">🖨️ Imprimer / PDF</button></div>'
-    +'<div class="convo-header"><div><div class="brand">Foot Factory Pro</div><div style="font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase">Convocation officielle · Saison 2026-27 · '+CAT+'</div></div><div style="font-size:10px;color:#888">Date: '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
+    +'<div class="convo-header"><div><div class="brand">One Sport</div><div style="font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase">Convocation officielle · Saison 2026-27 · '+CAT+'</div></div><div style="font-size:10px;color:#888">Date: '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
     +'<div class="event-box"><div class="event-title">'+(EVT_LBL[evt.type]||'Événement')+' : '+evt.title+'</div>'
     +'<div class="event-detail">📅 '+evt.date+(evt.end_date&&evt.end_date!==evt.date?' → '+evt.end_date:'')+(evt.time?' à '+evt.time:'')+' </div>'
     +(evt.end_time?'<div class="event-detail">🕐 Fin prévue : '+evt.end_time+'</div>':'')
     +(evt.location?'<div class="event-detail">📍 '+evt.location+'</div>':'')
     +(evt.desc?'<div class="event-detail" style="margin-top:6px;font-style:italic">'+evt.desc+'</div>':'')
     +'</div>'
-    +'<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#D4AF37;margin-bottom:8px">Joueurs convoqués ('+players.length+')</div>'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1565C0;margin-bottom:8px">Joueurs convoqués ('+players.length+')</div>'
     +'<table class="player-table"><thead><tr><th>#</th><th>Joueur</th><th>Poste</th><th>Équipe</th><th>Présence</th></tr></thead><tbody>'
     +players.map(function(p,i){return'<tr><td>'+(i+1)+'</td><td style="font-weight:600">'+p.prenom+' '+p.nom+'</td><td>'+p.poste+'</td><td>'+p.equipe+'</td><td style="width:80px">□</td></tr>';}).join('')
     +'</tbody></table>'
@@ -831,7 +831,7 @@ function exportConvocationPDF(evt,playerIds){
     +'<div>• En cas d\'absence, prévenir le coach immédiatement</div>'
     +'</div>'
     +'<div class="sign-area"><div class="sign-box">Signature du joueur</div><div class="sign-box">Signature parent / tuteur</div></div>'
-    +'<div class="footer">Foot Factory Pro · Document officiel · Saison 2026-27</div>'
+    +'<div class="footer">One Sport · Document officiel · Saison 2026-27</div>'
     +'</div></body></html>';
   printWindow.document.write(html);
   printWindow.document.close();
@@ -843,11 +843,11 @@ function exportGroupPDF(){
   var html='<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Bilans Équipe</title>'
     +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:11px;color:#111}.page{max-width:800px;margin:0 auto;padding:20px}.player-section{page-break-inside:avoid;margin-bottom:28px;border:1px solid #e0d8c0;border-radius:6px;overflow:hidden}.ph{background:#fffdf5;border-bottom:1px solid #e0d8c0;padding:12px 16px;display:flex;align-items:center;gap:14px}.pn{font-size:15px;font-weight:900}.ps{font-size:10px;color:#666}.sc{background:#D4AF37;color:#000;border-radius:6px;padding:4px 12px;font-size:14px;font-weight:900;margin-left:auto}.pb{padding:12px 16px}.bar-row{margin-bottom:5px}.br-labels{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px}.btr{height:5px;background:#eee;border-radius:2px}.bfi{height:100%;background:#D4AF37;border-radius:2px}@media print{.no-print{display:none}@page{margin:1.5cm}.player-section{page-break-inside:avoid}}</style>'
     +'</head><body><div style="max-width:800px;margin:0 auto;padding:20px">'
-    +'<div class="no-print" style="margin-bottom:14px;display:flex;gap:10px"><button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:700;font-size:13px">🖨️ Imprimer / PDF</button><button onclick="window.close()" style="background:#f0f0f0;color:#444;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600">Fermer</button></div>'
-    +'<div style="border-bottom:3px solid #D4AF37;padding-bottom:12px;margin-bottom:18px"><div style="font-size:18px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#D4AF37">Foot Factory Pro</div><div style="font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase">Bilans collectifs · Saison 2026-27 · '+CAT+' · '+PL.length+' joueurs · Généré le '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
+    +'<div class="no-print" style="margin-bottom:14px;display:flex;gap:10px"><button onclick="window.print()" style="background:#D4AF37;color:#000;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-weight:700;font-size:13px">🖨️ Imprimer / PDF</button><button onclick="window.close()" style="background:#f0f0f0;color:#475569;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600">Fermer</button></div>'
+    +'<div style="border-bottom:3px solid #D4AF37;padding-bottom:12px;margin-bottom:18px"><div style="font-size:18px;font-weight:900;letter-spacing:3px;text-transform:uppercase;color:#1565C0">One Sport</div><div style="font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase">Bilans collectifs · Saison 2026-27 · '+CAT+' · '+PL.length+' joueurs · Généré le '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
     +PL.map(function(p){
       var cats=[['Technique','technique'],['Physique','physique'],['Tactique','tactique'],['Mental','mental'],['Culture','culture']];
-      return'<div class="player-section"><div class="ph"><div style="width:38px;height:38px;border-radius:50%;background:#1A1200;color:#D4AF37;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div><div><div class="pn">'+p.prenom+' '+p.nom+'</div><div class="ps">'+p.poste+' · '+p.equipe+' · Rang #'+p.rank+'</div></div><div class="sc">'+p.score.toFixed(2)+'</div></div>'
+      return'<div class="player-section"><div class="ph"><div style="width:38px;height:38px;border-radius:50%;background:#1A1200;color:#1565C0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div><div><div class="pn">'+p.prenom+' '+p.nom+'</div><div class="ps">'+p.poste+' · '+p.equipe+' · Rang #'+p.rank+'</div></div><div class="sc">'+p.score.toFixed(2)+'</div></div>'
         +'<div class="pb">'+cats.map(function(c){return'<div class="bar-row"><div class="br-labels"><span>'+c[0]+'</span><span style="font-weight:700;color:#B8900F">'+cA(p,c[1]).toFixed(1)+'/10</span></div><div class="btr"><div class="bfi" style="width:'+cA(p,c[1])*10+'%"></div></div></div>';}).join('')+'</div></div>';
     }).join('')
     +'</div></body></html>';
@@ -860,7 +860,7 @@ function emailBilan(pid){
   var p=PL.find(function(x){return x.id===pid;});if(!p)return;
   var meta=metaGet(pid);
   var email=meta.email_parent||'';
-  var subject=encodeURIComponent('Bilan '+p.prenom+' '+p.nom+' — Foot Factory Pro · Saison 2026-27');
+  var subject=encodeURIComponent('Bilan '+p.prenom+' '+p.nom+' — One Sport · Saison 2026-27');
   var cats=[['Technique','technique'],['Physique','physique'],['Tactique','tactique'],['Mental','mental'],['Culture','culture']];
   var body='Bonjour,\n\nVoici le bilan de '+p.prenom+' '+p.nom+' pour la saison 2026-27.\n\n'
     +'SCORE GÉNÉRAL : '+p.score.toFixed(2)+'/10  (Rang #'+p.rank+' / '+PL.length+')\n'
@@ -870,7 +870,7 @@ function emailBilan(pid){
     +'Pour consulter la fiche complète, connectez-vous à l\'espace parents :\n'
     +'► Ouvrir ffp-parents.html\n'
     +'► Code d\'accès : '+playerCode(p)+'\n\n'
-    +'Cordialement,\nFoot Factory Pro — Saison 2026-27';
+    +'Cordialement,\nOne Sport — Saison 2026-27';
   window.location.href='mailto:'+email+'?subject='+subject+'&body='+encodeURIComponent(body);
 }
 
@@ -878,14 +878,14 @@ function emailGroupBilans(){
   var players=PL.slice();
   var emails=players.map(function(p){return metaGet(p.id).email_parent||'';}).filter(function(e){return e&&e.indexOf('@')>0;});
   if(emails.length===0){alert('Aucun email parent renseigné. Ouvrez la fiche de chaque joueur (icône 👤) pour ajouter les adresses email.');return;}
-  var subject=encodeURIComponent('Bilans Foot Factory Pro · Saison 2026-27 · '+CAT);
+  var subject=encodeURIComponent('Bilans One Sport · Saison 2026-27 · '+CAT);
   var body='Bonjour,\n\nVeuillez trouver ci-dessous les résultats de la dernière évaluation.\n\n';
   body+=players.filter(function(p){return metaGet(p.id).email_parent;}).map(function(p){
     return 'BILAN '+p.prenom.toUpperCase()+' '+p.nom.toUpperCase()
       +'\nScore : '+p.score.toFixed(2)+'/10 (Rang #'+p.rank+')\n'
       +'Code accès parents : '+playerCode(p)+'\n';
   }).join('\n---\n\n');
-  body+='\nPour consulter les fiches détaillées, ouvrez ffp-parents.html et entrez le code correspondant.\n\nCordialement,\nFoot Factory Pro';
+  body+='\nPour consulter les fiches détaillées, ouvrez ffp-parents.html et entrez le code correspondant.\n\nCordialement,\nOne Sport';
   window.location.href='mailto:'+emails.join(',')+('?subject='+subject+'&body='+encodeURIComponent(body.slice(0,1800)));
 }
 
@@ -909,7 +909,7 @@ function renderConvoModal(wrap){
   wrap.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto" onclick="if(event.target===this)closeConvo()">'
     +'<div style="background:#141414;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(640px,96vw);max-height:90vh;overflow-y:auto">'
       +'<div style="background:#141414;border-bottom:1px solid rgba(212,175,55,.15);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1">'
-        +'<div><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#D4AF37">Convocation</div><div style="font-size:12px;color:#888;margin-top:2px">'+(EVT_LBL[evt.type]||evt.type)+' · '+evt.title+'</div></div>'
+        +'<div><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#1565C0">Convocation</div><div style="font-size:12px;color:#888;margin-top:2px">'+(EVT_LBL[evt.type]||evt.type)+' · '+evt.title+'</div></div>'
         +'<button onclick="closeConvo()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#888;padding:5px 10px;cursor:pointer;font-size:16px">×</button>'
       +'</div>'
       +'<div style="padding:18px 22px">'
@@ -919,8 +919,8 @@ function renderConvoModal(wrap){
         +'</div>'
         // Select all / none
         +'<div style="display:flex;gap:10px;margin-bottom:10px;align-items:center">'
-          +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;flex:1">Sélectionner les joueurs <span id="convo-count" style="color:#888">(0 / '+PL.length+')</span></div>'
-          +'<button onclick="convoSelectAll()" style="background:transparent;border:1px solid rgba(212,175,55,.3);border-radius:5px;color:#D4AF37;padding:5px 10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase">Tous</button>'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;flex:1">Sélectionner les joueurs <span id="convo-count" style="color:#888">(0 / '+PL.length+')</span></div>'
+          +'<button onclick="convoSelectAll()" style="background:transparent;border:1px solid rgba(21,101,192,.4);border-radius:5px;color:#1565C0;padding:5px 10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase">Tous</button>'
           +'<button onclick="convoSelectNone()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#888;padding:5px 10px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;text-transform:uppercase">Aucun</button>'
         +'</div>'
         // Player list
@@ -929,16 +929,16 @@ function renderConvoModal(wrap){
             var meta=metaGet(p.id);
             var hasEmail=meta&&meta.email_parent&&meta.email_parent.indexOf('@')>0;
             return'<div id="cp-'+p.id+'" onclick="convoToggle('+p.id+')" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;cursor:pointer;transition:background .1s;margin-bottom:2px" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=convoIsSelected('+p.id+')&&\'rgba(212,175,55,.1)\'||\'transparent\'">'
-              +'<div id="cb-'+p.id+'" style="width:16px;height:16px;border-radius:3px;border:1px solid rgba(212,175,55,.4);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .1s"></div>'
+              +'<div id="cb-'+p.id+'" style="width:16px;height:16px;border-radius:3px;border:1px solid rgba(21,101,192,.5);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .1s"></div>'
               +'<div class="av" style="width:26px;height:26px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+';flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
-              +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#444">'+POS_SHORT[p.poste]+' · '+p.equipe+'</div></div>'
-              +(hasEmail?'<span style="font-size:9px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:600">✉</span>':'<span style="font-size:9px;color:#444;font-family:Montserrat,sans-serif">no email</span>')
+              +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#475569">'+POS_SHORT[p.poste]+' · '+p.equipe+'</div></div>'
+              +(hasEmail?'<span style="font-size:9px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:600">✉</span>':'<span style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif">no email</span>')
             +'</div>';
           }).join('')
         +'</div>'
         // Actions
         +'<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">'
-          +'<button onclick="convoExportPDF()" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">📄 Générer PDF convocations</button>'
+          +'<button onclick="convoExportPDF()" style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:6px;padding:10px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">📄 Générer PDF convocations</button>'
           +'<button onclick="convoEmail()" style="background:rgba(96,168,208,.1);border:1px solid rgba(96,168,208,.3);border-radius:6px;color:#60A8D0;padding:10px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase">✉️ Email aux parents</button>'
           +'<button onclick="closeConvo()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#888;padding:10px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600">Fermer</button>'
         +'</div>'
@@ -954,7 +954,7 @@ function convoToggle(pid){
   if(idx>=0)CONVO_SELECTED.splice(idx,1);else CONVO_SELECTED.push(pid);
   var cb=document.getElementById('cb-'+pid);
   var cp=document.getElementById('cp-'+pid);
-  if(cb){cb.style.background=convoIsSelected(pid)?'#D4AF37':'transparent';cb.style.borderColor=convoIsSelected(pid)?'#D4AF37':'rgba(212,175,55,.4)';cb.innerHTML=convoIsSelected(pid)?'✓':'';}
+  if(cb){cb.style.background=convoIsSelected(pid)?'#D4AF37':'transparent';cb.style.borderColor=convoIsSelected(pid)?'#D4AF37':'rgba(21,101,192,.5)';cb.innerHTML=convoIsSelected(pid)?'✓':'';}
   if(cp){cp.style.background=convoIsSelected(pid)?'rgba(212,175,55,.08)':'transparent';}
   var cnt=document.getElementById('convo-count');if(cnt)cnt.textContent='('+CONVO_SELECTED.length+' / '+PL.length+')';
 }
@@ -979,7 +979,7 @@ function convoEmail(){
     +(evt.desc?'Informations : '+evt.desc+'\n':'')
     +'\nJoueurs convoqués :\n'
     +players.map(function(p){return '• '+p.prenom+' '+p.nom+' ('+p.poste+')';}).join('\n')
-    +'\n\nMerci de confirmer la présence de votre enfant.\nEn cas d\'absence, veuillez prévenir le coach dès que possible.\n\nCordialement,\nFoot Factory Pro — Saison 2026-27';
+    +'\n\nMerci de confirmer la présence de votre enfant.\nEn cas d\'absence, veuillez prévenir le coach dès que possible.\n\nCordialement,\nOne Sport — Saison 2026-27';
   window.location.href='mailto:'+emails.join(',')+'?subject='+subject+'&body='+encodeURIComponent(body);
 }
 
@@ -991,7 +991,7 @@ function initFeatures(){
 
 // AGENDA
 // ══════════════════════════════════════════════════
-// AGENDA — FOOT FACTORY PRO
+// AGENDA — ONE SPORT
 // localStorage key: ffp_events
 // Shared between ffp-coach.html and ffp-vie-club.html
 // ══════════════════════════════════════════════════
@@ -1083,15 +1083,15 @@ function renderGrid(container) {
   var monthEvts = AG_EVENTS.filter(function(ev){ return ev.date.startsWith(monthStr) || (ev.end_date||ev.date).startsWith(monthStr); });
 
   var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">'
-    + '<button onclick="agPrev()" style="background:#141414;border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#D4AF37;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">‹</button>'
-    + '<div style="flex:1;text-align:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:#D4AF37;letter-spacing:1px">' + MOIS_FR[month] + ' ' + year + '</div>'
-    + '<button onclick="agNext()" style="background:#141414;border:1px solid rgba(212,175,55,.2);border-radius:6px;color:#D4AF37;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">›</button>'
-    + '<span style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:12px;padding:4px 12px;font-family:Montserrat,sans-serif;font-size:11px;color:#D4AF37;font-weight:600">' + monthEvts.length + ' événement' + (monthEvts.length!==1?'s':'') + '</span>'
+    + '<button onclick="agPrev()" style="background:#141414;border:1px solid rgba(0,0,0,.15);border-radius:6px;color:#1565C0;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">‹</button>'
+    + '<div style="flex:1;text-align:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:#1565C0;letter-spacing:1px">' + MOIS_FR[month] + ' ' + year + '</div>'
+    + '<button onclick="agNext()" style="background:#141414;border:1px solid rgba(0,0,0,.15);border-radius:6px;color:#1565C0;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:14px;font-weight:700;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">›</button>'
+    + '<span style="background:rgba(21,101,192,.07);border:1px solid rgba(0,0,0,.15);border-radius:12px;padding:4px 12px;font-family:Montserrat,sans-serif;font-size:11px;color:#1565C0;font-weight:600">' + monthEvts.length + ' événement' + (monthEvts.length!==1?'s':'') + '</span>'
     + '</div>';
 
   // Day headers
   html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px">'
-    + JOURS_FR.map(function(j){ return '<div style="text-align:center;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#444;padding:6px 0">' + j + '</div>'; }).join('') + '</div>';
+    + JOURS_FR.map(function(j){ return '<div style="text-align:center;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#475569;padding:6px 0">' + j + '</div>'; }).join('') + '</div>';
 
   // Calendar grid
   var firstDay = new Date(year, month, 1).getDay(); // 0=Sun
@@ -1141,13 +1141,13 @@ function renderGrid(container) {
   // Day detail panel
   if (AG_SELECTED_DAY) {
     var selEvts = evtOnDate(AG_SELECTED_DAY);
-    html += '<div style="margin-top:14px;background:#141414;border:1px solid rgba(212,175,55,.2);border-radius:10px;overflow:hidden">';
+    html += '<div style="margin-top:14px;background:#141414;border:1px solid rgba(0,0,0,.15);border-radius:10px;overflow:hidden">';
     html += '<div style="padding:12px 16px;border-bottom:1px solid rgba(212,175,55,.13);display:flex;align-items:center;justify-content:space-between">';
-    html += '<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#D4AF37">' + fmtDate(AG_SELECTED_DAY) + '</div>';
-    html += '<button onclick="agShowForm(null,\'' + AG_SELECTED_DAY + '\')" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase">+ Ajouter</button>';
+    html += '<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1565C0">' + fmtDate(AG_SELECTED_DAY) + '</div>';
+    html += '<button onclick="agShowForm(null,\'' + AG_SELECTED_DAY + '\')" style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase">+ Ajouter</button>';
     html += '</div>';
     if (selEvts.length === 0) {
-      html += '<div style="padding:20px;text-align:center;color:#444;font-size:13px">Aucun événement ce jour</div>';
+      html += '<div style="padding:20px;text-align:center;color:#475569;font-size:13px">Aucun événement ce jour</div>';
     } else {
       selEvts.forEach(function(ev) {
         html += agEventRow(ev);
@@ -1164,12 +1164,12 @@ function renderList(container) {
   var sorted = AG_EVENTS.slice().sort(function(a,b){ return a.date.localeCompare(b.date) || a.time.localeCompare(b.time); });
 
   var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">'
-    + '<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#D4AF37">' + AG_EVENTS.length + ' événement' + (AG_EVENTS.length!==1?'s':'') + ' planifiés</div>'
-    + '<button onclick="agShowForm(null,null)" style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Ajouter un événement</button>'
+    + '<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#1565C0">' + AG_EVENTS.length + ' événement' + (AG_EVENTS.length!==1?'s':'') + ' planifiés</div>'
+    + '<button onclick="agShowForm(null,null)" style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">+ Ajouter un événement</button>'
     + '</div>';
 
   if (sorted.length === 0) {
-    html += '<div style="text-align:center;padding:40px;color:#444"><div style="font-size:32px;margin-bottom:12px">📅</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucun événement</div></div>';
+    html += '<div style="text-align:center;padding:40px;color:#475569"><div style="font-size:32px;margin-bottom:12px">📅</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucun événement</div></div>';
   } else {
     // Group by month
     var groups = {};
@@ -1210,7 +1210,7 @@ function agEventRow(ev) {
       + (ev.desc ? '<div style="font-size:11px;color:#666;margin-top:4px;font-style:italic">' + ev.desc + '</div>' : '')
     + '</div>'
     + '<div style="display:flex;gap:5px;flex-shrink:0">'
-      + '<button onclick="agShowForm(\'' + ev.id + '\',null)" style="background:transparent;border:1px solid rgba(212,175,55,.2);border-radius:5px;color:#D4AF37;padding:5px 9px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">✏️</button>'
+      + '<button onclick="agShowForm(\'' + ev.id + '\',null)" style="background:transparent;border:1px solid rgba(0,0,0,.15);border-radius:5px;color:#1565C0;padding:5px 9px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor=\'#D4AF37\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.2)\'">✏️</button>'
       + '<button onclick="agDelete(\'' + ev.id + '\')" style="background:transparent;border:1px solid rgba(226,75,74,.2);border-radius:5px;color:#E24B4A;padding:5px 9px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor=\'#E24B4A\'" onmouseout="this.style.borderColor=\'rgba(226,75,74,.2)\'">🗑</button>'
     + '</div>'
     + '</div>';
@@ -1256,7 +1256,7 @@ function agShowForm(evtId, defaultDate) {
   wrap.innerHTML = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)agCloseForm()">'
     + '<div style="background:#141414;border:1px solid rgba(212,175,55,.35);border-radius:14px;width:min(580px,96vw);max-height:90vh;overflow-y:auto">'
       + '<div style="background:linear-gradient(135deg,rgba(212,175,55,.1),transparent);border-bottom:1px solid rgba(212,175,55,.15);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#141414;z-index:1">'
-        + '<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#D4AF37">' + (ev?'Modifier l\'événement':'Nouvel événement') + '</div>'
+        + '<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#1565C0">' + (ev?'Modifier l\'événement':'Nouvel événement') + '</div>'
         + '<button onclick="agCloseForm()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:5px;color:#888;padding:5px 10px;cursor:pointer;font-size:16px">×</button>'
       + '</div>'
       + '<div style="padding:20px 22px">'
@@ -1275,7 +1275,7 @@ function agShowForm(evtId, defaultDate) {
         + agField('Description / Informations', '<textarea class="add-input" id="f-desc" rows="2" placeholder="Ex: Tenue domicile obligatoire" style="resize:vertical">' + (ev?ev.desc||'':'') + '</textarea>', true)
         + '<div id="f-err" style="display:none;font-size:12px;color:#E24B4A;margin-bottom:10px;font-family:Montserrat,sans-serif;font-weight:600"></div>'
         + '<div style="display:flex;gap:10px;margin-top:4px">'
-          + '<button onclick="agSaveForm()" style="flex:1;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:7px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s">' + (ev?'Enregistrer':'Ajouter') + '</button>'
+          + '<button onclick="agSaveForm()" style="flex:1;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:7px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;transition:all .2s">' + (ev?'Enregistrer':'Ajouter') + '</button>'
           + '<button onclick="agCloseForm()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:13px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Annuler</button>'
         + '</div>'
       + '</div>'
@@ -1358,7 +1358,7 @@ function initAgenda() {
 
 // FIREBASE
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — FIREBASE SYNC MODULE
+// ONE SPORT — FIREBASE SYNC MODULE
 // ══════════════════════════════════════════════════════
 // Works WITHOUT Firebase (pure localStorage mode)
 // Enable Firebase by pasting config in coach Settings → Firebase
@@ -1561,11 +1561,11 @@ async function fbSetupWizard(){
         +'</div>'
 
         // Instructions
-        +'<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:8px;padding:14px;margin-bottom:18px;font-size:12px;color:#888;line-height:1.8">'
-          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:8px">Comment configurer</div>'
+        +'<div style="background:rgba(212,175,55,.04);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:14px;margin-bottom:18px;font-size:12px;color:#888;line-height:1.8">'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:8px">Comment configurer</div>'
           +'<div>1. Créez un projet gratuit sur <a href="https://console.firebase.google.com" target="_blank" style="color:#60A8D0">console.firebase.google.com</a></div>'
           +'<div>2. Activez <strong style="color:#F0F0F0">Firestore Database</strong> (mode test)</div>'
-          +'<div>3. Dans Paramètres du projet → Config Web → copiez l\'objet <code style="color:#FBCB57;background:#111;padding:1px 5px;border-radius:3px">firebaseConfig</code></div>'
+          +'<div>3. Dans Paramètres du projet → Config Web → copiez l\'objet <code style="color:#388E3C;background:#111;padding:1px 5px;border-radius:3px">firebaseConfig</code></div>'
           +'<div>4. Collez-le ci-dessous et entrez un identifiant de club unique</div>'
         +'</div>'
 
@@ -1575,7 +1575,7 @@ async function fbSetupWizard(){
 
         +'<div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#60A8D0;margin-bottom:6px">Identifiant du club (unique)</div>'
         +'<input id="fb-club-id" type="text" value="'+(cfg?cfg.clubId:'')+'" placeholder="ex: ffp-monclub-2026" style="background:#1A1A1A;border:1px solid rgba(96,168,208,.25);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;width:100%;margin-bottom:6px;transition:border-color .2s" onfocus="this.style.borderColor=\'#60A8D0\'" onblur="this.style.borderColor=\'rgba(96,168,208,.25)\'">'
-        +'<div style="font-size:11px;color:#444;margin-bottom:16px">Utilisez un identifiant sans espaces ni caractères spéciaux. Ex: <code style="color:#888">fc-bordeaux-u12</code></div>'
+        +'<div style="font-size:11px;color:#475569;margin-bottom:16px">Utilisez un identifiant sans espaces ni caractères spéciaux. Ex: <code style="color:#888">fc-bordeaux-u12</code></div>'
 
         +'<div id="fb-msg" style="min-height:20px;font-size:12px;margin-bottom:12px;font-family:Montserrat,sans-serif;font-weight:600"></div>'
 
@@ -1663,7 +1663,7 @@ async function fbAutoInit(){
 
 // STATS
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — STATS MODULE
+// ONE SPORT — STATS MODULE
 // ══════════════════════════════════════════════════════
 
 // ── Palette couleurs catégories ──
@@ -1855,7 +1855,7 @@ function buildHeatmap(cats) {
   cats.forEach(function(c){
     html += '<th style="width:'+cellW+'px;padding:6px 4px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:'+CAT_COLORS[c]+';border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:#141414;z-index:2">'+CAT_LABELS[c].slice(0,4)+'</th>';
   });
-  html += '<th style="width:52px;padding:6px 4px;text-align:center;font-size:9px;font-weight:700;color:#D4AF37;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:#141414;z-index:2">Score</th></tr></thead>';
+  html += '<th style="width:52px;padding:6px 4px;text-align:center;font-size:9px;font-weight:700;color:#1565C0;border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;background:#141414;z-index:2">Score</th></tr></thead>';
   // Rows
   html += '<tbody>';
   players.forEach(function(p, idx) {
@@ -1864,7 +1864,7 @@ function buildHeatmap(cats) {
     html += '<td style="padding:4px 8px;font-size:11px;white-space:nowrap;border-right:1px solid rgba(255,255,255,.04)">'
       + '<span style="font-weight:600;color:#888;font-size:9px;margin-right:4px">#'+p.rank+'</span>'
       + '<span style="font-weight:600">'+p.prenom+' '+p.nom+'</span>'
-      + '<span style="font-size:9px;color:#444;margin-left:4px">'+POS_SHORT[p.poste]+'</span>'
+      + '<span style="font-size:9px;color:#475569;margin-left:4px">'+POS_SHORT[p.poste]+'</span>'
       + '</td>';
     cats.forEach(function(c){
       var v = cA(p,c);
@@ -1906,7 +1906,7 @@ function buildPosteStats() {
     var hc = heatColor(avgScore);
     html += '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(255,255,255,.025);border-radius:7px;transition:background .1s" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=\'rgba(255,255,255,.025)\'">'
       + '<div style="font-size:12px;font-weight:600;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+poste+'</div>'
-      + '<div style="font-size:10px;color:#444;min-width:50px">'+pl.length+' joueur'+(pl.length>1?'s':'')+'</div>'
+      + '<div style="font-size:10px;color:#475569;min-width:50px">'+pl.length+' joueur'+(pl.length>1?'s':'')+'</div>'
       + '<div style="flex:1;height:5px;background:#222;border-radius:3px;overflow:hidden"><div style="height:100%;background:'+hc.text+';border-radius:3px;width:'+(avgScore*10)+'%;transition:width .5s"></div></div>'
       + '<div style="min-width:35px;text-align:right;font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:'+hc.text+'">'+avgScore.toFixed(1)+'</div>'
       + '<div style="font-size:10px;color:#888;min-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Best: '+best.prenom+'</div>'
