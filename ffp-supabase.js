@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — MODULE SUPABASE
+// ONE SPORT — MODULE SUPABASE
 // Auth sécurisée + Sync données PostgreSQL
 // ══════════════════════════════════════════════════════
 
