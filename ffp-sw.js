@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — SERVICE WORKER
+// ONE SPORT — SERVICE WORKER
 // Offline support + cache management
 // ══════════════════════════════════════════════════════
 
