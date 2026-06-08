@@ -1,4 +1,4 @@
-// FOOT FACTORY PRO — ffp-stripe.js
+// ONE SPORT — ffp-stripe.js
 // Payment Links Stripe — configurés le 01/06/2026
 
 var FFP_STRIPE = {
