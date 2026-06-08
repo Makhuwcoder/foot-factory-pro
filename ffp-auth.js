@@ -1,4 +1,4 @@
-// FOOT FACTORY PRO — ffp-auth.js v3
+// ONE SPORT — ffp-auth.js v3
 // Chargé en premier sur toutes les pages protégées
 // La démo passe par ffp-demo.html qui set la session AVANT de rediriger
 
@@ -51,11 +51,11 @@ var FFP = (function() {
       + '<span style="font-size:11px;color:#888">Données fictives · AS Voltaire Paris</span>'
       + '</div>'
       + '<div style="display:flex;gap:8px;align-items:center">'
-      + '<a href="ffp-demo.html" style="font-size:10px;font-weight:700;color:#D4AF37;'
-      + 'text-decoration:none;border:1px solid rgba(212,175,55,.2);'
+      + '<a href="ffp-demo.html" style="font-size:10px;font-weight:700;color:#1565C0;'
+      + 'text-decoration:none;border:1px solid rgba(0,0,0,.15);'
       + 'border-radius:5px;padding:4px 10px">← Changer de profil</a>'
       + '<a href="ffp-pricing.html" style="font-size:10px;font-weight:800;'
-      + 'background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;'
+      + 'background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;'
       + 'border-radius:5px;padding:4px 11px;text-decoration:none">Créer un compte →</a>'
       + '<button onclick="FFP.exitDemo()" style="background:transparent;'
       + 'border:1px solid rgba(255,255,255,.1);border-radius:5px;'
