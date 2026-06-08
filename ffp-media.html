@@ -2,30 +2,30 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/webp" href="/favicon.webp">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FFP — Media &amp; AI Recruteurs</title>
+<title>One Sport — Media &amp; AI Recruteurs</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="ffp-manifest.json">
 <meta name="theme-color" content="#D4AF37">
 <style>
-:root{--gold:#D4AF37;--gl:#FBCB57}
+:root{--os-blue:#1565C0;--gl:#FBCB57}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(212,175,55,.03),transparent 70%);z-index:0}
 .mcard{background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:12px;position:relative;z-index:1}
-.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#D4AF37;margin-bottom:11px}
-.vtab{padding:8px 16px;background:transparent;border:1px solid rgba(212,175,55,.15);border-radius:7px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap}
-.vtab:hover{border-color:rgba(212,175,55,.3);color:#FBCB57}
-.vtab.on{background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.45);color:#D4AF37}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:11px}
+.vtab{padding:8px 16px;background:transparent;border:1px solid rgba(0,0,0,.12);border-radius:7px;color:#888;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;white-space:nowrap}
+.vtab:hover{border-color:rgba(212,175,55,.3);color:#388E3C}
+.vtab.on{background:rgba(21,101,192,.08);border-color:rgba(212,175,55,.45);color:#1565C0}
 .vsec{display:none}
-.srch{background:#111;border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:7px 11px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:12px;outline:none;width:100%;transition:border-color .2s}
+.srch{background:#111;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:7px 11px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:12px;outline:none;width:100%;transition:border-color .2s}
 .srch:focus{border-color:rgba(212,175,55,.35)}
-.srch::placeholder{color:#333}
-.fsel{background:#111;border:1px solid rgba(212,175,55,.12);border-radius:7px;padding:6px 8px;color:#888;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;outline:none;width:100%;cursor:pointer}
+.srch::placeholder{color:#1E293B}
+.fsel{background:#111;border:1px solid rgba(0,0,0,.1);border-radius:7px;padding:6px 8px;color:#888;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;outline:none;width:100%;cursor:pointer}
 .fsel option{background:#111}
-::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#F0F4F8}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
 @media(max-width:700px){.sidebar{display:none}.resp-1{grid-template-columns:1fr!important}}
 </style>
 <script src="ffp-auth.js"></script>
@@ -89,7 +89,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 <!-- AUTH GUARD: coach + parent + scout authentifié -->
 <script>
 // ══════════════════════════════════════════════════════
-// FFP — AUTH GUARD
+// One Sport — AUTH GUARD
 // À injecter en tête de chaque page protégée
 // ══════════════════════════════════════════════════════
 
@@ -155,12 +155,12 @@ function ffpRecruteursGuard() {
 </script>
 
 <header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
-<a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">FOOT FACTORY PRO</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a><div style="display:flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap"><div style="display:flex;gap:6px"><span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:2px 9px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:700">🤖 YOLOv8</span><span style="font-size:9px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:2px 9px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:700">📹 OpenCV</span><span style="font-size:9px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;padding:2px 9px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700">🎙️ Whisper</span></div><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
-<div style="display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 52px)"><div class="sidebar" style="border-right:1px solid rgba(212,175,55,.1);padding:14px 12px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;background:#050402"><div style="margin-bottom:12px"><input class="srch" id="player-search" type="text" placeholder="Rechercher..." oninput="SEARCH_Q=this.value;renderPlayerList()"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><select class="fsel" onchange="FILTER_TEAM=this.value;renderPlayerList()"><option value="">Équipes</option><option value="Équipe 1">Équipe 1</option><option value="Équipe 2">Équipe 2</option><option value="Équipe 3">Équipe 3</option></select><select class="fsel" onchange="FILTER_POS=this.value;renderPlayerList()"><option value="">Postes</option></select></div><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px" id="player-count">30 joueurs</div><div id="player-list"></div></div><div id="main-view" style="padding:18px 20px;overflow-y:auto;position:relative;z-index:1"><div id="player-hdr"></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><button class="vtab on" onclick="setView('profil',this)">👤 Profil</button><button class="vtab" onclick="setView('highlights',this)">🎬 Highlights</button><button class="vtab" onclick="setView('stats',this)">📊 Stats</button><button class="vtab" onclick="setView('cv',this)">📋 CV Sportif</button><button class="vtab" onclick="setView('scout',this)" style="color:rgba(160,96,224,.8)">🔍 Recruteurs</button></div><div id="vs-profil" class="vsec"></div><div id="vs-highlights" class="vsec"></div><div id="vs-stats" class="vsec"></div><div id="vs-cv" class="vsec"></div><div id="vs-scout" class="vsec"></div></div></div>
+<a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ONE SPORT</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a><div style="display:flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap"><div style="display:flex;gap:6px"><span style="font-size:9px;background:rgba(212,175,55,.07);border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:2px 9px;color:#1565C0;font-family:Montserrat,sans-serif;font-weight:700">🤖 YOLOv8</span><span style="font-size:9px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:2px 9px;color:#60A8D0;font-family:Montserrat,sans-serif;font-weight:700">📹 OpenCV</span><span style="font-size:9px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;padding:2px 9px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700">🎙️ Whisper</span></div><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
+<div style="display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 52px)"><div class="sidebar" style="border-right:1px solid rgba(212,175,55,.1);padding:14px 12px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;background:#050402"><div style="margin-bottom:12px"><input class="srch" id="player-search" type="text" placeholder="Rechercher..." oninput="SEARCH_Q=this.value;renderPlayerList()"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><select class="fsel" onchange="FILTER_TEAM=this.value;renderPlayerList()"><option value="">Équipes</option><option value="Équipe 1">Équipe 1</option><option value="Équipe 2">Équipe 2</option><option value="Équipe 3">Équipe 3</option></select><select class="fsel" onchange="FILTER_POS=this.value;renderPlayerList()"><option value="">Postes</option></select></div><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px" id="player-count">30 joueurs</div><div id="player-list"></div></div><div id="main-view" style="padding:18px 20px;overflow-y:auto;position:relative;z-index:1"><div id="player-hdr"></div><div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap"><button class="vtab on" onclick="setView('profil',this)">👤 Profil</button><button class="vtab" onclick="setView('highlights',this)">🎬 Highlights</button><button class="vtab" onclick="setView('stats',this)">📊 Stats</button><button class="vtab" onclick="setView('cv',this)">📋 CV Sportif</button><button class="vtab" onclick="setView('scout',this)" style="color:rgba(160,96,224,.8)">🔍 Recruteurs</button></div><div id="vs-profil" class="vsec"></div><div id="vs-highlights" class="vsec"></div><div id="vs-stats" class="vsec"></div><div id="vs-cv" class="vsec"></div><div id="vs-scout" class="vsec"></div></div></div>
 <script>
 
 // ══════════════════════════════════════════════════════
-// FOOT FACTORY PRO — MEDIA PLATFORM v2 (30 joueurs)
+// ONE SPORT — MEDIA PLATFORM v2 (30 joueurs)
 // ══════════════════════════════════════════════════════
 
 // ── Données de base ──
@@ -288,7 +288,7 @@ function mkPlayer(i){
   // CV
   var clubPrec = CLUBS_PREC[Math.floor(r()*CLUBS_PREC.length)];
   var cv = [
-    {periode:'2026—',club:'Foot Factory Pro',cat:'U12',role:(rank<=10?'Titulaire':'Remplaçant')},
+    {periode:'2026—',club:'One Sport',cat:'U12',role:(rank<=10?'Titulaire':'Remplaçant')},
     {periode:'2024—2026',club:clubPrec,cat:'U11',role:'Titulaire'},
     {periode:'2022—2024',club:'École de foot locale',cat:'U9',role:'Découverte'}
   ];
@@ -332,7 +332,7 @@ function mkPlayer(i){
     taille:148+Math.floor(r()*20), poids:38+Math.floor(r()*18),
     poste:poste, pied:r()>0.2?'Droit':'Gauche',
     numero_maillot:rank,
-    club_actuel:'Foot Factory Pro', club_precedent:clubPrec,
+    club_actuel:'One Sport', club_precedent:clubPrec,
     scores:catScores, global:global, rank:rank, equipe:equipe,
     profil:prof, highlights:highlights, palmares:palmares,
     stats_saison:stats, ai_analysis:aiAnalysis, cv:cv
@@ -367,13 +367,13 @@ function renderPlayerList(){
   el.innerHTML=filtered.map(function(p){
     var active=p.id===CUR.id;
     var sc=p.global>=7.5?'#4BC88A':p.global>=6?'#D4AF37':p.global>=5?'#C89020':'#888';
-    return '<div class="pcard'+(active?' active':'')+'" onclick="selectPlayer('+p.id+')" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:5px;border:1px solid '+(active?'rgba(212,175,55,.4)':'rgba(212,175,55,.08)')+';background:'+(active?'rgba(212,175,55,.07)':'transparent')+';transition:all .2s" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=\''+(active?'rgba(212,175,55,.07)':'transparent')+'\'">'
-      +'<div style="width:32px;height:32px;border-radius:50%;background:'+(active?'rgba(212,175,55,.15)':'rgba(212,175,55,.06)')+';border:1px solid rgba(212,175,55,.2);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#D4AF37;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
+    return '<div class="pcard'+(active?' active':'')+'" onclick="selectPlayer('+p.id+')" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:5px;border:1px solid '+(active?'rgba(21,101,192,.5)':'rgba(212,175,55,.08)')+';background:'+(active?'rgba(212,175,55,.07)':'transparent')+';transition:all .2s" onmouseover="this.style.background=\'rgba(212,175,55,.05)\'" onmouseout="this.style.background=\''+(active?'rgba(212,175,55,.07)':'transparent')+'\'">'
+      +'<div style="width:32px;height:32px;border-radius:50%;background:'+(active?'rgba(212,175,55,.15)':'rgba(21,101,192,.04)')+';border:1px solid rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#1565C0;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div>'
-      +'<div style="font-size:9px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+POS_SH[p.poste]+' · '+p.equipe+'</div></div>'
+      +'<div style="font-size:9px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+POS_SH[p.poste]+' · '+p.equipe+'</div></div>'
       +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:'+sc+';flex-shrink:0">'+p.global.toFixed(1)+'</div>'
       +'</div>';
-  }).join('')||'<div style="text-align:center;padding:20px;color:#444;font-size:12px">Aucun résultat</div>';
+  }).join('')||'<div style="text-align:center;padding:20px;color:#475569;font-size:12px">Aucun résultat</div>';
 }
 
 function selectPlayer(id){
@@ -418,31 +418,31 @@ function renderHeader(){
       +'</div>';
   }).join('');
   var hlViews=p.highlights.reduce(function(s,h){return s+h.views;},0);
-  el.innerHTML='<div style="background:linear-gradient(135deg,#0D0B05,#141208);border:1px solid rgba(212,175,55,.3);border-radius:14px;overflow:hidden;margin-bottom:16px">'
+  el.innerHTML='<div style="background:linear-gradient(135deg,#0D0B05,#141208);border:1px solid rgba(21,101,192,.4);border-radius:14px;overflow:hidden;margin-bottom:16px">'
     +'<div style="height:3px;background:linear-gradient(to right,'+p.ai_analysis.potColor+',#FBCB57,'+p.ai_analysis.potColor+')"></div>'
     +'<div style="padding:18px 22px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">'
       +'<div style="position:relative;flex-shrink:0">'
-        +'<div style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#1A1200,#2A1E00);border:2px solid rgba(212,175,55,.4);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:24px;color:#D4AF37;box-shadow:0 0 20px rgba(212,175,55,.15)">'+p.prenom[0]+p.nom[0]+'</div>'
+        +'<div style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#1A1200,#2A1E00);border:2px solid rgba(21,101,192,.5);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:24px;color:#1565C0;box-shadow:0 0 20px rgba(212,175,55,.15)">'+p.prenom[0]+p.nom[0]+'</div>'
         +'<div style="position:absolute;bottom:2px;right:2px;background:#D4AF37;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#000;font-family:Montserrat,sans-serif;border:2px solid #000">'+p.numero_maillot+'</div>'
       +'</div>'
       +'<div style="flex:1;min-width:180px">'
         +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">'
-          +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+p.prenom+' '+p.nom+'</div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+p.prenom+' '+p.nom+'</div>'
           +'<span style="background:'+p.ai_analysis.potColor+'22;border:1px solid '+p.ai_analysis.potColor+'55;border-radius:10px;padding:2px 9px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:'+p.ai_analysis.potColor+';text-transform:uppercase">'+p.ai_analysis.potentiel+'</span>'
         +'</div>'
         +'<div style="font-size:11px;color:#888;margin-bottom:6px">'+p.poste+' · Pied '+p.pied+' · '+age+' ans · '+p.taille+'cm</div>'
-        +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif;margin-bottom:8px">'+p.nationalite+' · <span style="color:#60A8D0">'+p.numero_licence+'</span></div>'
+        +'<div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif;margin-bottom:8px">'+p.nationalite+' · <span style="color:#60A8D0">'+p.numero_licence+'</span></div>'
         +'<div style="font-size:11px;color:#666;font-style:italic;background:rgba(0,0,0,.3);border-radius:5px;padding:4px 8px;display:inline-block">"'+p.ai_analysis.similarite+'"</div>'
       +'</div>'
       +'<div style="text-align:center;flex-shrink:0">'
-        +'<div style="background:#0A0800;border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:10px 14px;margin-bottom:8px">'
+        +'<div style="background:#F5F7FA;border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:10px 14px;margin-bottom:8px">'
           +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:28px;color:'+sc+';line-height:1">'+p.global.toFixed(2)+'</div>'
-          +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">Score IA</div>'
+          +'<div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">Score IA</div>'
         +'</div>'
         +'<div style="display:flex;gap:10px;justify-content:center">'
-          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#FBCB57">#'+p.rank+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Rang</div></div>'
-          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">'+p.highlights.length+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Clips</div></div>'
-          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">'+hlViews+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">Vues</div></div>'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#388E3C">#'+p.rank+'</div><div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;text-transform:uppercase">Rang</div></div>'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">'+p.highlights.length+'</div><div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;text-transform:uppercase">Clips</div></div>'
+          +'<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">'+hlViews+'</div><div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;text-transform:uppercase">Vues</div></div>'
         +'</div>'
       +'</div>'
       +'<div style="min-width:160px;flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center">'+bars+'</div>'
@@ -468,7 +468,7 @@ function renderProfil(){
     +'</svg>';
 
   var pal=p.palmares.length?'<div class="mcard"><div class="ct">🏆 Palmarès</div>'
-    +p.palmares.map(function(t){return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(212,175,55,.03);border:1px solid rgba(212,175,55,.08);border-radius:8px;margin-bottom:6px"><div style="font-size:16px">'+t.ico+'</div><div style="flex:1;font-size:12px;font-weight:600">'+t.titre+'</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#D4AF37">'+t.annee+'</div></div>';}).join('')
+    +p.palmares.map(function(t){return '<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:rgba(212,175,55,.03);border:1px solid rgba(212,175,55,.08);border-radius:8px;margin-bottom:6px"><div style="font-size:16px">'+t.ico+'</div><div style="flex:1;font-size:12px;font-weight:600">'+t.titre+'</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:#1565C0">'+t.annee+'</div></div>';}).join('')
     +'</div>':'';
 
   el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
@@ -485,8 +485,8 @@ function renderProfil(){
           +'<div style="background:rgba(226,75,74,.05);border:1px solid rgba(226,75,74,.15);border-radius:7px;padding:9px 10px"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#E24B4A;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Progression</div><p style="font-size:11px;color:#888;line-height:1.6">'+p.ai_analysis.progression+'</p></div>'
         +'</div>'
         +'<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);border-radius:7px;padding:9px 10px">'
-          +'<div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#D4AF37;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Zones heatmap IA</div>'
-          +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+p.ai_analysis.heatmap_zones.map(function(z){return '<span style="font-size:10px;color:#D4AF37;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:2px 8px">'+z+'</span>';}).join('')+'</div>'
+          +'<div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">Zones heatmap IA</div>'
+          +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+p.ai_analysis.heatmap_zones.map(function(z){return '<span style="font-size:10px;color:#1565C0;background:rgba(21,101,192,.08);border:1px solid rgba(0,0,0,.15);border-radius:10px;padding:2px 8px">'+z+'</span>';}).join('')+'</div>'
         +'</div>'
       +'</div>'
     +'</div>'
@@ -507,7 +507,7 @@ function renderHighlights(){
   var cards=filtered.map(function(h){
     var tc={match:'#D4AF37',tournoi:'#A060E0',stage:'#60A8D0',entrainement:'#4BC88A'}[h.type]||'#888';
     var ac=h.ai_score>=9?'#4BC88A':h.ai_score>=8?'#D4AF37':'#C89020';
-    return '<div style="background:#0D0B05;border:1px solid rgba(212,175,55,.12);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .2s" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(212,175,55,.35)\';this.style.boxShadow=\'0 8px 20px rgba(212,175,55,.1)\'" onmouseout="this.style.transform=\'none\';this.style.borderColor=\'rgba(212,175,55,.12)\';this.style.boxShadow=\'none\'">'
+    return '<div style="background:#0D0B05;border:1px solid rgba(0,0,0,.1);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .2s" onmouseover="this.style.transform=\'translateY(-3px)\';this.style.borderColor=\'rgba(212,175,55,.35)\';this.style.boxShadow=\'0 8px 20px rgba(212,175,55,.1)\'" onmouseout="this.style.transform=\'none\';this.style.borderColor=\'rgba(212,175,55,.12)\';this.style.boxShadow=\'none\'">'
       +'<div style="position:relative;background:linear-gradient(135deg,#1A1200,#0A0800);height:120px;display:flex;align-items:center;justify-content:center">'
         +'<div style="font-size:38px;opacity:.65">'+h.thumbnail+'</div>'
         +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'
@@ -522,8 +522,8 @@ function renderHighlights(){
       +'<div style="padding:10px 12px">'
         +'<div style="font-size:11px;font-weight:600;margin-bottom:3px;line-height:1.3">'+h.match+'</div>'
         +'<div style="font-size:10px;color:#888;margin-bottom:6px">'+h.description+'</div>'
-        +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">'+h.tags.map(function(t){return '<span style="font-size:8px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:1px 6px;color:#D4AF37;font-family:Montserrat,sans-serif;font-weight:600">'+t+'</span>';}).join('')+'</div>'
-        +'<div style="display:flex;justify-content:space-between;font-family:Montserrat,sans-serif;font-size:9px;color:#444"><span>'+h.date.slice(5).replace('-','/')+'</span><span>👁 '+h.views+'</span></div>'
+        +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">'+h.tags.map(function(t){return '<span style="font-size:8px;background:rgba(21,101,192,.07);border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:1px 6px;color:#1565C0;font-family:Montserrat,sans-serif;font-weight:600">'+t+'</span>';}).join('')+'</div>'
+        +'<div style="display:flex;justify-content:space-between;font-family:Montserrat,sans-serif;font-size:9px;color:#475569"><span>'+h.date.slice(5).replace('-','/')+'</span><span>👁 '+h.views+'</span></div>'
       +'</div>'
     +'</div>';
   }).join('');
@@ -545,7 +545,7 @@ function renderHighlights(){
     +'<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">'+filterBtns+'</div>'
     +(filtered.length
       ?'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">'+cards+'</div>'
-      :'<div style="text-align:center;padding:40px;color:#444"><div style="font-size:32px;margin-bottom:8px">🎬</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Aucun highlight</div></div>');
+      :'<div style="text-align:center;padding:40px;color:#475569"><div style="font-size:32px;margin-bottom:8px">🎬</div><div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Aucun highlight</div></div>');
 }
 
 // ── Pipeline IA simulation ──
@@ -572,16 +572,16 @@ function startPipeline(input){
       +'<div style="font-size:18px;width:28px;text-align:center">'+s.ico+'</div>'
       +'<div style="flex:1">'
         +'<div style="font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;color:'+s.col+'">'+s.label+'</div>'
-        +'<div style="font-size:10px;color:#444;margin-top:1px">'+s.sub+'</div>'
+        +'<div style="font-size:10px;color:#475569;margin-top:1px">'+s.sub+'</div>'
       +'</div>'
-      +'<div id="ps-st-'+i+'" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;color:#444">En attente</div>'
+      +'<div id="ps-st-'+i+'" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;color:#475569">En attente</div>'
     +'</div>';
   }).join('');
 
   panel.innerHTML='<div style="background:rgba(96,168,208,.05);border:1px solid rgba(96,168,208,.2);border-radius:10px;padding:14px">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
       +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#60A8D0">Pipeline IA en cours — '+name+'</div>'
-      +'<div id="ps-pct" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#D4AF37">0%</div>'
+      +'<div id="ps-pct" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0">0%</div>'
     +'</div>'
     +'<div style="height:3px;background:#1A1A1A;border-radius:2px;overflow:hidden;margin-bottom:12px"><div id="ps-bar" style="height:100%;background:linear-gradient(to right,#60A8D0,#D4AF37);border-radius:2px;width:0%;transition:width .5s"></div></div>'
     +stepsHtml
@@ -640,7 +640,7 @@ function completePipeline(filename){
       +'<div style="font-size:24px">✅</div>'
       +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#4BC88A;margin-bottom:3px">Traitement terminé — Score IA : '+aiScore+'/10</div>'
       +'<div style="font-size:11px;color:#888">'+newH.tags.join(' · ')+'</div></div>'
-      +'<button onclick="GAL_FILTER=\'all\';renderHighlights()" style="margin-left:auto;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Voir →</button>'
+      +'<button onclick="GAL_FILTER=\'all\';renderHighlights()" style="margin-left:auto;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase">Voir →</button>'
     +'</div>';
   }
   setTimeout(renderHighlights,300);
@@ -663,7 +663,7 @@ function renderStats(){
       +'<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+k.c+'"></div>'
       +'<div style="font-size:18px;margin-bottom:4px">'+k.i+'</div>'
       +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;color:'+k.c+';line-height:1;margin-bottom:2px">'+k.v+'</div>'
-      +'<div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">'+k.l+'</div>'
+      +'<div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;font-weight:600;text-transform:uppercase">'+k.l+'</div>'
     +'</div>';
   }).join('');
   var cats=['Technique','Physique','Tactique','Mental','Culture'];
@@ -685,33 +685,33 @@ function renderCV(){
     return '<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
       +'<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">'
         +'<div style="width:9px;height:9px;border-radius:50%;background:#D4AF37;margin-top:4px;box-shadow:0 0 6px rgba(212,175,55,.5)"></div>'
-        +(i<p.cv.length-1?'<div style="flex:1;width:1px;background:rgba(212,175,55,.15);margin:4px 0"></div>':'')
+        +(i<p.cv.length-1?'<div style="flex:1;width:1px;background:rgba(21,101,192,.1);margin:4px 0"></div>':'')
       +'</div>'
       +'<div style="flex:1;padding-bottom:4px">'
         +'<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px">'
           +'<div style="font-size:12px;font-weight:600">'+c.club+'</div>'
-          +'<span style="background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:1px 7px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#D4AF37">'+c.cat+'</span>'
+          +'<span style="background:rgba(21,101,192,.07);border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:1px 7px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#1565C0">'+c.cat+'</span>'
           +'<span style="background:rgba(96,168,208,.08);border:1px solid rgba(96,168,208,.15);border-radius:8px;padding:1px 7px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:600;color:#60A8D0">'+c.role+'</span>'
         +'</div>'
-        +'<div style="font-size:10px;color:#444;font-family:Montserrat,sans-serif">'+c.periode+'</div>'
+        +'<div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif">'+c.periode+'</div>'
       +'</div>'
     +'</div>';
   }).join('');
   var licence='<div style="background:#0D0B05;border:2px solid rgba(212,175,55,.25);border-radius:12px;padding:18px">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
-      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#D4AF37">Foot Factory Pro</div>'
-      +'<div style="background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border-radius:5px;padding:3px 9px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase">2026-27</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#1565C0">One Sport</div>'
+      +'<div style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border-radius:5px;padding:3px 9px;font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase">2026-27</div>'
     +'</div>'
     +'<div style="background:rgba(212,175,55,.04);border-radius:7px;padding:10px;margin-bottom:10px;display:flex;align-items:center;gap:10px">'
-      +'<div style="width:40px;height:40px;border-radius:50%;background:rgba(212,175,55,.1);border:1.5px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#D4AF37">'+p.prenom[0]+p.nom[0]+'</div>'
+      +'<div style="width:40px;height:40px;border-radius:50%;background:rgba(21,101,192,.08);border:1.5px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;color:#1565C0">'+p.prenom[0]+p.nom[0]+'</div>'
       +'<div><div style="font-size:13px;font-weight:700">'+p.prenom+' '+p.nom+'</div><div style="font-size:11px;color:#888;margin-top:1px">'+p.poste+'</div></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:11px;color:#888;margin-bottom:8px">'
-      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:1px">Né(e) le</div>'+dob.toLocaleDateString('fr-FR')+'</div>'
-      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:1px">Âge</div>'+age+' ans</div>'
+      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;margin-bottom:1px">Né(e) le</div>'+dob.toLocaleDateString('fr-FR')+'</div>'
+      +'<div><div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;margin-bottom:1px">Âge</div>'+age+' ans</div>'
     +'</div>'
     +'<div style="border-top:1px solid rgba(212,175,55,.1);padding-top:8px">'
-      +'<div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#444;text-transform:uppercase;margin-bottom:3px">N° Licence FIFA</div>'
+      +'<div style="font-family:Montserrat,sans-serif;font-size:8px;font-weight:700;color:#475569;text-transform:uppercase;margin-bottom:3px">N° Licence FIFA</div>'
       +'<div style="font-family:monospace;font-size:11px;color:#60A8D0;letter-spacing:1px">'+p.numero_licence+'</div>'
     +'</div>'
   +'</div>';
@@ -731,9 +731,9 @@ function renderRecruteurs(){
     var v=vals[i];var col=cols[i];
     return '<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:600;color:'+col+'">'+c+'</span><span style="font-family:Montserrat,sans-serif;font-weight:700;color:'+col+'">'+v+'/10</span></div><div style="height:5px;background:#1A1A1A;border-radius:3px;overflow:hidden"><div style="height:100%;background:'+col+';border-radius:3px;width:'+(v*10)+'%;transition:width .8s"></div></div></div>';
   }).join('');
-  el.innerHTML='<div style="background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px">'
+  el.innerHTML='<div style="background:rgba(212,175,55,.04);border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px">'
     +'<div style="font-size:20px">🔍</div>'
-    +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#D4AF37;margin-bottom:2px">Fiche Recruteur — Confidentielle</div><div style="font-size:11px;color:#888">Généré par IA · Foot Factory Pro · '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
+    +'<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#1565C0;margin-bottom:2px">Fiche Recruteur — Confidentielle</div><div style="font-size:11px;color:#888">Généré par IA · One Sport · '+new Date().toLocaleDateString('fr-FR')+'</div></div>'
     +'<div style="margin-left:auto;display:flex;gap:8px">'
       +'<button onclick="window.print()" style="background:rgba(96,168,208,.1);border:1px solid rgba(96,168,208,.3);border-radius:6px;color:#60A8D0;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">🖨️ Print</button>'
       +'<button onclick="exportRecruteurs()" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:6px;color:#E87060;padding:7px 12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">📄 PDF</button>'
@@ -754,7 +754,7 @@ function renderRecruteurs(){
   +'<div class="mcard" style="margin-top:0"><div class="ct">Statistiques saison</div>'
     +'<div style="display:flex;gap:14px;flex-wrap:wrap">'+
     [['Matchs',p.stats_saison.matchs],['Buts',p.stats_saison.buts],['Passes D.',p.stats_saison.passes],['Score IA',p.global],['Vitesse max',p.stats_saison.vitesse_max+'km/h']].map(function(k){
-      return '<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#F0F0F0">'+k[1]+'</div><div style="font-size:9px;color:#444;font-family:Montserrat,sans-serif;text-transform:uppercase">'+k[0]+'</div></div>';
+      return '<div style="text-align:center"><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;color:#F0F0F0">'+k[1]+'</div><div style="font-size:9px;color:#475569;font-family:Montserrat,sans-serif;text-transform:uppercase">'+k[0]+'</div></div>';
     }).join('')+'</div>'
   +'</div>';
 }
@@ -774,7 +774,7 @@ function exportRecruteurs(){
     +'<button class="btn" onclick="window.print()">Imprimer / PDF</button>'
     +'<button onclick="window.close()" style="background:#eee;border:none;border-radius:5px;padding:8px 18px;cursor:pointer;font-size:12px">Fermer</button>'
     +'</div>'
-    +'<div class="title">Foot Factory Pro · Fiche Recruteur</div>'
+    +'<div class="title">One Sport · Fiche Recruteur</div>'
     +'<p style="color:#888;font-size:10px;margin:4px 0 16px">'+new Date().toLocaleDateString('fr-FR')+' · Confidentiel · Usage scouting uniquement</p>'
     +'<table><tr><th colspan="4">Identité</th></tr>'
     +'<tr><th>Nom</th><td><strong>'+p.prenom+' '+p.nom+'</strong></td><th>Poste</th><td>'+p.poste+'</td></tr>'
@@ -788,7 +788,7 @@ function exportRecruteurs(){
     +'<tr style="background:#fffdf0"><td><strong>Score global</strong></td><td style="font-weight:900;font-size:14px;color:#B8900F"><strong>'+p.global+'/10</strong></td><td style="font-weight:700;color:'+p.ai_analysis.potColor+'">'+p.ai_analysis.potentiel+'</td></tr></table>'
     +'<p><strong>Analyse :</strong> '+p.ai_analysis.profil+'</p>'
     +'<p style="color:#666;font-style:italic;margin-top:6px">'+p.ai_analysis.similarite+'</p>'
-    +'<p style="margin-top:18px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">Foot Factory Pro · Rapport confidentiel</p>'
+    +'<p style="margin-top:18px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">One Sport · Rapport confidentiel</p>'
     +'</body></html>';
   w.document.write(html);w.document.close();
 
