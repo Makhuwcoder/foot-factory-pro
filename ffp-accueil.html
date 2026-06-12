@@ -18,7 +18,7 @@
   --bd:1px solid rgba(21,101,192,.12);--bd2:1px solid rgba(21,101,192,.3);
 }
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-html { scroll-behavior:smooth; }
+html { scroll-behavior:smooth; background:#FFFFFF; }
 body { font-family:'Raleway',sans-serif; background:#FFFFFF; color:#0D1B3E; overflow-x:hidden; }
 
 /* Animations */
@@ -37,7 +37,7 @@ body { font-family:'Raleway',sans-serif; background:#FFFFFF; color:#0D1B3E; over
 .anim-up:nth-child(4).visible { transition-delay:.3s; }
 
 /* Header */
-.hdr { position:fixed; top:0; left:0; right:0; z-index:100; backdrop-filter:blur(20px);
+.hdr { background:#FFFFFF !important; position:fixed; top:0; left:0; right:0; z-index:100; backdrop-filter:blur(20px);
   background:rgba(21,101,192,0,0,.85); border-bottom:1px solid rgba(0,0,0,.1);
   transition:all .3s; }
 .hdr-inner { max-width:1300px; margin:0 auto; padding:0 24px;
@@ -235,7 +235,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
 <header class="hdr">
   <div class="hdr-inner">
     <a href="#" class="hdr-logo">
-      <img src="logo-one-sport-premium.png" alt="One Sport" style="height:44px;width:auto"/>
+      <img src="logo-one-sport-premium.png" alt="One Sport" style="height:44px;width:auto;mix-blend-mode:multiply"/>
       <div>
         <div class="hdr-brand">One Sport</div>
         <div style="font-size:8px;color:rgba(21,101,192,.45);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Connecter · Partager · Progresser</div>
@@ -262,7 +262,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
 
   <div class="hero-content">
     <div style="animation:fadeUp .8s ease both;margin-bottom:24px">
-      <img src="logo-one-sport-officiel.png" alt="One Sport" style="width:min(280px,50vw);height:auto;animation:float 3.5s ease-in-out infinite"/>
+      <img src="logo-one-sport-officiel.png" alt="One Sport" style="width:min(280px,50vw);height:auto;animation:float 3.5s ease-in-out infinite;mix-blend-mode:multiply"/>
     </div>
     <div style="animation:fadeUp .85s ease both .1s;opacity:0">
       <div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(32px,7vw,80px);letter-spacing:6px;text-transform:uppercase;line-height:1;background:linear-gradient(135deg,#0D1B3E 0%,#1565C0 50%,#388E3C 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite,fadeUp .85s ease both .1s">ONE SPORT</div>
