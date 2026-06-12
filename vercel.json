@@ -1,27 +1,56 @@
 {
   "version": 2,
-  "builds": [{ "src": "*.html", "use": "@vercel/static" }],
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
-    { "src": "/(.*)", "dest": "/$1" }
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)\\.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
     },
     {
       "source": "/(.*)\\.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
       ]
     },
     {
       "source": "/(.*)\\.css",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
       ]
     }
   ]
