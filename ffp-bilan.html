@@ -31,12 +31,13 @@
     #formContainer  { display:none; }
 
     .level-header { margin-bottom:36px; }
-    .level-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
-    .level-header p  { color:var(--muted); font-size:13px; line-height:1.6; }
+    .level-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; color:#ffffff; }
+    .level-header p  { color:#bbbbbb; font-size:13px; line-height:1.6; }
 
     .level-group-label {
       font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:.25em;
-      text-transform:uppercase; color:var(--muted); margin:28px 0 12px;
+      text-transform:uppercase; color:#aaaaaa; margin:28px 0 12px;
+      border-bottom:1px solid var(--border); padding-bottom:8px;
     }
 
     .level-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:12px; }
@@ -55,8 +56,8 @@
     .level-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,.5); }
     .level-card:hover::after { transform:scaleX(1); }
     .level-card .lc-age { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:var(--gold); line-height:1; margin-bottom:4px; }
-    .level-card .lc-label { font-size:11px; color:var(--muted); letter-spacing:.08em; }
-    .level-card .lc-transition { font-size:10px; color:var(--border); margin-top:4px; letter-spacing:.05em; }
+    .level-card .lc-label { font-size:11px; color:#cccccc; letter-spacing:.08em; }
+    .level-card .lc-transition { font-size:10px; color:#888888; margin-top:4px; letter-spacing:.05em; }
 
     /* SECTION */
     .section { background:var(--surface); border:1px solid var(--border); border-radius:4px; margin-bottom:16px; overflow:hidden; }
@@ -1083,7 +1084,9 @@ function showToast(msg) {
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
-buildSelector();
+document.addEventListener('DOMContentLoaded', function() {
+  buildSelector();
+});
 </script>
 </body>
 </html>
