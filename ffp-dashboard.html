@@ -262,7 +262,7 @@ function renderCoachDashboard(session, el){
     +(recentMatches.length?'<div class="dcard">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
         +'<div class="dct">Derniers matchs</div>'
-        +'<a href="ffp-match.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#1565C0;text-decoration:none">Nouveau match →</a>'
+        +'<a href="ffp-match.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#1565C0;text-decoration:none">Nouveau match →</a>'+'&nbsp;&nbsp;<a href="ffp-bilan.html" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#C9A84C;text-decoration:none">&#128203; Bilans</a>'
       +'</div>'
       +recentMatches.map(function(m){
         var res=m.score_home>m.score_away?'V':m.score_home===m.score_away?'N':'D';
