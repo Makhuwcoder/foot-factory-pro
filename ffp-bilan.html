@@ -1,417 +1,349 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dossier de Positionnement — One Sport Football</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --black:#0A0A0A; --surface:#111111; --surface2:#1A1A1A;
-      --border:#2a2a2a; --gold:#C9A84C; --gold2:#E8C56A;
-      --text:#EEEEEE; --muted:#777777; --green:#27AE60; --red:#E74C3C;
-    }
-    body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; font-size:14px; min-height:100vh; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dossier de Positionnement — One Sport Football</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0A0A0A;--surface:#111111;--surface2:#1A1A1A;
+  --border:#333333;--gold:#C9A84C;--gold2:#E8C56A;
+  --text:#FFFFFF;--muted:#AAAAAA;--green:#27AE60;--red:#E74C3C;
+}
+body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;}
 
-    /* NAV */
-    nav { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 32px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
-    nav img { height:36px; filter:invert(1); }
-    .nav-sep { width:1px; height:28px; background:var(--border); }
-    nav h1 { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--gold); }
-    .nav-back { margin-left:auto; color:var(--muted); text-decoration:none; font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-family:'Barlow Condensed',sans-serif; transition:color .2s; }
-    .nav-back:hover { color:var(--text); }
+/* NAV */
+nav{background:#111;border-bottom:1px solid #333;padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+nav img{height:36px;filter:invert(1);}
+.nav-sep{width:1px;height:28px;background:#333;}
+nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);}
+.nav-back{margin-left:auto;color:#AAA;text-decoration:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;}
+.nav-back:hover{color:#FFF;}
 
-    /* WRAPPER */
-    .wrapper { max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+/* WRAPPER */
+.wrapper{max-width:960px;margin:0 auto;padding:40px 24px 80px;}
 
-    /* ── SÉLECTEUR DE NIVEAU ── */
-    #levelSelector { display:block; }
-    #formContainer  { display:none; }
+/* SELECTOR */
+#levelSelector{display:block;}
+#formContainer{display:none;}
 
-    .level-header { margin-bottom:36px; }
-    .level-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; color:#ffffff; }
-    .level-header p  { color:#bbbbbb; font-size:13px; line-height:1.6; }
+.level-header{margin-bottom:36px;}
+.level-header h2{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;color:#FFFFFF;margin-bottom:8px;}
+.level-header p{color:#BBBBBB;font-size:14px;line-height:1.6;}
 
-    .level-group-label {
-      font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:.25em;
-      text-transform:uppercase; color:#aaaaaa; margin:28px 0 12px;
-      border-bottom:1px solid var(--border); padding-bottom:8px;
-    }
+.group-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.25em;
+  text-transform:uppercase;color:#FFFFFF;margin:32px 0 14px;
+  padding-bottom:8px;border-bottom:1px solid #333;
+}
 
-    .level-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:12px; }
+.level-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;}
 
-    .level-card {
-      background:var(--surface); border:1px solid var(--border); border-radius:4px;
-      padding:20px 14px 16px; text-align:center; cursor:pointer;
-      transition:border-color .2s, transform .2s, box-shadow .2s;
-      position:relative; overflow:hidden;
-    }
-    .level-card::after {
-      content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:var(--gold); transform:scaleX(0); transform-origin:left;
-      transition:transform .25s;
-    }
-    .level-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,.5); }
-    .level-card:hover::after { transform:scaleX(1); }
-    .level-card .lc-age { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:var(--gold); line-height:1; margin-bottom:4px; }
-    .level-card .lc-label { font-size:11px; color:#cccccc; letter-spacing:.08em; }
-    .level-card .lc-transition { font-size:10px; color:#888888; margin-top:4px; letter-spacing:.05em; }
+.level-card{
+  background:#1A1A1A;border:1px solid #333;border-radius:4px;
+  padding:18px 12px 14px;text-align:center;cursor:pointer;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+}
+.level-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.6);}
+.lc-age{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px;}
+.lc-label{font-size:11px;color:#CCCCCC;letter-spacing:.05em;}
+.lc-trans{font-size:10px;color:#888;margin-top:4px;}
 
-    /* SECTION */
-    .section { background:var(--surface); border:1px solid var(--border); border-radius:4px; margin-bottom:16px; overflow:hidden; }
-    .section-header { background:var(--surface2); border-bottom:1px solid var(--border); padding:13px 22px; display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none; }
-    .section-num { font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:.2em; color:var(--gold); font-weight:700; }
-    .section-title { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-    .section-toggle { margin-left:auto; color:var(--muted); font-size:18px; transition:transform .2s; }
-    .section.collapsed .section-toggle { transform:rotate(-90deg); }
-    .section.collapsed .section-body { display:none; }
-    .section-body { padding:22px; }
+/* FORM */
+.level-badge{display:inline-flex;align-items:center;gap:12px;background:#1A1A1A;border:1px solid var(--gold);border-radius:3px;padding:10px 18px;margin-bottom:28px;cursor:pointer;}
+.lb-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--gold);}
+.lb-change{font-size:11px;color:#AAA;letter-spacing:.1em;text-transform:uppercase;}
 
-    /* LEVEL BADGE in form */
-    .level-badge {
-      display:inline-flex; align-items:center; gap:10px;
-      background:var(--surface2); border:1px solid var(--gold);
-      border-radius:3px; padding:10px 18px; margin-bottom:28px; cursor:pointer;
-    }
-    .level-badge .lb-name { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:900; color:var(--gold); }
-    .level-badge .lb-change { font-size:11px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; }
+.progress-bar{height:3px;background:#222;border-radius:2px;margin-bottom:28px;}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s;width:0%;}
 
-    /* FORM */
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
-    .form-row.full { grid-template-columns:1fr; }
-    .form-row.tri  { grid-template-columns:1fr 1fr 1fr; }
-    .field { display:flex; flex-direction:column; gap:5px; }
-    label { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); font-weight:600; }
-    input[type="text"],input[type="date"],input[type="number"],textarea,select {
-      background:var(--black); border:1px solid var(--border); border-radius:3px;
-      color:var(--text); font-family:'Barlow',sans-serif; font-size:14px;
-      padding:9px 11px; transition:border-color .2s; outline:none; width:100%;
-    }
-    input:focus,textarea:focus,select:focus { border-color:var(--gold); }
-    textarea { resize:vertical; min-height:68px; }
+.section{background:#111;border:1px solid #333;border-radius:4px;margin-bottom:14px;overflow:hidden;}
+.section-header{background:#1A1A1A;border-bottom:1px solid #333;padding:13px 22px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.section-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.2em;color:var(--gold);font-weight:700;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#FFFFFF;}
+.section-toggle{margin-left:auto;color:#AAA;font-size:18px;transition:transform .2s;}
+.section.collapsed .section-toggle{transform:rotate(-90deg);}
+.section.collapsed .section-body{display:none;}
+.section-body{padding:22px;}
 
-    /* RATING TABLE */
-    .rating-grid { width:100%; border-collapse:collapse; }
-    .rating-grid th { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:7px 10px; text-align:left; border-bottom:1px solid var(--border); }
-    .rating-grid th.c { text-align:center; }
-    .rating-grid td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.04); font-size:13px; }
-    .rating-grid tr:last-child td { border-bottom:none; }
-    .stars { display:flex; justify-content:center; gap:3px; }
-    .star-btn { background:none; border:none; color:var(--border); font-size:20px; cursor:pointer; line-height:1; transition:color .15s,transform .1s; padding:2px; }
-    .star-btn:hover { transform:scale(1.2); }
-    .star-btn.active { color:var(--gold); }
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-row.tri{grid-template-columns:1fr 1fr 1fr;}
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#AAAAAA;font-weight:600;}
+input[type="text"],input[type="date"],input[type="number"],textarea,select{
+  background:#0A0A0A;border:1px solid #333;border-radius:3px;
+  color:#FFFFFF;font-family:'Barlow',sans-serif;font-size:14px;
+  padding:9px 11px;transition:border-color .2s;outline:none;width:100%;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);}
+textarea{resize:vertical;min-height:68px;}
+select option{background:#111;color:#FFF;}
 
-    /* CHECK */
-    .check-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:9px; margin-top:4px; }
-    .check-item { display:flex; align-items:center; gap:9px; cursor:pointer; padding:7px 11px; border:1px solid var(--border); border-radius:3px; transition:border-color .2s,background .2s; }
-    .check-item:hover { border-color:var(--gold); }
-    .check-item.checked { border-color:var(--gold); background:rgba(201,168,76,.08); }
-    .check-item input { display:none; }
-    .check-box { width:15px; height:15px; border:1px solid var(--border); border-radius:2px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; transition:background .2s,border-color .2s; }
-    .check-item.checked .check-box { background:var(--gold); border-color:var(--gold); color:#000; }
-    .check-label { font-size:13px; }
+/* RATING */
+.rating-grid{width:100%;border-collapse:collapse;}
+.rating-grid th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#AAA;padding:7px 10px;text-align:left;border-bottom:1px solid #333;}
+.rating-grid th.c{text-align:center;}
+.rating-grid td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:#FFFFFF;font-size:13px;}
+.rating-grid tr:last-child td{border-bottom:none;}
+.star-btn{background:none;border:none;color:#444;font-size:22px;cursor:pointer;line-height:1;transition:color .15s,transform .1s;padding:2px;display:block;margin:0 auto;}
+.star-btn:hover{transform:scale(1.2);}
+.star-btn.active{color:var(--gold);}
 
-    /* RADIO */
-    .radio-group { display:flex; gap:9px; flex-wrap:wrap; margin-top:4px; }
-    .radio-item { display:flex; align-items:center; gap:7px; cursor:pointer; padding:7px 14px; border:1px solid var(--border); border-radius:3px; transition:border-color .2s,background .2s; font-size:13px; }
-    .radio-item:hover { border-color:var(--gold); }
-    .radio-item.selected { border-color:var(--gold); background:rgba(201,168,76,.1); color:var(--gold); font-weight:600; }
-    .radio-item input { display:none; }
+/* CHECK */
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;margin-top:6px;}
+.check-item{display:flex;align-items:center;gap:9px;cursor:pointer;padding:8px 12px;border:1px solid #333;border-radius:3px;transition:border-color .2s,background .2s;color:#FFFFFF;}
+.check-item:hover{border-color:var(--gold);}
+.check-item.checked{border-color:var(--gold);background:rgba(201,168,76,.08);}
+.check-box{width:16px;height:16px;border:1px solid #444;border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.check-item.checked .check-box{background:var(--gold);border-color:var(--gold);color:#000;}
+.check-label{font-size:13px;color:#FFFFFF;}
 
-    /* PLAN TABLE */
-    .plan-table { width:100%; border-collapse:collapse; }
-    .plan-table th { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); padding:9px 10px; text-align:left; border-bottom:1px solid var(--border); }
-    .plan-table td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.04); }
-    .plan-table input { background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; padding:4px 0; font-size:13px; }
-    .plan-table input:focus { border-bottom-color:var(--gold); }
+/* RADIO */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.radio-item{display:flex;align-items:center;gap:7px;cursor:pointer;padding:8px 14px;border:1px solid #333;border-radius:3px;font-size:13px;color:#FFFFFF;transition:border-color .2s,background .2s;}
+.radio-item:hover{border-color:var(--gold);}
+.radio-item.selected{border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--gold);font-weight:600;}
 
-    /* PROGRESS */
-    .progress-bar { height:3px; background:var(--border); border-radius:2px; margin-bottom:28px; overflow:hidden; }
-    .progress-fill { height:100%; background:var(--gold); border-radius:2px; transition:width .4s; width:0%; }
+/* PLAN TABLE */
+.plan-table{width:100%;border-collapse:collapse;}
+.plan-table th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#AAA;padding:9px 10px;text-align:left;border-bottom:1px solid #333;}
+.plan-table td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);}
+.plan-table input{background:transparent;border:none;border-bottom:1px solid #333;border-radius:0;padding:4px 0;font-size:13px;color:#FFF;}
+.plan-table input:focus{border-bottom-color:var(--gold);outline:none;}
 
-    /* ACTIONS */
-    .actions { display:flex; gap:14px; margin-top:28px; padding-top:22px; border-top:1px solid var(--border); flex-wrap:wrap; }
-    .btn { display:inline-flex; align-items:center; gap:7px; padding:11px 22px; border-radius:3px; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; border:none; transition:all .2s; }
-    .btn-primary { background:var(--gold); color:#000; }
-    .btn-primary:hover { background:var(--gold2); transform:translateY(-1px); }
-    .btn-secondary { background:transparent; color:var(--text); border:1px solid var(--border); }
-    .btn-secondary:hover { border-color:var(--text); }
-    .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
-    .btn-ghost:hover { color:var(--gold); border-color:var(--gold); }
-    .btn-danger { background:transparent; color:var(--red); border:1px solid var(--red); margin-left:auto; }
-    .btn-danger:hover { background:rgba(231,76,60,.1); }
+/* ACTIONS */
+.actions{display:flex;gap:12px;margin-top:28px;padding-top:22px;border-top:1px solid #333;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--gold);color:#000;}
+.btn-primary:hover{background:var(--gold2);}
+.btn-secondary{background:transparent;color:#FFF;border:1px solid #444;}
+.btn-secondary:hover{border-color:#FFF;}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);margin-left:auto;}
+.btn-danger:hover{background:rgba(231,76,60,.1);}
 
-    /* TOAST */
-    .toast { position:fixed; bottom:28px; right:28px; background:var(--green); color:#fff; padding:13px 22px; border-radius:4px; font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; z-index:9999; opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none; }
-    .toast.show { opacity:1; transform:translateY(0); }
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--green);color:#fff;padding:13px 22px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;z-index:9999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
 
-    @media(max-width:600px) {
-      .form-row,.form-row.tri { grid-template-columns:1fr; }
-      nav h1 { display:none; }
-      .level-grid { grid-template-columns:repeat(3,1fr); }
-    }
-  </style>
+@media(max-width:600px){
+  .form-row,.form-row.tri{grid-template-columns:1fr;}
+  .level-grid{grid-template-columns:repeat(3,1fr);}
+  nav h1{display:none;}
+}
+</style>
 </head>
 <body>
 
 <nav>
   <img src="logo-one-sport-officiel.png" alt="One Sport"/>
   <div class="nav-sep"></div>
-  <h1>⚽ Dossier de Positionnement</h1>
-  <a href="ffp-accueil.html" class="nav-back">← Accueil</a>
+  <h1>&#9917; Dossier de Positionnement</h1>
+  <a href="ffp-accueil.html" class="nav-back">&larr; Accueil</a>
 </nav>
 
-<!-- ══════════ SÉLECTEUR DE NIVEAU ══════════ -->
+<!-- SELECTEUR -->
 <div id="levelSelector">
   <div class="wrapper">
     <div class="level-header">
       <h2>Choisir le niveau</h2>
-      <p>Sélectionnez la catégorie du joueur. Le formulaire et le dossier PDF s'adapteront automatiquement à ce niveau.</p>
+      <p>Selectionnez la categorie du joueur. Le formulaire et le PDF s'adapteront automatiquement.</p>
     </div>
-
-    <div class="level-group-label">Catégories jeunes</div>
+    <div class="group-label">Categories Jeunes</div>
     <div class="level-grid" id="gridJeunes"></div>
-
-    <div class="level-group-label">Catégories seniors & féminines</div>
+    <div class="group-label">Categories Seniors &amp; Feminines</div>
     <div class="level-grid" id="gridSeniors"></div>
-
-    <div class="level-group-label">Poste spécifique</div>
+    <div class="group-label">Poste Specifique</div>
     <div class="level-grid" id="gridSpecifique"></div>
   </div>
 </div>
 
-<!-- ══════════ FORMULAIRE ══════════ -->
+<!-- FORMULAIRE -->
 <div id="formContainer">
   <div class="wrapper">
 
-    <!-- BADGE NIVEAU -->
-    <div class="level-badge" onclick="backToSelector()" title="Changer de niveau">
+    <div class="level-badge" onclick="backToSelector()">
       <span class="lb-name" id="badgeName">U12</span>
-      <span class="lb-change">✎ Changer</span>
+      <span class="lb-change">&#9998; Changer</span>
     </div>
 
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-    <!-- PARTIE 1 : IDENTIFICATION -->
+    <!-- P1 IDENTIFICATION -->
     <div class="section" id="sec1">
-      <div class="section-header" onclick="toggleSection('sec1')">
+      <div class="section-header" onclick="toggleSec('sec1')">
         <span class="section-num">PARTIE 1</span>
         <span class="section-title">Identification du Joueur</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
         <div class="form-row">
           <div class="field"><label>Nom</label><input type="text" id="nom" placeholder="DUPONT" oninput="updateProgress()"/></div>
-          <div class="field"><label>Prénom</label><input type="text" id="prenom" placeholder="Lucas" oninput="updateProgress()"/></div>
+          <div class="field"><label>Prenom</label><input type="text" id="prenom" placeholder="Lucas" oninput="updateProgress()"/></div>
         </div>
         <div class="form-row tri">
           <div class="field"><label>Date de naissance</label><input type="date" id="ddn"/></div>
           <div class="field"><label>Saisons au club</label><input type="number" id="saisons" min="1" max="20" value="1"/></div>
-          <div class="field"><label>Date de l'entretien</label><input type="date" id="dateEntretien"/></div>
+          <div class="field"><label>Date entretien</label><input type="date" id="dateEntretien"/></div>
         </div>
         <div class="form-row">
-          <div class="field"><label>Nom du club</label><input type="text" id="club" placeholder="FC Example"/></div>
-          <div class="field"><label>Poste habituel</label><input type="text" id="poste" id="poste" placeholder="Milieu central…"/></div>
+          <div class="field"><label>Club</label><input type="text" id="club" placeholder="FC Example"/></div>
+          <div class="field"><label>Poste</label><input type="text" id="poste" placeholder="Milieu central"/></div>
         </div>
         <div class="form-row tri">
-          <div class="field"><label>Coach actuel</label><input type="text" id="coachActuel" placeholder="Prénom NOM"/></div>
-          <div class="field"><label>Futur coach</label><input type="text" id="coachFutur" placeholder="Prénom NOM"/></div>
-          <div class="field"><label>Responsable technique</label><input type="text" id="respTech" placeholder="Prénom NOM"/></div>
+          <div class="field"><label>Coach actuel</label><input type="text" id="coachActuel" placeholder="Prenom NOM"/></div>
+          <div class="field"><label>Futur coach</label><input type="text" id="coachFutur" placeholder="Prenom NOM"/></div>
+          <div class="field"><label>Resp. Technique</label><input type="text" id="respTech" placeholder="Prenom NOM"/></div>
         </div>
       </div>
     </div>
 
-    <!-- PARTIE 2 : BILAN TECHNIQUE -->
+    <!-- P2 BILAN -->
     <div class="section" id="sec2">
-      <div class="section-header" onclick="toggleSection('sec2')">
+      <div class="section-header" onclick="toggleSec('sec2')">
         <span class="section-num">PARTIE 2</span>
         <span class="section-title" id="sec2title">Bilan de la Saison</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
-        <p style="color:var(--muted);font-size:11px;margin-bottom:14px;letter-spacing:.1em;text-transform:uppercase;">Évaluation technique</p>
-        <table class="rating-grid"><thead><tr><th>Critère</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="techTable"></tbody></table>
-        <div class="form-row full" style="margin-top:16px;">
-          <div class="field"><label>Commentaires techniques</label><textarea id="commentTech"></textarea></div>
-        </div>
+        <p style="color:#AAA;font-size:11px;margin-bottom:12px;letter-spacing:.1em;text-transform:uppercase;">Evaluation technique</p>
+        <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="techTable"></tbody></table>
+        <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires techniques</label><textarea id="commentTech"></textarea></div></div>
 
-        <p style="color:var(--muted);font-size:11px;margin:18px 0 14px;letter-spacing:.1em;text-transform:uppercase;">Compréhension du jeu</p>
-        <table class="rating-grid"><thead><tr><th>Critère</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="jeuTable"></tbody></table>
-        <div class="form-row full" style="margin-top:16px;">
-          <div class="field"><label>Commentaires jeu</label><textarea id="commentJeu"></textarea></div>
-        </div>
+        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Comprehension du jeu</p>
+        <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="jeuTable"></tbody></table>
+        <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires jeu</label><textarea id="commentJeu"></textarea></div></div>
 
-        <p style="color:var(--muted);font-size:11px;margin:18px 0 14px;letter-spacing:.1em;text-transform:uppercase;">Attitude & Comportement</p>
-        <table class="rating-grid"><thead><tr><th>Critère</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="attTable"></tbody></table>
-        <div class="form-row full" style="margin-top:16px;">
-          <div class="field"><label>Commentaires attitude</label><textarea id="commentAtt"></textarea></div>
-        </div>
+        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Attitude et Comportement</p>
+        <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="attTable"></tbody></table>
+        <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires attitude</label><textarea id="commentAtt"></textarea></div></div>
 
-        <p style="color:var(--muted);font-size:11px;margin:18px 0 14px;letter-spacing:.1em;text-transform:uppercase;">Assiduité & Engagement</p>
+        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Assiduite et Engagement</p>
         <div class="form-row tri">
-          <div class="field"><label>Présence entraînements (%)</label><input type="number" id="presenceEntr" min="0" max="100" value="80"/></div>
-          <div class="field"><label>Présence matchs (%)</label><input type="number" id="presenceMatch" min="0" max="100" value="80"/></div>
-          <div class="field"><label>Ponctualité</label>
+          <div class="field"><label>Presence entrainements (%)</label><input type="number" id="presenceEntr" min="0" max="100" value="80"/></div>
+          <div class="field"><label>Presence matchs (%)</label><input type="number" id="presenceMatch" min="0" max="100" value="80"/></div>
+          <div class="field"><label>Ponctualite</label>
             <select id="ponctualite">
-              <option>Exemplaire</option><option>Bonne</option><option>Irrégulière</option><option>Insuffisante</option>
+              <option>Exemplaire</option><option>Bonne</option><option>Irreguliere</option><option>Insuffisante</option>
             </select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PARTIE 3 : POTENTIEL -->
+    <!-- P3 POTENTIEL -->
     <div class="section" id="sec3">
-      <div class="section-header" onclick="toggleSection('sec3')">
+      <div class="section-header" onclick="toggleSec('sec3')">
         <span class="section-num">PARTIE 3</span>
         <span class="section-title">Analyse du Potentiel</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
-        <div class="field" style="margin-bottom:18px;">
-          <label>Atouts identifiés</label>
-          <div class="check-grid" id="atoutsGrid"></div>
-        </div>
-        <div class="field" style="margin-bottom:18px;">
-          <label>Freins potentiels</label>
-          <div class="check-grid" id="freinsGrid"></div>
-        </div>
-        <div class="form-row full">
-          <div class="field"><label>Analyse globale du potentiel</label><textarea id="commentPotentiel"></textarea></div>
-        </div>
+        <div class="field" style="margin-bottom:16px;"><label>Atouts identifies</label><div class="check-grid" id="atoutsGrid"></div></div>
+        <div class="field" style="margin-bottom:16px;"><label>Freins potentiels</label><div class="check-grid" id="freinsGrid"></div></div>
+        <div class="form-row full"><div class="field"><label>Analyse globale</label><textarea id="commentPotentiel"></textarea></div></div>
       </div>
     </div>
 
-    <!-- PARTIE 4 : POSITIONNEMENT -->
+    <!-- P4 POSITIONNEMENT -->
     <div class="section" id="sec4">
-      <div class="section-header" onclick="toggleSection('sec4')">
+      <div class="section-header" onclick="toggleSec('sec4')">
         <span class="section-num">PARTIE 4</span>
         <span class="section-title">Positionnement dans le Groupe</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
-        <div class="field" style="margin-bottom:18px;">
-          <label>Position estimée</label>
-          <div class="radio-group" id="positionGroup"></div>
-        </div>
-        <div class="form-row full">
-          <div class="field"><label>Justification observée</label><textarea id="justifPosition"></textarea></div>
-        </div>
+        <div class="field" style="margin-bottom:16px;"><label>Position estimee</label><div class="radio-group" id="positionGroup"></div></div>
+        <div class="form-row full"><div class="field"><label>Justification</label><textarea id="justifPosition"></textarea></div></div>
       </div>
     </div>
 
-    <!-- PARTIE 5-6 : DÉCISION -->
+    <!-- P5-6 DECISION -->
     <div class="section" id="sec5">
-      <div class="section-header" onclick="toggleSection('sec5')">
-        <span class="section-num">PARTIES 5 — 6</span>
-        <span class="section-title" id="sec5title">Affectation envisagée</span>
-        <span class="section-toggle">▾</span>
+      <div class="section-header" onclick="toggleSec('sec5')">
+        <span class="section-num">PARTIES 5-6</span>
+        <span class="section-title" id="sec5title">Affectation envisagee</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
         <div class="form-row">
-          <div class="field">
-            <label>Proposition</label>
-            <div class="radio-group" id="affectationGroup"></div>
-          </div>
-          <div class="field">
-            <label>Niveau de certitude</label>
-            <div class="radio-group" id="certitudeGroup"></div>
-          </div>
+          <div class="field"><label>Proposition</label><div class="radio-group" id="affectationGroup"></div></div>
+          <div class="field"><label>Niveau de certitude</label><div class="radio-group" id="certitudeGroup"></div></div>
         </div>
-        <div class="form-row full" style="margin-top:14px;">
-          <div class="field"><label>Arguments</label><textarea id="argsDecision" style="min-height:80px;"></textarea></div>
-        </div>
-        <div class="form-row full">
-          <div class="field"><label>Conditions d'évolution</label><textarea id="conditionsAcces"></textarea></div>
-        </div>
+        <div class="form-row full" style="margin-top:12px;"><div class="field"><label>Arguments</label><textarea id="argsDecision" style="min-height:80px;"></textarea></div></div>
+        <div class="form-row full"><div class="field"><label>Conditions d evolution</label><textarea id="conditionsAcces"></textarea></div></div>
       </div>
     </div>
 
-    <!-- PARTIE 7 : PROJET SAISON SUIVANTE -->
+    <!-- P7 PROJET -->
     <div class="section" id="sec6">
-      <div class="section-header" onclick="toggleSection('sec6')">
+      <div class="section-header" onclick="toggleSec('sec6')">
         <span class="section-num">PARTIE 7</span>
-        <span class="section-title" id="sec6title">Projet Sportif — Saison Suivante</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-title">Projet Sportif Saison Suivante</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
         <div class="form-row tri">
-          <div class="field"><label>Jours d'entraînement</label><input type="text" id="joursEntr" placeholder="Mardi, Jeudi"/></div>
-          <div class="field"><label>Horaires</label><input type="text" id="horaires" placeholder="18h – 19h30"/></div>
-          <div class="field"><label>Séances / semaine</label>
-            <select id="seances"><option>2</option><option>3</option><option>4</option><option>5</option></select>
-          </div>
+          <div class="field"><label>Jours d entrainement</label><input type="text" id="joursEntr" placeholder="Mardi, Jeudi"/></div>
+          <div class="field"><label>Horaires</label><input type="text" id="horaires" placeholder="18h - 19h30"/></div>
+          <div class="field"><label>Seances / semaine</label><select id="seances"><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
         </div>
-        <div class="form-row full" style="margin-top:8px;">
-          <div class="field"><label>Programme prévisionnel</label><textarea id="programme" placeholder="Championnat, tournois, stages…"></textarea></div>
-        </div>
+        <div class="form-row full" style="margin-top:8px;"><div class="field"><label>Programme previsionnel</label><textarea id="programme" placeholder="Championnat, tournois, stages..."></textarea></div></div>
       </div>
     </div>
 
-    <!-- PARTIE 8 : FAMILLE -->
+    <!-- P8 FAMILLE -->
     <div class="section" id="sec7">
-      <div class="section-header" onclick="toggleSection('sec7')">
+      <div class="section-header" onclick="toggleSec('sec7')">
         <span class="section-num">PARTIE 8</span>
-        <span class="section-title">Retour du Joueur & de la Famille</span>
-        <span class="section-toggle">▾</span>
+        <span class="section-title">Retour Joueur et Famille</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
         <div class="form-row">
-          <div class="field">
-            <label>Clarté des infos communiquées</label>
-            <div class="radio-group" id="clarteGroup"></div>
-          </div>
-          <div class="field">
-            <label>Attentes prioritaires</label>
-            <div class="check-grid" id="attentesGrid" style="grid-template-columns:1fr;"></div>
-          </div>
+          <div class="field"><label>Clarte des informations</label><div class="radio-group" id="clarteGroup"></div></div>
+          <div class="field"><label>Attentes prioritaires</label><div class="check-grid" id="attentesGrid" style="grid-template-columns:1fr;"></div></div>
         </div>
-        <div class="form-row full" style="margin-top:14px;">
-          <div class="field"><label>Commentaires & questions</label><textarea id="commentFamille"></textarea></div>
-        </div>
+        <div class="form-row full" style="margin-top:12px;"><div class="field"><label>Commentaires famille</label><textarea id="commentFamille"></textarea></div></div>
       </div>
     </div>
 
-    <!-- PARTIES 9-10 : COLLÉGIAL + PLAN -->
+    <!-- P9-10 COLLEGIAL -->
     <div class="section" id="sec8">
-      <div class="section-header" onclick="toggleSection('sec8')">
-        <span class="section-num">PARTIES 9 — 10</span>
-        <span class="section-title">Décision Collégiale & Plan de Progression</span>
-        <span class="section-toggle">▾</span>
+      <div class="section-header" onclick="toggleSec('sec8')">
+        <span class="section-num">PARTIES 9-10</span>
+        <span class="section-title">Decision Collegiale et Plan de Progression</span>
+        <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
         <div class="form-row tri">
-          <div class="field"><label>Avis Coach actuel</label><div class="radio-group" id="avisCoachActGroup"></div></div>
-          <div class="field"><label>Avis Futur Coach</label><div class="radio-group" id="avisCoachFutGroup"></div></div>
+          <div class="field"><label>Avis Coach actuel</label><div class="radio-group" id="avisActGroup"></div></div>
+          <div class="field"><label>Avis Futur Coach</label><div class="radio-group" id="avisFutGroup"></div></div>
           <div class="field"><label>Avis Resp. Technique</label><div class="radio-group" id="avisRespGroup"></div></div>
         </div>
-        <div class="form-row full" style="margin-top:18px;">
-          <div class="field"><label>Décision finale</label><div class="radio-group" id="decisionFinaleGroup"></div></div>
-        </div>
+        <div class="form-row full" style="margin-top:16px;"><div class="field"><label>Decision finale</label><div class="radio-group" id="decisionGroup"></div></div></div>
 
-        <p style="color:var(--muted);font-size:11px;margin:22px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Plan de Progression Individuel</p>
+        <p style="color:#AAA;font-size:11px;margin:20px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Plan de Progression Individuel</p>
         <table class="plan-table">
-          <thead><tr><th style="width:40px">N°</th><th>Objectif</th><th>Indicateur de réussite</th><th style="width:90px">Échéance</th></tr></thead>
+          <thead><tr><th style="width:36px">N</th><th>Objectif</th><th>Indicateur de reussite</th><th style="width:88px">Echeance</th></tr></thead>
           <tbody>
-            <tr><td style="color:var(--gold);font-weight:700">1</td><td><input type="text" id="obj1" placeholder="Objectif…"/></td><td><input type="text" id="ind1" placeholder="Comment mesurer…"/></td><td><input type="text" id="ech1" placeholder="Nov"/></td></tr>
-            <tr><td style="color:var(--gold);font-weight:700">2</td><td><input type="text" id="obj2" placeholder="Objectif…"/></td><td><input type="text" id="ind2" placeholder="Indicateur…"/></td><td><input type="text" id="ech2" placeholder="Fév"/></td></tr>
-            <tr><td style="color:var(--gold);font-weight:700">3</td><td><input type="text" id="obj3" placeholder="Objectif…"/></td><td><input type="text" id="ind3" placeholder="Indicateur…"/></td><td><input type="text" id="ech3" placeholder="Juin"/></td></tr>
+            <tr><td style="color:var(--gold);font-weight:700;">1</td><td><input type="text" id="obj1" placeholder="Objectif..."/></td><td><input type="text" id="ind1" placeholder="Comment mesurer..."/></td><td><input type="text" id="ech1" placeholder="Nov"/></td></tr>
+            <tr><td style="color:var(--gold);font-weight:700;">2</td><td><input type="text" id="obj2" placeholder="Objectif..."/></td><td><input type="text" id="ind2" placeholder="Indicateur..."/></td><td><input type="text" id="ech2" placeholder="Fev"/></td></tr>
+            <tr><td style="color:var(--gold);font-weight:700;">3</td><td><input type="text" id="obj3" placeholder="Objectif..."/></td><td><input type="text" id="ind3" placeholder="Indicateur..."/></td><td><input type="text" id="ech3" placeholder="Juin"/></td></tr>
           </tbody>
         </table>
-        <div class="form-row full" style="margin-top:16px;">
-          <div class="field"><label>Motifs principaux de la décision</label><textarea id="motifsDecision"></textarea></div>
-        </div>
+        <div class="form-row full" style="margin-top:16px;"><div class="field"><label>Motifs principaux</label><textarea id="motifsDecision"></textarea></div></div>
       </div>
     </div>
 
-    <!-- ACTIONS -->
     <div class="actions">
-      <button class="btn btn-primary" onclick="genererPDF()">⬇ Générer le PDF</button>
-      <button class="btn btn-secondary" onclick="sauvegarder()">💾 Sauvegarder</button>
-      <button class="btn btn-ghost" onclick="charger()">📂 Charger</button>
-      <button class="btn btn-danger" onclick="reinitialiser()">✕ Réinitialiser</button>
+      <button class="btn btn-primary" onclick="genPDF()">&#11015; Generer le PDF</button>
+      <button class="btn btn-secondary" onclick="sauver()">&#128190; Sauvegarder</button>
+      <button class="btn btn-secondary" onclick="charger()">&#128194; Charger</button>
+      <button class="btn btn-danger" onclick="reinit()">&#10005; Reinitialiser</button>
     </div>
   </div>
 </div>
@@ -419,674 +351,473 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// NIVEAUX — configuration complète
-// ══════════════════════════════════════════
-const LEVELS = {
-  jeunes: [
-    { id:'U6',  label:'U6',  age:'5-6 ans',   transition:'U6 → U7',   format:'3c3',  saison:'2025-2026' },
-    { id:'U7',  label:'U7',  age:'6-7 ans',   transition:'U7 → U8',   format:'3c3',  saison:'2025-2026' },
-    { id:'U8',  label:'U8',  age:'7-8 ans',   transition:'U8 → U9',   format:'4c4',  saison:'2025-2026' },
-    { id:'U9',  label:'U9',  age:'8-9 ans',   transition:'U9 → U10',  format:'5c5',  saison:'2025-2026' },
-    { id:'U10', label:'U10', age:'9-10 ans',  transition:'U10 → U11', format:'7c7',  saison:'2025-2026' },
-    { id:'U11', label:'U11', age:'10-11 ans', transition:'U11 → U12', format:'8c8',  saison:'2025-2026' },
-    { id:'U12', label:'U12', age:'11-12 ans', transition:'U12 → U13', format:'9c9',  saison:'2025-2026' },
-    { id:'U13', label:'U13', age:'12-13 ans', transition:'U13 → U14', format:'11c11',saison:'2025-2026' },
-    { id:'U14', label:'U14', age:'13-14 ans', transition:'U14 → U15', format:'11c11',saison:'2025-2026' },
-    { id:'U15', label:'U15', age:'14-15 ans', transition:'U15 → U16', format:'11c11',saison:'2025-2026' },
-    { id:'U16', label:'U16', age:'15-16 ans', transition:'U16 → U17', format:'11c11',saison:'2025-2026' },
-    { id:'U17', label:'U17', age:'16-17 ans', transition:'U17 → U18', format:'11c11',saison:'2025-2026' },
-    { id:'U18', label:'U18', age:'17-18 ans', transition:'U18 → Senior',format:'11c11',saison:'2025-2026' },
-    { id:'U19', label:'U19', age:'18-19 ans', transition:'U19 → Senior',format:'11c11',saison:'2025-2026' },
-  ],
-  seniors: [
-    { id:'SEN',  label:'Senior', age:'19+ ans', transition:'Maintien / montée', format:'11c11', saison:'2025-2026' },
-    { id:'VET',  label:'Vétéran', age:'35+ ans', transition:'Bilan annuel', format:'11c11', saison:'2025-2026' },
-    { id:'FF',   label:'Féminine', age:'Tous âges', transition:'Bilan annuel', format:'11c11', saison:'2025-2026' },
-    { id:'U13F', label:'U13 Fém.', age:'12-13 ans', transition:'U13F → U15F', format:'11c11', saison:'2025-2026' },
-    { id:'U15F', label:'U15 Fém.', age:'14-15 ans', transition:'U15F → U18F', format:'11c11', saison:'2025-2026' },
-    { id:'U18F', label:'U18 Fém.', age:'17-18 ans', transition:'U18F → Senior F', format:'11c11', saison:'2025-2026' },
-  ],
-  specifique: [
-    { id:'GK',    label:'Gardien', age:'Tous niveaux', transition:'Bilan spécifique', format:'poste GK', saison:'2025-2026' },
-  ]
-};
+// DATA
+var LEVELS_JEUNES = [
+  {id:'U6', label:'U6', age:'5-6 ans', trans:'U6 vers U7', saison:'2025-2026'},
+  {id:'U7', label:'U7', age:'6-7 ans', trans:'U7 vers U8', saison:'2025-2026'},
+  {id:'U8', label:'U8', age:'7-8 ans', trans:'U8 vers U9', saison:'2025-2026'},
+  {id:'U9', label:'U9', age:'8-9 ans', trans:'U9 vers U10', saison:'2025-2026'},
+  {id:'U10',label:'U10',age:'9-10 ans',trans:'U10 vers U11',saison:'2025-2026'},
+  {id:'U11',label:'U11',age:'10-11 ans',trans:'U11 vers U12',saison:'2025-2026'},
+  {id:'U12',label:'U12',age:'11-12 ans',trans:'U12 vers U13',saison:'2025-2026'},
+  {id:'U13',label:'U13',age:'12-13 ans',trans:'U13 vers U14',saison:'2025-2026'},
+  {id:'U14',label:'U14',age:'13-14 ans',trans:'U14 vers U15',saison:'2025-2026'},
+  {id:'U15',label:'U15',age:'14-15 ans',trans:'U15 vers U16',saison:'2025-2026'},
+  {id:'U16',label:'U16',age:'15-16 ans',trans:'U16 vers U17',saison:'2025-2026'},
+  {id:'U17',label:'U17',age:'16-17 ans',trans:'U17 vers U18',saison:'2025-2026'},
+  {id:'U18',label:'U18',age:'17-18 ans',trans:'U18 vers Senior',saison:'2025-2026'},
+  {id:'U19',label:'U19',age:'18-19 ans',trans:'U19 vers Senior',saison:'2025-2026'}
+];
+var LEVELS_SENIORS = [
+  {id:'SEN', label:'Senior',  age:'19+ ans',    trans:'Maintien / Montee', saison:'2025-2026'},
+  {id:'VET', label:'Veteran', age:'35+ ans',    trans:'Bilan annuel',      saison:'2025-2026'},
+  {id:'FF',  label:'Feminine',age:'Tous ages',  trans:'Bilan annuel',      saison:'2025-2026'},
+  {id:'U13F',label:'U13 F',  age:'12-13 ans',  trans:'U13F vers U15F',    saison:'2025-2026'},
+  {id:'U15F',label:'U15 F',  age:'14-15 ans',  trans:'U15F vers U18F',    saison:'2025-2026'},
+  {id:'U18F',label:'U18 F',  age:'17-18 ans',  trans:'U18F vers Senior F',saison:'2025-2026'}
+];
+var LEVELS_SPEC = [
+  {id:'GK', label:'Gardien', age:'Tous niveaux', trans:'Bilan specifique GK', saison:'2025-2026'}
+];
 
-// Critères par niveau
-function getCriteres(levelId) {
-  const isJeune = ['U6','U7','U8','U9','U10'].includes(levelId);
-  const isPreform = ['U11','U12','U13'].includes(levelId);
-  const isForm = ['U14','U15','U16','U17'].includes(levelId);
-  const isSenior = ['SEN','VET','FF','U18','U19','U18F'].includes(levelId);
-  const isGK = levelId === 'GK';
-  const isFemU = ['U13F','U15F'].includes(levelId);
+var ATOUTS  = ['Forte capacite d apprentissage','Forte motivation','Bonne autonomie','Capacite d adaptation','Resilience','Potentiel athletique','Potentiel technique','Potentiel tactique','Leadership'];
+var FREINS  = ['Confiance en soi','Gestion des emotions','Regularite','Assiduite','Maturite','Comprehension du jeu','Difficultes techniques','Disponibilite'];
+var POSITIONS = ['Top 10 %','Top 25 %','Top 50 %','Deuxieme moitie','Profil en developpement'];
+var CERTITUDES= ['Confirme','Tres probable','Probable','A confirmer'];
+var CLARTE  = ['Tres claires','Claires','Partiellement claires','Insuffisantes'];
+var ATTENTES= ['Progression sportive','Epanouissement','Niveau de competition','Temps de jeu','Encadrement','Preparation long terme'];
+var AVIS    = ['Favorable','Reserve','Defavorable'];
 
-  if (isGK) return {
-    tech: ['Positionnement dans les buts','Jeu de mains','Jeu de pieds','Sorties aériennes','Relances courtes','Relances longues'],
-    jeu:  ['Lecture du jeu','Communication avec la défense','Prise de décision','Placement sur coups de pied','Organisation défensive'],
-    att:  ['Leadership','Calme sous pression','Écoute','Investissement','Résilience'],
-  };
+var currentLevel = null;
+var ratings = {};
 
-  if (isJeune) return {
-    tech: ['Contrôle du ballon','Conduite de balle','Passe simple','Frappe au but','Coordination'],
-    jeu:  ['Orientation dans l\'espace','Participation au jeu','Prise de décision basique'],
-    att:  ['Plaisir de jouer','Respect','Écoute des consignes','Esprit d\'équipe'],
-  };
-
-  if (isPreform) return {
-    tech: ['Contrôle','Conduite de balle','Passe','Dribble','Finition','Pied faible'],
-    jeu:  ['Lecture du jeu','Prise d\'information','Occupation des espaces','Choix de jeu','Adaptation'],
-    att:  ['Respect','Écoute','Investissement','Esprit collectif','Gestion émotionnelle'],
-  };
-
-  if (isForm) return {
-    tech: ['Contrôle','Conduite de balle','Passe courte','Passe longue','Dribble','Finition','Pied faible','Technique défensive'],
-    jeu:  ['Lecture du jeu','Prise d\'information','Occupation des espaces','Pressing','Transition off/def','Jeu sans ballon'],
-    att:  ['Leadership','Résilience','Concentration','Esprit collectif','Gestion émotionnelle','Ambition'],
-  };
-
-  // Senior / U18 / U19 / féminine
-  return {
-    tech: ['Contrôle','Conduite','Passe courte','Passe longue','Dribble','Finition','Technique défensive','Jeu de tête'],
-    jeu:  ['Lecture du jeu','Pressing','Transitions','Jeu sans ballon','Occupation des espaces','Intelligence tactique'],
-    att:  ['Leadership','Professionnalisme','Résilience','Esprit d\'équipe','Communication','Ambition'],
-  };
-}
-
-function getAffectations(levelId) {
-  const isSenior = ['SEN','VET','FF','U18','U19','U18F'].includes(levelId);
-  const isGK = levelId === 'GK';
-  if (isSenior || isGK) return ['Équipe 1','Équipe 2','Équipe 3','Prêt','Non-renouvellement'];
-  // Jeunes — label dynamique
-  const lv = findLevel(levelId);
-  const next = lv ? lv.transition.split('→')[1]?.trim() : 'Niveau supérieur';
-  return [`${next} Elite`, `${next} A`, `${next} B`, 'Observation', 'Décision différée'];
-}
-
-function getDecisions(levelId) {
-  const isSenior = ['SEN','VET','FF','U18','U19','U18F'].includes(levelId);
-  if (isSenior) return ['Contrat renouvelé','Renouvellement avec objectifs','Déclassement','Non-renouvellement'];
-  return ['Renouvellement validé','Renouvellement avec objectifs','Décision reportée','Non-renouvellement'];
-}
-
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let currentLevel = null;
-const ratings = {};
-
-const ATOUTS   = ['Forte capacité d\'apprentissage','Forte motivation','Bonne autonomie','Capacité d\'adaptation','Résilience','Potentiel athlétique','Potentiel technique','Potentiel tactique','Leadership'];
-const FREINS   = ['Confiance en soi','Gestion des émotions','Régularité','Assiduité','Maturité','Compréhension du jeu','Difficultés techniques','Disponibilité'];
-const POSITIONS= ['Top 10 %','Top 25 %','Top 50 %','Deuxième moitié','Profil en développement'];
-const CERTITUDES=['Confirmé','Très probable','Probable','À confirmer'];
-const CLARTE   = ['Très claires','Claires','Partiellement claires','Insuffisantes'];
-const ATTENTES = ['Progression sportive','Épanouissement','Niveau de compétition','Temps de jeu','Encadrement','Préparation long terme'];
-const AVIS     = ['Favorable','Réservé','Défavorable'];
-
-// ══════════════════════════════════════════
-// INIT SÉLECTEUR
-// ══════════════════════════════════════════
+// FIND
 function findLevel(id) {
-  for (const grp of Object.values(LEVELS)) {
-    const found = grp.find(l => l.id === id);
-    if (found) return found;
-  }
+  var all = LEVELS_JEUNES.concat(LEVELS_SENIORS).concat(LEVELS_SPEC);
+  for (var i=0;i<all.length;i++) { if(all[i].id===id) return all[i]; }
   return null;
 }
 
+function getCriteres(id) {
+  var isJeune = ['U6','U7','U8','U9','U10'].indexOf(id)>=0;
+  var isGK = id==='GK';
+  if (isGK) return {
+    tech:['Positionnement dans les buts','Jeu de mains','Jeu de pieds','Sorties aeriennes','Relances courtes','Relances longues'],
+    jeu:['Lecture du jeu','Communication defense','Prise de decision','Placement coups de pied','Organisation defensive'],
+    att:['Leadership','Calme sous pression','Ecoute','Investissement','Resilience']
+  };
+  if (isJeune) return {
+    tech:['Controle du ballon','Conduite de balle','Passe simple','Frappe au but','Coordination'],
+    jeu:['Orientation dans l espace','Participation au jeu','Prise de decision basique'],
+    att:['Plaisir de jouer','Respect','Ecoute des consignes','Esprit d equipe']
+  };
+  var isPreform = ['U11','U12','U13'].indexOf(id)>=0;
+  if (isPreform) return {
+    tech:['Controle','Conduite de balle','Passe','Dribble','Finition','Pied faible'],
+    jeu:['Lecture du jeu','Prise d information','Occupation des espaces','Choix de jeu','Adaptation'],
+    att:['Respect','Ecoute','Investissement','Esprit collectif','Gestion emotionnelle']
+  };
+  var isForm = ['U14','U15','U16','U17'].indexOf(id)>=0;
+  if (isForm) return {
+    tech:['Controle','Conduite de balle','Passe courte','Passe longue','Dribble','Finition','Pied faible','Technique defensive'],
+    jeu:['Lecture du jeu','Prise d information','Occupation des espaces','Pressing','Transition off/def','Jeu sans ballon'],
+    att:['Leadership','Resilience','Concentration','Esprit collectif','Gestion emotionnelle','Ambition']
+  };
+  return {
+    tech:['Controle','Conduite','Passe courte','Passe longue','Dribble','Finition','Technique defensive','Jeu de tete'],
+    jeu:['Lecture du jeu','Pressing','Transitions','Jeu sans ballon','Occupation des espaces','Intelligence tactique'],
+    att:['Leadership','Professionnalisme','Resilience','Esprit d equipe','Communication','Ambition']
+  };
+}
+
+function getAffectations(id) {
+  var isSenior = ['SEN','VET','FF','U18','U19','U18F'].indexOf(id)>=0;
+  if (isSenior||id==='GK') return ['Equipe 1','Equipe 2','Equipe 3','Pret','Non-renouvellement'];
+  var lv = findLevel(id);
+  var next = lv ? lv.trans.replace(' vers ',' ') : 'Niveau sup';
+  return [next+' Elite', next+' A', next+' B', 'Observation', 'Decision differee'];
+}
+
+function getDecisions(id) {
+  var isSenior = ['SEN','VET','FF','U18','U19','U18F'].indexOf(id)>=0;
+  if (isSenior) return ['Contrat renouvele','Renouvellement avec objectifs','Declassement','Non-renouvellement'];
+  return ['Renouvellement valide','Renouvellement avec objectifs','Decision reportee','Non-renouvellement'];
+}
+
+// BUILD SELECTOR
+function buildCard(lv) {
+  var div = document.createElement('div');
+  div.className = 'level-card';
+  div.setAttribute('onclick','selectLevel("'+lv.id+'")');
+  div.innerHTML = '<div class="lc-age">'+lv.label+'</div><div class="lc-label">'+lv.age+'</div><div class="lc-trans">'+lv.trans+'</div>';
+  return div;
+}
+
 function buildSelector() {
-  buildGrid('gridJeunes',    LEVELS.jeunes);
-  buildGrid('gridSeniors',   LEVELS.seniors);
-  buildGrid('gridSpecifique',LEVELS.specifique);
+  var gJ = document.getElementById('gridJeunes');
+  var gS = document.getElementById('gridSeniors');
+  var gSp= document.getElementById('gridSpecifique');
+  if (!gJ||!gS||!gSp) { setTimeout(buildSelector,100); return; }
+  gJ.innerHTML=''; gS.innerHTML=''; gSp.innerHTML='';
+  LEVELS_JEUNES.forEach(function(lv){ gJ.appendChild(buildCard(lv)); });
+  LEVELS_SENIORS.forEach(function(lv){ gS.appendChild(buildCard(lv)); });
+  LEVELS_SPEC.forEach(function(lv){ gSp.appendChild(buildCard(lv)); });
 }
 
-function buildGrid(containerId, levels) {
-  const el = document.getElementById(containerId);
-  levels.forEach(lv => {
-    const div = document.createElement('div');
-    div.className = 'level-card';
-    div.innerHTML = `<div class="lc-age">${lv.label}</div><div class="lc-label">${lv.age}</div><div class="lc-transition">${lv.transition}</div>`;
-    div.onclick = () => selectLevel(lv.id);
-    el.appendChild(div);
-  });
-}
-
-// ══════════════════════════════════════════
-// SÉLECTION DU NIVEAU
-// ══════════════════════════════════════════
-function selectLevel(levelId) {
-  currentLevel = findLevel(levelId);
+// SELECT LEVEL
+function selectLevel(id) {
+  currentLevel = findLevel(id);
   if (!currentLevel) return;
+  ratings = {};
 
-  // Reset ratings
-  Object.keys(ratings).forEach(k => delete ratings[k]);
-
-  // Badge
   document.getElementById('badgeName').textContent = currentLevel.label;
+  document.getElementById('sec2title').textContent = 'Bilan Saison ' + currentLevel.label;
+  document.getElementById('sec5title').textContent = 'Affectation — ' + currentLevel.trans;
 
-  // Titres dynamiques
-  document.getElementById('sec2title').textContent = `Bilan de la Saison ${currentLevel.label}`;
-  document.getElementById('sec5title').textContent = `Affectation envisagée — ${currentLevel.transition}`;
-  document.getElementById('sec6title').textContent = `Projet Sportif — Saison Suivante`;
+  var crit = getCriteres(id);
+  buildTable('techTable', crit.tech, 'tech');
+  buildTable('jeuTable',  crit.jeu,  'jeu');
+  buildTable('attTable',  crit.att,  'att');
 
-  // Build tables
-  const crit = getCriteres(levelId);
-  clearAndBuild('techTable', crit.tech, 'tech');
-  clearAndBuild('jeuTable',  crit.jeu,  'jeu');
-  clearAndBuild('attTable',  crit.att,  'att');
+  buildChecks('atoutsGrid',  ATOUTS,   'atout');
+  buildChecks('freinsGrid',  FREINS,   'frein');
+  buildChecks('attentesGrid',ATTENTES, 'attente');
 
-  // Checks
-  buildCheckGrid('atoutsGrid', ATOUTS, 'atout');
-  buildCheckGrid('freinsGrid', FREINS, 'frein');
-  buildCheckGrid('attentesGrid', ATTENTES, 'attente');
+  buildRadios('positionGroup',   POSITIONS,           'pos');
+  buildRadios('affectationGroup',getAffectations(id), 'aff');
+  buildRadios('certitudeGroup',  CERTITUDES,          'cert');
+  buildRadios('clarteGroup',     CLARTE,              'clarte');
+  buildRadios('avisActGroup',    AVIS,                'avisAct');
+  buildRadios('avisFutGroup',    AVIS,                'avisFut');
+  buildRadios('avisRespGroup',   AVIS,                'avisResp');
+  buildRadios('decisionGroup',   getDecisions(id),    'dec');
 
-  // Radios
-  buildRadioGroup('positionGroup',    POSITIONS,                'position');
-  buildRadioGroup('affectationGroup', getAffectations(levelId), 'affectation');
-  buildRadioGroup('certitudeGroup',   CERTITUDES,               'certitude');
-  buildRadioGroup('clarteGroup',      CLARTE,                   'clarte');
-  buildRadioGroup('avisCoachActGroup',AVIS,                     'avisAct');
-  buildRadioGroup('avisCoachFutGroup',AVIS,                     'avisFut');
-  buildRadioGroup('avisRespGroup',    AVIS,                     'avisResp');
-  buildRadioGroup('decisionFinaleGroup', getDecisions(levelId), 'decisionFinale');
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('dateEntretien').value = today;
 
-  // Date
-  document.getElementById('dateEntretien').value = new Date().toISOString().split('T')[0];
-
-  // Show form
-  document.getElementById('levelSelector').style.display = 'none';
-  document.getElementById('formContainer').style.display = 'block';
+  document.getElementById('levelSelector').style.display='none';
+  document.getElementById('formContainer').style.display='block';
   window.scrollTo(0,0);
   updateProgress();
 }
 
 function backToSelector() {
-  document.getElementById('formContainer').style.display = 'none';
-  document.getElementById('levelSelector').style.display = 'block';
+  document.getElementById('formContainer').style.display='none';
+  document.getElementById('levelSelector').style.display='block';
   window.scrollTo(0,0);
 }
 
-// ══════════════════════════════════════════
-// BUILDERS
-// ══════════════════════════════════════════
-function clearAndBuild(tbodyId, criteres, prefix) {
-  const tbody = document.getElementById(tbodyId);
+// BUILD TABLE
+function buildTable(tbodyId, criteres, prefix) {
+  var tbody = document.getElementById(tbodyId);
   tbody.innerHTML = '';
-  criteres.forEach((c, i) => {
-    const key = `${prefix}_${i}`;
+  criteres.forEach(function(c,i){
+    var key = prefix+'_'+i;
     ratings[key] = 0;
-    const tr = document.createElement('tr');
-    let cells = `<td>${c}</td>`;
-    for (let s = 1; s <= 5; s++) {
-      cells += `<td style="text-align:center"><button class="star-btn" data-key="${key}" data-val="${s}" onclick="setRating('${key}',${s})">★</button></td>`;
+    var tr = document.createElement('tr');
+    var html = '<td>'+c+'</td>';
+    for(var s=1;s<=5;s++){
+      html += '<td style="text-align:center"><button class="star-btn" id="sb_'+key+'_'+s+'" onclick="setRating(\''+key+'\','+s+')">&#9733;</button></td>';
     }
-    tr.innerHTML = cells;
+    tr.innerHTML = html;
     tbody.appendChild(tr);
   });
 }
 
 function setRating(key, val) {
   ratings[key] = val;
-  document.querySelectorAll(`[data-key="${key}"]`).forEach(btn => {
-    btn.classList.toggle('active', parseInt(btn.dataset.val) <= val);
-  });
+  for(var s=1;s<=5;s++){
+    var btn = document.getElementById('sb_'+key+'_'+s);
+    if(btn) btn.className = s<=val ? 'star-btn active' : 'star-btn';
+  }
   updateProgress();
 }
 
-function buildCheckGrid(containerId, items, prefix) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  items.forEach((item, i) => {
-    const key = `${prefix}_${i}`;
-    const div = document.createElement('div');
+// BUILD CHECKS
+function buildChecks(containerId, items, prefix) {
+  var c = document.getElementById(containerId);
+  c.innerHTML = '';
+  items.forEach(function(item,i){
+    var key = prefix+'_'+i;
+    var div = document.createElement('div');
     div.className = 'check-item';
-    div.id = `ci_${key}`;
-    div.innerHTML = `<div class="check-box" id="cb_${key}"></div><span class="check-label">${item}</span>`;
-    div.onclick = () => toggleCheck(key, div);
-    div.dataset.checked = 'false';
-    div.dataset.val = item;
-    container.appendChild(div);
+    div.id = 'ci_'+key;
+    div.setAttribute('data-checked','false');
+    div.setAttribute('data-val',item);
+    div.setAttribute('onclick','toggleCheck("'+key+'")');
+    div.innerHTML = '<div class="check-box" id="cb_'+key+'"></div><span class="check-label">'+item+'</span>';
+    c.appendChild(div);
   });
 }
 
-function toggleCheck(key, el) {
-  const checked = el.dataset.checked === 'true';
-  el.dataset.checked = checked ? 'false' : 'true';
-  el.classList.toggle('checked', !checked);
-  el.querySelector('.check-box').textContent = checked ? '' : '✓';
+function toggleCheck(key) {
+  var el = document.getElementById('ci_'+key);
+  var cb = document.getElementById('cb_'+key);
+  if(!el||!cb) return;
+  var checked = el.getAttribute('data-checked')==='true';
+  el.setAttribute('data-checked', checked?'false':'true');
+  el.className = checked ? 'check-item' : 'check-item checked';
+  cb.textContent = checked ? '' : '\u2713';
   updateProgress();
 }
 
-function buildRadioGroup(containerId, items, name) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  items.forEach((item, i) => {
-    const div = document.createElement('div');
+// BUILD RADIOS
+function buildRadios(containerId, items, name) {
+  var c = document.getElementById(containerId);
+  c.innerHTML = '';
+  items.forEach(function(item,i){
+    var div = document.createElement('div');
     div.className = 'radio-item';
-    div.id = `ri_${name}_${i}`;
-    div.dataset.name = name;
-    div.dataset.val = item;
-    div.dataset.selected = 'false';
-    div.innerHTML = `<input type="radio" name="${name}"/>${item}`;
-    div.onclick = () => selectRadio(name, i);
-    container.appendChild(div);
+    div.id = 'ri_'+name+'_'+i;
+    div.setAttribute('data-name',name);
+    div.setAttribute('data-val',item);
+    div.setAttribute('data-sel','false');
+    div.setAttribute('onclick','selectRadio("'+name+'",'+i+')');
+    div.textContent = item;
+    c.appendChild(div);
   });
 }
 
 function selectRadio(name, idx) {
-  document.querySelectorAll(`[data-name="${name}"]`).forEach(el => {
-    el.classList.remove('selected');
-    el.dataset.selected = 'false';
+  document.querySelectorAll('[data-name="'+name+'"]').forEach(function(el){
+    el.className='radio-item'; el.setAttribute('data-sel','false');
   });
-  const el = document.getElementById(`ri_${name}_${idx}`);
-  if (el) { el.classList.add('selected'); el.dataset.selected = 'true'; }
+  var el = document.getElementById('ri_'+name+'_'+idx);
+  if(el){ el.className='radio-item selected'; el.setAttribute('data-sel','true'); }
   updateProgress();
 }
 
-function toggleSection(id) {
-  document.getElementById(id).classList.toggle('collapsed');
-}
-
-// ══════════════════════════════════════════
-// PROGRESS
-// ══════════════════════════════════════════
-function updateProgress() {
-  const filled = ['nom','prenom','club'].filter(f => document.getElementById(f)?.value.trim()).length;
-  document.getElementById('progressFill').style.width = Math.min(100, filled * 30) + '%';
-}
-
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
-function v(id) { return document.getElementById(id)?.value || ''; }
-
 function getRadioVal(name) {
-  const el = document.querySelector(`[data-name="${name}"][data-selected="true"]`);
-  return el ? el.dataset.val : '—';
+  var el = document.querySelector('[data-name="'+name+'"][data-sel="true"]');
+  return el ? el.getAttribute('data-val') : '—';
 }
 
-function getCheckedItems(prefix, items) {
-  return items.filter((_, i) => {
-    const el = document.getElementById(`ci_${prefix}_${i}`);
-    return el && el.dataset.checked === 'true';
+function getChecked(prefix, items) {
+  return items.filter(function(_,i){
+    var el = document.getElementById('ci_'+prefix+'_'+i);
+    return el && el.getAttribute('data-checked')==='true';
   });
 }
 
-function getCritValues(prefix, crit) {
-  return crit.map((_, i) => ratings[`${prefix}_${i}`] || 0);
+function getRatings(prefix, crit) {
+  return crit.map(function(_,i){ return ratings[prefix+'_'+i]||0; });
 }
 
-// ══════════════════════════════════════════
-// SAUVEGARDER / CHARGER
-// ══════════════════════════════════════════
-function sauvegarder() {
-  if (!currentLevel) return;
-  const crit = getCriteres(currentLevel.id);
-  const data = {
-    levelId: currentLevel.id,
-    nom: v('nom'), prenom: v('prenom'), ddn: v('ddn'),
-    saisons: v('saisons'), dateEntretien: v('dateEntretien'),
-    club: v('club'), poste: v('poste'),
-    coachActuel: v('coachActuel'), coachFutur: v('coachFutur'), respTech: v('respTech'),
-    techRatings: getCritValues('tech', crit.tech),
-    jeuRatings:  getCritValues('jeu',  crit.jeu),
-    attRatings:  getCritValues('att',  crit.att),
-    commentTech: v('commentTech'), commentJeu: v('commentJeu'), commentAtt: v('commentAtt'),
-    presenceEntr: v('presenceEntr'), presenceMatch: v('presenceMatch'), ponctualite: v('ponctualite'),
-    atouts: getCheckedItems('atout', ATOUTS),
-    freins: getCheckedItems('frein', FREINS),
-    commentPotentiel: v('commentPotentiel'),
-    position: getRadioVal('position'), justifPosition: v('justifPosition'),
-    affectation: getRadioVal('affectation'), certitude: getRadioVal('certitude'),
-    argsDecision: v('argsDecision'), conditionsAcces: v('conditionsAcces'),
-    joursEntr: v('joursEntr'), horaires: v('horaires'), seances: v('seances'), programme: v('programme'),
-    clarte: getRadioVal('clarte'),
-    attentes: getCheckedItems('attente', ATTENTES),
-    commentFamille: v('commentFamille'),
-    avisAct: getRadioVal('avisAct'), avisFut: getRadioVal('avisFut'), avisResp: getRadioVal('avisResp'),
-    decisionFinale: getRadioVal('decisionFinale'), motifsDecision: v('motifsDecision'),
-    obj1: v('obj1'), ind1: v('ind1'), ech1: v('ech1'),
-    obj2: v('obj2'), ind2: v('ind2'), ech2: v('ech2'),
-    obj3: v('obj3'), ind3: v('ind3'), ech3: v('ech3'),
+// TOGGLE SECTION
+function toggleSec(id) {
+  var el = document.getElementById(id);
+  if(el.className.indexOf('collapsed')>=0) el.className=el.className.replace(' collapsed','');
+  else el.className+=' collapsed';
+}
+
+// PROGRESS
+function updateProgress() {
+  var n = ['nom','prenom','club'].filter(function(f){ return document.getElementById(f)&&document.getElementById(f).value.trim(); }).length;
+  document.getElementById('progressFill').style.width = Math.min(100,n*30)+'%';
+}
+
+function v(id){ var el=document.getElementById(id); return el?el.value:''; }
+
+// SAVE / LOAD
+function collectData() {
+  if(!currentLevel) return {};
+  var crit = getCriteres(currentLevel.id);
+  return {
+    levelId:currentLevel.id,
+    nom:v('nom'),prenom:v('prenom'),ddn:v('ddn'),saisons:v('saisons'),
+    dateEntretien:v('dateEntretien'),club:v('club'),poste:v('poste'),
+    coachActuel:v('coachActuel'),coachFutur:v('coachFutur'),respTech:v('respTech'),
+    techR:getRatings('tech',crit.tech),jeuR:getRatings('jeu',crit.jeu),attR:getRatings('att',crit.att),
+    commentTech:v('commentTech'),commentJeu:v('commentJeu'),commentAtt:v('commentAtt'),
+    presenceEntr:v('presenceEntr'),presenceMatch:v('presenceMatch'),ponctualite:v('ponctualite'),
+    atouts:getChecked('atout',ATOUTS),freins:getChecked('frein',FREINS),
+    commentPotentiel:v('commentPotentiel'),
+    pos:getRadioVal('pos'),justifPosition:v('justifPosition'),
+    aff:getRadioVal('aff'),cert:getRadioVal('cert'),
+    argsDecision:v('argsDecision'),conditionsAcces:v('conditionsAcces'),
+    joursEntr:v('joursEntr'),horaires:v('horaires'),seances:v('seances'),programme:v('programme'),
+    clarte:getRadioVal('clarte'),attentes:getChecked('attente',ATTENTES),commentFamille:v('commentFamille'),
+    avisAct:getRadioVal('avisAct'),avisFut:getRadioVal('avisFut'),avisResp:getRadioVal('avisResp'),
+    dec:getRadioVal('dec'),motifsDecision:v('motifsDecision'),
+    obj1:v('obj1'),ind1:v('ind1'),ech1:v('ech1'),
+    obj2:v('obj2'),ind2:v('ind2'),ech2:v('ech2'),
+    obj3:v('obj3'),ind3:v('ind3'),ech3:v('ech3')
   };
-  localStorage.setItem('onesport_bilan_' + currentLevel.id, JSON.stringify(data));
-  showToast('Sauvegardé ✓');
+}
+
+function sauver() {
+  if(!currentLevel) return;
+  localStorage.setItem('onesport_bilan_'+currentLevel.id, JSON.stringify(collectData()));
+  showToast('Sauvegarde OK');
 }
 
 function charger() {
-  if (!currentLevel) return;
-  const raw = localStorage.getItem('onesport_bilan_' + currentLevel.id);
-  if (!raw) { showToast('Aucune sauvegarde'); return; }
+  if(!currentLevel) return;
+  var raw = localStorage.getItem('onesport_bilan_'+currentLevel.id);
+  if(!raw){showToast('Aucune sauvegarde');return;}
   try {
-    const d = JSON.parse(raw);
-    const crit = getCriteres(currentLevel.id);
+    var d = JSON.parse(raw);
+    var crit = getCriteres(currentLevel.id);
     ['nom','prenom','ddn','saisons','dateEntretien','club','poste','coachActuel','coachFutur','respTech',
      'commentTech','commentJeu','commentAtt','presenceEntr','presenceMatch','ponctualite',
      'commentPotentiel','justifPosition','argsDecision','conditionsAcces',
      'joursEntr','horaires','seances','programme','commentFamille','motifsDecision',
-     'obj1','ind1','ech1','obj2','ind2','ech2','obj3','ind3','ech3'].forEach(k => {
-      const el = document.getElementById(k); if (el && d[k] !== undefined) el.value = d[k];
+     'obj1','ind1','ech1','obj2','ind2','ech2','obj3','ind3','ech3'].forEach(function(k){
+      var el=document.getElementById(k); if(el&&d[k]!==undefined) el.value=d[k];
     });
-    (d.techRatings||[]).forEach((v,i) => setRating(`tech_${i}`, v));
-    (d.jeuRatings||[]).forEach((v,i)  => setRating(`jeu_${i}`, v));
-    (d.attRatings||[]).forEach((v,i)  => setRating(`att_${i}`, v));
-    (d.atouts||[]).forEach(val => { const i=ATOUTS.indexOf(val); if(i>=0){const el=document.getElementById(`ci_atout_${i}`);if(el&&el.dataset.checked==='false')toggleCheck(`atout_${i}`,el);} });
-    (d.freins||[]).forEach(val => { const i=FREINS.indexOf(val); if(i>=0){const el=document.getElementById(`ci_frein_${i}`);if(el&&el.dataset.checked==='false')toggleCheck(`frein_${i}`,el);} });
-    (d.attentes||[]).forEach(val => { const i=ATTENTES.indexOf(val); if(i>=0){const el=document.getElementById(`ci_attente_${i}`);if(el&&el.dataset.checked==='false')toggleCheck(`attente_${i}`,el);} });
-    ['position','affectation','certitude','clarte','avisAct','avisFut','avisResp','decisionFinale'].forEach(name => {
-      if (!d[name] || d[name]==='—') return;
-      document.querySelectorAll(`[data-name="${name}"]`).forEach((el,i) => {
-        if (el.dataset.val === d[name]) selectRadio(name, i);
-      });
+    (d.techR||[]).forEach(function(v,i){setRating('tech_'+i,v);});
+    (d.jeuR||[]).forEach(function(v,i){setRating('jeu_'+i,v);});
+    (d.attR||[]).forEach(function(v,i){setRating('att_'+i,v);});
+    (d.atouts||[]).forEach(function(val){var i=ATOUTS.indexOf(val);if(i>=0&&document.getElementById('ci_atout_'+i)&&document.getElementById('ci_atout_'+i).getAttribute('data-checked')!=='true')toggleCheck('atout_'+i);});
+    (d.freins||[]).forEach(function(val){var i=FREINS.indexOf(val);if(i>=0&&document.getElementById('ci_frein_'+i)&&document.getElementById('ci_frein_'+i).getAttribute('data-checked')!=='true')toggleCheck('frein_'+i);});
+    (d.attentes||[]).forEach(function(val){var i=ATTENTES.indexOf(val);if(i>=0&&document.getElementById('ci_attente_'+i)&&document.getElementById('ci_attente_'+i).getAttribute('data-checked')!=='true')toggleCheck('attente_'+i);});
+    ['pos','aff','cert','clarte','avisAct','avisFut','avisResp','dec'].forEach(function(name){
+      if(!d[name]||d[name]==='—') return;
+      var els=document.querySelectorAll('[data-name="'+name+'"]');
+      els.forEach(function(el,i){if(el.getAttribute('data-val')===d[name])selectRadio(name,i);});
     });
-    showToast('Chargé ✓');
-  } catch(e) { console.error(e); }
+    showToast('Charge OK');
+  } catch(e){console.error(e);}
 }
 
-function reinitialiser() {
-  if (!confirm('Réinitialiser ce formulaire ?')) return;
-  if (currentLevel) localStorage.removeItem('onesport_bilan_' + currentLevel.id);
+function reinit() {
+  if(!confirm('Reinitialiser ?')) return;
+  if(currentLevel) localStorage.removeItem('onesport_bilan_'+currentLevel.id);
   location.reload();
 }
 
-// ══════════════════════════════════════════
 // PDF
-// ══════════════════════════════════════════
-function genererPDF() {
-  if (!currentLevel) return;
-  const lv = currentLevel;
-  const crit = getCriteres(lv.id);
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+function genPDF() {
+  if(!currentLevel){alert('Selectionnez un niveau d abord');return;}
+  var lv = currentLevel;
+  var crit = getCriteres(lv.id);
+  var d = collectData();
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,H=297,ML=18,MR=18;
+  var y=22;
+  var GOLD=[201,168,76],BLACK=[10,10,10],DARK=[26,26,26],LIGHT=[238,238,238],MUTED=[120,120,120];
 
-  const W=210, H=297, ML=18, MR=18, MT=22;
-  let y = MT;
+  function newPage(){doc.addPage();y=22;doc.setFillColor(201,168,76);doc.rect(0,0,W,2,'F');doc.setFillColor(10,10,10);doc.rect(0,2,W,H,'F');}
+  function chk(n){if(y+n>H-18)newPage();}
+  function secH(t){chk(14);doc.setFillColor(26,26,26);doc.rect(ML-4,y-4,W-ML-MR+8,12,'F');doc.setFillColor(201,168,76);doc.rect(ML-4,y-4,3,12,'F');doc.setTextColor(201,168,76);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(t.toUpperCase(),ML+4,y+4);y+=15;}
+  function rRow(label,score){chk(8);doc.setTextColor(238,238,238);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(label,ML,y);for(var s=1;s<=5;s++){doc.setTextColor(s<=score?201:80,s<=score?168:80,s<=score?76:80);doc.text('*',115+(s-1)*8,y);}doc.setTextColor(120,120,120);doc.setFontSize(8);doc.text(score+'/5',158,y);y+=7;}
+  function cBox(label,text){if(!text)return;chk(14);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(label.toUpperCase(),ML,y);y+=4;doc.setTextColor(238,238,238);doc.setFont('helvetica','normal');doc.setFontSize(9);var lines=doc.splitTextToSize(text,W-ML-MR);chk(lines.length*5+4);doc.setFillColor(18,18,18);doc.rect(ML-2,y-3,W-ML-MR+4,lines.length*5+4,'F');doc.text(lines,ML,y);y+=lines.length*5+8;}
 
-  const GOLD=[201,168,76], BLACK=[10,10,10], DARK=[26,26,26],
-        LIGHT=[238,238,238], MUTED=[120,120,120];
-
-  function newPage() {
-    doc.addPage(); y = MT;
-    doc.setFillColor(...GOLD); doc.rect(0,0,W,2,'F');
-    doc.setFillColor(...BLACK); doc.rect(0,2,W,H,'F');
+  // COVER
+  doc.setFillColor(10,10,10);doc.rect(0,0,W,H,'F');
+  doc.setFillColor(201,168,76);doc.rect(0,0,W,3,'F');
+  doc.setFillColor(26,26,26);doc.rect(0,0,6,H,'F');
+  doc.setTextColor(201,168,76);doc.setFont('helvetica','bold');doc.setFontSize(30);
+  doc.text('DOSSIER DE',ML+10,55);doc.text('POSITIONNEMENT',ML+10,70);
+  doc.setTextColor(238,238,238);doc.text('SPORTIF',ML+10,85);
+  doc.setFillColor(201,168,76);doc.rect(ML+10,92,70,0.8,'F');
+  doc.setTextColor(120,120,120);doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('CATEGORIE '+lv.label+' — '+lv.age.toUpperCase(),ML+10,102);
+  doc.text('TRANSITION : '+lv.trans.toUpperCase(),ML+10,110);
+  doc.text('SAISON '+lv.saison,ML+10,118);
+  if(d.nom){
+    doc.setFillColor(26,26,26);doc.rect(ML+6,130,W-ML-MR-6,34,'F');
+    doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('JOUEUR',ML+14,140);
+    doc.setTextColor(238,238,238);doc.setFontSize(20);doc.text((d.prenom+' '+d.nom).toUpperCase(),ML+14,152);
+    if(d.club){doc.setTextColor(120,120,120);doc.setFontSize(10);doc.text(d.club.toUpperCase(),ML+14,160);}
   }
-  function checkY(n=20) { if (y+n > H-18) newPage(); }
+  doc.setFillColor(201,168,76);doc.rect(W-MR-38,128,34,18,'F');
+  doc.setTextColor(0,0,0);doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text(lv.label,W-MR-28,141);
+  doc.setFillColor(26,26,26);doc.rect(ML+6,206,W-ML-MR-6,44,'F');
+  var infos=[['ENTRETIEN',d.dateEntretien||'—'],['COACH ACTUEL',d.coachActuel||'—'],['FUTUR COACH',d.coachFutur||'—'],['RESP. TECH',d.respTech||'—']];
+  infos.forEach(function(inf,i){var x=ML+14+(i>=2?(W-ML-MR-6)/2:0);var yy=206+12+(i%2)*18;doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(inf[0],x,yy);doc.setTextColor(238,238,238);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text(inf[1],x,yy+6);});
+  doc.setTextColor(120,120,120);doc.setFontSize(7);doc.text('ONE SPORT FOOTBALL — FLANDRE TECH — onesport.fr',ML+10,H-10);
+  doc.setFillColor(201,168,76);doc.rect(0,H-3,W,3,'F');
 
-  function secHeader(title) {
-    checkY(16);
-    doc.setFillColor(...DARK); doc.rect(ML-4, y-4, W-ML-MR+8, 13,'F');
-    doc.setFillColor(...GOLD); doc.rect(ML-4, y-4, 3, 13,'F');
-    doc.setTextColor(...GOLD); doc.setFont('helvetica','bold'); doc.setFontSize(10);
-    doc.text(title.toUpperCase(), ML+4, y+5);
-    y += 17;
-  }
-
-  function ratingRow(label, score) {
-    checkY(9);
-    doc.setTextColor(...LIGHT); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    doc.text(label, ML, y);
-    for (let s=1;s<=5;s++) {
-      doc.setTextColor(s<=score ? ...[...GOLD] : ...[...MUTED]);
-      doc.text('★', 115+(s-1)*8, y);
-    }
-    doc.setTextColor(...MUTED); doc.setFontSize(8);
-    doc.text(`${score}/5`, 158, y);
-    y += 7;
-  }
-
-  function commentBox(label, text) {
-    if (!text) return;
-    checkY(16);
-    doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text(label.toUpperCase(), ML, y); y+=4;
-    doc.setTextColor(...LIGHT); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    const lines = doc.splitTextToSize(text, W-ML-MR);
-    checkY(lines.length*5+4);
-    doc.setFillColor(18,18,18); doc.rect(ML-2,y-3,W-ML-MR+4,lines.length*5+4,'F');
-    doc.text(lines, ML, y); y+=lines.length*5+8;
-  }
-
-  // ── COVER ──
-  doc.setFillColor(...BLACK); doc.rect(0,0,W,H,'F');
-  doc.setFillColor(...GOLD);  doc.rect(0,0,W,3,'F');
-  doc.setFillColor(...DARK);  doc.rect(0,0,6,H,'F');
-
-  doc.setTextColor(...GOLD); doc.setFont('helvetica','bold');
-  doc.setFontSize(32); doc.text('DOSSIER DE', ML+10, 55);
-  doc.setFontSize(32); doc.text('POSITIONNEMENT', ML+10, 70);
-  doc.setTextColor(...LIGHT); doc.setFontSize(32); doc.text('SPORTIF', ML+10, 85);
-
-  doc.setFillColor(...GOLD); doc.rect(ML+10, 92, 70, 0.8,'F');
-
-  doc.setTextColor(...MUTED); doc.setFontSize(10); doc.setFont('helvetica','normal');
-  doc.text(`CATÉGORIE ${lv.label.toUpperCase()} — ${lv.age.toUpperCase()}`, ML+10, 102);
-  doc.text(`TRANSITION : ${lv.transition.toUpperCase()}`, ML+10, 110);
-  doc.text(`SAISON ${lv.saison}`, ML+10, 118);
-
-  const pNom = v('nom'), pPrenom = v('prenom');
-  if (pNom) {
-    doc.setFillColor(...DARK); doc.rect(ML+6,132,W-ML-MR-6,34,'F');
-    doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text('JOUEUR', ML+14, 142);
-    doc.setTextColor(...LIGHT); doc.setFontSize(22); doc.setFont('helvetica','bold');
-    doc.text(`${pPrenom} ${pNom}`.toUpperCase(), ML+14, 154);
-    if (v('club')) { doc.setTextColor(...MUTED); doc.setFontSize(10); doc.text(v('club').toUpperCase(), ML+14, 161); }
-    if (v('poste')){ doc.setTextColor(...GOLD); doc.setFontSize(9); doc.text(v('poste').toUpperCase(), ML+14, 168); }
-  }
-
-  // Badge niveau cover
-  doc.setFillColor(...GOLD); doc.rect(W-MR-40, 130, 36, 18,'F');
-  doc.setTextColor(...BLACK); doc.setFont('helvetica','bold'); doc.setFontSize(20);
-  doc.text(lv.label, W-MR-30, 143);
-
-  // infos
-  const iY=208;
-  doc.setFillColor(...DARK); doc.rect(ML+6,iY,W-ML-MR-6,44,'F');
-  const infos=[
-    ['ENTRETIEN',      v('dateEntretien')||'—'],
-    ['COACH ACTUEL',   v('coachActuel')||'—'],
-    ['FUTUR COACH',    v('coachFutur')||'—'],
-    ['RESP. TECHNIQUE',v('respTech')||'—'],
-  ];
-  infos.forEach(([l,val],i) => {
-    const x = ML+14+(i>=2?(W-ML-MR-6)/2:0);
-    const yy = iY+12+(i%2)*18;
-    doc.setTextColor(...MUTED); doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.text(l, x, yy);
-    doc.setTextColor(...LIGHT); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text(val, x, yy+6);
-  });
-
-  doc.setTextColor(...MUTED); doc.setFontSize(7);
-  doc.text('ONE SPORT FOOTBALL — FLANDRE TECH — onesport.fr', ML+10, H-10);
-  doc.setFillColor(...GOLD); doc.rect(0,H-3,W,3,'F');
-
-  // ── PAGE 2 : TECHNIQUE ──
+  // PAGE 2 BILAN
   newPage();
-  secHeader(`Partie 2 — Bilan Saison ${lv.label}`);
+  secH('PARTIE 2 — BILAN SAISON '+lv.label);
+  doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('EVALUATION TECHNIQUE',ML,y);y+=7;
+  crit.tech.forEach(function(c,i){rRow(c,d.techR[i]||0);});
+  cBox('Commentaires techniques',d.commentTech);
+  y+=4;doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('COMPREHENSION DU JEU',ML,y);y+=7;
+  crit.jeu.forEach(function(c,i){rRow(c,d.jeuR[i]||0);});
+  cBox('Commentaires',d.commentJeu);
+  y+=4;doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('ATTITUDE ET COMPORTEMENT',ML,y);y+=7;
+  crit.att.forEach(function(c,i){rRow(c,d.attR[i]||0);});
+  cBox('Commentaires',d.commentAtt);
+  y+=4;doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('ASSIDUITE ET ENGAGEMENT',ML,y);y+=7;
+  [['Presence entrainements',d.presenceEntr+'%'],['Presence matchs',d.presenceMatch+'%'],['Ponctualite',d.ponctualite]].forEach(function(r){chk(8);doc.setTextColor(238,238,238);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(r[0],ML,y);doc.setTextColor(201,168,76);doc.setFont('helvetica','bold');doc.text(r[1],115,y);y+=7;});
 
-  doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('ÉVALUATION TECHNIQUE', ML, y); y+=7;
-  crit.tech.forEach((c,i) => ratingRow(c, ratings[`tech_${i}`]||0));
-  commentBox('Commentaires techniques', v('commentTech'));
-
-  y+=4;
-  doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('COMPRÉHENSION DU JEU', ML, y); y+=7;
-  crit.jeu.forEach((c,i) => ratingRow(c, ratings[`jeu_${i}`]||0));
-  commentBox('Commentaires', v('commentJeu'));
-
-  y+=4;
-  doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('ATTITUDE & COMPORTEMENT', ML, y); y+=7;
-  crit.att.forEach((c,i) => ratingRow(c, ratings[`att_${i}`]||0));
-  commentBox('Commentaires', v('commentAtt'));
-
-  y+=4;
-  doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('ASSIDUITÉ & ENGAGEMENT', ML, y); y+=7;
-  [['Présence entraînements', v('presenceEntr')+'%'],['Présence matchs',v('presenceMatch')+'%'],['Ponctualité',v('ponctualite')]].forEach(([l,val]) => {
-    checkY(8); doc.setTextColor(...LIGHT); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    doc.text(l, ML, y); doc.setTextColor(...GOLD); doc.setFont('helvetica','bold'); doc.text(val, 115, y); y+=7;
-  });
-
-  // ── PAGE 3 : POTENTIEL + DÉCISION ──
+  // PAGE 3
   newPage();
-  secHeader('Partie 3 — Analyse du Potentiel');
-  const atouts = getCheckedItems('atout', ATOUTS);
-  const freins  = getCheckedItems('frein',  FREINS);
-  if (atouts.length) {
-    doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text('ATOUTS IDENTIFIÉS', ML, y); y+=6;
-    atouts.forEach(a => { checkY(7); doc.setTextColor(...LIGHT); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text(`✓  ${a}`, ML+4, y); y+=6; });
-    y+=4;
-  }
-  if (freins.length) {
-    doc.setTextColor(...[200,80,76]); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text('FREINS POTENTIELS', ML, y); y+=6;
-    freins.forEach(f => { checkY(7); doc.setTextColor(...LIGHT); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text(`⚑  ${f}`, ML+4, y); y+=6; });
-    y+=4;
-  }
-  commentBox('Analyse du potentiel', v('commentPotentiel'));
+  secH('PARTIE 3 — POTENTIEL');
+  if(d.atouts&&d.atouts.length){doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('ATOUTS',ML,y);y+=6;d.atouts.forEach(function(a){chk(7);doc.setTextColor(238,238,238);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('+ '+a,ML+4,y);y+=6;});y+=4;}
+  if(d.freins&&d.freins.length){doc.setTextColor(200,80,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('FREINS',ML,y);y+=6;d.freins.forEach(function(f){chk(7);doc.setTextColor(238,238,238);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('- '+f,ML+4,y);y+=6;});y+=4;}
+  cBox('Analyse du potentiel',d.commentPotentiel);
+  y+=6;secH('PARTIE 4 — POSITIONNEMENT');
+  chk(10);doc.setTextColor(238,238,238);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('Position estimee :',ML,y);doc.setTextColor(201,168,76);doc.setFont('helvetica','bold');doc.text(d.pos,ML+42,y);y+=10;
+  cBox('Justification',d.justifPosition);
+  y+=6;secH('PARTIES 5-6 — AFFECTATION');
+  [['Affectation proposee',d.aff],['Niveau de certitude',d.cert]].forEach(function(r){chk(14);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(r[0].toUpperCase(),ML,y);y+=5;doc.setTextColor(201,168,76);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.text(r[1],ML,y);y+=10;});
+  cBox('Arguments',d.argsDecision);cBox('Conditions',d.conditionsAcces);
 
-  y+=6;
-  secHeader('Partie 4 — Positionnement dans le Groupe');
-  checkY(10); doc.setTextColor(...LIGHT); doc.setFontSize(9); doc.setFont('helvetica','normal');
-  doc.text('Position estimée :', ML, y);
-  doc.setTextColor(...GOLD); doc.setFont('helvetica','bold');
-  doc.text(getRadioVal('position'), ML+40, y); y+=10;
-  commentBox('Justification', v('justifPosition'));
-
-  y+=6;
-  secHeader(`Parties 5-6 — Affectation — ${lv.transition}`);
-  [['Affectation proposée',getRadioVal('affectation')],['Niveau de certitude',getRadioVal('certitude')]].forEach(([l,val]) => {
-    checkY(14); doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','bold');
-    doc.text(l.toUpperCase(), ML, y); y+=5;
-    doc.setTextColor(...GOLD); doc.setFontSize(12); doc.setFont('helvetica','bold');
-    doc.text(val, ML, y); y+=10;
-  });
-  commentBox('Arguments', v('argsDecision'));
-  commentBox("Conditions d'évolution", v('conditionsAcces'));
-
-  // ── PAGE 4 : PROJET + FAMILLE + DÉCISION ──
+  // PAGE 4
   newPage();
-  secHeader('Partie 7 — Projet Sportif Saison Suivante');
-  [["Jours d'entraînement",v('joursEntr')],['Horaires',v('horaires')],['Séances / semaine',v('seances')]].forEach(([l,val]) => {
-    if(!val) return; checkY(9);
-    doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.text(l, ML, y);
-    doc.setTextColor(...LIGHT); doc.setFont('helvetica','bold'); doc.text(val, ML+55, y); y+=8;
-  });
-  commentBox('Programme prévisionnel', v('programme'));
-
-  y+=6;
-  secHeader('Partie 8 — Retour Joueur & Famille');
-  checkY(9); doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text('Clarté des informations :', ML, y);
-  doc.setTextColor(...LIGHT); doc.setFont('helvetica','bold'); doc.text(getRadioVal('clarte'), ML+50, y); y+=10;
-  const att = getCheckedItems('attente', ATTENTES);
-  if (att.length) {
-    doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.text('ATTENTES', ML, y); y+=6;
-    att.forEach(a => { checkY(6); doc.setTextColor(...LIGHT); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text(`•  ${a}`, ML+4, y); y+=6; });
-    y+=4;
-  }
-  commentBox('Commentaires famille', v('commentFamille'));
-
-  y+=6;
-  secHeader('Parties 9-10 — Décision Collégiale');
-  [['Coach actuel',getRadioVal('avisAct')],['Futur coach',getRadioVal('avisFut')],['Resp. Technique',getRadioVal('avisResp')]].forEach(([l,val]) => {
-    checkY(9); doc.setTextColor(...MUTED); doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.text(l, ML, y);
-    const col = val==='Favorable'?[39,174,96]:val==='Défavorable'?[231,76,60]:GOLD;
-    doc.setTextColor(...col); doc.setFont('helvetica','bold'); doc.text(val, ML+42, y); y+=8;
-  });
-  y+=4;
-  doc.setFillColor(...DARK); doc.rect(ML-4,y-4,W-ML-MR+8,18,'F');
-  doc.setFillColor(...GOLD); doc.rect(ML-4,y-4,3,18,'F');
-  doc.setTextColor(...MUTED); doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.text('DÉCISION FINALE', ML+4, y+2);
-  doc.setTextColor(...GOLD); doc.setFontSize(12); doc.text(getRadioVal('decisionFinale'), ML+4, y+12); y+=24;
-  commentBox('Motifs principaux', v('motifsDecision'));
-
-  // PLAN
-  if (v('obj1')||v('obj2')||v('obj3')) {
-    y+=4; secHeader('Plan de Progression Individuel');
-    doc.setFillColor(...DARK); doc.rect(ML-2,y-4,W-ML-MR+4,10,'F');
-    doc.setTextColor(...MUTED); doc.setFontSize(7); doc.setFont('helvetica','bold');
-    doc.text('N°',ML,y+2); doc.text('OBJECTIF',ML+12,y+2); doc.text('INDICATEUR',ML+85,y+2); doc.text('ÉCHÉANCE',ML+145,y+2); y+=13;
-    [[v('obj1'),v('ind1'),v('ech1')],[v('obj2'),v('ind2'),v('ech2')],[v('obj3'),v('ind3'),v('ech3')]].filter(r=>r[0]).forEach(([o,ind,e],i) => {
-      checkY(12); doc.setFillColor(16,16,16); doc.rect(ML-2,y-4,W-ML-MR+4,12,'F');
-      doc.setTextColor(...GOLD); doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.text(String(i+1), ML, y+2);
-      doc.setTextColor(...LIGHT); doc.setFont('helvetica','normal'); doc.setFontSize(8);
-      doc.text(doc.splitTextToSize(o,68)[0]||'', ML+12, y+2);
-      doc.text(doc.splitTextToSize(ind,55)[0]||'', ML+85, y+2);
-      doc.setTextColor(...GOLD); doc.text(e||'', ML+145, y+2); y+=13;
-    });
+  secH('PARTIE 7 — PROJET SAISON SUIVANTE');
+  [['Jours entrainement',d.joursEntr],['Horaires',d.horaires],['Seances/semaine',d.seances]].forEach(function(r){if(!r[1])return;chk(9);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(r[0],ML,y);doc.setTextColor(238,238,238);doc.setFont('helvetica','bold');doc.text(r[1],ML+55,y);y+=8;});
+  cBox('Programme',d.programme);
+  y+=6;secH('PARTIE 8 — RETOUR FAMILLE');
+  chk(9);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Clarte :',ML,y);doc.setTextColor(238,238,238);doc.setFont('helvetica','bold');doc.text(d.clarte,ML+24,y);y+=10;
+  if(d.attentes&&d.attentes.length){doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('ATTENTES',ML,y);y+=6;d.attentes.forEach(function(a){chk(6);doc.setTextColor(238,238,238);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('• '+a,ML+4,y);y+=6;});y+=4;}
+  cBox('Commentaires famille',d.commentFamille);
+  y+=6;secH('PARTIES 9-10 — DECISION COLLEGIALE');
+  [['Coach actuel',d.avisAct],['Futur coach',d.avisFut],['Resp. Technique',d.avisResp]].forEach(function(r){chk(9);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(r[0],ML,y);var col=r[1]==='Favorable'?[39,174,96]:r[1]==='Defavorable'?[231,76,60]:[201,168,76];doc.setTextColor(col[0],col[1],col[2]);doc.setFont('helvetica','bold');doc.text(r[1],ML+42,y);y+=8;});
+  y+=4;doc.setFillColor(26,26,26);doc.rect(ML-4,y-4,W-ML-MR+8,18,'F');doc.setFillColor(201,168,76);doc.rect(ML-4,y-4,3,18,'F');
+  doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text('DECISION FINALE',ML+4,y+2);
+  doc.setTextColor(201,168,76);doc.setFontSize(12);doc.text(d.dec,ML+4,y+12);y+=24;
+  cBox('Motifs',d.motifsDecision);
+  if(d.obj1||d.obj2||d.obj3){
+    y+=4;secH('PLAN DE PROGRESSION');
+    doc.setFillColor(26,26,26);doc.rect(ML-2,y-4,W-ML-MR+4,10,'F');doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','bold');
+    doc.text('N',ML,y+2);doc.text('OBJECTIF',ML+10,y+2);doc.text('INDICATEUR',ML+85,y+2);doc.text('ECHEANCE',ML+148,y+2);y+=12;
+    [[d.obj1,d.ind1,d.ech1],[d.obj2,d.ind2,d.ech2],[d.obj3,d.ind3,d.ech3]].filter(function(r){return r[0];}).forEach(function(r,i){chk(12);doc.setFillColor(16,16,16);doc.rect(ML-2,y-4,W-ML-MR+4,12,'F');doc.setTextColor(201,168,76);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(String(i+1),ML,y+2);doc.setTextColor(238,238,238);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text(doc.splitTextToSize(r[0]||'',68)[0]||'',ML+10,y+2);doc.text(doc.splitTextToSize(r[1]||'',55)[0]||'',ML+85,y+2);doc.setTextColor(201,168,76);doc.text(r[2]||'',ML+148,y+2);y+=13;});
   }
 
-  // ── SIGNATURES ──
-  newPage();
-  secHeader('Engagements & Signatures');
-  doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('LE CLUB S\'ENGAGE À', ML, y); y+=7;
-  ['Évaluer chaque joueur selon les mêmes critères','Communiquer de manière transparente','Assurer un suivi de progression','Réévaluer les situations lorsque nécessaire','Favoriser le développement avant toute autre considération'].forEach(e => {
-    checkY(7); doc.setTextColor(...LIGHT); doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.text(`☑  ${e}`, ML+4, y); y+=6;
-  });
-  y+=8; doc.setTextColor(...GOLD); doc.setFontSize(8); doc.setFont('helvetica','bold');
-  doc.text('LE JOUEUR & SA FAMILLE S\'ENGAGENT À', ML, y); y+=7;
-  ['Respecter les éducateurs et les décisions sportives','Maintenir un comportement exemplaire','Favoriser l\'assiduité et la ponctualité','Participer activement au projet proposé','Communiquer de manière constructive avec le club'].forEach(e => {
-    checkY(7); doc.setTextColor(...LIGHT); doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.text(`☑  ${e}`, ML+4, y); y+=6;
-  });
+  // SIGNATURES
+  newPage();secH('ENGAGEMENTS ET SIGNATURES');
+  doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('LE CLUB S ENGAGE A',ML,y);y+=7;
+  ['Evaluer chaque joueur selon les memes criteres','Communiquer de maniere transparente','Assurer un suivi de progression','Reevaluer les situations lorsque necessaire','Favoriser le developpement avant toute autre consideration'].forEach(function(e){chk(7);doc.setTextColor(238,238,238);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('OK  '+e,ML+4,y);y+=6;});
+  y+=8;doc.setTextColor(201,168,76);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('LE JOUEUR ET SA FAMILLE S ENGAGENT A',ML,y);y+=7;
+  ['Respecter les educateurs et les decisions sportives','Maintenir un comportement exemplaire','Favoriser l assiduite et la ponctualite','Participer activement au projet propose','Communiquer de maniere constructive avec le club'].forEach(function(e){chk(7);doc.setTextColor(238,238,238);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('OK  '+e,ML+4,y);y+=6;});
   y+=16;
-  const hw = (W-ML-MR)/2;
-  const sigs=[
-    {l:'Joueur / Joueuse', n:`${pPrenom} ${pNom}`},
-    {l:'Parents / Tuteurs', n:''},
-    {l:'Coach actuel', n:v('coachActuel')},
-    {l:'Futur Coach', n:v('coachFutur')},
-    {l:'Responsable Technique', n:v('respTech')},
-  ];
-  sigs.forEach((s,i) => {
-    const x = ML+(i%2)*(hw+8);
-    if (i%2===0 && i>0) y+=30;
-    checkY(30);
-    doc.setTextColor(...MUTED); doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.text(s.l.toUpperCase(), x, y);
-    if(s.n){doc.setTextColor(...LIGHT);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(s.n,x,y+6);}
-    doc.setDrawColor(...MUTED); doc.line(x, y+20, x+hw-10, y+20);
-    if (i%2===1) y+=30;
+  var hw=(W-ML-MR)/2;
+  [{l:'Joueur',n:d.prenom+' '+d.nom},{l:'Parents',n:''},{l:'Coach actuel',n:d.coachActuel},{l:'Futur Coach',n:d.coachFutur},{l:'Resp. Technique',n:d.respTech}].forEach(function(s,i){
+    var x=ML+(i%2)*(hw+8);if(i%2===0&&i>0)y+=30;chk(30);
+    doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(s.l.toUpperCase(),x,y);
+    if(s.n){doc.setTextColor(238,238,238);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(s.n,x,y+6);}
+    doc.setDrawColor(80,80,80);doc.line(x,y+20,x+hw-10,y+20);
+    if(i%2===1)y+=30;
   });
-  y+=36;
-  doc.setTextColor(...MUTED); doc.setFontSize(8);
-  doc.text(`Fait le : ${v('dateEntretien')||'_____ / _____ / _____'}`, ML, y);
-  doc.text(`À : ${v('club')||'_____________________________'}`, ML+80, y);
+  y+=36;doc.setTextColor(120,120,120);doc.setFontSize(8);doc.text('Fait le : '+(d.dateEntretien||'_______________'),ML,y);doc.text('A : '+(d.club||'_____________________________'),ML+80,y);
 
   // FOOTERS
-  const pc = doc.internal.getNumberOfPages();
-  for(let i=1;i<=pc;i++){
-    doc.setPage(i);
-    doc.setFillColor(...GOLD); doc.rect(0,H-3,W,3,'F');
-    doc.setTextColor(...MUTED); doc.setFontSize(7); doc.setFont('helvetica','normal');
-    doc.text('ONE SPORT FOOTBALL — FLANDRE TECH — onesport.fr', ML, H-6);
-    doc.text(`Page ${i} / ${pc}`, W-MR-12, H-6);
-    if(pNom) doc.text(`${pPrenom} ${pNom} — ${lv.label} — ${lv.saison}`.toUpperCase(), W/2, H-6, {align:'center'});
+  var pc=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pc;p++){
+    doc.setPage(p);
+    doc.setFillColor(201,168,76);doc.rect(0,H-3,W,3,'F');
+    doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('ONE SPORT FOOTBALL — FLANDRE TECH — onesport.fr',ML,H-6);
+    doc.text('Page '+p+' / '+pc,W-MR-12,H-6);
+    if(d.nom) doc.text((d.prenom+' '+d.nom+' — '+lv.label+' — '+lv.saison).toUpperCase(),W/2,H-6,{align:'center'});
   }
 
-  const fname = `Bilan_${lv.label}_${pNom||'joueur'}_${pPrenom||''}_${lv.saison.replace('/','_')}.pdf`.replace(/\s+/g,'_');
-  doc.save(fname);
-  showToast('PDF généré ✓');
+  var fname='Bilan_'+lv.label+'_'+(d.nom||'joueur')+'_'+(d.prenom||'')+'_'+lv.saison.replace('/','_')+'.pdf';
+  doc.save(fname.replace(/\s+/g,'_'));
+  showToast('PDF genere !');
 }
 
-// ══════════════════════════════════════════
 // TOAST
-// ══════════════════════════════════════════
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
 
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function() {
-  buildSelector();
-});
+// START
+window.onload = function() { buildSelector(); };
 </script>
 </body>
 </html>
