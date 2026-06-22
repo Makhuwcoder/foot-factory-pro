@@ -11,7 +11,7 @@
 :root{
   --black:#0A0A0A;--surface:#111111;--surface2:#1A1A1A;
   --border:#333333;--gold:#C9A84C;--gold2:#E8C56A;
-  --text:#FFFFFF;--muted:#AAAAAA;--green:#27AE60;--red:#E74C3C;
+  --text:#FFFFFF;--muted:#FFFFFF;--green:#27AE60;--red:#E74C3C;
 }
 body{background:var(--black);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;}
 
@@ -20,7 +20,7 @@ nav{background:#111;border-bottom:1px solid #333;padding:14px 32px;display:flex;
 nav img{height:36px;filter:invert(1);}
 .nav-sep{width:1px;height:28px;background:#333;}
 nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);}
-.nav-back{margin-left:auto;color:#AAA;text-decoration:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;}
+.nav-back{margin-left:auto;color:#FFFFFF;text-decoration:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;}
 .nav-back:hover{color:#FFF;}
 
 /* WRAPPER */
@@ -32,7 +32,7 @@ nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
 
 .level-header{margin-bottom:36px;}
 .level-header h2{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;color:#FFFFFF;margin-bottom:8px;}
-.level-header p{color:#BBBBBB;font-size:14px;line-height:1.6;}
+.level-header p{color:#FFFFFF;font-size:14px;line-height:1.6;}
 
 .group-label{
   font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.25em;
@@ -49,13 +49,13 @@ nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
 }
 .level-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.6);}
 .lc-age{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px;}
-.lc-label{font-size:11px;color:#CCCCCC;letter-spacing:.05em;}
-.lc-trans{font-size:10px;color:#888;margin-top:4px;}
+.lc-label{font-size:11px;color:#FFFFFF;letter-spacing:.05em;}
+.lc-trans{font-size:10px;color:#FFFFFF;margin-top:4px;}
 
 /* FORM */
 .level-badge{display:inline-flex;align-items:center;gap:12px;background:#1A1A1A;border:1px solid var(--gold);border-radius:3px;padding:10px 18px;margin-bottom:28px;cursor:pointer;}
 .lb-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--gold);}
-.lb-change{font-size:11px;color:#AAA;letter-spacing:.1em;text-transform:uppercase;}
+.lb-change{font-size:11px;color:#FFFFFF;letter-spacing:.1em;text-transform:uppercase;}
 
 .progress-bar{height:3px;background:#222;border-radius:2px;margin-bottom:28px;}
 .progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s;width:0%;}
@@ -64,7 +64,7 @@ nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
 .section-header{background:#1A1A1A;border-bottom:1px solid #333;padding:13px 22px;display:flex;align-items:center;gap:12px;cursor:pointer;}
 .section-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.2em;color:var(--gold);font-weight:700;}
 .section-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#FFFFFF;}
-.section-toggle{margin-left:auto;color:#AAA;font-size:18px;transition:transform .2s;}
+.section-toggle{margin-left:auto;color:#FFFFFF;font-size:18px;transition:transform .2s;}
 .section.collapsed .section-toggle{transform:rotate(-90deg);}
 .section.collapsed .section-body{display:none;}
 .section-body{padding:22px;}
@@ -73,7 +73,7 @@ nav h1{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
 .form-row.full{grid-template-columns:1fr;}
 .form-row.tri{grid-template-columns:1fr 1fr 1fr;}
 .field{display:flex;flex-direction:column;gap:5px;}
-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#AAAAAA;font-weight:600;}
+label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#FFFFFF;font-weight:600;}
 input[type="text"],input[type="date"],input[type="number"],textarea,select{
   background:#0A0A0A;border:1px solid #333;border-radius:3px;
   color:#FFFFFF;font-family:'Barlow',sans-serif;font-size:14px;
@@ -85,7 +85,7 @@ select option{background:#111;color:#FFF;}
 
 /* RATING */
 .rating-grid{width:100%;border-collapse:collapse;}
-.rating-grid th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#AAA;padding:7px 10px;text-align:left;border-bottom:1px solid #333;}
+.rating-grid th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#FFFFFF;padding:7px 10px;text-align:left;border-bottom:1px solid #333;}
 .rating-grid th.c{text-align:center;}
 .rating-grid td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:#FFFFFF;font-size:13px;}
 .rating-grid tr:last-child td{border-bottom:none;}
@@ -110,7 +110,7 @@ select option{background:#111;color:#FFF;}
 
 /* PLAN TABLE */
 .plan-table{width:100%;border-collapse:collapse;}
-.plan-table th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#AAA;padding:9px 10px;text-align:left;border-bottom:1px solid #333;}
+.plan-table th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#FFFFFF;padding:9px 10px;text-align:left;border-bottom:1px solid #333;}
 .plan-table td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);}
 .plan-table input{background:transparent;border:none;border-bottom:1px solid #333;border-radius:0;padding:4px 0;font-size:13px;color:#FFF;}
 .plan-table input:focus{border-bottom-color:var(--gold);outline:none;}
@@ -120,7 +120,7 @@ select option{background:#111;color:#FFF;}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;}
 .btn-primary{background:var(--gold);color:#000;}
 .btn-primary:hover{background:var(--gold2);}
-.btn-secondary{background:transparent;color:#FFF;border:1px solid #444;}
+.btn-secondary{background:transparent;color:#FFFFFF;border:1px solid #666;}
 .btn-secondary:hover{border-color:#FFF;}
 .btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);margin-left:auto;}
 .btn-danger:hover{background:rgba(231,76,60,.1);}
@@ -134,6 +134,27 @@ select option{background:#111;color:#FFF;}
   .level-grid{grid-template-columns:repeat(3,1fr);}
   nav h1{display:none;}
 }
+
+    /* Force white text everywhere */
+    label { color: #FFFFFF !important; }
+    .rating-grid th { color: #FFFFFF !important; }
+    .plan-table th { color: #FFFFFF !important; }
+    .nav-back { color: #FFFFFF !important; }
+    .lc-trans { color: #CCCCCC !important; }
+    .lc-label { color: #FFFFFF !important; }
+    .group-label { color: #FFFFFF !important; }
+    .section-toggle { color: #FFFFFF !important; }
+    .section-num { color: var(--gold) !important; }
+    p[style*="color:#AAA"] { color: #FFFFFF !important; }
+    p[style*="color:"] { color: #FFFFFF !important; }
+    .check-label { color: #FFFFFF !important; }
+    .radio-item { color: #FFFFFF !important; }
+    .lb-change { color: #CCCCCC !important; }
+    input::placeholder { color: #666666 !important; }
+    textarea::placeholder { color: #666666 !important; }
+    .level-header p { color: #FFFFFF !important; }
+    .btn-secondary { color: #FFFFFF !important; }
+
 </style>
 </head>
 <body>
@@ -209,19 +230,19 @@ select option{background:#111;color:#FFF;}
         <span class="section-toggle">&#9660;</span>
       </div>
       <div class="section-body">
-        <p style="color:#AAA;font-size:11px;margin-bottom:12px;letter-spacing:.1em;text-transform:uppercase;">Evaluation technique</p>
+        <p style="color:#FFFFFF;font-size:11px;margin-bottom:12px;letter-spacing:.1em;text-transform:uppercase;">Evaluation technique</p>
         <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="techTable"></tbody></table>
         <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires techniques</label><textarea id="commentTech"></textarea></div></div>
 
-        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Comprehension du jeu</p>
+        <p style="color:#FFFFFF;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Comprehension du jeu</p>
         <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="jeuTable"></tbody></table>
         <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires jeu</label><textarea id="commentJeu"></textarea></div></div>
 
-        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Attitude et Comportement</p>
+        <p style="color:#FFFFFF;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Attitude et Comportement</p>
         <table class="rating-grid"><thead><tr><th>Critere</th><th class="c">1</th><th class="c">2</th><th class="c">3</th><th class="c">4</th><th class="c">5</th></tr></thead><tbody id="attTable"></tbody></table>
         <div class="form-row full" style="margin-top:14px;"><div class="field"><label>Commentaires attitude</label><textarea id="commentAtt"></textarea></div></div>
 
-        <p style="color:#AAA;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Assiduite et Engagement</p>
+        <p style="color:#FFFFFF;font-size:11px;margin:16px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Assiduite et Engagement</p>
         <div class="form-row tri">
           <div class="field"><label>Presence entrainements (%)</label><input type="number" id="presenceEntr" min="0" max="100" value="80"/></div>
           <div class="field"><label>Presence matchs (%)</label><input type="number" id="presenceMatch" min="0" max="100" value="80"/></div>
@@ -326,7 +347,7 @@ select option{background:#111;color:#FFF;}
         </div>
         <div class="form-row full" style="margin-top:16px;"><div class="field"><label>Decision finale</label><div class="radio-group" id="decisionGroup"></div></div></div>
 
-        <p style="color:#AAA;font-size:11px;margin:20px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Plan de Progression Individuel</p>
+        <p style="color:#FFFFFF;font-size:11px;margin:20px 0 12px;letter-spacing:.1em;text-transform:uppercase;">Plan de Progression Individuel</p>
         <table class="plan-table">
           <thead><tr><th style="width:36px">N</th><th>Objectif</th><th>Indicateur de reussite</th><th style="width:88px">Echeance</th></tr></thead>
           <tbody>
