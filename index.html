@@ -1,16 +1,516 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=ffp-accueil.html">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>One Sport</title>
-<style>body{background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Montserrat,sans-serif;color:#1565C0}a{color:#1565C0}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Sport — Choisissez votre univers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0A0A0A;
+      --surface: #111111;
+      --surface2: #181818;
+      --border:  #2a2a2a;
+      --text:    #EEEEEE;
+      --muted:   #777777;
+
+      --football:   #C9A84C;
+      --basketball: #E8630A;
+      --rugby:      #C0392B;
+      --handball:   #1A6FBF;
+      --tennis:     #27AE60;
+      --judo:       #7D3C98;
+      --volleyball: #16A085;
+      --natation:   #2471A3;
+      --cyclisme:   #D4AC0D;
+      --boxe:       #CB4335;
+      --athletisme: #1E8449;
+      --esport:     #6C3483;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── WATERMARK ATHLETE ── */
+    .watermark {
+      position: fixed;
+      bottom: -60px;
+      left: -40px;
+      width: 520px;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+      filter: invert(1);
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .nav-logo img {
+      height: 44px;
+      filter: invert(1) brightness(1);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 60px;
+    }
+
+    .hero-logo {
+      width: min(340px, 70vw);
+      filter: invert(1);
+      margin-bottom: 32px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-line {
+      width: 48px;
+      height: 2px;
+      background: var(--football);
+      margin: 0 auto 24px;
+      animation: fadeIn 1s 0.3s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    .hero-tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(13px, 2vw, 15px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      animation: fadeIn 1s 0.5s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      animation: fadeIn 1s 0.6s ease both;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 460px;
+      line-height: 1.6;
+      animation: fadeIn 1s 0.8s ease both;
+    }
+
+    .hero-arrow {
+      margin-top: 48px;
+      animation: bounce 2s infinite;
+      color: var(--muted);
+      font-size: 22px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(8px); }
+    }
+
+    /* ── SPORTS GRID ── */
+    .sports-section {
+      position: relative;
+      z-index: 1;
+      padding: 60px 40px 100px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .sports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* ── SPORT CARD ── */
+    .sport-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 36px 28px 32px;
+      text-decoration: none;
+      color: var(--text);
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      display: block;
+    }
+
+    .sport-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .sport-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .sport-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .sport-card:hover::after { transform: scaleX(1); }
+
+    /* color per sport */
+    .card-football  { --c: var(--football); }
+    .card-basketball{ --c: var(--basketball); }
+    .card-rugby     { --c: var(--rugby); }
+    .card-handball  { --c: var(--handball); }
+    .card-tennis    { --c: var(--tennis); }
+    .card-judo      { --c: var(--judo); }
+    .card-volleyball{ --c: var(--volleyball); }
+    .card-natation  { --c: var(--natation); }
+    .card-cyclisme  { --c: var(--cyclisme); }
+    .card-boxe      { --c: var(--boxe); }
+    .card-athletisme{ --c: var(--athletisme); }
+    .card-esport    { --c: var(--esport); }
+
+    .sport-card:hover { border-color: var(--c); }
+    .sport-card::after { background: var(--c); }
+
+    .card-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+      display: block;
+      line-height: 1;
+    }
+
+    .card-sport-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      transition: color 0.25s;
+    }
+
+    .sport-card:hover .card-sport-name { color: var(--c); }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.25s, gap 0.25s;
+    }
+
+    .sport-card:hover .card-cta {
+      color: var(--c);
+      gap: 12px;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+    }
+
+    .card-badge.live {
+      background: rgba(39, 174, 96, 0.15);
+      color: #27AE60;
+    }
+
+    /* ── COMING SOON CARD ── */
+    .sport-card.soon {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    footer img {
+      height: 28px;
+      filter: invert(1);
+      opacity: 0.3;
+      margin-bottom: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .sports-section { padding: 40px 16px 80px; }
+      .sports-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .sport-card { padding: 24px 18px 22px; }
+      .card-icon { font-size: 30px; margin-bottom: 12px; }
+      .card-sport-name { font-size: 17px; }
+      .card-desc { display: none; }
+    }
+
+    @media (max-width: 420px) {
+      .sports-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<div style="text-align:center">
-  <div style="font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">One Sport</div>
-  <div style="font-size:12px;color:#888">Chargement... <a href="ffp-accueil.html">Cliquez ici</a> si rien ne se passe.</div>
-</div>
+
+  <!-- WATERMARK -->
+  <img
+    class="watermark"
+    src="logo-one-sport-officiel.png"
+    alt=""
+    aria-hidden="true"
+  />
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <img src="logo-one-sport-officiel.png" alt="One Sport" />
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">À propos</a></li>
+      <li><a href="#">Plateforme</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-logo" src="logo-one-sport-officiel.png" alt="One Sport" />
+    <div class="hero-line"></div>
+    <p class="hero-tagline">La plateforme tout-en-un du coaching sportif</p>
+    <h1 class="hero-title">Choisissez votre sport</h1>
+    <p class="hero-sub">Accédez à votre espace dédié : gestion des joueurs, bilans de saison, convocations et suivi de progression.</p>
+    <div class="hero-arrow">↓</div>
+  </section>
+
+  <!-- SPORTS GRID -->
+  <section class="sports-section">
+    <p class="section-label">Sélectionnez votre discipline</p>
+
+    <div class="sports-grid">
+
+      <!-- FOOTBALL (LIVE) -->
+      <a href="ffp-accueil.html" class="sport-card card-football">
+        <span class="card-badge live">En ligne</span>
+        <span class="card-icon">⚽</span>
+        <div class="card-sport-name">Football</div>
+        <p class="card-desc">Gestion des joueurs, bilans U11→U12, convocations, suivi technique et tactique.</p>
+        <span class="card-cta">Accéder →</span>
+      </a>
+
+      <!-- BASKETBALL -->
+      <a href="basketball/index.html" class="sport-card card-basketball soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🏀</span>
+        <div class="card-sport-name">Basketball</div>
+        <p class="card-desc">Suivi des joueurs, bilans de saison, statistiques match.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- RUGBY -->
+      <a href="rugby/index.html" class="sport-card card-rugby soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🏉</span>
+        <div class="card-sport-name">Rugby</div>
+        <p class="card-desc">Gestion des équipes, suivi physique et tactique.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- HANDBALL -->
+      <a href="handball/index.html" class="sport-card card-handball soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🤾</span>
+        <div class="card-sport-name">Handball</div>
+        <p class="card-desc">Bilans de saison, gestion des groupes, convocations.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- TENNIS -->
+      <a href="tennis/index.html" class="sport-card card-tennis soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🎾</span>
+        <div class="card-sport-name">Tennis</div>
+        <p class="card-desc">Suivi individuel, classements, progression technique.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- JUDO -->
+      <a href="judo/index.html" class="sport-card card-judo soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🥋</span>
+        <div class="card-sport-name">Judo</div>
+        <p class="card-desc">Suivi des judokas, passage de grades, bilans.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- VOLLEYBALL -->
+      <a href="volleyball/index.html" class="sport-card card-volleyball soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🏐</span>
+        <div class="card-sport-name">Volleyball</div>
+        <p class="card-desc">Gestion des équipes, suivi des performances.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- NATATION -->
+      <a href="natation/index.html" class="sport-card card-natation soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🏊</span>
+        <div class="card-sport-name">Natation</div>
+        <p class="card-desc">Chronométrage, suivi des nages, progression.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- ATHLETISME -->
+      <a href="athletisme/index.html" class="sport-card card-athletisme soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🏃</span>
+        <div class="card-sport-name">Athlétisme</div>
+        <p class="card-desc">Chronos, sauts, lancers — suivi des performances.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- BOXE -->
+      <a href="boxe/index.html" class="sport-card card-boxe soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🥊</span>
+        <div class="card-sport-name">Boxe</div>
+        <p class="card-desc">Suivi des boxeurs, catégories de poids, bilans.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- CYCLISME -->
+      <a href="cyclisme/index.html" class="sport-card card-cyclisme soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🚴</span>
+        <div class="card-sport-name">Cyclisme</div>
+        <p class="card-desc">Gestion des équipes, performances, courses.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+      <!-- ESPORT -->
+      <a href="esport/index.html" class="sport-card card-esport soon">
+        <span class="card-badge">Bientôt</span>
+        <span class="card-icon">🎮</span>
+        <div class="card-sport-name">Esport</div>
+        <p class="card-desc">Gestion des équipes, performances, tournois.</p>
+        <span class="card-cta">Bientôt disponible</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="logo-one-sport-officiel.png" alt="One Sport" />
+    <p>© 2026 One Sport — FLANDRE TECH · Clichy · France</p>
+    <p style="margin-top:6px;">Toutes les disciplines. Une seule plateforme.</p>
+  </footer>
+
 </body>
 </html>
