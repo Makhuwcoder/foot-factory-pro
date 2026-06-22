@@ -15,7 +15,7 @@
       --surface2: #181818;
       --border:  #2a2a2a;
       --text:    #EEEEEE;
-      --muted:   #777777;
+      --muted:   #FFFFFF;
 
       --football:   #C9A84C;
       --basketball: #E8630A;
@@ -78,7 +78,7 @@
     }
 
     .nav-links a {
-      color: var(--muted);
+      color:#FFFFFF;
       text-decoration: none;
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 13px;
@@ -87,7 +87,7 @@
       transition: color 0.2s;
     }
 
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover { color: #FFFFFF; }
 
     /* ── HERO ── */
     .hero {
@@ -131,7 +131,7 @@
       font-size: clamp(13px, 2vw, 15px);
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--muted);
+      color:#FFFFFF;
       margin-bottom: 12px;
       animation: fadeIn 1s 0.5s ease both;
     }
@@ -149,7 +149,7 @@
 
     .hero-sub {
       font-size: 15px;
-      color: var(--muted);
+      color:#FFFFFF;
       max-width: 460px;
       line-height: 1.6;
       animation: fadeIn 1s 0.8s ease both;
@@ -158,7 +158,7 @@
     .hero-arrow {
       margin-top: 48px;
       animation: bounce 2s infinite;
-      color: var(--muted);
+      color:#FFFFFF;
       font-size: 22px;
     }
 
@@ -181,7 +181,7 @@
       font-size: 12px;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--muted);
+      color:#FFFFFF;
       text-align: center;
       margin-bottom: 48px;
     }
@@ -270,7 +270,7 @@
 
     .card-desc {
       font-size: 13px;
-      color: var(--muted);
+      color:#FFFFFF;
       line-height: 1.5;
       margin-bottom: 28px;
     }
@@ -283,7 +283,7 @@
       font-size: 12px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--muted);
+      color:#FFFFFF;
       transition: color 0.25s, gap 0.25s;
     }
 
@@ -303,7 +303,7 @@
       padding: 3px 8px;
       border-radius: 2px;
       background: rgba(255,255,255,0.05);
-      color: var(--muted);
+      color:#FFFFFF;
     }
 
     .card-badge.live {
@@ -313,7 +313,7 @@
 
     /* ── COMING SOON CARD ── */
     .sport-card.soon {
-      opacity: 0.45;
+      opacity: 0.55;
       pointer-events: none;
     }
 
@@ -324,7 +324,7 @@
       text-align: center;
       padding: 40px 24px;
       border-top: 1px solid var(--border);
-      color: var(--muted);
+      color:#FFFFFF;
       font-size: 12px;
       letter-spacing: 0.08em;
     }
@@ -354,7 +354,18 @@
     @media (max-width: 420px) {
       .sports-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── FORCE WHITE TEXT ── */
+    .hero-tagline, .hero-sub, .hero-arrow,
+    .nav-links a, .section-label,
+    .card-desc, .card-cta, .card-badge,
+    footer p { color: #FFFFFF !important; }
+    .sport-card.soon .card-sport-name,
+    .sport-card.soon .card-desc,
+    .sport-card.soon .card-cta { color: #CCCCCC !important; }
+    .sport-card.soon .card-badge { color: #AAAAAA !important; }
+    .nav-links a:hover { color: #C9A84C !important; }
+</style>
 </head>
 <body>
 
