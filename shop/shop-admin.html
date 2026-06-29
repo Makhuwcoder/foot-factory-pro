@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FFP Shop — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#D4AF37;--gold-l:#FBCB57;--bg:#050400;--bg2:#0A0800;--bg3:#111006;--text:#F0EEE8;--muted:#888;--border:rgba(212,175,55,.12);--red:#E24B4A;--green:#4BC88A}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:var(--bg);color:var(--text)}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:var(--bg2);border:1px solid rgba(212,175,55,.3);border-radius:16px;padding:40px;width:min(400px,92vw);text-align:center}
+.inp{width:100%;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:12px 14px;color:var(--text);font-size:13px;outline:none;margin-bottom:10px;transition:border-color .2s}
+.inp:focus{border-color:rgba(212,175,55,.5)}
+.btn-gold{width:100%;background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+.app{display:none;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-brand{font-family:'Montserrat',sans-serif;font-weight:900;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-sub{font-size:8px;color:var(--green);font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.nav-items{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;margin-bottom:2px;transition:all .2s;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.nav-item:hover{background:rgba(212,175,55,.06);color:var(--text)}
+.nav-item.active{background:rgba(212,175,55,.1);color:var(--gold);border:1px solid rgba(212,175,55,.2)}
+.main{margin-left:220px;padding:24px;min-height:100vh}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.page-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:20px;background:linear-gradient(135deg,#FBCB57,#D4AF37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;text-transform:uppercase}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;border-top-width:2px}
+.kpi-val{font-family:'Montserrat',sans-serif;font-weight:900;font-size:28px;line-height:1;margin-bottom:4px}
+.kpi-lbl{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+td{padding:11px 14px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;border-radius:5px;padding:2px 8px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.badge-green{background:rgba(75,200,138,.12);color:var(--green);border:1px solid rgba(75,200,138,.3)}
+.badge-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.3)}
+.badge-red{background:rgba(226,75,74,.12);color:var(--red);border:1px solid rgba(226,75,74,.3)}
+.badge-gray{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.form-input{background:#111;border:1px solid rgba(212,175,55,.2);border-radius:7px;padding:9px 12px;color:var(--text);font-size:12px;outline:none;width:100%;transition:border-color .2s}
+.form-input:focus{border-color:rgba(212,175,55,.5)}
+.btn-sm{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,#D4AF37,#FBCB57);color:#000}
+.btn-danger{background:rgba(226,75,74,.15);color:var(--red);border:1px solid rgba(226,75,74,.3)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.search-inp{background:#111;border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--text);font-size:12px;outline:none}
+.product-img-preview{width:60px;height:60px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px}
+.page{display:none}.page.active{display:block}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:768px){.sidebar{width:56px}.sidebar-brand,.sidebar-sub,.nav-item span{display:none}.main{margin-left:56px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="login-wrap" class="login-wrap">
+  <div class="login-card">
+    <img src="data:image/webp;base64,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" style="height:48px;filter:drop-shadow(0 0 12px rgba(212,175,55,.5));margin-bottom:16px">
+    <div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#4BC88A;margin-bottom:4px">Shop Admin</div>
+    <div style="font-size:11px;color:#555;font-family:Montserrat,sans-serif;margin-bottom:24px">Gestion e-commerce FFP Shop</div>
+    <input class="inp" id="shop-pass" type="password" placeholder="Mot de passe boutique">
+    <div id="shop-err" style="min-height:16px;font-size:11px;color:var(--red);margin-bottom:8px"></div>
+    <button class="btn-gold" onclick="shopLogin()">Accéder →</button>
+  </div>
+</div>
+
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="data:image/webp;base64,UklGRk4MAABXRUJQVlA4WAoAAAAQAAAAMgAAKwAAQUxQSNgEAAABoC3Jtmnban2MsXlsc+PYtm3burZt27Zt2zaObZ+rvdccaA9rrrn2/YOImAD8/woDT4ER/L+itDFGG2OMFohM3h3GA2KkwkQbJBcl9T+8vHJhIQBdMWIASNH4U6598Kl7b7hoSf96gEK1+R+u3fDLTY2hK0A0UDDmjt8iJjz0RQ9p9DU3tO465/2dk6Cz0kD9i9aTpLNRrPVkK732i6LbDIDnOR46C42Cs/aQ3jpnHWNDKvoZp+wH3t52QYdZh3mokagkojH0V9J675ieOnLob5J8CX9unvkcSXvx5Id5PkwCEZxD2uA9eeTT65b0Km1Yr0Hn/lNvXpQbnd/vBf5X9hWAr7+HyiSiHqL3wZG/rmyC5FUPdQF+J39CFX3fHmQWrZ5hRE/+MT0PgNFKKRGltVHYNB945Z6j3xgJ/Po7JIPB44zoGV1cBdAKiQ0e+q1yrzMB9eRlz/B6mDiDSxjRcfcoQAuyVGj27/Y9/XV1zCBTraFiNMbR0nNTO+QbnbXKwXLyFgDPBp4AjXSlau8M3nNbS1T4soP85dHV/PtoVEcc7qcNLjUIptbIESOzHNSzW9tihRYnv//Dh6dVx/LfK4sAJm9k8HQ8HfmYzgp9GDmIHf4JeRwMkNP/D3rHj8XkYLZLuSy95bqaIsooo24hI7+pUATVbmUIPvSENphDR4YYH2vD/lIoABCU/Ga94xRo5L0cnOPr0DBYRsts/QgYxCocTW/DM9DQv9A7jhEDg6NoA/d/8+G773/x8++r/1y7+o+5yFVKpYk02knHg7UgbVP03JAniLO8HhUtci+d52iYhfSWV8EkkVyDFsVFRUUti4pKioqKWrTRaQpjGKJwMcxtdJ5joZOgAEtSkfPpzrkUn81RMS0OMOLL0B/SsawZJBGG2cDMnj/XRpog50tX7r+G/EDH9VUS3YTSfd6GdB+CCwfbQCFdyZskDxRgGz2/zE10dZXNTOxHQyNWpP/4sYtW5mMTHX8oTHRF/eNWLls0d/7i2XPnLZm3ahoUsv6eln/mJboB2QoyKty/+tfV94j+iJbbaie6XLJJqPAJybeh76PlvmKoDI4XYtAN190Qf91Vt66ApCljcvG2L/NfVVMn0tKOFZ3gbJzOpPu7Skzse3QhfFmnpwueF0IlOBrH2jIbpZen9naGAqDQeumSZYVv0QWmJuZvoOX3VSBxnvNxPC0zLoCGaJ0nJ5Bs/DKd5472uCNEtGOgM02L2btv/4E9e2+CRvxyW24bvkLrwkkKfeg9n4aKCxyN4xjxqHZdurUprSwiqNazd/8aK+jY8BWmeB+Uwhe0wY+HzmICYkVyZAHJmbPjuLaxKIMRdJ4/VlW5cUNjpqocpZQAwKLwX5g6k46NX/FHJkABGi/Set6CvLiBMVOgAaBKtVqFc1nOiZPpWPMZ3qOVAEqaHAjOcyFiwmA5nhEnwSitqq7ev//hqWnjGf4ds+O75lAAoDHROx/KV+EYWsehWMGIo5Be5TD58hSWc+o4urJ/d/aCQqzG0QyWW/Vypri3Dd6i4xA06dy5c6NdIbw0leWcPpYpppZCI6PByc6H1Wo5uX1I3sv05FDcxsBpG8nnJrOcE/qT+1ZASSbk4Pgy7shdyl0j8SgtyRG4JaTClI3k0xOZ4uLruH4uFGIBVlA4IFAHAADwIQCdASozACwAPi0ShkKhoQ3+qgAMAWJbACdMoR+N6P5glRfsH3v45EvXYh+v+6P3V/032Afk32APyH6gHmA/kH9y/cD3qv7B6ivQA/W71hfUL9AD+Gf270uP24+Bz9qv23+A/9cP/NdPPBHveeGfWbjjsy/vv5eebN4A+/j+H8hm8Gcv/l/+A+3L9QOkn6weg7+df3780venv+/qP92/0nuCfyH+a/4n+5/uZ/wPiR/uPLp87f6v3Bf45/Jv8r/fv7t/y/8r/+for9fP7M+wh+tY55zxUN2KMtYjP8fSBjybKLEUk9/IDdOWu9F7r/r6HQlsuPCbQD5bf+nAzEAcGG9pnaOF3qgKIc2qrWH/1Qxn4ijDleAAAP7/T/S3Y8WUhE1TJ7oTXmC8DYTaOTxLeBSUfMDp/0FNGg0ZoGONbMShJGSbv1D3rql1SB5bjcaWSCMR0vT+f94dFWx7Z2q19l3cZH5zmh2uthSWVl0m9uCyMo+fwtZTv4d1YEyXHUIT9rDLNc91tS9fI3AmWPL4kblqaZEq9YQK3pwgiwycjVQYrizGrAIOddMVf07ZXJhNa/9/cU/KI4cUJv9rK5DlJN80jxUr2b3HDcCNEyiUP3His4jxinuEuLk2OdbLtyB7m2D267A9c8fNKC1T88ttUA39UziYDlFDHLkKTFUsySn4/QFCPbybiY+r0PPShsADnJeHiMfF95DtJ1fa0BRP5pBhcl6n8Rpa0iUdpvk2FPJUz6MaeOcTF1TUbqoH2Ybggq9O60F9QkfvmtLeYnHa0kQ2GV8HvKsjkxVyRXH9uUMO2+SRO7TlDKpPsrDbzPH/PSl6tGp6GZ8VGe/K3QwXVX1CmUrztzI7KMCKevywnKzVnmfzj7KxK+YHnh0GmfLR++1QNcBDmBO2Wxax7ok9HPrvz4FWHxSdyIuvCRjltQjuJmYDhhePmPfgdRpAiV+p8tDoLUnvZUIiMC2Bf85mk369cJ+DNWp6vZQPUZybw27HuaXVtWgDRaNdD+aEESFz72ptyAEP/3bl//+7PlhnEmKwWmn3H3w6i4Q7VWcpNcK++IMIldXd+5P+CPM3cOMgMmI10zII/4Uk8M6NRlXllg+jE3DFMiRjiv43uXz8G+Gdz+8d6zxgY6NtNlHa9A9IzlrZ1x+5NtICvx3BCjKu1Dfj4SuiajXgSpNf/JY8Vq5MXw5W0VRiAgJHmXdfi/6OdzhWryUrLwM1V//tr5+Eku4K0XerBvwt9of1P2ydxHKXML1kTAOCi0a3v3+MHp6dpo02feaWzQhG7MJTBgF9EXnJUxCxfJ8C+n1R90NPxDePlPHTNaFA+n5sBEK6RK5heaSjWJuKDxqc4iVtY5VZkZryzQVW/gVa9LXUJa7KXYZfGGnN3rrRTEer7HzNGE5o2YxlzuGSPout2YkWU+NG+2HhfWOZD9H8CG8EdN8UUnlHykTbRn+ZDBYXk8SKr+YYhtPowu2o31Y4YFKCTfU9ttdAc+Xg9LT8CoOXySiFG3LW1HfMlIbLL73gpfBxraQZo3pTohR+7nWWo/Ro8InqVT131fzDCRbMPNyC3NjjgnxfhUeWqo83KQx38ROdB95h7U1fBAQS41xUUeQAfOh9fNZNeqOv6EOgeAMA4ZRBcTZLC+Br4aCX0qSt/Ff2q2fjBGO2Xx2l/o5oUO/8PqL+F08f08b3nmL5VUaecp/h2zy1FKZzuFenaRR7hLeUzVVpKAfmRPVfnmVkdEE/vrZ7zS3fBd8Dm2RBZWVQBNh+67GYOdYVFJj4T7892efmfxYDJBYtLSDI1qpgbaEUnvnk37T3mSkVJLS0GbrjxMssa1YhWBtHP6Z7qzQhyJN+Q/4w61RuGUVgt7FGYRgT3wKCg98R4q+OauETWPPuPpd/SXVmh98VM7MD/Cyhi+fcpUWXc8Rio2cAoRzwJpd4E+EUemxRc5qleaKYL1Dq4DT5xLLzwtYyzQXDmZH3nFURxL1R1RPXGXwYVYraomINI5h9kWv08PG+GHMWYveouxXj5vmL8wIsuYTJebVmFcezJCbLYzR8ksjCXNwOpk21b5w0y7/QhNg7GHv52b1N027cDnuCzD3Xavt74bZ5f3sTQbxQ2HqnMMOGnXd0F08xgIp99dwFzXdGA7/NS/5GLZcjmxINXHi0+XCqceX2wgwklkH9vYkLKwRdAkzHsM6fX/XPzyjxPHxiZ/X7eYd9noOAFtTVPAIr4Umj7xvO3KEaTHpD3izQsCyJYcQ96IvdzlZDF/io+AkDv8HPg50FFuqK1GZeP9z/1IXKECRQqXs43OKXHjzRPtVDhdIBBV7r69FzTIei79GnxE7/cyMsIs8BUO71GjZTM7KPmKd6/5c6oKl2lVpHvd0DL90ttuf9wN2959Iu609YsB23txrKsIB7RNFFv8KfLD/zdPD3IOJRCd25CoPvOX0ieQqAs03by1nn26VHoZmsun3tHRy7x6chgTYFt95GU2/+acfwAyXzAAA=" style="height:26px">
+      <div>
+        <div class="sidebar-brand">FFP Shop</div>
+        <div class="sidebar-sub">Admin</div>
+      </div>
+    </div>
+    <nav class="nav-items">
+      <div class="nav-item active" data-page="dashboard" onclick="loadPage('dashboard')"><span>📊</span><span>Dashboard</span></div>
+      <div class="nav-item" data-page="products" onclick="loadPage('products')"><span>🛍️</span><span>Produits</span></div>
+      <div class="nav-item" data-page="orders" onclick="loadPage('orders')"><span>📦</span><span>Commandes</span></div>
+      <div class="nav-item" data-page="campaigns" onclick="loadPage('campaigns')"><span>📣</span><span>Campagnes</span></div>
+      <div class="nav-item" data-page="settings" onclick="loadPage('settings')"><span>⚙️</span><span>Paramètres</span></div>
+      <div style="border-top:1px solid var(--border);margin:8px 0;padding-top:8px">
+        <div class="nav-item" onclick="window.open('https://www.footfactorypro.shop','_blank')"><span>🌐</span><span>Voir la boutique</span></div>
+        <div class="nav-item" onclick="window.open('ffp-superadmin.html','_self')"><span>🔐</span><span>Admin plateforme</span></div>
+      </div>
+    </nav>
+    <div style="padding:12px;border-top:1px solid var(--border)">
+      <button class="btn-sm btn-ghost" style="width:100%" onclick="shopLogout()">← Déconnexion</button>
+    </div>
+  </aside>
+  
+  <main class="main">
+    <div class="top-bar">
+      <div class="page-title" id="page-title">Dashboard Boutique</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm btn-ghost" onclick="loadPage(CURRENT)">↻ Actualiser</button>
+      </div>
+    </div>
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-products" class="page"></div>
+    <div id="page-orders" class="page"></div>
+    <div id="page-campaigns" class="page"></div>
+    <div id="page-settings" class="page"></div>
+  </main>
+</div>
+
+<script>
+
+var SHOP_PASS = 'FFPShop@2026!';
+var CURRENT = 'dashboard';
+
+// Données en localStorage (pas de backend shop encore)
+function getData(key, def) {
+  try { var r = localStorage.getItem('ffp_shop_admin_' + key); return r ? JSON.parse(r) : def; } catch(e) { return def; }
+}
+function setData(key, val) {
+  try { localStorage.setItem('ffp_shop_admin_' + key, JSON.stringify(val)); } catch(e) {}
+}
+
+// ── Init produits démo ──────────────────────────────────────────
+function initProducts() {
+  if (getData('products', null)) return;
+  setData('products', [
+    {id:'p1',nom:'Crampons Pro Junior',cat:'Équipement',prix:49.9,stock:25,emoji:'👟',actif:true,desc:'Semelle carbone · Tailles 28-42'},
+    {id:'p2',nom:'Pack Chaussettes x3',cat:'Équipement',prix:18.9,stock:50,emoji:'🧦',actif:true,desc:'Anti-ampoules · Tailles 30-46'},
+    {id:'p3',nom:'Gourde FFP 750ml',cat:'FFP Branded',prix:22.9,stock:30,emoji:'💧',actif:true,desc:'Inox · Logo FFP doré'},
+    {id:'p4',nom:'Maillot FFP Collector',cat:'FFP Branded',prix:44.9,stock:15,emoji:'⭐',actif:true,desc:'Édition limitée 2026-27'},
+    {id:'p5',nom:'Sac Coach FFP',cat:'FFP Branded',prix:54.9,stock:10,emoji:'🎒',actif:true,desc:'35L · Broderie FFP'},
+    {id:'p6',nom:'Kit Urgence Coach',cat:'Équipement',prix:24.9,stock:20,emoji:'🩹',actif:true,desc:'Bandages · Spray froid'},
+    {id:'p7',nom:'Ballon Training FFP',cat:'Équipement',prix:34.9,stock:18,emoji:'⚽',actif:true,desc:'Taille 4 & 5'},
+    {id:'p8',nom:'Chasuble FFP x5',cat:'Club',prix:42.9,stock:12,emoji:'🟡',actif:true,desc:'Dossards numérotés'},
+    {id:'p9',nom:'Gants Gardien Pro',cat:'Équipement',prix:28.9,stock:8,emoji:'🧤',actif:true,desc:'Latex négatif'},
+    {id:'p10',nom:'Carnet Tactique',cat:'FFP Branded',prix:14.9,stock:35,emoji:'📋',actif:true,desc:'96 pages · Spirale'},
+    {id:'p11',nom:'Protège-tibias Air',cat:'Équipement',prix:12.9,stock:40,emoji:'🛡️',actif:true,desc:'Ultra-légers 85g'},
+    {id:'p12',nom:'Box Socks Mensuelle',cat:'Abonnement',prix:9.9,stock:999,emoji:'📦',actif:false,desc:'3 paires/mois · En cours'},
+  ]);
+  setData('orders', [
+    {id:'ORD-001',client:'Thomas Bernard',email:'thomas@test.com',produit:'Crampons Pro Junior',montant:49.9,statut:'livré',date:'2026-05-28'},
+    {id:'ORD-002',client:'Marie Dupont',email:'marie@test.com',produit:'Maillot FFP Collector',montant:44.9,statut:'en cours',date:'2026-05-30'},
+    {id:'ORD-003',client:'Lucas Renard',email:'lucas@test.com',produit:'Gourde FFP 750ml',montant:22.9,statut:'expédié',date:'2026-05-31'},
+  ]);
+  setData('campaigns', [
+    {id:'c1',nom:'Début de saison 2026',type:'email',statut:'planifiée',budget:0,reach:'Tous les abonnés FFP',date:'2026-08-01'},
+    {id:'c2',nom:'Code FFPCLUB -15%',type:'promo',statut:'active',budget:0,reach:'Utilisateurs plateforme',date:'2026-06-01'},
+  ]);
+}
+
+// ── Auth ────────────────────────────────────────────────────────
+function shopLogin() {
+  var pass = document.getElementById('shop-pass').value;
+  var err = document.getElementById('shop-err');
+  if (pass === SHOP_PASS) {
+    try { sessionStorage.setItem('ffp_shop_admin', '1'); } catch(e) {}
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initProducts();
+    loadPage('dashboard');
+  } else {
+    err.textContent = 'Mot de passe incorrect.';
+  }
+}
+
+function shopLogout() {
+  try { sessionStorage.removeItem('ffp_shop_admin'); } catch(e) {}
+  location.reload();
+}
+
+// ── Navigation ──────────────────────────────────────────────────
+function loadPage(page) {
+  CURRENT = page;
+  document.querySelectorAll('.nav-item').forEach(function(n){
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+  document.querySelectorAll('.page').forEach(function(p){
+    p.classList.toggle('active', p.id === 'page-' + page);
+  });
+  var titles = {dashboard:'Dashboard Boutique',products:'Produits',orders:'Commandes',campaigns:'Campagnes',settings:'Paramètres'};
+  document.getElementById('page-title').textContent = titles[page] || page;
+  
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'products') loadProducts();
+  else if (page === 'orders') loadOrders();
+  else if (page === 'campaigns') loadCampaigns();
+  else if (page === 'settings') loadSettings();
+}
+
+// ── DASHBOARD ───────────────────────────────────────────────────
+function loadDashboard() {
+  var products = getData('products', []);
+  var orders = getData('orders', []);
+  var ca = orders.reduce(function(s,o){return s+o.montant;}, 0);
+  var actifs = products.filter(function(p){return p.actif;}).length;
+  var stockFaible = products.filter(function(p){return p.stock < 10;}).length;
+  
+  document.getElementById('page-dashboard').innerHTML = 
+    '<div class="kpi-grid">'
+    + kpiCard('CA total', ca.toFixed(2)+' €', '#D4AF37', '💶')
+    + kpiCard('Commandes', orders.length, '#4BC88A', '📦')
+    + kpiCard('Produits actifs', actifs, '#60A8D0', '🛍️')
+    + kpiCard('Stock faible', stockFaible, stockFaible > 0 ? '#E24B4A' : '#4BC88A', '⚠️')
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div class="card"><div class="card-header"><span class="card-title">Dernières commandes</span></div>'
+    + '<table><tr><th>ID</th><th>Client</th><th>Montant</th><th>Statut</th></tr>'
+    + orders.map(function(o){return '<tr><td style="font-family:monospace;font-size:10px">'+o.id+'</td><td>'+o.client+'</td><td style="color:var(--gold);font-weight:700">'+o.montant+'€</td><td>'+statusBadge(o.statut)+'</td></tr>';}).join('')
+    + '</table></div>'
+    + '<div class="card"><div class="card-header"><span class="card-title">Stock critique</span></div>'
+    + '<table><tr><th>Produit</th><th>Stock</th><th>Action</th></tr>'
+    + products.filter(function(p){return p.stock < 15;}).map(function(p){
+        return '<tr><td>'+p.emoji+' '+p.nom+'</td>'
+          +'<td><span class="badge '+(p.stock<5?'badge-red':p.stock<10?'badge-gold':'badge-gray')+'">'+p.stock+'</span></td>'
+          +'<td><button class="btn-sm btn-ghost" onclick="editProduct(\'' + p.id + '\')">Réappro.</button></td></tr>';
+      }).join('')
+    + '</table></div>'
+    + '</div>';
+}
+
+function kpiCard(lbl, val, color, ico) {
+  return '<div class="kpi-card" style="border-top-color:'+color+'">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+    + '<div><div class="kpi-val" style="color:'+color+'">'+val+'</div>'
+    + '<div class="kpi-lbl">'+lbl+'</div></div>'
+    + '<div style="font-size:24px;opacity:.4">'+ico+'</div></div></div>';
+}
+
+function statusBadge(s) {
+  var m = {livré:'badge-green',expédié:'badge-gold','en cours':'badge-gray'};
+  return '<span class="badge '+(m[s]||'badge-gray')+'">'+s+'</span>';
+}
+
+// ── PRODUITS ────────────────────────────────────────────────────
+function loadProducts(filter) {
+  var products = getData('products', []);
+  if (filter) products = products.filter(function(p){return p.cat===filter;});
+  
+  var cats = [...new Set(getData('products',[]).map(function(p){return p.cat;}))];
+  
+  document.getElementById('page-products').innerHTML =
+    '<div class="card">'
+    + '<div class="card-header">'
+    + '<span class="card-title">'+products.length+' produits</span>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    + '<select class="search-inp" onchange="loadProducts(this.value||undefined)">'
+    + '<option value="">Toutes catégories</option>'
+    + cats.map(function(c){return '<option '+(filter===c?'selected':'')+'>'+c+'</option>';}).join('')
+    + '</select>'
+    + '<button class="btn-sm btn-primary" onclick="showAddProduct()">+ Nouveau produit</button>'
+    + '</div></div>'
+    + '<div style="overflow-x:auto"><table>'
+    + '<tr><th></th><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Actions</th></tr>'
+    + products.map(function(p){return '<tr>'
+      + '<td><div class="product-img-preview">'+p.emoji+'</div></td>'
+      + '<td style="font-weight:600">'+p.nom+'<div style="font-size:10px;color:var(--muted)">'+p.desc+'</div></td>'
+      + '<td><span class="badge badge-gray">'+p.cat+'</span></td>'
+      + '<td style="font-family:Montserrat,sans-serif;font-weight:700;color:var(--gold)">'+p.prix.toFixed(2)+' €</td>'
+      + '<td><span class="badge '+(p.stock<5?'badge-red':p.stock<10?'badge-gold':'badge-green')+'">'+p.stock+'</span></td>'
+      + '<td><span class="badge '+(p.actif?'badge-green':'badge-gray')+'">'+(p.actif?'Actif':'Masqué')+'</span></td>'
+      + '<td style="display:flex;gap:4px">'
+      + '<button class="btn-sm btn-ghost" onclick="editProduct(\'' + p.id + '\')">✏️ Modifier</button>'
+      + '<button class="btn-sm btn-danger" onclick="deleteProduct(\'' + p.id + '\')">Supprimer</button>'
+      + '</td></tr>';
+    }).join('')
+    + '</table></div></div>'
+    + '<div id="product-form-wrap"></div>';
+}
+
+function clearProductForm() { document.getElementById("product-form-wrap").innerHTML=""; }
+
+function showAddProduct() {
+  showProductForm(null);
+}
+
+function editProduct(id) {
+  showProductForm(id);
+}
+
+function showProductForm(id) {
+  var products = getData('products', []);
+  var p = id ? products.find(function(x){return x.id===id;}) : {id:'p'+Date.now(),nom:'',cat:'Équipement',prix:0,stock:0,emoji:'📦',actif:true,desc:''};
+  if (!p) return;
+  
+  var html = '<div class="card" style="margin-top:16px">'
+    + '<div class="card-header"><span class="card-title">'+(id?'Modifier':'Nouveau produit')+'</span>'
+    + '<button class="btn-sm btn-ghost" onclick="clearProductForm()">Fermer</button>'
+    + '</div>'
+    + '<div style="padding:18px">'
+    + '<div class="form-grid">'
+    + formField('Nom du produit','text','pf-nom',p.nom,'Nom complet du produit')
+    + formField('Emoji','text','pf-emoji',p.emoji,'📦')
+    + formField('Prix (€)','number','pf-prix',p.prix,'0.00')
+    + formField('Stock','number','pf-stock',p.stock,'0')
+    + formField('Description courte','text','pf-desc',p.desc,'Description...')
+    + '<div class="form-group">'
+    + '<label class="form-label">Catégorie</label>'
+    + '<select class="form-input" id="pf-cat">'
+    + ['Équipement','FFP Branded','Club','Abonnement'].map(function(c){return '<option '+(p.cat===c?'selected':'')+'>'+c+'</option>';}).join('')
+    + '</select></div>'
+    + '</div>'
+    + '<div class="form-group" style="margin-bottom:14px">'
+    + '<label class="form-label">Visible dans la boutique</label>'
+    + '<label style="display:flex;align-items:center;gap:8px;cursor:pointer">'
+    + '<input type="checkbox" id="pf-actif" '+(p.actif?'checked':'')+'> '
+    + '<span style="font-size:12px">Afficher ce produit</span></label>'
+    + '</div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<button class="btn-sm btn-primary" onclick="saveProduct(\'' + p.id + '\','+(id?'true':'false')+')">💾 Enregistrer</button>'
+    + '</div>'
+    + '</div></div>';
+  
+  document.getElementById('product-form-wrap').innerHTML = html;
+  document.getElementById('product-form-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+function formField(label, type, id, val, placeholder) {
+  return '<div class="form-group">'
+    + '<label class="form-label">'+label+'</label>'
+    + '<input class="form-input" type="'+type+'" id="'+id+'" value="'+val+'" placeholder="'+placeholder+'">'
+    + '</div>';
+}
+
+function saveProduct(id, isEdit) {
+  var products = getData('products', []);
+  var newP = {
+    id: id,
+    nom: document.getElementById('pf-nom').value,
+    emoji: document.getElementById('pf-emoji').value || '📦',
+    prix: parseFloat(document.getElementById('pf-prix').value) || 0,
+    stock: parseInt(document.getElementById('pf-stock').value) || 0,
+    desc: document.getElementById('pf-desc').value,
+    cat: document.getElementById('pf-cat').value,
+    actif: document.getElementById('pf-actif').checked
+  };
+  
+  if (isEdit === true || isEdit === 'true') {
+    var idx = products.findIndex(function(p){return p.id===id;});
+    if (idx >= 0) products[idx] = newP; else products.push(newP);
+  } else {
+    products.push(newP);
+  }
+  
+  setData('products', products);
+  loadProducts();
+  alert('✅ Produit enregistré ! Pensez à mettre à jour shop-index.html pour refléter les changements.');
+}
+
+function deleteProduct(id) {
+  if (!confirm('Supprimer ce produit ?')) return;
+  var products = getData('products', []).filter(function(p){return p.id!==id;});
+  setData('products', products);
+  loadProducts();
+}
+
+// ── COMMANDES ───────────────────────────────────────────────────
+function loadOrders() {
+  var orders = getData('orders', []);
+  document.getElementById('page-orders').innerHTML =
+    '<div class="card">'
+    + '<div class="card-header">'
+    + '<span class="card-title">'+orders.length+' commandes</span>'
+    + '<button class="btn-sm btn-primary" onclick="exportOrders()">📥 Exporter CSV</button>'
+    + '</div>'
+    + '<div style="overflow-x:auto"><table>'
+    + '<tr><th>ID</th><th>Client</th><th>Email</th><th>Produit</th><th>Montant</th><th>Date</th><th>Statut</th><th>Action</th></tr>'
+    + orders.map(function(o){return '<tr>'
+      + '<td style="font-family:monospace;font-size:10px;color:var(--muted)">'+o.id+'</td>'
+      + '<td style="font-weight:600">'+o.client+'</td>'
+      + '<td style="font-size:11px;color:var(--muted)">'+o.email+'</td>'
+      + '<td>'+o.produit+'</td>'
+      + '<td style="color:var(--gold);font-weight:700">'+o.montant.toFixed(2)+' €</td>'
+      + '<td style="font-size:10px;color:var(--muted)">'+o.date+'</td>'
+      + '<td>'+statusBadge(o.statut)+'</td>'
+      + '<td><select class="search-inp" style="padding:3px 6px;font-size:10px" onchange="updateOrderStatus(\'' + o.id + '\',this.value)">'
+      + ['en cours','expédié','livré','annulé'].map(function(s){return '<option '+(o.statut===s?'selected':'')+'>'+s+'</option>';}).join('')
+      + '</select></td>'
+      + '</tr>';}).join('')
+    + '</table></div></div>'
+    + '<div style="margin-top:10px;font-size:11px;color:var(--muted);padding:0 4px">⚠️ Les vraies commandes arriveront via Stripe Webhooks une fois les Payment Links configurés.</div>';
+}
+
+function updateOrderStatus(id, status) {
+  var orders = getData('orders', []);
+  orders = orders.map(function(o){return o.id===id ? Object.assign({},o,{statut:status}) : o;});
+  setData('orders', orders);
+}
+
+function exportOrders() {
+  var orders = getData('orders', []);
+  var csv = 'ID,Client,Email,Produit,Montant,Date,Statut\n'
+    + orders.map(function(o){return [o.id,o.client,o.email,o.produit,o.montant,o.date,o.statut].join(',');}).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href=url; a.download='commandes_ffp_shop.csv'; a.click();
+}
+
+// ── CAMPAGNES ───────────────────────────────────────────────────
+function loadCampaigns() {
+  var campaigns = getData('campaigns', []);
+  document.getElementById('page-campaigns').innerHTML =
+    '<div class="card">'
+    + '<div class="card-header"><span class="card-title">Campagnes publicitaires</span>'
+    + '<button class="btn-sm btn-primary" onclick="showAddCampaign()">+ Nouvelle campagne</button>'
+    + '</div>'
+    + '<div style="overflow-x:auto"><table>'
+    + '<tr><th>Nom</th><th>Type</th><th>Cible</th><th>Date</th><th>Statut</th><th>Actions</th></tr>'
+    + campaigns.map(function(c){return '<tr>'
+      + '<td style="font-weight:600">'+c.nom+'</td>'
+      + '<td><span class="badge badge-blue">'+c.type+'</span></td>'
+      + '<td style="font-size:11px;color:var(--muted)">'+c.reach+'</td>'
+      + '<td style="font-size:10px;color:var(--muted)">'+c.date+'</td>'
+      + '<td><span class="badge '+(c.statut==='active'?'badge-green':c.statut==='planifiée'?'badge-gold':'badge-gray')+'">'+c.statut+'</span></td>'
+      + '<td style="display:flex;gap:4px">'
+      + '<button class="btn-sm btn-ghost" onclick="editCampaign(\'' + c.id + '\')">✏️</button>'
+      + '<button class="btn-sm btn-danger" onclick="deleteCampaign(\'' + c.id + '\')">✕</button>'
+      + '</td></tr>';}).join('')
+    + '</table></div></div>'
+    + '<div id="campaign-form-wrap"></div>'
+    + '<div class="card" style="margin-top:16px">'
+    + '<div class="card-header"><span class="card-title">Stratégie marketing FFP Shop</span></div>'
+    + '<div style="padding:18px;display:flex;flex-direction:column;gap:12px">'
+    + idea('🎯','Code FFPCLUB -15%','Actif · Pour tous les abonnés plateforme · Code à partager dans ffp-parents.html')
+    + idea('📧','Email début de saison','À envoyer août 2026 · Cible: 500+ parents · Objet: "Préparez la saison de [prénom]"')
+    + idea('⚽','Recommandation coach','Le coach peut recommander un produit depuis ffp-coach.html → notification parent')
+    + idea('📦','Box mensuelle chaussettes','Abonnement 9,90€/mois · Résiliable · À activer quand stock géré')
+    + '</div></div>';
+}
+
+function idea(ico, titre, desc) {
+  return '<div style="display:flex;gap:12px;padding:12px;background:rgba(212,175,55,.03);border:1px solid var(--border);border-radius:8px">'
+    + '<div style="font-size:20px;flex-shrink:0">'+ico+'</div>'
+    + '<div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:var(--gold);margin-bottom:3px">'+titre+'</div>'
+    + '<div style="font-size:11px;color:var(--muted)">'+desc+'</div></div></div>';
+}
+
+function showAddCampaign() {
+  document.getElementById('campaign-form-wrap').innerHTML = 
+    '<div class="card" style="margin-top:16px"><div class="card-header"><span class="card-title">Nouvelle campagne</span></div>'
+    + '<div style="padding:18px">'
+    + '<div class="form-grid">'
+    + '<div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="cf-nom" placeholder="Nom de la campagne"></div>'
+    + '<div class="form-group"><label class="form-label">Type</label><select class="form-input" id="cf-type"><option>email</option><option>promo</option><option>réseaux sociaux</option><option>notification</option></select></div>'
+    + '<div class="form-group"><label class="form-label">Cible</label><input class="form-input" id="cf-reach" placeholder="Ex: Tous les abonnés FFP"></div>'
+    + '<div class="form-group"><label class="form-label">Date prévue</label><input class="form-input" type="date" id="cf-date"></div>'
+    + '</div>'
+    + '<button class="btn-sm btn-primary" onclick="saveCampaign()">💾 Enregistrer</button>'
+    + '</div></div>';
+}
+
+function saveCampaign() {
+  var campaigns = getData('campaigns', []);
+  campaigns.push({
+    id: 'c'+Date.now(),
+    nom: document.getElementById('cf-nom').value,
+    type: document.getElementById('cf-type').value,
+    reach: document.getElementById('cf-reach').value,
+    date: document.getElementById('cf-date').value,
+    statut: 'planifiée'
+  });
+  setData('campaigns', campaigns);
+  loadCampaigns();
+}
+
+function deleteCampaign(id) {
+  if (!confirm('Supprimer cette campagne ?')) return;
+  setData('campaigns', getData('campaigns',[]).filter(function(c){return c.id!==id;}));
+  loadCampaigns();
+}
+
+function editCampaign(id) { alert('Modification à implémenter.'); }
+
+// ── SETTINGS ────────────────────────────────────────────────────
+function loadSettings() {
+  document.getElementById('page-settings').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div class="card"><div class="card-header"><span class="card-title">Infos boutique</span></div>'
+    + '<div style="padding:18px;display:flex;flex-direction:column;gap:10px">'
+    + info('URL', 'footfactorypro.shop')
+    + info('Hébergement', 'Vercel Hobby')
+    + info('Paiement', 'Stripe (Payment Links à configurer)')
+    + info('Livraison', 'À configurer (Colissimo...)')
+    + info('Email contact', 'contact@footfactorypro.com')
+    + '</div></div>'
+    + '<div class="card"><div class="card-header"><span class="card-title">Liens rapides</span></div>'
+    + '<div style="padding:18px;display:flex;flex-direction:column;gap:8px">'
+    + link('🌐 Voir la boutique', 'https://www.footfactorypro.shop')
+    + link('💳 Dashboard Stripe', 'https://dashboard.stripe.com')
+    + link('🗄️ Supabase', 'https://app.supabase.com')
+    + link('⚡ Vercel', 'https://vercel.com/dashboard')
+    + link('🐙 GitHub Shop', 'https://github.com/Makhuwcoder/ffp-shop')
+    + link('📊 Admin Plateforme', 'ffp-superadmin.html')
+    + '</div></div>'
+    + '<div class="card"><div class="card-header"><span class="card-title">🔴 Prochaines étapes</span></div>'
+    + '<div style="padding:18px;display:flex;flex-direction:column;gap:10px">'
+    + todo('Créer les Payment Links Stripe et les intégrer', false)
+    + todo('Configurer Stripe Webhooks pour commandes automatiques', false)
+    + todo('Ajouter vraies photos produits', false)
+    + todo('Connecter boutique à Supabase pour commandes réelles', false)
+    + todo('Mettre en place suivi Colissimo', false)
+    + '</div></div>'
+    + '</div>';
+}
+
+function info(k, v) {
+  return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">'
+    + '<span style="font-size:11px;color:var(--muted)">'+k+'</span>'
+    + '<span style="font-size:11px;font-family:monospace">'+v+'</span></div>';
+}
+
+function link(label, url) {
+  return '<a href="'+url+'" target="_blank" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.12);border-radius:7px;text-decoration:none;color:#F0EEE8;font-size:11px"><span>'+label+'</span><span>→</span></a>';
+}
+
+function todo(text, done) {
+  return '<div style="display:flex;align-items:center;gap:8px;font-size:12px">'
+    + '<span style="color:'+(done?'var(--green)':'var(--muted)')+'">'+( done?'✅':'○')+'</span>'
+    + '<span style="color:'+(done?'var(--text)':'var(--muted)')+'">'+text+'</span></div>';
+}
+
+// ── INIT ────────────────────────────────────────────────────────
+(function() {
+  try { if (sessionStorage.getItem('ffp_shop_admin') === '1') {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initProducts();
+    loadPage('dashboard');
+  }} catch(e) {}
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      var lw = document.getElementById('login-wrap');
+      if (lw && lw.style.display !== 'none') shopLogin();
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
