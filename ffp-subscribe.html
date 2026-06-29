@@ -78,7 +78,8 @@ function goToStripe() {
   // PLACEHOLDER — à remplacer par vos Payment Links Stripe
   // Format: https://buy.stripe.com/VOTRE_PAYMENT_LINK
   var STRIPE_LINKS = {
-    club_base:     'https://buy.stripe.com/REMPLACER_CLUB_BASE',
+    club_base:     'https://buy.stripe.com/4gM4gz8Zf3s52fX8SE97G08',
+    club_base_plus: 'https://buy.stripe.com/aFaaEX0sJ4w93k15Gs97G09',
     parent_solo:   'https://buy.stripe.com/REMPLACER_PARENT_SOLO',
     parent_joueur: 'https://buy.stripe.com/REMPLACER_PARENT_JOUEUR',
     scout_solo:    'https://buy.stripe.com/REMPLACER_SCOUT_SOLO',
@@ -86,7 +87,9 @@ function goToStripe() {
     scout_premium: 'https://buy.stripe.com/REMPLACER_SCOUT_PREMIUM'
   };
   var email = getParam('email');
+  var coaches = parseInt(getParam('coaches') || '0');
   var link = STRIPE_LINKS[plan] || STRIPE_LINKS.club_base;
+  if (plan === 'club_base' && coaches > 3) link = STRIPE_LINKS.club_base_plus;
   if (email) link += '?prefilled_email=' + encodeURIComponent(email);
   window.location.href = link;
 }
