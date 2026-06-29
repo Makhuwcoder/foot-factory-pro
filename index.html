@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>One Sport — Choisissez votre univers</title>
+  <title data-i18n="page_title">One Sport — Choisissez votre univers</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -652,6 +652,57 @@
       .car-btn { display: none; }
     }
 
+  
+    /* ── LANG SELECTOR ── */
+    .lang-selector { position: relative; }
+
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #FFFFFF;
+      padding: 6px 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+
+    .lang-btn:hover { border-color: var(--gold); }
+
+    .lang-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 4px;
+      list-style: none;
+      padding: 6px 0;
+      min-width: 140px;
+      z-index: 300;
+      box-shadow: 0 12px 40px rgba(0,0,0,.8);
+    }
+
+    .lang-menu.open { display: block; }
+
+    .lang-menu li {
+      padding: 9px 16px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .lang-menu li:hover { background: #1A1A1A; color: var(--gold); }
+
   </style>
 </head>
 <body>
@@ -670,10 +721,10 @@
       <img src="logo-one-sport-officiel.png" alt="One Sport" />
     </div>
     <ul class="nav-links">
-      <li><a href="#apropos">À propos</a></li>
-      <li><a href="/shop/" style="color:#C9A84C;font-weight:700">🛒 Boutique</a></li>
+      <li><a href="#apropos" data-i18n="nav_about">À propos</a></li>
+      <li><a href="/shop/" style="color:#C9A84C;font-weight:700" data-i18n="nav_shop">🛒 Boutique</a></li>
       <li class="nav-dropdown">
-        <a href="#" class="nav-dropdown-toggle">Mon Sport ▾</a>
+        <a href="#" class="nav-dropdown-toggle" data-i18n="nav_sport">Mon Sport ▾</a>
         <ul class="dropdown-menu">
           <li><a href="/football/">⚽ Football</a><span class="dd-badge live">En ligne</span></li>
           <li><a href="/basketball/" class="soon">🏀 Basketball</a><span class="dd-badge">Bientôt</span></li>
@@ -690,15 +741,31 @@
         </ul>
       </li>
     </ul>
+  
+    <div class="lang-selector" id="langSelector">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangMenu()">
+        <span id="langFlag">🇫🇷</span>
+        <span id="langCode">FR</span>
+        <span style="font-size:10px">▾</span>
+      </button>
+      <ul class="lang-menu" id="langMenu">
+        <li onclick="setLang('fr')">🇫🇷 Français</li>
+        <li onclick="setLang('en')">🇬🇧 English</li>
+        <li onclick="setLang('es')">🇪🇸 Español</li>
+        <li onclick="setLang('it')">🇮🇹 Italiano</li>
+        <li onclick="setLang('ar')">🇸🇦 العربية</li>
+        <li onclick="setLang('zh')">🇨🇳 中文</li>
+      </ul>
+    </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
     <img class="hero-logo" src="logo-one-sport-officiel.png" alt="One Sport" />
     <div class="hero-line"></div>
-    <p class="hero-tagline">La plateforme tout-en-un du coaching sportif</p>
-    <h1 class="hero-title">Choisissez votre sport</h1>
-    <p class="hero-sub">Accédez à votre espace dédié : gestion des joueurs, bilans de saison, convocations et suivi de progression.</p>
+    <p class="hero-tagline" data-i18n="hero_tagline">La plateforme tout-en-un du coaching sportif</p>
+    <h1 class="hero-title" data-i18n="hero_title">Choisissez votre sport</h1>
+    <p class="hero-sub" data-i18n="hero_sub">Accédez à votre espace dédié : gestion des joueurs, bilans de saison, convocations et suivi de progression.</p>
     <div class="hero-arrow">↓</div>
   </section>
 
@@ -718,7 +785,7 @@
             <div class="car-bg-icon">&#9917;</div>
             <div class="car-content">
               <span class="car-icon">&#9917;</span>
-              <span class="car-name">Football</span>
+              <span class="car-name" data-sport="football">Football</span>
               <span class="car-desc">Gestion joueurs, bilans, convocations</span>
               <span class="car-cta">Accéder &rarr;</span>
             </div>
@@ -729,7 +796,7 @@
             <div class="car-bg-icon">&#127936;</div>
             <div class="car-content">
               <span class="car-icon">&#127936;</span>
-              <span class="car-name">Basketball</span>
+              <span class="car-name" data-sport="basketball">Basketball</span>
               <span class="car-desc">Suivi joueurs, stats, bilans</span>
             </div>
           </div>
@@ -739,7 +806,7 @@
             <div class="car-bg-icon">&#127945;</div>
             <div class="car-content">
               <span class="car-icon">&#127945;</span>
-              <span class="car-name">Rugby</span>
+              <span class="car-name" data-sport="rugby">Rugby</span>
               <span class="car-desc">Suivi physique et tactique</span>
             </div>
           </div>
@@ -749,7 +816,7 @@
             <div class="car-bg-icon">&#129334;</div>
             <div class="car-content">
               <span class="car-icon">&#129334;</span>
-              <span class="car-name">Handball</span>
+              <span class="car-name" data-sport="handball">Handball</span>
               <span class="car-desc">Groupes, bilans, convocations</span>
             </div>
           </div>
@@ -759,7 +826,7 @@
             <div class="car-bg-icon">&#127934;</div>
             <div class="car-content">
               <span class="car-icon">&#127934;</span>
-              <span class="car-name">Tennis</span>
+              <span class="car-name" data-sport="tennis">Tennis</span>
               <span class="car-desc">Classements, progression</span>
             </div>
           </div>
@@ -769,7 +836,7 @@
             <div class="car-bg-icon">&#129355;</div>
             <div class="car-content">
               <span class="car-icon">&#129355;</span>
-              <span class="car-name">Judo</span>
+              <span class="car-name" data-sport="judo">Judo</span>
               <span class="car-desc">Grades, suivi judokas</span>
             </div>
           </div>
@@ -779,7 +846,7 @@
             <div class="car-bg-icon">&#127952;</div>
             <div class="car-content">
               <span class="car-icon">&#127952;</span>
-              <span class="car-name">Volleyball</span>
+              <span class="car-name" data-sport="volleyball">Volleyball</span>
               <span class="car-desc">Équipes, performances</span>
             </div>
           </div>
@@ -789,7 +856,7 @@
             <div class="car-bg-icon">&#127946;</div>
             <div class="car-content">
               <span class="car-icon">&#127946;</span>
-              <span class="car-name">Natation</span>
+              <span class="car-name" data-sport="natation">Natation</span>
               <span class="car-desc">Chronos, nages, progression</span>
             </div>
           </div>
@@ -799,7 +866,7 @@
             <div class="car-bg-icon">&#127939;</div>
             <div class="car-content">
               <span class="car-icon">&#127939;</span>
-              <span class="car-name">Athlétisme</span>
+              <span class="car-name" data-sport="athletisme">Athletisme</span>
               <span class="car-desc">Chronos, sauts, lancers</span>
             </div>
           </div>
@@ -809,7 +876,7 @@
             <div class="car-bg-icon">&#129354;</div>
             <div class="car-content">
               <span class="car-icon">&#129354;</span>
-              <span class="car-name">Boxe</span>
+              <span class="car-name" data-sport="boxe">Boxe</span>
               <span class="car-desc">Catégories, bilans boxeurs</span>
             </div>
           </div>
@@ -819,7 +886,7 @@
             <div class="car-bg-icon">&#128692;</div>
             <div class="car-content">
               <span class="car-icon">&#128692;</span>
-              <span class="car-name">Cyclisme</span>
+              <span class="car-name" data-sport="cyclisme">Cyclisme</span>
               <span class="car-desc">Équipes, performances, courses</span>
             </div>
           </div>
@@ -829,7 +896,7 @@
             <div class="car-bg-icon">&#127918;</div>
             <div class="car-content">
               <span class="car-icon">&#127918;</span>
-              <span class="car-name">E-Sport</span>
+              <span class="car-name" data-sport="esport">Esport</span>
               <span class="car-desc">Équipes, tournois</span>
             </div>
           </div>
@@ -854,7 +921,7 @@
       <a href="/football/" class="sport-card card-football">
         <span class="card-badge live">En ligne</span>
         <span class="card-icon">⚽</span>
-        <div class="card-sport-name">Football</div>
+        <div class="card-sport-name" data-sport="football">Football</div>
         <p class="card-desc">Gestion des joueurs, bilans U11→U12, convocations, suivi technique et tactique.</p>
         <span class="card-cta">Accéder →</span>
       </a>
@@ -863,7 +930,7 @@
       <a href="basketball/index.html" class="sport-card card-basketball soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🏀</span>
-        <div class="card-sport-name">Basketball</div>
+        <div class="card-sport-name" data-sport="basketball">Basketball</div>
         <p class="card-desc">Suivi des joueurs, bilans de saison, statistiques match.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -872,7 +939,7 @@
       <a href="rugby/index.html" class="sport-card card-rugby soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🏉</span>
-        <div class="card-sport-name">Rugby</div>
+        <div class="card-sport-name" data-sport="rugby">Rugby</div>
         <p class="card-desc">Gestion des équipes, suivi physique et tactique.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -881,7 +948,7 @@
       <a href="handball/index.html" class="sport-card card-handball soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🤾</span>
-        <div class="card-sport-name">Handball</div>
+        <div class="card-sport-name" data-sport="handball">Handball</div>
         <p class="card-desc">Bilans de saison, gestion des groupes, convocations.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -890,7 +957,7 @@
       <a href="tennis/index.html" class="sport-card card-tennis soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🎾</span>
-        <div class="card-sport-name">Tennis</div>
+        <div class="card-sport-name" data-sport="tennis">Tennis</div>
         <p class="card-desc">Suivi individuel, classements, progression technique.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -899,7 +966,7 @@
       <a href="judo/index.html" class="sport-card card-judo soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🥋</span>
-        <div class="card-sport-name">Judo</div>
+        <div class="card-sport-name" data-sport="judo">Judo</div>
         <p class="card-desc">Suivi des judokas, passage de grades, bilans.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -908,7 +975,7 @@
       <a href="volleyball/index.html" class="sport-card card-volleyball soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🏐</span>
-        <div class="card-sport-name">Volleyball</div>
+        <div class="card-sport-name" data-sport="volleyball">Volleyball</div>
         <p class="card-desc">Gestion des équipes, suivi des performances.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -917,7 +984,7 @@
       <a href="natation/index.html" class="sport-card card-natation soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🏊</span>
-        <div class="card-sport-name">Natation</div>
+        <div class="card-sport-name" data-sport="natation">Natation</div>
         <p class="card-desc">Chronométrage, suivi des nages, progression.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -926,7 +993,7 @@
       <a href="athletisme/index.html" class="sport-card card-athletisme soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🏃</span>
-        <div class="card-sport-name">Athlétisme</div>
+        <div class="card-sport-name" data-sport="athletisme">Athlétisme</div>
         <p class="card-desc">Chronos, sauts, lancers — suivi des performances.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -935,7 +1002,7 @@
       <a href="boxe/index.html" class="sport-card card-boxe soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🥊</span>
-        <div class="card-sport-name">Boxe</div>
+        <div class="card-sport-name" data-sport="boxe">Boxe</div>
         <p class="card-desc">Suivi des boxeurs, catégories de poids, bilans.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -944,7 +1011,7 @@
       <a href="cyclisme/index.html" class="sport-card card-cyclisme soon">
         <span class="card-badge">Bientôt</span>
         <span class="card-icon">🚴</span>
-        <div class="card-sport-name">Cyclisme</div>
+        <div class="card-sport-name" data-sport="cyclisme">Cyclisme</div>
         <p class="card-desc">Gestion des équipes, performances, courses.</p>
         <span class="card-cta">Bientôt disponible</span>
       </a>
@@ -1055,5 +1122,82 @@
   })();
   </script>
 
+
+  <script src="/i18n.js"></script>
+  <script>
+  var LANG_FLAGS = { fr:'🇫🇷', en:'🇬🇧', es:'🇪🇸', it:'🇮🇹', ar:'🇸🇦', zh:'🇨🇳' };
+  var LANG_CODES = { fr:'FR', en:'EN', es:'ES', it:'IT', ar:'AR', zh:'ZH' };
+
+  function toggleLangMenu() {
+    document.getElementById('langMenu').classList.toggle('open');
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('langSelector').contains(e.target)) {
+      document.getElementById('langMenu').classList.remove('open');
+    }
+  });
+
+  function setLang(lang) {
+    if (!OS_TRANSLATIONS[lang]) return;
+    var t = OS_TRANSLATIONS[lang];
+    document.getElementById('langMenu').classList.remove('open');
+    document.getElementById('langFlag').textContent = LANG_FLAGS[lang];
+    document.getElementById('langCode').textContent = LANG_CODES[lang];
+    localStorage.setItem('os_lang', lang);
+
+    // RTL pour arabe
+    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', lang);
+
+    // Traduire tous les éléments data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+
+    // Titre de page
+    if (t.page_title) document.title = t.page_title;
+
+    // Cards sports dans le carrousel
+    var sportKeys = ['football','basketball','rugby','handball','tennis','judo','volleyball','natation','athletisme','boxe','cyclisme','esport'];
+    document.querySelectorAll('.car-name[data-sport]').forEach(function(el) {
+      var s = el.getAttribute('data-sport');
+      if (t.sports && t.sports[s]) el.textContent = t.sports[s];
+    });
+    document.querySelectorAll('.car-desc[data-sport]').forEach(function(el) {
+      var s = el.getAttribute('data-sport');
+      if (t.descs && t.descs[s]) el.textContent = t.descs[s];
+    });
+    document.querySelectorAll('.car-badge.live').forEach(function(el) {
+      el.textContent = t.badge_live || el.textContent;
+    });
+    document.querySelectorAll('.car-badge:not(.live)').forEach(function(el) {
+      el.textContent = t.badge_soon || el.textContent;
+    });
+    document.querySelectorAll('.car-cta').forEach(function(el) {
+      el.textContent = t.cta_access || el.textContent;
+    });
+
+    // Cards grille
+    document.querySelectorAll('.card-sport-name[data-sport]').forEach(function(el) {
+      var s = el.getAttribute('data-sport');
+      if (t.sports && t.sports[s]) el.textContent = t.sports[s];
+    });
+    document.querySelectorAll('.card-desc[data-sport]').forEach(function(el) {
+      var s = el.getAttribute('data-sport');
+      if (t.descs && t.descs[s]) el.textContent = t.descs[s];
+    });
+  }
+
+  // Auto-detect langue au chargement
+  window.addEventListener('load', function() {
+    var saved = localStorage.getItem('os_lang');
+    var browser = navigator.language ? navigator.language.split('-')[0] : 'fr';
+    var supported = ['fr','en','es','it','ar','zh'];
+    var lang = saved || (supported.indexOf(browser) >= 0 ? browser : 'fr');
+    if (lang !== 'fr') setLang(lang);
+  });
+  </script>
 </body>
 </html>
