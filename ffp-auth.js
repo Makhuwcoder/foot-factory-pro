@@ -80,6 +80,8 @@ var FFP = (function() {
 
     // Pas de session → login
     if (!sess) {
+      // Ne pas rediriger si mode démo avec ?demo= dans l'URL
+      if (typeof window !== 'undefined' && window.location.search.indexOf('demo=') >= 0) return null;
       window.location.replace('ffp-login.html');
       return null;
     }
