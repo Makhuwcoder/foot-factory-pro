@@ -8,6 +8,20 @@
   ],
   "routes": [
     {
+      "src": "/shop/?",
+      "headers": {
+        "Location": "https://www.footfactorypro.shop/"
+      },
+      "status": 301
+    },
+    {
+      "src": "/shop/(.*)",
+      "headers": {
+        "Location": "https://www.footfactorypro.shop/$1"
+      },
+      "status": 301
+    },
+    {
       "src": "/football/?",
       "dest": "/ffp-accueil.html"
     },
