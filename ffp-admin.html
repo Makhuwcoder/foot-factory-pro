@@ -10,7 +10,7 @@
 <style>
 :root{--os-blue:#1565C0;--gl:#FBCB57}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow:hidden}
+html,body{overflow-x:hidden;height:100%;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0;overflow:hidden}
 .app{display:flex;flex-direction:column;height:100vh}
 .layout{flex:1;display:flex;overflow:hidden;min-height:0}
 /* Sidebar */
@@ -38,7 +38,135 @@ html,body{height:100%;font-family:'Raleway',sans-serif;background:#000;color:#F0
 .audit-filter.on{background:rgba(21,101,192,.08);border-color:rgba(21,101,192,.5);color:#1565C0}
 /* Scrollbar */
 ::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
-@media(max-width:768px){.sidebar{width:180px}.nav-item span:not(.nav-ico){display:none}}
+@media(max-width:768px){
+  /* Layout principal */
+  .layout{flex-direction:column}
+  
+  /* Sidebar → barre horizontale en haut */
+  .sidebar{
+    width:100% !important;
+    height:auto;
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+    border-right:none;
+    border-bottom:1px solid rgba(212,175,55,.15);
+    padding:0;
+    min-height:56px;
+  }
+  .sidebar-logo{
+    display:none;
+  }
+  .sidebar-nav{
+    display:flex;
+    flex-direction:row;
+    flex:1;
+    overflow-x:auto;
+    padding:8px 4px;
+    gap:4px;
+  }
+  .nav-section-label{display:none}
+  .nav-item{
+    flex-direction:column;
+    min-width:56px;
+    padding:6px 8px;
+    gap:2px;
+    border-radius:8px;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav-item span:not(.nav-ico){
+    font-size:9px;
+    letter-spacing:0;
+    display:block !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:52px;
+    text-align:center;
+  }
+  .nav-ico{font-size:18px}
+  .sidebar-footer{display:none}
+
+  /* Contenu principal */
+  .main-content{
+    width:100% !important;
+    overflow-x:hidden;
+    padding:12px !important;
+  }
+
+  /* Header */
+  .page-header{
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .page-header h1{font-size:18px !important}
+
+  /* Stats cards → 2 colonnes */
+  .stats-grid, .kpi-grid, [class*="grid"]{
+    grid-template-columns:1fr 1fr !important;
+    gap:10px !important;
+  }
+
+  /* Cards génériques */
+  .stat-card, .kpi-card, [class*="card"]{
+    padding:12px !important;
+    min-width:0 !important;
+  }
+
+  /* Tableaux → scroll horizontal */
+  .table-wrap, table{
+    overflow-x:auto;
+    display:block;
+    width:100%;
+  }
+
+  /* Grilles 3+ colonnes → 1 colonne */
+  [style*="grid-template-columns: repeat(3"],
+  [style*="grid-template-columns:repeat(3"],
+  [style*="grid-template-columns: 1fr 1fr 1fr"]{
+    grid-template-columns:1fr !important;
+  }
+
+  /* Header admin top */
+  .adm-header, .app-header{
+    flex-wrap:wrap;
+    gap:6px;
+    padding:8px 12px !important;
+  }
+  .adm-header .logo-zone{flex:1}
+  .adm-header .btn-zone{
+    display:flex;
+    gap:4px;
+    flex-wrap:wrap;
+  }
+  .adm-header .btn-zone button,
+  .adm-header .btn-zone a{
+    font-size:11px !important;
+    padding:5px 8px !important;
+  }
+
+  /* Panels côte-à-côte → empilés */
+  [style*="display:flex"][style*="gap"]{
+    flex-wrap:wrap !important;
+  }
+
+  /* Textes tronqués */
+  .stat-label, .kpi-label{
+    font-size:10px !important;
+    white-space:normal !important;
+  }
+  .stat-value, .kpi-value{
+    font-size:24px !important;
+  }
+}
+
+@media(max-width:400px){
+  .stats-grid, .kpi-grid, [class*="grid"]{
+    grid-template-columns:1fr !important;
+  }
+}
 </style>
 <script src="ffp-auth.js"></script>
 </head>
