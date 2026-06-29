@@ -444,7 +444,6 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      position: relative;
     }
 
     .car-viewport {
@@ -464,34 +463,96 @@
       flex-shrink: 0;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 28px 20px 24px;
+      border-radius: 6px;
+      padding: 0;
+      height: 200px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      justify-content: flex-end;
       position: relative;
       text-decoration: none;
-      color: var(--text);
-      transition: border-color .25s, transform .25s;
+      color: #FFFFFF;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
     }
 
-    .car-card.car-live:hover {
-      border-color: var(--football);
-      transform: translateY(-4px);
+    .car-card:hover {
+      border-color: var(--c, #1565C0);
+      transform: scale(1.05);
+      box-shadow: 0 16px 48px rgba(0,0,0,.6);
+      z-index: 10;
     }
 
-    .car-card.car-soon { opacity: 0.5; }
+    .car-card:hover .car-bg-icon {
+      transform: scale(1.2) translateY(-8px);
+      opacity: .18;
+    }
 
-    .car-icon { font-size: 36px; line-height: 1; }
+    .car-card:hover .car-content {
+      background: linear-gradient(to top, var(--c, #1565C0) 0%, rgba(0,0,0,0) 100%);
+    }
+
+    .car-card:hover .car-desc {
+      opacity: 1;
+      transform: translateY(0);
+      max-height: 30px;
+    }
+
+    .car-card:hover .car-cta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .car-bg-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      font-size: 80px;
+      line-height: 1;
+      opacity: .08;
+      transition: transform .4s ease, opacity .4s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .car-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,0) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: background .3s;
+    }
+
+    .car-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
 
     .car-name {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 900;
       letter-spacing: .05em;
       text-transform: uppercase;
       color: #FFFFFF;
+      line-height: 1;
+    }
+
+    .car-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,.75);
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(6px);
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity .3s, transform .3s, max-height .3s;
     }
 
     .car-cta {
@@ -499,8 +560,15 @@
       font-size: 11px;
       letter-spacing: .2em;
       text-transform: uppercase;
-      color: var(--football);
+      color: #FFFFFF;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .3s .05s, transform .3s .05s;
     }
+
+    .car-card.car-soon { opacity: 0.55; }
+    .car-card.car-soon:hover { opacity: 0.75; transform: scale(1.04); }
 
     .car-badge {
       position: absolute;
@@ -512,12 +580,13 @@
       text-transform: uppercase;
       padding: 2px 7px;
       border-radius: 2px;
-      background: rgba(255,255,255,.06);
-      color: #AAAAAA;
+      background: rgba(255,255,255,.08);
+      color: #CCCCCC;
+      z-index: 3;
     }
 
     .car-badge.live {
-      background: rgba(39,174,96,.15);
+      background: rgba(39,174,96,.2);
       color: #27AE60;
     }
 
@@ -525,10 +594,10 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       color: #FFFFFF;
-      font-size: 24px;
+      font-size: 28px;
       cursor: pointer;
       flex-shrink: 0;
       display: flex;
@@ -538,13 +607,13 @@
       line-height: 1;
     }
 
-    .car-btn:hover { border-color: var(--football); background: rgba(201,168,76,.08); }
+    .car-btn:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
 
     .car-dots {
       display: flex;
       justify-content: center;
       gap: 6px;
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     .car-dot {
@@ -557,11 +626,10 @@
     }
 
     .car-dot.active {
-      background: var(--football);
-      width: 20px;
+      background: var(--gold);
+      width: 22px;
     }
 
-    /* séparateur entre carrousel et grille */
     .car-grid-sep {
       text-align: center;
       font-family: 'Barlow Condensed', sans-serif;
@@ -571,7 +639,12 @@
       color: #FFFFFF;
       padding: 32px 0 8px;
       border-top: 1px solid var(--border);
-      margin-top: 40px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 768px) {
+      .car-card { min-width: calc((100% - 16px) / 2); height: 160px; }
+      .car-btn { display: none; }
     }
 
     @media (max-width: 768px) {
@@ -640,77 +713,125 @@
       <div class="car-viewport">
         <div class="car-track" id="carTrack">
 
-          <a href="/football/" class="car-card car-live">
+          <a href="/football/" class="car-card car-live" style="--c:#1565C0">
             <span class="car-badge live">En ligne</span>
-            <span class="car-icon">&#9917;</span>
-            <span class="car-name">Football</span>
-            <span class="car-cta">Accéder &rarr;</span>
+            <div class="car-bg-icon">&#9917;</div>
+            <div class="car-content">
+              <span class="car-icon">&#9917;</span>
+              <span class="car-name">Football</span>
+              <span class="car-desc">Gestion joueurs, bilans, convocations</span>
+              <span class="car-cta">Accéder &rarr;</span>
+            </div>
           </a>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#E8630A">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127936;</span>
-            <span class="car-name">Basketball</span>
+            <div class="car-bg-icon">&#127936;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127936;</span>
+              <span class="car-name">Basketball</span>
+              <span class="car-desc">Suivi joueurs, stats, bilans</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#C0392B">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127945;</span>
-            <span class="car-name">Rugby</span>
+            <div class="car-bg-icon">&#127945;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127945;</span>
+              <span class="car-name">Rugby</span>
+              <span class="car-desc">Suivi physique et tactique</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#1A6FBF">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#129334;</span>
-            <span class="car-name">Handball</span>
+            <div class="car-bg-icon">&#129334;</div>
+            <div class="car-content">
+              <span class="car-icon">&#129334;</span>
+              <span class="car-name">Handball</span>
+              <span class="car-desc">Groupes, bilans, convocations</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#27AE60">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127934;</span>
-            <span class="car-name">Tennis</span>
+            <div class="car-bg-icon">&#127934;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127934;</span>
+              <span class="car-name">Tennis</span>
+              <span class="car-desc">Classements, progression</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#7D3C98">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#129355;</span>
-            <span class="car-name">Judo</span>
+            <div class="car-bg-icon">&#129355;</div>
+            <div class="car-content">
+              <span class="car-icon">&#129355;</span>
+              <span class="car-name">Judo</span>
+              <span class="car-desc">Grades, suivi judokas</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#16A085">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127952;</span>
-            <span class="car-name">Volleyball</span>
+            <div class="car-bg-icon">&#127952;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127952;</span>
+              <span class="car-name">Volleyball</span>
+              <span class="car-desc">Équipes, performances</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#2471A3">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127946;</span>
-            <span class="car-name">Natation</span>
+            <div class="car-bg-icon">&#127946;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127946;</span>
+              <span class="car-name">Natation</span>
+              <span class="car-desc">Chronos, nages, progression</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#1E8449">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127939;</span>
-            <span class="car-name">Athlétisme</span>
+            <div class="car-bg-icon">&#127939;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127939;</span>
+              <span class="car-name">Athlétisme</span>
+              <span class="car-desc">Chronos, sauts, lancers</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#CB4335">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#129354;</span>
-            <span class="car-name">Boxe</span>
+            <div class="car-bg-icon">&#129354;</div>
+            <div class="car-content">
+              <span class="car-icon">&#129354;</span>
+              <span class="car-name">Boxe</span>
+              <span class="car-desc">Catégories, bilans boxeurs</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#D4AC0D">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#128692;</span>
-            <span class="car-name">Cyclisme</span>
+            <div class="car-bg-icon">&#128692;</div>
+            <div class="car-content">
+              <span class="car-icon">&#128692;</span>
+              <span class="car-name">Cyclisme</span>
+              <span class="car-desc">Équipes, performances, courses</span>
+            </div>
           </div>
 
-          <div class="car-card car-soon">
+          <div class="car-card car-soon" style="--c:#6C3483">
             <span class="car-badge">Bientôt</span>
-            <span class="car-icon">&#127918;</span>
-            <span class="car-name">Esport</span>
+            <div class="car-bg-icon">&#127918;</div>
+            <div class="car-content">
+              <span class="car-icon">&#127918;</span>
+              <span class="car-name">Esport</span>
+              <span class="car-desc">Équipes, tournois</span>
+            </div>
           </div>
 
         </div>
@@ -721,6 +842,8 @@
     <div class="car-dots" id="carDots"></div>
 
   </section>
+
+
 
 <section class="sports-section">
     <p class="car-grid-sep">Toutes les disciplines</p>
