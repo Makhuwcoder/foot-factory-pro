@@ -26,7 +26,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 .card.recruteur:hover{border-color:rgba(96,168,208,.5);box-shadow:0 16px 50px rgba(96,168,208,.1)}
 .card.directeur:hover{border-color:rgba(75,200,138,.5);box-shadow:0 16px 50px rgba(75,200,138,.1)}
 .avatar{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;border:2px solid rgba(212,175,55,.2)}
-.card-name{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px}
+.card-name{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;margin-bottom:4px;color:#0A0D14}
 .card-role{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
 .card-desc{font-size:11px;color:#666;line-height:1.7;margin-bottom:16px}
 .card-features{list-style:none;text-align:left;margin-bottom:20px}
@@ -68,7 +68,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 <div class="grid">
 
   <!-- Coach -->
-  <div class="card coach" onclick="startDemo('coach')">
+  <div class="card coach" onclick="openDemoModal('coach')">
     <div class="avatar" style="background:linear-gradient(135deg,#1A1200,#2A1E00);border-color:rgba(212,175,55,.3)">🏟️</div>
     <div class="card-name">Ahmed Benali</div>
     <div class="card-role" style="color:#1565C0">Coach U12</div>
@@ -83,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
   </div>
 
   <!-- Parent -->
-  <div class="card parent" onclick="startDemo('parent')">
+  <div class="card parent" onclick="openDemoModal('parent')">
     <div class="avatar" style="background:linear-gradient(135deg,#1A0030,#280040);border-color:rgba(160,96,224,.3)">🫂</div>
     <div class="card-name">Famille Faure</div>
     <div class="card-role" style="color:#A060E0">Parent · Kylian #4</div>
@@ -113,7 +113,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
   </div>
 
   <!-- Directeur -->
-  <div class="card directeur" onclick="startDemo('directeur')">
+  <div class="card directeur" onclick="openDemoModal('directeur')">
     <div class="avatar" style="background:linear-gradient(135deg,#001A10,#002A18);border-color:rgba(75,200,138,.3)">🏛️</div>
     <div class="card-name">Jean-Marc Roussel</div>
     <div class="card-role" style="color:#4BC88A">Directeur de club</div>
@@ -244,5 +244,91 @@ function exitDemo() {
 }
 
 </script>
+
+<!-- Modal identification démo -->
+<div id="demo-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#0A0D14;border:1px solid rgba(21,101,192,.4);border-radius:12px;padding:32px;max-width:400px;width:90%;position:relative">
+    <button onclick="closeDemoModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#888;font-size:20px;cursor:pointer">✕</button>
+    <div style="text-align:center;margin-bottom:20px">
+      <img src="/logo-one-sport-football.png" style="height:56px;margin-bottom:12px"/>
+      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;color:#fff">Espace Démo</div>
+      <div id="demo-modal-role" style="font-size:11px;color:#64B5F6;letter-spacing:.15em;text-transform:uppercase;margin-top:4px"></div>
+    </div>
+    <div style="background:#0D1B2A;border-radius:8px;padding:14px;margin-bottom:20px">
+      <div style="font-size:10px;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em">Identifiants de démonstration</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="color:#aaa;font-size:12px">Identifiant</span>
+        <span id="demo-modal-user" style="color:#64B5F6;font-family:monospace;font-size:13px;font-weight:700"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:#aaa;font-size:12px">Mot de passe</span>
+        <span id="demo-modal-pwd" style="color:#64B5F6;font-family:monospace;font-size:13px;font-weight:700"></span>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Identifiant</label>
+      <input id="demo-modal-input-user" type="text" style="width:100%;background:#111;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#fff;font-family:Montserrat,sans-serif;font-size:13px;outline:none;box-sizing:border-box"/>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:11px;color:#888;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Mot de passe</label>
+      <input id="demo-modal-input-pwd" type="password" style="width:100%;background:#111;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#fff;font-family:Montserrat,sans-serif;font-size:13px;outline:none;box-sizing:border-box"/>
+    </div>
+    <div id="demo-modal-error" style="display:none;color:#E57373;font-size:12px;margin-bottom:12px;text-align:center"></div>
+    <button onclick="confirmDemoLogin()" style="width:100%;background:#1565C0;color:#fff;border:none;border-radius:8px;padding:14px;font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#1976D2'" onmouseout="this.style.background='#1565C0'">
+      Accéder à la plateforme →
+    </button>
+    <p style="text-align:center;font-size:10px;color:#555;margin-top:12px">Données fictives · Session 2h · Aucune donnée réelle</p>
+  </div>
+</div>
+
+<script>
+var _demoRole = null;
+var _demoCreds = {
+  coach:     {user:'coach',     pwd:'Terrain2026', label:'🏟️ Coach Principal'},
+  parent:    {user:'parent_demo',pwd:'Parent2026', label:'👨‍👧 Famille Faure'},
+  recruteur: {user:'scout',     pwd:'Scout2026',   label:'🔍 Recruteur'},
+  directeur: {user:'directeur', pwd:'FFP2026!',    label:'🏛️ Directeur de Club'}
+};
+
+function openDemoModal(role) {
+  _demoRole = role;
+  var creds = _demoCreds[role];
+  if (!creds) { startDemo(role); return; }
+  document.getElementById('demo-modal-role').textContent = creds.label;
+  document.getElementById('demo-modal-user').textContent = creds.user;
+  document.getElementById('demo-modal-pwd').textContent = creds.pwd;
+  document.getElementById('demo-modal-input-user').value = '';
+  document.getElementById('demo-modal-input-pwd').value = '';
+  document.getElementById('demo-modal-error').style.display = 'none';
+  document.getElementById('demo-modal').style.display = 'flex';
+}
+
+function closeDemoModal() {
+  document.getElementById('demo-modal').style.display = 'none';
+  _demoRole = null;
+}
+
+function confirmDemoLogin() {
+  var creds = _demoCreds[_demoRole];
+  if (!creds) return;
+  var user = document.getElementById('demo-modal-input-user').value.trim();
+  var pwd  = document.getElementById('demo-modal-input-pwd').value;
+  var err  = document.getElementById('demo-modal-error');
+  if (user !== creds.user || pwd !== creds.pwd) {
+    err.textContent = 'Identifiants incorrects. Utilisez les identifiants affichés ci-dessus.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  closeDemoModal();
+  startDemo(_demoRole);
+}
+
+// Fermer si clic dehors
+document.getElementById('demo-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDemoModal();
+});
+</script>
+
 </body>
 </html>
