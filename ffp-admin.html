@@ -123,6 +123,7 @@ html,body{overflow-x:hidden;height:100%;font-family:'Raleway',sans-serif;backgro
 <script>
 (function(){
   // FFP AUTH GUARD v3 — synchrone
+  if(window.location.search.indexOf('demo=')>=0)return;
   var LS='ffp_session',LSC='ffp_scout_session';
   var roles=['directeur','superadmin'];
   function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
