@@ -70,6 +70,10 @@ var FFP = (function() {
   // Guard — appeler en tête de chaque page protégée
   // roles: tableau de rôles autorisés, ex: ['coach','directeur']
   function guard(roles) {
+    // Bypass demo
+    if(typeof window!=='undefined'&&window.location.search.indexOf('demo=')>=0){
+      var ds=getSession();if(ds)return ds;
+    }
     var sess = getSession();
 
     // Scout peut aussi utiliser ffp_scout_session
