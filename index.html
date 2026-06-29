@@ -365,7 +365,80 @@
     .sport-card.soon .card-cta { color: #CCCCCC !important; }
     .sport-card.soon .card-badge { color: #AAAAAA !important; }
     .nav-links a:hover { color: #C9A84C !important; }
-</style>
+
+    /* ── DROPDOWN MON SPORT ── */
+    .nav-dropdown { position: relative; }
+
+    .nav-dropdown-toggle {
+      display: flex; align-items: center; gap: 4px;
+      color: #FFFFFF !important; cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      background: #111111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      min-width: 220px;
+      list-style: none;
+      padding: 8px 0;
+      z-index: 200;
+      box-shadow: 0 20px 60px rgba(0,0,0,.8);
+    }
+
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+
+    .dropdown-menu li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0;
+    }
+
+    .dropdown-menu li a {
+      display: block;
+      padding: 10px 16px;
+      color: #FFFFFF !important;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      flex: 1;
+      transition: background .15s, color .15s;
+    }
+
+    .dropdown-menu li a:hover { background: #1A1A1A; color: #C9A84C !important; }
+    .dropdown-menu li a.soon { opacity: 0.5; pointer-events: none; }
+
+    .dd-badge {
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-right: 12px;
+      background: rgba(255,255,255,.05);
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .dd-badge.live {
+      background: rgba(39,174,96,.15);
+      color: #27AE60;
+    }
+
+    /* séparateur après football */
+    .dropdown-menu li:first-child {
+      border-bottom: 1px solid #222;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+    }
+
+
+  </style>
 </head>
 <body>
 
@@ -384,8 +457,23 @@
     </div>
     <ul class="nav-links">
       <li><a href="#apropos">À propos</a></li>
-      <li><a href="ffp-accueil.html">Plateforme</a></li>
-      <li><a href="mailto:contact@onesport.fr">Contact</a></li>
+      <li class="nav-dropdown">
+        <a href="#" class="nav-dropdown-toggle">Mon Sport ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="/football/">⚽ Football</a><span class="dd-badge live">En ligne</span></li>
+          <li><a href="/basketball/" class="soon">🏀 Basketball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/rugby/" class="soon">🏉 Rugby</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/handball/" class="soon">🤾 Handball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/tennis/" class="soon">🎾 Tennis</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/judo/" class="soon">🥋 Judo</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/volleyball/" class="soon">🏐 Volleyball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/natation/" class="soon">🏊 Natation</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/athletisme/" class="soon">🏃 Athlétisme</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/boxe/" class="soon">🥊 Boxe</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/cyclisme/" class="soon">🚴 Cyclisme</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/esport/" class="soon">🎮 Esport</a><span class="dd-badge">Bientôt</span></li>
+        </ul>
+      </li>
     </ul>
   </nav>
 
@@ -406,7 +494,7 @@
     <div class="sports-grid">
 
       <!-- FOOTBALL (LIVE) -->
-      <a href="ffp-accueil.html" class="sport-card card-football">
+      <a href="/football/" class="sport-card card-football">
         <span class="card-badge live">En ligne</span>
         <span class="card-icon">⚽</span>
         <div class="card-sport-name">Football</div>
