@@ -97,6 +97,7 @@ html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;colo
 <script>
 (function(){
   // FFP AUTH GUARD v3 — synchrone
+  if(window.location.search.indexOf('demo=')>=0)return;
   var LS='ffp_session',LSC='ffp_scout_session';
   var roles=['coach','directeur','coordinateur'];
   function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
