@@ -14,7 +14,7 @@
 html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(96,168,208,.04),transparent 60%);z-index:0}
 /* Login */
-.login-wrap{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 52px);padding:24px;position:relative;z-index:1}
+.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 52px);padding:24px;position:relative;z-index:1}
 .login-card{background:#0A0D14;border:1px solid rgba(96,168,208,.35);border-radius:16px;padding:36px 40px;width:min(420px,92vw);text-align:center;box-shadow:0 0 60px rgba(96,168,208,.08)}
 .l-inp{width:100%;background:#111318;border:1px solid rgba(96,168,208,.2);border-radius:8px;padding:12px 14px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;margin-bottom:11px;transition:border-color .2s}
 .l-inp:focus{border-color:rgba(96,168,208,.55)}
@@ -761,7 +761,11 @@ function init(){
     }
   });
 }
-init();
+try{init();}catch(e){
+  console.error('init error:',e);
+  var l=document.getElementById('sc-login');
+  if(l)l.style.display='flex';
+}
 
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
