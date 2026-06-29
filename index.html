@@ -829,7 +829,7 @@
             <div class="car-bg-icon">&#127918;</div>
             <div class="car-content">
               <span class="car-icon">&#127918;</span>
-              <span class="car-name">Esport</span>
+              <span class="car-name">E-Sport</span>
               <span class="car-desc">Équipes, tournois</span>
             </div>
           </div>
@@ -973,42 +973,85 @@
   (function() {
     var track = document.getElementById('carTrack');
     var dotsEl = document.getElementById('carDots');
-    var cards = track.querySelectorAll('.car-card');
-    var VISIBLE = window.innerWidth < 768 ? 2 : 4;
-    var total = cards.length;
-    var maxPage = total - VISIBLE;
-    var current = 0;
+    var VISIBLE = window.innerWidth <= 768 ? 2 : 4;
+    var origCards = Array.from(track.querySelectorAll('.car-card'));
+    var total = origCards.length;
 
-    for (var i = 0; i <= maxPage; i++) {
-      var dot = document.createElement('div');
-      dot.className = 'car-dot' + (i === 0 ? ' active' : '');
-      dot.setAttribute('data-idx', i);
-      dot.addEventListener('click', function() { goTo(parseInt(this.getAttribute('data-idx'))); });
-      dotsEl.appendChild(dot);
-    }
+    // Football est à l'index 0 — on veut le centrer (position VISIBLE/2 = index 2 pour 4 visible)
+    // On clone les cartes pour boucle infinie : clone fin + originaux + clone debut
+    var clonesBefore = origCards.slice(total - VISIBLE).map(function(c) {
+      var cl = c.cloneNode(true); cl.setAttribute('aria-hidden','true'); return cl;
+    });
+    var clonesAfter = origCards.slice(0, VISIBLE).map(function(c) {
+      var cl = c.cloneNode(true); cl.setAttribute('aria-hidden','true'); return cl;
+    });
+
+    // Vider et reconstruire : clones fin + originaux + clones début
+    track.innerHTML = '';
+    clonesBefore.forEach(function(c) { track.appendChild(c); });
+    origCards.forEach(function(c) { track.appendChild(c); });
+    clonesAfter.forEach(function(c) { track.appendChild(c); });
+
+    var allCards = Array.from(track.querySelectorAll('.car-card'));
+    var offset = clonesBefore.length; // décalage dû aux clones de début
+
+    // Football est à l'index 0 des originaux → index offset dans allCards
+    // Pour le centrer : on veut qu'il soit à la position 1 (0-indexé) → current = offset - 1
+    var current = offset; // commence sur Football
 
     function cardW() {
       var vp = document.querySelector('.car-viewport');
       return Math.floor((vp.offsetWidth - (VISIBLE - 1) * 16) / VISIBLE) + 16;
     }
 
-    function goTo(idx) {
-      current = Math.max(0, Math.min(idx, maxPage));
-      track.style.transform = 'translateX(-' + (current * cardW()) + 'px)';
+    // Créer les dots pour les originaux uniquement
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'car-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('data-idx', i + offset);
+      dot.addEventListener('click', function() { goTo(parseInt(this.getAttribute('data-idx')), true); });
+      dotsEl.appendChild(dot);
+    }
+
+    function updateDots() {
+      var realIdx = current - offset;
+      // Normaliser
+      if (realIdx < 0) realIdx += total;
+      if (realIdx >= total) realIdx -= total;
       document.querySelectorAll('.car-dot').forEach(function(d, i) {
-        d.className = 'car-dot' + (i === current ? ' active' : '');
+        d.className = 'car-dot' + (i === realIdx ? ' active' : '');
       });
     }
 
-    document.getElementById('carPrev').addEventListener('click', function() { goTo(current - 1); });
-    document.getElementById('carNext').addEventListener('click', function() { goTo(current + 1); });
+    function goTo(idx, animate) {
+      current = idx;
+      track.style.transition = animate === false ? 'none' : 'transform .45s cubic-bezier(.4,0,.2,1)';
+      track.style.transform = 'translateX(-' + (current * cardW()) + 'px)';
+      updateDots();
+    }
+
+    // Repositionner sans animation quand on touche les clones
+    track.addEventListener('transitionend', function() {
+      var allLen = allCards.length;
+      if (current < offset) {
+        goTo(current + total, false);
+      } else if (current >= offset + total) {
+        goTo(current - total, false);
+      }
+    });
+
+    document.getElementById('carPrev').addEventListener('click', function() { goTo(current - 1, true); });
+    document.getElementById('carNext').addEventListener('click', function() { goTo(current + 1, true); });
 
     var sx = 0;
     track.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, {passive:true});
     track.addEventListener('touchend', function(e) {
       var dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+      if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1), true);
     });
+
+    // Init : positionner sans animation
+    goTo(current, false);
   })();
   </script>
 
