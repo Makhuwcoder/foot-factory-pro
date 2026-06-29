@@ -8,6 +8,54 @@
   ],
   "routes": [
     {
+      "src": "/football/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/basketball/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/rugby/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/handball/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/tennis/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/judo/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/volleyball/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/natation/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/athletisme/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/boxe/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/cyclisme/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
+      "src": "/esport/?",
+      "dest": "/ffp-accueil.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
@@ -41,15 +89,6 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=86400"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)\\.png",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=604800"
         }
       ]
     }
