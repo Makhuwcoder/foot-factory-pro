@@ -9,17 +9,19 @@
   "routes": [
     {
       "src": "/shop/?",
-      "headers": {
-        "Location": "https://www.footfactorypro.shop/"
-      },
-      "status": 301
+      "dest": "/shop/index.html"
+    },
+    {
+      "src": "/shop/shop-index/?",
+      "dest": "/shop/shop-index.html"
+    },
+    {
+      "src": "/shop/admin/?",
+      "dest": "/shop/shop-admin.html"
     },
     {
       "src": "/shop/(.*)",
-      "headers": {
-        "Location": "https://www.footfactorypro.shop/$1"
-      },
-      "status": 301
+      "dest": "/shop/$1"
     },
     {
       "src": "/football/?",
