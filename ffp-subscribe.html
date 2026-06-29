@@ -99,7 +99,11 @@ async function goToStripe() {
       'https://qpabgwskavglvojhuzeq.supabase.co/functions/v1/create-checkout',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'sb_publishable_n814zGkCNq7wnSoro8w1Zg_ln31penJ',
+          'Authorization': 'Bearer sb_publishable_n814zGkCNq7wnSoro8w1Zg_ln31penJ'
+        },
         body: JSON.stringify({ plan: plan, coaches: coaches, email: email, club: club })
       }
     );
