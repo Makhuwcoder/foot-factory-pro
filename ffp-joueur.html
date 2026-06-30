@@ -220,7 +220,10 @@ function getSession(){
 }
 
 function playerLogout(){
-  try{['ffp_session','ffp_demo_mode'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+  try{
+    ['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages','ffp_demo_events_set']
+      .forEach(function(k){localStorage.removeItem(k);});
+  }catch(e){}
   window.location.href='ffp-accueil.html';
 }
 
@@ -239,10 +242,9 @@ function statBar(label,val){
 
 function render(){
   var session = getSession();
-  if(!session) return;
 
-  var p = session.playerData || {
-    prenom: session.prenom || 'Joueur', nom: session.nom || 'Démo',
+  var p = (session && session.playerData) || {
+    prenom: (session && session.prenom) || 'Joueur', nom: (session && session.nom) || 'Démo',
     poste: 'Milieu offensif', club: 'AS Voltaire Paris', categorie: 'U14',
     score: 7.4,
     technique:{controle:7.8,dribble:8.2,frappe:6.9,passe:7.5,tete:6.2},
