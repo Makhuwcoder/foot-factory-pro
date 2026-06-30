@@ -70,7 +70,20 @@ var FFP = (function() {
   // Guard — appeler en tête de chaque page protégée
   // roles: tableau de rôles autorisés, ex: ['coach','directeur']
   function guard(roles) {
-    // Bypass demo
+    // Bypass demo : ?demo= dans URL OU session._demo dans localStorage
+    var _earlyS = getSession();
+    if (_earlyS && _earlyS._demo) {
+      if (_earlyS._exp && Date.now() > _earlyS._exp) {
+        // Session expirée
+      } else {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', showDemoBanner);
+        } else {
+          setTimeout(showDemoBanner, 100);
+        }
+        return _earlyS;
+      }
+    }
     if(typeof window!=='undefined'&&window.location.search.indexOf('demo=')>=0){
       var ds=getSession();if(ds)return ds;
     }
