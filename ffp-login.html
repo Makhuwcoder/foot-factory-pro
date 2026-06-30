@@ -63,19 +63,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 <div id="v-coach" class="wrap" style="display:none"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:24px"><img src="/logo-one-sport-football-white.png" style="height:36px;filter:drop-shadow(0 0 10px rgba(212,175,55,.5))"/><div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">One Sport</div><div style="font-size:9px;color:rgba(212,175,55,.5);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Connexion sécurisée</div></div></a><div class="card"><div style="margin-bottom:12px"><label class="fl">Rôle</label><select class="fi" id="c-role" onchange="updateRoleUI()"><option value="coach">🏟️ Coach</option><option value="directeur">🏛️ Directeur de club</option><option value="scout">🔍 Recruteur accrédité</option><option value="parent">🫂 Parent</option></select></div><div class="hint" id="c-hint">
   <div style="margin-bottom:10px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em">Comptes démo disponibles</div>
   <div style="display:flex;flex-direction:column;gap:8px">
-    <button onclick="fillDemo('coach','Terrain2026')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="fillDemo('coach','Terrain2026','coach')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
       <span>🏆 <strong>Coach</strong></span>
       <span style="color:#64B5F6;font-family:monospace">coach / Terrain2026</span>
     </button>
-    <button onclick="fillDemo('directeur','FFP2026!')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="fillDemo('directeur','FFP2026!','directeur')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
       <span>🏛️ <strong>Directeur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">directeur / FFP2026!</span>
     </button>
-    <button onclick="fillDemo('parent_demo','Parent2026')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="setView('parent');setTimeout(function(){PIN=['1','0','0','3'];['p0','p1','p2','p3'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.value=PIN[i];});var pw=document.getElementById('p-pwd');if(pw)pw.value='Parent2026';},50)" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
       <span>👨‍👧 <strong>Parent</strong></span>
-      <span style="color:#64B5F6;font-family:monospace">parent_demo / Parent2026</span>
+      <span style="color:#64B5F6;font-family:monospace">1003 / Parent2026</span>
     </button>
-    <button onclick="fillDemo('scout','Scout2026')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="fillDemo('scout','Scout2026','scout')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
       <span>🔍 <strong>Recruteur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">scout / Scout2026</span>
     </button>
@@ -311,19 +311,20 @@ function updateRoleUI(){
 }
 
 function fillDemoJoueur(){
-  fillDemo('joueur','Joueur2026');
-  document.getElementById('c-role').value='joueur';
+  fillDemo('joueur','Joueur2026','joueur');
 }
 
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
 
 <script>
-function fillDemo(user, pwd) {
+function fillDemo(user, pwd, role) {
   var u = document.getElementById('c-user');
   var p = document.getElementById('c-pwd');
+  var r = document.getElementById('c-role');
   if (u) { u.value = user; u.style.borderColor = '#1565C0'; }
   if (p) { p.value = pwd;  p.style.borderColor = '#1565C0'; }
+  if (r && role) { r.value = role; }
   // Flash visuel
   setTimeout(function() {
     if (u) u.style.borderColor = '';
