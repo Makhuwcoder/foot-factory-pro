@@ -38,6 +38,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 .sb-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(75,200,138,.08);border:1px solid rgba(75,200,138,.2);border-radius:10px;padding:3px 10px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;color:#4BC88A;letter-spacing:1px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#F0F4F8}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
 </style>
+
+<script>
+// Nettoyer session démo résiduelle — page de connexion réelle
+(function(){
+  try {
+    var s = localStorage.getItem('ffp_session');
+    if (s) {
+      var d = JSON.parse(s);
+      if (d && d._demo) {
+        ['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages','ffp_demo_events_set']
+          .forEach(function(k){ localStorage.removeItem(k); });
+      }
+    }
+  } catch(e) {}
+})();
+</script>
+
 </head>
 <body>
 <div id="v-role" class="wrap" style="display:none"><img src="/logo-one-sport-football-white.png" style="height:64px;margin-bottom:20px"/><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(20px,5vw,34px);letter-spacing:4px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">ONE SPORT</div><div style="font-size:11px;color:rgba(212,175,55,.5);letter-spacing:4px;text-transform:uppercase;font-family:Montserrat,sans-serif;margin-bottom:40px">Connecter · Partager · Progresser</div><div class="card" style="text-align:center"><div class="card-title">Accéder à votre espace</div><div class="card-sub">Sélectionnez votre profil</div><div style="display:flex;flex-direction:column;gap:10px"><button onclick="setView('coach')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(212,175,55,.07);border:1px solid rgba(0,0,0,.15);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(212,175,55,.45)'" onmouseout="this.style.borderColor='rgba(212,175,55,.2)'"><span style="font-size:26px">🏟️</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0">Espace Coach</div><div style="font-size:11px;color:#888">Évaluations, matchs, convocations</div></div></button><button onclick="setView('parent')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(160,96,224,.45)'" onmouseout="this.style.borderColor='rgba(160,96,224,.2)'"><span style="font-size:26px">🫂</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#A060E0">Espace Parents</div><div style="font-size:11px;color:#888">Fiche de votre enfant, messagerie</div></div></button><button onclick="setView('coach');document.getElementById('c-role').value='scout'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(96,168,208,.45)'" onmouseout="this.style.borderColor='rgba(96,168,208,.2)'"><span style="font-size:26px">🔍</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">Recruteurs</div><div style="font-size:11px;color:#888">Recrutement, comparaison</div></div></button></div></div></div>
