@@ -700,10 +700,6 @@ function exitDemo(){
   document.body.appendChild(b);
 })();
 
-  html+='</body></html>';
-  w.document.write(html);w.document.close();
-}
-
 function exportComparePDF(){
   var players=COMPARE.map(function(id){return PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
   var w=window.open('','_blank');
