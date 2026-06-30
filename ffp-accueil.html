@@ -255,6 +255,23 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
     }
 
   </style>
+
+<script>
+// Nettoyer toute session démo résiduelle à l'arrivée sur l'accueil
+(function(){
+  try {
+    var s = localStorage.getItem('ffp_session');
+    if (s) {
+      var d = JSON.parse(s);
+      if (d && d._demo) {
+        ['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages','ffp_demo_events_set']
+          .forEach(function(k){ localStorage.removeItem(k); });
+      }
+    }
+  } catch(e) {}
+})();
+</script>
+
 </head>
 <body>
 
