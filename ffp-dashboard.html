@@ -452,6 +452,13 @@ function init(){
   var session=getSession();
   var content=document.getElementById('dashboard-content');
 
+  // Directeur → rediriger vers le panel admin dédié
+  if(session && session.role==='directeur'){
+    var qs = window.location.search || '';
+    window.location.replace('ffp-admin.html'+qs);
+    return;
+  }
+
   if(!session){
     // Not logged in — show login options
     if(content){
