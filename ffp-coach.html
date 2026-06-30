@@ -96,6 +96,10 @@ html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;colo
 <body>
 <script>
 (function(){
+  // Nettoyer session démo si navigation directe (sans ?demo=)
+  if(window.location.search.indexOf('demo=')<0){
+    try{var _c=localStorage.getItem('ffp_session');if(_c){var _co=JSON.parse(_c);if(_co&&_co._demo){['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages','ffp_demo_events_set'].forEach(function(k){localStorage.removeItem(k);});}}}catch(e){}
+  }
   // FFP AUTH GUARD v3 — synchrone
   if(window.location.search.indexOf('demo=')>=0)return;
   var LS='ffp_session',LSC='ffp_scout_session';
