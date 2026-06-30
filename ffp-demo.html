@@ -18,7 +18,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:20px;padding:5px 16px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4BC88A;margin-bottom:20px}
 .dot{width:7px;height:7px;border-radius:50%;background:#4BC88A;box-shadow:0 0 8px #4BC88A;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1080px;margin:0 auto 50px;padding:0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:1280px;margin:0 auto 50px;padding:0 20px}
 .card{background:#F5F7FA;border:1px solid rgba(0,0,0,.1);border-radius:16px;padding:26px 20px;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
 .card:hover{transform:translateY(-6px)}
 .card.coach:hover{border-color:rgba(212,175,55,.5);box-shadow:0 16px 50px rgba(212,175,55,.1)}
@@ -127,6 +127,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
     <button class="btn btn-green">🏛️ Vue Directeur →</button>
   </div>
 
+  <!-- Joueur -->
+  <div class="card joueur" onclick="openDemoModal('joueur')">
+    <div class="avatar" style="background:linear-gradient(135deg,#0D1B3E,#001533);border-color:rgba(21,101,192,.3)">⚽</div>
+    <div class="card-name">Kylian Faure</div>
+    <div class="card-role" style="color:#1565C0">Joueur · U14</div>
+    <div class="card-desc">Milieu offensif · AS Voltaire Paris</div>
+    <ul class="card-features">
+      <li>Mon profil et mes stats</li>
+      <li>Convocations et matchs</li>
+      <li>Messagerie avec le coach</li>
+      <li>Suivi de progression</li>
+    </ul>
+    <button class="btn btn-gold">⚽ Vue Joueur →</button>
+  </div>
+
 </div>
 
 <div class="stats">
@@ -168,13 +183,28 @@ var DEMO = {
     directeur: {
       role:'directeur', prenom:'Jean-Marc', nom:'Roussel',
       club_id:'a0000000-0000-0000-0000-000000000001', _demo:true
+    },
+    joueur: {
+      role:'joueur', prenom:'Kylian', nom:'Faure',
+      club_id:'a0000000-0000-0000-0000-000000000001',
+      category_id:'U14', _demo:true,
+      playerData: {
+        prenom:'Kylian', nom:'Faure', poste:'Milieu offensif',
+        club:'AS Voltaire Paris', categorie:'U14', score:7.4,
+        technique:{controle:7.8,dribble:8.2,frappe:6.9,passe:7.5,tete:6.2},
+        physique:{vitesse:8.1,endurance:7.3,force:6.5,coordination:7.9,souplesse:7.1},
+        tactique:{positionnement:7.6,lecture:7.2,pressing:6.8},
+        mental:{motivation:8.5,concentration:7.0,combativite:7.8,leadership:6.4,stress:7.2},
+        sante:{taille:158,poids:48,imc:19.2,etat:'Excellent'}
+      }
     }
   },
   pages: {
     coach:     'ffp-coach.html?demo=coach',
     parent:    'ffp-parents.html?demo=parent',
     recruteur: 'ffp-scout.html?demo=recruteur',
-    directeur: 'ffp-admin.html?demo=directeur'
+    directeur: 'ffp-admin.html?demo=directeur',
+    joueur:    'ffp-joueur.html?demo=joueur'
   },
   events: function() {
     function futur(j) {
@@ -287,7 +317,8 @@ var _demoCreds = {
   coach:     {user:'coach',     pwd:'Terrain2026', label:'🏟️ Coach Principal'},
   parent:    {user:'parent_demo',pwd:'Parent2026', label:'👨‍👧 Famille Faure'},
   recruteur: {user:'scout',     pwd:'Scout2026',   label:'🔍 Recruteur'},
-  directeur: {user:'directeur', pwd:'FFP2026!',    label:'🏛️ Directeur de Club'}
+  directeur: {user:'directeur', pwd:'FFP2026!',    label:'🏛️ Directeur de Club'},
+  joueur:    {user:'joueur',    pwd:'Joueur2026',  label:'⚽ Kylian Faure'}
 };
 
 function openDemoModal(role) {
