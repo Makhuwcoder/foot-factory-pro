@@ -150,6 +150,12 @@ function showLoading(btnId, loading){
 }
 
 // ── Login Coach / Scout ──
+function targetPageForRole(role){
+  if(role==='joueur') return 'ffp-joueur.html';
+  if(role==='scout') return 'ffp-scout.html';
+  return 'ffp-dashboard.html';
+}
+
 async function loginCoach(){
   clearErr('coach-err');
   var user=((document.getElementById('c-user')||{}).value||'').trim();
@@ -164,17 +170,18 @@ async function loginCoach(){
       var res = await sbLogin(user, pwd);
       if(!res.error && res.data){
         var profile = res.data.profile || {};
-        saveSession({role:profile.role||role,prenom:profile.prenom||user,nom:profile.nom||'',
+        var finalRole = profile.role||role;
+        saveSession({role:finalRole,prenom:profile.prenom||user,nom:profile.nom||'',
           supabase_id:res.data.user.id, club_id:profile.club_id||null, category_id:profile.category_id||null});
         await sbLog('Connexion', user, 'info');
-        window.location.href='ffp-dashboard.html';
+        window.location.href=targetPageForRole(finalRole);
         return;
       }
     }catch(e){}
   }
 
   // Fallback localStorage
-  var accounts = role==='scout'?DEMO_SCOUTS:DEMO_COACHES;
+  var accounts = role==='scout' ? DEMO_SCOUTS : (role==='joueur' ? DEMO_PLAYERS : DEMO_COACHES);
   var found = accounts.find(function(a){return a.username===user&&chk(pwd,a.password);});
   if(!found){
     showLoading('c-btn',false);
@@ -182,7 +189,7 @@ async function loginCoach(){
     return;
   }
   saveSession({role:found.role,prenom:found.prenom,nom:found.nom,username:found.username});
-  window.location.href='ffp-dashboard.html';
+  window.location.href=targetPageForRole(found.role);
 }
 
 // ── Login Parent (code PIN) ──
