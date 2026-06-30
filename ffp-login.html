@@ -211,34 +211,44 @@ function setupPIN(){
   }
 }
 
-async function loginParent(code){
+async function loginParent(code, pwd){
   clearErr('parent-err');
   if(!code||code.length!==4){showErr('parent-err','Code à 4 chiffres requis.');return;}
+  if(!pwd||pwd.length<6){showErr('parent-err','Mot de passe requis (6 caractères min).');return;}
   showLoading('p-btn',true);
 
-  // Try Supabase
+  // Try Supabase — auth réelle email/password basée sur le code joueur
   if(USE_SUPABASE && typeof sbLogin === 'function'){
     try{
-      var res = await sbLogin(code, code);
+      var fakeEmail = 'parent.'+code+'@onesport.fr';
+      var res = await sbLogin(fakeEmail, pwd);
       if(!res.error && res.data){
         var profile = res.data.profile || {};
+        if(profile.player_code && profile.player_code!==code){
+          showLoading('p-btn',false);
+          showErr('parent-err','Code et mot de passe ne correspondent pas.');
+          return;
+        }
         saveSession({role:'parent',player_code:code,prenom:profile.prenom||'Parent',
           nom:profile.nom||'',supabase_id:res.data.user.id});
         window.location.href='ffp-parents.html';
+        return;
+      } else {
+        showLoading('p-btn',false);
+        showErr('parent-err','Code ou mot de passe incorrect.');
         return;
       }
     }catch(e){}
   }
 
-  // Fallback : accepte 1001-1030
-  var num = parseInt(code);
-  if(isNaN(num)||num<1001||num>1030){
-    showLoading('p-btn',false);
-    showErr('parent-err','Code incorrect. Les codes valides sont 1001 à 1030.');
+  // Fallback démo uniquement : code 1003 + mot de passe Parent2026
+  if(code==='1003' && pwd==='Parent2026'){
+    saveSession({role:'parent',player_code:code,prenom:'Marie',nom:'Faure'});
+    window.location.href='ffp-parents.html';
     return;
   }
-  saveSession({role:'parent',player_code:code});
-  window.location.href='ffp-parents.html';
+  showLoading('p-btn',false);
+  showErr('parent-err','Code ou mot de passe incorrect.');
 }
 
 // ── Œil mot de passe ──
