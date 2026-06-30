@@ -656,26 +656,6 @@ function exportPlayerPDF(id){
     +'<tr><th>Vitesse max</th><td>'+p.stats.vitesse_max+' km/h</td><th>Matchs</th><td>'+p.stats.matchs+'</td></tr></table>'
     +'<p style="font-style:italic;color:#666">'+p.similar+'</p>'
     +'<p style="margin-top:16px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">One Sport · Rapport confidentiel</p>'
-    +'
-<script>
-window.addEventListener('load', function(){
-  if(window.location.search.indexOf('demo=')>=0){
-    setTimeout(function(){
-      var hint = document.getElementById('sc-demo-hint');
-      var login = document.getElementById('sc-login');
-      var platform = document.getElementById('sc-platform');
-      // Si le formulaire de login est visible (pas la plateforme), forcer le hint
-      if(hint && login && login.style.display !== 'none'){
-        hint.style.display = 'block';
-      }
-      var actions = document.getElementById('scout-header-actions');
-      if(actions && login && login.style.display !== 'none'){
-        actions.style.display = 'none';
-      }
-    }, 300);
-  }
-});
-</script>
 
 </body></html>';
   w.document.write(html);w.document.close();
@@ -811,15 +791,26 @@ try{init();}catch(e){
   console.error('init error:',e);
   var l=document.getElementById('sc-login');
   if(l)l.style.display='flex';
-  if(window.location.search.indexOf('demo=')>=0){
-    var dbg=document.createElement('div');
-    dbg.style.cssText='position:fixed;top:60px;left:10px;right:10px;background:#400;color:#fff;padding:12px;font-family:monospace;font-size:11px;z-index:99999;border-radius:6px;border:1px solid #c00';
-    dbg.textContent='DEBUG init() error: '+(e&&e.message?e.message:String(e));
-    document.body.appendChild(dbg);
-  }
 }
 
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+<script>
+window.addEventListener('load', function(){
+  if(window.location.search.indexOf('demo=')>=0){
+    setTimeout(function(){
+      var hint = document.getElementById('sc-demo-hint');
+      var login = document.getElementById('sc-login');
+      if(hint && login && login.style.display !== 'none'){
+        hint.style.display = 'block';
+      }
+      var actions = document.getElementById('scout-header-actions');
+      if(actions && login && login.style.display !== 'none'){
+        actions.style.display = 'none';
+      }
+    }, 300);
+  }
+});
+</script>
 </body>
 </html>
