@@ -125,6 +125,7 @@ main{flex:1;padding:24px 16px;max-width:1000px;margin:0 auto;width:100%}
   <div class="tabs">
     <div class="tab active" data-view="v-profil" onclick="showTab('v-profil')">👤 Mon profil</div>
     <div class="tab" data-view="v-stats" onclick="showTab('v-stats')">📊 Mes stats</div>
+    <div class="tab" data-view="v-matchs" onclick="showTab('v-matchs')">⚽ Matchs joués</div>
     <div class="tab" data-view="v-events" onclick="showTab('v-events')">📅 Convocations</div>
     <div class="tab" data-view="v-msg" onclick="showTab('v-msg')">💬 Messagerie coach</div>
   </div>
@@ -175,6 +176,18 @@ main{flex:1;padding:24px 16px;max-width:1000px;margin:0 auto;width:100%}
       <div class="card">
         <div class="card-title">🔥 Mental</div>
         <div class="stat-grid" id="s-mental"></div>
+      </div>
+    </div>
+
+    <!-- MATCHS -->
+    <div class="view" id="v-matchs">
+      <div class="card">
+        <div class="card-title">⚽ Historique des matchs</div>
+        <div id="p-matchs"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏆 Badges & réussites</div>
+        <div id="p-badges" class="stat-grid"></div>
       </div>
     </div>
 
@@ -284,11 +297,41 @@ function render(){
     el.innerHTML = html || '<div class="empty-state">Aucune donnée disponible</div>';
   });
 
+  // Matchs joués
+  var matchs = [
+    {adv:'Red Star FC', score:'3-1', resultat:'V', date:'15 juin', buts:1, passes:1, note:8.2},
+    {adv:'PSG Academy', score:'1-1', resultat:'N', date:'8 juin', buts:0, passes:1, note:7.0},
+    {adv:'Paris FC', score:'2-0', resultat:'V', date:'1 juin', buts:2, passes:0, note:8.8},
+    {adv:'Stade Rennais', score:'0-2', resultat:'D', date:'25 mai', buts:0, passes:0, note:5.5},
+    {adv:'AS Voltaire B', score:'4-0', resultat:'V', date:'18 mai', buts:1, passes:2, note:8.0}
+  ];
+  var resColors = {V:'#4BC88A', N:'#E8A93C', D:'#E24B4A'};
+  document.getElementById('p-matchs').innerHTML = matchs.map(function(m){
+    return '<div class="event-item"><div class="event-ico" style="background:'+resColors[m.resultat]+'22;color:'+resColors[m.resultat]+'">'+m.resultat+'</div>'
+      +'<div class="event-info"><div class="event-title">AS Voltaire '+m.score+' '+m.adv+'</div>'
+      +'<div class="event-sub">'+m.buts+' but(s) · '+m.passes+' passe(s) décisive(s) · Note '+m.note+'/10</div></div>'
+      +'<div class="event-date">'+m.date+'</div></div>';
+  }).join('');
+
+  // Badges
+  var badges = [
+    {ico:'🥇', lbl:'Meilleur buteur du mois', val:'4 buts'},
+    {ico:'🎯', lbl:'Précision de passe', val:'87%'},
+    {ico:'🔥', lbl:'Série de victoires', val:'3 matchs'},
+    {ico:'📈', lbl:'Progression trimestre', val:'+0.6 pt'}
+  ];
+  document.getElementById('p-badges').innerHTML = badges.map(function(b){
+    return '<div class="stat-item" style="text-align:center"><div style="font-size:24px;margin-bottom:6px">'+b.ico+'</div>'
+      +'<div class="lbl">'+b.lbl+'</div><div class="val" style="margin-top:4px">'+b.val+'</div></div>';
+  }).join('');
+
   // Events
   var events = [
-    {ico:'⚽',title:'Match — AS Voltaire vs Red Star',sub:'Convocation samedi 14h00',date:'Dans 3j'},
-    {ico:'🏃',title:'Entraînement collectif',sub:'Terrain B — Tenue complète',date:'Demain'},
-    {ico:'📋',title:'Évaluation technique',sub:'Bilan trimestriel programmé',date:'Dans 8j'}
+    {ico:'⚽',title:'Match — AS Voltaire vs Red Star',sub:'Convocation samedi 14h00 — Tenue domicile',date:'Dans 3j'},
+    {ico:'🏃',title:'Entraînement collectif',sub:'Terrain B — Travail technique et tactique',date:'Demain'},
+    {ico:'📋',title:'Évaluation technique',sub:'Bilan trimestriel programmé avec le coach',date:'Dans 8j'},
+    {ico:'🏆',title:'Tournoi U14 — Plateau régional',sub:'Stade Municipal — Convocation 8h30',date:'Dans 12j'},
+    {ico:'🩺',title:'Visite médicale annuelle',sub:'Certificat de non contre-indication',date:'Dans 18j'}
   ];
   document.getElementById('p-events').innerHTML = events.map(function(e){
     return '<div class="event-item"><div class="event-ico">'+e.ico+'</div>'
@@ -306,8 +349,12 @@ function renderMessages(){
 
   if(msgs.length===0){
     msgs = [
-      {from:'coach',text:'Bonjour ! N\\'oublie pas l\\'entraînement de demain à 18h.',ts:Date.now()-3600000*5},
-      {from:'me',text:'Bien reçu coach, j\\'y serai !',ts:Date.now()-3600000*4}
+      {from:'coach',text:'Bravo pour le match de samedi Kylian, beau but en 2e mi-temps !',ts:Date.now()-3600000*72},
+      {from:'me',text:'Merci coach ! On a bien travaille les combinaisons a l entrainement.',ts:Date.now()-3600000*71},
+      {from:'coach',text:'Exactement. Continue a travailler ton pied gauche cette semaine.',ts:Date.now()-3600000*70},
+      {from:'coach',text:'Bonjour ! Noublie pas l entrainement de demain a 18h, terrain B.',ts:Date.now()-3600000*5},
+      {from:'me',text:'Bien recu coach, j y serai avec mes crampons neufs !',ts:Date.now()-3600000*4},
+      {from:'coach',text:'Parfait. Pense aussi a bien t hydrater, il va faire chaud.',ts:Date.now()-3600000*3}
     ];
   }
 
