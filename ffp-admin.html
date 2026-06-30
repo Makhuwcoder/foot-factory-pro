@@ -142,6 +142,7 @@ html,body{overflow-x:hidden;height:100%;font-family:'Raleway',sans-serif;backgro
   
   // Mode démo: ?demo=... → laisser passer (ffp-auth.js gère la session)
   if (window.location.search.indexOf('demo=') >= 0) return;
+  try{var _dck=localStorage.getItem('ffp_session');if(_dck){var _dobj=JSON.parse(_dck);if(_dobj&&_dobj._demo)return;}}catch(e){}
   
   // Vérifier session
   function getSess(key) {
