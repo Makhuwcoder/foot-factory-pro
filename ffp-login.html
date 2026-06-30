@@ -79,6 +79,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
       <span>🔍 <strong>Recruteur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">scout / Scout2026</span>
     </button>
+    <button onclick="fillDemoJoueur()" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+      <span>⚽ <strong>Joueur</strong></span>
+      <span style="color:#64B5F6;font-family:monospace">joueur / Joueur2026</span>
+    </button>
   </div>
   <div style="font-size:10px;color:#555;margin-top:8px;text-align:center">Cliquez sur un profil pour pré-remplir les champs</div>
 </div><div style="margin-bottom:12px"><label class="fl">Identifiant</label><input class="fi" id="c-user" type="text" placeholder="Votre identifiant" autocomplete="username"></div><div style="margin-bottom:16px"><label class="fl">Mot de passe</label><div style="position:relative"><input class="fi" id="c-pwd" type="password" placeholder="Mot de passe" autocomplete="current-password" style="padding-right:44px"><button class="eye-btn" onclick="toggleEye('c-pwd',this)" style="right:12px;top:50%;transform:translateY(-50%);position:absolute;background:none;border:none;cursor:pointer;font-size:15px;color:#475569">👁</button></div></div><div class="err" id="coach-err"></div><button class="btn" id="c-btn" data-label="Connexion →" onclick="loginCoach()">Connexion →</button><div class="sep"></div><div style="text-align:center"><button class="link" onclick="setView('role')">← Changer d'espace</button><span style="color:#1E293B;margin:0 8px">·</span><button class="link" onclick="setView('parent')">Espace parents</button></div></div></div>
@@ -102,6 +106,9 @@ var DEMO_COACHES = [
 var DEMO_SCOUTS = [
   {id:'s1',username:'scout',password:btoa('Scout2026'),prenom:'Recruteur',nom:'Principal',role:'scout',club:'One Sport',email:'scout@footfactorypro.app'},
   {id:'s2',username:'julien.r',password:btoa('Recruit23'),prenom:'Julien',nom:'Renard',role:'scout',club:'AS Monaco Academy',email:'julien.r@footfactorypro.app'}
+];
+var DEMO_PLAYERS = [
+  {id:'pl1',username:'joueur',password:btoa('Joueur2026'),prenom:'Kylian',nom:'Faure',role:'joueur',email:'joueur@onesport.fr'}
 ];
 
 function enc(s){try{return btoa(unescape(encodeURIComponent(s)));}catch(e){return btoa(s);}}
@@ -301,6 +308,11 @@ function updateRoleUI(){
     return;
   }
   // Le hint avec boutons démo cliquables est géré statiquement en HTML — pas d'écrasement ici
+}
+
+function fillDemoJoueur(){
+  fillDemo('joueur','Joueur2026');
+  document.getElementById('c-role').value='joueur';
 }
 
 </script>
