@@ -656,8 +656,7 @@ function exportPlayerPDF(id){
     +'<tr><th>Vitesse max</th><td>'+p.stats.vitesse_max+' km/h</td><th>Matchs</th><td>'+p.stats.matchs+'</td></tr></table>'
     +'<p style="font-style:italic;color:#666">'+p.similar+'</p>'
     +'<p style="margin-top:16px;font-size:10px;color:#bbb;border-top:1px solid #eee;padding-top:8px">One Sport · Rapport confidentiel</p>'
-
-</body></html>';
+    +'</body></html>';
   w.document.write(html);w.document.close();
 }
 </script>
@@ -767,12 +766,6 @@ function renderOverview(){
 function init(){
   // Check existing session
   var sess=getScoutSession();
-  if(window.location.search.indexOf('demo=')>=0){
-    var dbg2=document.createElement('div');
-    dbg2.style.cssText='position:fixed;top:60px;left:10px;right:10px;background:#040;color:#fff;padding:12px;font-family:monospace;font-size:11px;z-index:99999;border-radius:6px;border:1px solid #0c0;max-height:200px;overflow:auto';
-    dbg2.textContent='DEBUG session brute localStorage: '+localStorage.getItem('ffp_scout_session')+' | sess parsed: '+JSON.stringify(sess);
-    document.body.appendChild(dbg2);
-  }
   if(sess&&sess.role==='scout'){
     try{
       showScoutPlatform(sess);
