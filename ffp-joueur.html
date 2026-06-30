@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>One Sport — Espace Joueur</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#1565C0">
+<style>
+:root{--blue:#1565C0;--navy:#0D1B3E}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#05070C;color:#F0F0F0}
+a{color:inherit}
+.app{display:flex;flex-direction:column;min-height:100vh}
+
+/* Header */
+header{background:#020200;border-bottom:1px solid rgba(21,101,192,.15);padding:0 16px;display:flex;align-items:center;gap:10px;height:54px;flex-shrink:0;position:sticky;top:0;z-index:50}
+.hdr-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.hdr-logo img{height:30px}
+.hdr-title{line-height:1}
+.hdr-title .t1{font-family:Montserrat,sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--blue),var(--navy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-title .t2{font-size:8px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.hdr-btn{font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;text-decoration:none;border-radius:4px;padding:5px 10px;border:1px solid rgba(255,255,255,.1);color:#888;cursor:pointer;background:none}
+
+/* Nav tabs */
+.tabs{display:flex;gap:4px;background:#080A10;border-bottom:1px solid rgba(21,101,192,.1);padding:0 16px;overflow-x:auto}
+.tab{padding:13px 16px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab:hover{color:#aaa}
+
+main{flex:1;padding:24px 16px;max-width:1000px;margin:0 auto;width:100%}
+.view{display:none}
+.view.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Profile header card */
+.profile-card{background:linear-gradient(135deg,#0D1B3E,#1565C0);border-radius:16px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.profile-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.08),transparent 60%)}
+.profile-row{display:flex;align-items:center;gap:18px;position:relative;z-index:1;flex-wrap:wrap}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;font-family:Montserrat,sans-serif;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.3)}
+.profile-info{flex:1;min-width:180px}
+.profile-name{font-family:Montserrat,sans-serif;font-weight:900;font-size:22px;color:#fff}
+.profile-meta{font-size:12px;color:rgba(255,255,255,.75);margin-top:2px}
+.profile-score{text-align:center}
+.profile-score .num{font-family:Montserrat,sans-serif;font-weight:900;font-size:32px;color:#fff;line-height:1}
+.profile-score .lbl{font-size:9px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* Cards */
+.card{background:#0A0D14;border:1px solid rgba(21,101,192,.15);border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* Radar stats */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.stat-item{background:rgba(21,101,192,.06);border-radius:8px;padding:10px 12px}
+.stat-item .lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat-item .bar-wrap{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.stat-item .bar{height:100%;border-radius:3px;transition:width .6s ease}
+.stat-item .val{font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:#fff}
+
+/* Events */
+.event-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.event-item:last-child{border-bottom:none}
+.event-ico{width:36px;height:36px;border-radius:8px;background:rgba(21,101,192,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.event-info{flex:1}
+.event-title{font-size:13px;font-weight:700;color:#fff}
+.event-sub{font-size:11px;color:#888;margin-top:1px}
+.event-date{font-size:10px;color:#666;text-align:right;white-space:nowrap}
+
+/* Messagerie */
+.msg-list{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow-y:auto;margin-bottom:14px}
+.msg-bubble{max-width:80%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5}
+.msg-bubble.coach{background:rgba(21,101,192,.12);border:1px solid rgba(21,101,192,.25);align-self:flex-start;border-bottom-left-radius:3px}
+.msg-bubble.me{background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+.msg-meta{font-size:9px;color:#666;margin-top:4px}
+.msg-input-row{display:flex;gap:8px}
+.msg-input{flex:1;background:#111318;border:1px solid rgba(21,101,192,.2);border-radius:8px;padding:11px 14px;color:#fff;font-family:Raleway,sans-serif;font-size:13px;outline:none}
+.msg-send{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:0 18px;font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase}
+
+.empty-state{text-align:center;padding:40px 20px;color:#666;font-size:13px}
+
+@media(max-width:600px){
+  .profile-row{flex-direction:column;text-align:center}
+  .profile-score{margin-top:8px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ── AUTH GUARD ── -->
+<script>
+(function(){
+  if(window.location.search.indexOf('demo=')>=0){
+    try{var _c=localStorage.getItem('ffp_session');if(_c){var _co=JSON.parse(_c);if(_co&&_co._demo)return;}}catch(e){}
+  }
+  // Nettoyer session démo si navigation directe
+  if(window.location.search.indexOf('demo=')<0){
+    try{var _c2=localStorage.getItem('ffp_session');if(_c2){var _co2=JSON.parse(_c2);if(_co2&&_co2._demo){['ffp_session','ffp_scout_session','ffp_demo_mode','ffp_events','ffp_messages','ffp_demo_events_set'].forEach(function(k){localStorage.removeItem(k);});}}}catch(e){}
+  }
+  var LS='ffp_session';
+  function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
+  var s=get(LS);
+  if(!s||s.role!=='joueur'){
+    window.location.replace('ffp-login.html?role=joueur');
+  }
+})();
+</script>
+
+<div class="app">
+  <header>
+    <a href="ffp-accueil.html" class="hdr-logo">
+      <img src="/logo-one-sport-football-white.png" alt="One Sport"/>
+      <div class="hdr-title"><div class="t1">One Sport</div><div class="t2">Espace Joueur</div></div>
+    </a>
+    <div class="hdr-right">
+      <span id="player-name-pill" style="font-size:10px;color:#888;font-family:Montserrat,sans-serif"></span>
+      <button class="hdr-btn" onclick="playerLogout()">Déconnexion ✕</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-view="v-profil" onclick="showTab('v-profil')">👤 Mon profil</div>
+    <div class="tab" data-view="v-stats" onclick="showTab('v-stats')">📊 Mes stats</div>
+    <div class="tab" data-view="v-events" onclick="showTab('v-events')">📅 Convocations</div>
+    <div class="tab" data-view="v-msg" onclick="showTab('v-msg')">💬 Messagerie coach</div>
+  </div>
+
+  <main>
+
+    <!-- PROFIL -->
+    <div class="view active" id="v-profil">
+      <div class="profile-card">
+        <div class="profile-row">
+          <div class="profile-avatar" id="p-avatar">??</div>
+          <div class="profile-info">
+            <div class="profile-name" id="p-name">—</div>
+            <div class="profile-meta" id="p-meta">—</div>
+          </div>
+          <div class="profile-score">
+            <div class="num" id="p-score">—</div>
+            <div class="lbl">Score global /10</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏟️ Mon club</div>
+        <div id="p-club-info" style="font-size:13px;color:#ccc;line-height:1.8"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚕️ Santé & morphologie</div>
+        <div class="stat-grid" id="p-sante"></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="view" id="v-stats">
+      <div class="card">
+        <div class="card-title">⚽ Technique</div>
+        <div class="stat-grid" id="s-technique"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">💪 Physique</div>
+        <div class="stat-grid" id="s-physique"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧠 Tactique</div>
+        <div class="stat-grid" id="s-tactique"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔥 Mental</div>
+        <div class="stat-grid" id="s-mental"></div>
+      </div>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="view" id="v-events">
+      <div class="card">
+        <div class="card-title">📅 Prochains événements</div>
+        <div id="p-events"></div>
+      </div>
+    </div>
+
+    <!-- MESSAGERIE -->
+    <div class="view" id="v-msg">
+      <div class="card">
+        <div class="card-title">💬 Messagerie avec le coach</div>
+        <div class="msg-list" id="msg-list"></div>
+        <div class="msg-input-row">
+          <input class="msg-input" id="msg-input" placeholder="Écrire un message..." onkeydown="if(event.key==='Enter')sendPlayerMsg()"/>
+          <button class="msg-send" onclick="sendPlayerMsg()">Envoyer</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bannière démo (réutilise FFP si chargé) -->
+</div>
+
+<script src="ffp-auth.js"></script>
+<script>
+// ── Données joueur (démo ou réelles via localStorage) ──
+var LS_SESSION = 'ffp_session';
+var LS_MSG = 'ffp_player_messages';
+
+function getSession(){
+  try{
+    var r=localStorage.getItem(LS_SESSION);
+    if(!r)return null;
+    var d=JSON.parse(r);
+    if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(LS_SESSION);return null;}
+    return d;
+  }catch(e){return null;}
+}
+
+function playerLogout(){
+  try{['ffp_session','ffp_demo_mode'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+  window.location.href='ffp-accueil.html';
+}
+
+function showTab(view){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.view===view);});
+  document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('active',v.id===view);});
+}
+
+function statBar(label,val){
+  var pct = (val/10*100).toFixed(0);
+  var color = val>=8 ? '#4BC88A' : val>=6 ? '#1565C0' : val>=4 ? '#E8A93C' : '#E24B4A';
+  return '<div class="stat-item"><div class="lbl">'+label+'</div>'
+    +'<div class="bar-wrap"><div class="bar" style="width:'+pct+'%;background:'+color+'"></div></div>'
+    +'<div class="val">'+val+' / 10</div></div>';
+}
+
+function render(){
+  var session = getSession();
+  if(!session) return;
+
+  var p = session.playerData || {
+    prenom: session.prenom || 'Joueur', nom: session.nom || 'Démo',
+    poste: 'Milieu offensif', club: 'AS Voltaire Paris', categorie: 'U14',
+    score: 7.4,
+    technique:{controle:7.8,dribble:8.2,frappe:6.9,passe:7.5,tete:6.2},
+    physique:{vitesse:8.1,endurance:7.3,force:6.5,coordination:7.9,souplesse:7.1},
+    tactique:{positionnement:7.6,lecture:7.2,pressing:6.8},
+    mental:{motivation:8.5,concentration:7.0,combativite:7.8,leadership:6.4,stress:7.2},
+    sante:{taille:158,poids:48,imc:19.2,etat:'Excellent'}
+  };
+
+  document.getElementById('player-name-pill').textContent = p.prenom+' '+p.nom;
+  document.getElementById('p-name').textContent = p.prenom+' '+p.nom;
+  document.getElementById('p-avatar').textContent = (p.prenom[0]||'').toUpperCase()+(p.nom[0]||'').toUpperCase();
+  document.getElementById('p-meta').textContent = (p.poste||'')+' · '+(p.categorie||'')+' · '+(p.club||'');
+  document.getElementById('p-score').textContent = (p.score||0).toFixed(1);
+
+  document.getElementById('p-club-info').innerHTML =
+    '<div style="margin-bottom:6px"><strong style="color:#fff">Club :</strong> '+(p.club||'—')+'</div>'
+    +'<div style="margin-bottom:6px"><strong style="color:#fff">Catégorie :</strong> '+(p.categorie||'—')+'</div>'
+    +'<div><strong style="color:#fff">Poste :</strong> '+(p.poste||'—')+'</div>';
+
+  var sante = p.sante || {};
+  document.getElementById('p-sante').innerHTML =
+    '<div class="stat-item"><div class="lbl">Taille</div><div class="val">'+(sante.taille||'—')+' cm</div></div>'
+    +'<div class="stat-item"><div class="lbl">Poids</div><div class="val">'+(sante.poids||'—')+' kg</div></div>'
+    +'<div class="stat-item"><div class="lbl">IMC</div><div class="val">'+(sante.imc||'—')+'</div></div>'
+    +'<div class="stat-item"><div class="lbl">État général</div><div class="val">'+(sante.etat||'—')+'</div></div>';
+
+  ['technique','physique','tactique','mental'].forEach(function(cat){
+    var el = document.getElementById('s-'+cat);
+    if(!el) return;
+    var data = p[cat] || {};
+    var html = '';
+    Object.keys(data).forEach(function(k){
+      var label = k.charAt(0).toUpperCase()+k.slice(1);
+      html += statBar(label, data[k]);
+    });
+    el.innerHTML = html || '<div class="empty-state">Aucune donnée disponible</div>';
+  });
+
+  // Events
+  var events = [
+    {ico:'⚽',title:'Match — AS Voltaire vs Red Star',sub:'Convocation samedi 14h00',date:'Dans 3j'},
+    {ico:'🏃',title:'Entraînement collectif',sub:'Terrain B — Tenue complète',date:'Demain'},
+    {ico:'📋',title:'Évaluation technique',sub:'Bilan trimestriel programmé',date:'Dans 8j'}
+  ];
+  document.getElementById('p-events').innerHTML = events.map(function(e){
+    return '<div class="event-item"><div class="event-ico">'+e.ico+'</div>'
+      +'<div class="event-info"><div class="event-title">'+e.title+'</div><div class="event-sub">'+e.sub+'</div></div>'
+      +'<div class="event-date">'+e.date+'</div></div>';
+  }).join('') || '<div class="empty-state">Aucun événement à venir</div>';
+
+  renderMessages();
+}
+
+function renderMessages(){
+  var list = document.getElementById('msg-list');
+  var msgs = [];
+  try{ msgs = JSON.parse(localStorage.getItem(LS_MSG) || '[]'); }catch(e){}
+
+  if(msgs.length===0){
+    msgs = [
+      {from:'coach',text:'Bonjour ! N\\'oublie pas l\\'entraînement de demain à 18h.',ts:Date.now()-3600000*5},
+      {from:'me',text:'Bien reçu coach, j\\'y serai !',ts:Date.now()-3600000*4}
+    ];
+  }
+
+  list.innerHTML = msgs.map(function(m){
+    var d = new Date(m.ts);
+    var time = d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+    return '<div class="msg-bubble '+(m.from==='me'?'me':'coach')+'">'+m.text
+      +'<div class="msg-meta">'+(m.from==='me'?'Moi':'Coach')+' · '+time+'</div></div>';
+  }).join('');
+  list.scrollTop = list.scrollHeight;
+}
+
+function sendPlayerMsg(){
+  var input = document.getElementById('msg-input');
+  var text = input.value.trim();
+  if(!text) return;
+  var msgs = [];
+  try{ msgs = JSON.parse(localStorage.getItem(LS_MSG) || '[]'); }catch(e){}
+  msgs.push({from:'me', text: text, ts: Date.now()});
+  localStorage.setItem(LS_MSG, JSON.stringify(msgs));
+  input.value = '';
+  renderMessages();
+}
+
+render();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>
