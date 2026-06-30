@@ -320,8 +320,9 @@ function confirmDemoLogin() {
     return;
   }
   err.style.display = 'none';
+  var roleToStart = _demoRole;
   closeDemoModal();
-  startDemo(_demoRole);
+  startDemo(roleToStart);
 }
 
 // Fermer si clic dehors
