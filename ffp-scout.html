@@ -811,6 +811,12 @@ try{init();}catch(e){
   console.error('init error:',e);
   var l=document.getElementById('sc-login');
   if(l)l.style.display='flex';
+  if(window.location.search.indexOf('demo=')>=0){
+    var dbg=document.createElement('div');
+    dbg.style.cssText='position:fixed;top:60px;left:10px;right:10px;background:#400;color:#fff;padding:12px;font-family:monospace;font-size:11px;z-index:99999;border-radius:6px;border:1px solid #c00';
+    dbg.textContent='DEBUG init() error: '+(e&&e.message?e.message:String(e));
+    document.body.appendChild(dbg);
+  }
 }
 
 </script>
