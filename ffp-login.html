@@ -1,4 +1,4 @@
-<!DOCTYP<button onclick="setView('coach');document.getElementById('c-role').value='directeur'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(75,200,138,.07);border:1px solid rgba(75,200,138,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(75,200,138,.45)'" onmouseout="this.style.borderColor='rgba(75,200,138,.2)'"><span style="font-size:26px">🏛️</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">Espace Directeur</div><div style="font-size:11px;color:#888">Multi-clubs, facturation, sécurité</div></div></button>E html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -40,7 +40,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 </style>
 
 <script>
-// Nettoyer session démo résiduelle — page de connexion réelle
 (function(){
   try {
     var s = localStorage.getItem('ffp_session');
@@ -59,8 +58,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 <body>
 <a href="/ffp-accueil.html" style="position:fixed;top:18px;left:18px;z-index:200;display:flex;align-items:center;gap:6px;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#888;text-decoration:none;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:7px 13px;background:rgba(10,13,16,.85);backdrop-filter:blur(6px);transition:all .2s" onmouseover="this.style.color='#1565C0';this.style.borderColor='#1565C0'" onmouseout="this.style.color='#888';this.style.borderColor='rgba(21,101,192,.3)'">&larr; Accueil</a>
 
-<div id="v-role" class="wrap" style="display:none"><img src="/logo-one-sport-football-white.png" style="height:64px;margin-bottom:20px"/><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(20px,5vw,34px);letter-spacing:4px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">ONE SPORT</div><div style="font-size:11px;color:rgba(212,175,55,.5);letter-spacing:4px;text-transform:uppercase;font-family:Montserrat,sans-serif;margin-bottom:40px">Connecter · Partager · Progresser</div><div class="card" style="text-align:center"><div class="card-title">Accéder à votre espace</div><div class="card-sub">Sélectionnez votre profil</div><div style="display:flex;flex-direction:column;gap:10px"><button onclick="setView('coach')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(212,175,55,.07);border:1px solid rgba(0,0,0,.15);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(212,175,55,.45)'" onmouseout="this.style.borderColor='rgba(212,175,55,.2)'"><span style="font-size:26px">🏟️</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0">Espace Coach</div><div style="font-size:11px;color:#888">Évaluations, matchs, convocations</div></div></button><button onclick="setView('parent')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(160,96,224,.45)'" onmouseout="this.style.borderColor='rgba(160,96,224,.2)'"><span style="font-size:26px">🫂</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#A060E0">Espace Parents</div><div style="font-size:11px;color:#888">Fiche de votre enfant, messagerie</div></div></button><button onclick="setView('coach');document.getElementById('c-role').value='scout'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(96,168,208,.45)'" onmouseout="this.style.borderColor='rgba(96,168,208,.2)'"><span style="font-size:26px">🔍</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">Recruteurs</div><div style="font-size:11px;color:#888">Recrutement, comparaison</div></div></button></div></div></div>
-<div id="v-coach" class="wrap" style="display:none"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:24px"><img src="/logo-one-sport-football-white.png" style="height:36px;filter:drop-shadow(0 0 10px rgba(212,175,55,.5))"/><div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">One Sport</div><div style="font-size:9px;color:rgba(212,175,55,.5);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Connexion sécurisée</div></div></a><div class="card"><div style="margin-bottom:12px"><label class="fl">Rôle</label><select class="fi" id="c-role" onchange="updateRoleUI()"><option value="coach">🏟️ Coach</option><option value="directeur">🏛️ Directeur de club</option><option value="scout">🔍 Recruteur accrédité</option><option value="parent">🫂 Parent</option></select></div><div class="hint" id="c-hint" style="display:none">
+<div id="v-role" class="wrap" style="display:none"><img src="/logo-one-sport-football-white.png" style="height:64px;margin-bottom:20px"/><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(20px,5vw,34px);letter-spacing:4px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px">ONE SPORT</div><div style="font-size:11px;color:rgba(212,175,55,.5);letter-spacing:4px;text-transform:uppercase;font-family:Montserrat,sans-serif;margin-bottom:40px">Connecter · Partager · Progresser</div><div class="card" style="text-align:center"><div class="card-title">Accéder à votre espace</div><div class="card-sub">Sélectionnez votre profil</div><div style="display:flex;flex-direction:column;gap:10px"><button onclick="setView('coach')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(212,175,55,.07);border:1px solid rgba(0,0,0,.15);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(212,175,55,.45)'" onmouseout="this.style.borderColor='rgba(212,175,55,.2)'"><span style="font-size:26px">🏟️</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0">Espace Coach</div><div style="font-size:11px;color:#888">Évaluations, matchs, convocations</div></div></button><button onclick="setView('parent')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(160,96,224,.07);border:1px solid rgba(160,96,224,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(160,96,224,.45)'" onmouseout="this.style.borderColor='rgba(160,96,224,.2)'"><span style="font-size:26px">🫂</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#A060E0">Espace Parents</div><div style="font-size:11px;color:#888">Fiche de votre enfant, messagerie</div></div></button><button onclick="setView('coach');document.getElementById('c-role').value='scout'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(96,168,208,.07);border:1px solid rgba(96,168,208,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(96,168,208,.45)'" onmouseout="this.style.borderColor='rgba(96,168,208,.2)'"><span style="font-size:26px">🔍</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#60A8D0">Recruteurs</div><div style="font-size:11px;color:#888">Recrutement, comparaison</div></div></button><button onclick="setView('coach');document.getElementById('c-role').value='directeur'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(75,200,138,.07);border:1px solid rgba(75,200,138,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(75,200,138,.45)'" onmouseout="this.style.borderColor='rgba(75,200,138,.2)'"><span style="font-size:26px">🏛️</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#4BC88A">Espace Directeur</div><div style="font-size:11px;color:#888">Multi-clubs, facturation, sécurité</div></div></button><button onclick="setView('coach');document.getElementById('c-role').value='joueur'" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(21,101,192,.07);border:1px solid rgba(21,101,192,.2);border-radius:10px;cursor:pointer;transition:all .2s;text-align:left" onmouseover="this.style.borderColor='rgba(21,101,192,.45)'" onmouseout="this.style.borderColor='rgba(21,101,192,.2)'"><span style="font-size:26px">⚽</span><div><div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0">Espace Joueur</div><div style="font-size:11px;color:#888">Mon profil, mes stats, messagerie</div></div></button></div></div></div>
+<div id="v-coach" class="wrap" style="display:none"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:24px"><img src="/logo-one-sport-football-white.png" style="height:36px;filter:drop-shadow(0 0 10px rgba(212,175,55,.5))"/><div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">One Sport</div><div style="font-size:9px;color:rgba(212,175,55,.5);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Connexion sécurisée</div></div></a><div class="card"><div style="text-align:center;margin-bottom:18px"><div class="sb-badge"><span style="width:6px;height:6px;border-radius:50%;background:#4BC88A"></span>Supabase Auth activé</div></div><div style="margin-bottom:12px"><label class="fl">Rôle</label><select class="fi" id="c-role" onchange="updateRoleUI()"><option value="coach">🏟️ Coach</option><option value="directeur">🏛️ Directeur de club</option><option value="scout">🔍 Recruteur accrédité</option><option value="parent">🫂 Parent</option><option value="joueur">⚽ Joueur</option></select></div><div class="hint" id="c-hint" style="display:none">
   <div style="margin-bottom:10px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.1em">Comptes démo disponibles</div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <button onclick="fillDemo('coach','Terrain2026','coach')" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
@@ -71,7 +70,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
       <span>🏛️ <strong>Directeur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">directeur / FFP2026!</span>
     </button>
-    <button onclick="setView('parent');setTimeout(function(){PIN=['1','0','0','3'];['p0','p1','p2','p3'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.value=PIN[i];});var pw=document.getElementById('p-pwd');if(pw)pw.value='Parent2026';},50)" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="setView('parent');setTimeout(function(){PIN=['1','0','0','3'];['p0','p1','p2','p3'].forEach(function(id,i){var el=document.getElementById(id);if(el)el.value=PIN[i];});var pw=document.getElementById('p-pwd');if(pw)pw.value='Parent2026';},50)" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s">
       <span>👨‍👧 <strong>Parent</strong></span>
       <span style="color:#64B5F6;font-family:monospace">1003 / Parent2026</span>
     </button>
@@ -79,7 +78,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
       <span>🔍 <strong>Recruteur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">scout / Scout2026</span>
     </button>
-    <button onclick="fillDemoJoueur()" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s" onmouseover="this.style.borderColor='#1565C0'" onmouseout="this.style.borderColor='rgba(21,101,192,.3)'">
+    <button onclick="fillDemoJoueur()" style="display:flex;justify-content:space-between;align-items:center;background:#0D1B2A;border:1px solid rgba(21,101,192,.3);border-radius:6px;padding:10px 14px;cursor:pointer;color:#fff;font-family:Montserrat,sans-serif;font-size:11px;transition:all .2s">
       <span>⚽ <strong>Joueur</strong></span>
       <span style="color:#64B5F6;font-family:monospace">joueur / Joueur2026</span>
     </button>
@@ -107,6 +106,7 @@ var DEMO_SCOUTS = [
   {id:'s1',username:'scout',password:btoa('Scout2026'),prenom:'Recruteur',nom:'Principal',role:'scout',club:'One Sport',email:'scout@footfactorypro.app'},
   {id:'s2',username:'julien.r',password:btoa('Recruit23'),prenom:'Julien',nom:'Renard',role:'scout',club:'AS Monaco Academy',email:'julien.r@footfactorypro.app'}
 ];
+
 var DEMO_PLAYERS = [
   {id:'pl1',username:'joueur',password:btoa('Joueur2026'),prenom:'Kylian',nom:'Faure',role:'joueur',email:'joueur@onesport.fr'}
 ];
@@ -129,6 +129,8 @@ function detectRole(){
   var url = window.location.search || window.location.href;
   if(url.indexOf('role=parent')>=0) return 'parent';
   if(url.indexOf('role=scout')>=0) return 'scout';
+  if(url.indexOf('role=joueur')>=0) return 'joueur';
+  if(url.indexOf('role=directeur')>=0) return 'directeur';
   return 'coach';
 }
 
@@ -231,7 +233,6 @@ async function loginParent(code, pwd){
   if(!pwd||pwd.length<6){showErr('parent-err','Mot de passe requis (6 caractères min).');return;}
   showLoading('p-btn',true);
 
-  // Try Supabase — auth réelle email/password basée sur le code joueur
   if(USE_SUPABASE && typeof sbLogin === 'function'){
     try{
       var fakeEmail = 'parent.'+code+'@onesport.fr';
@@ -255,7 +256,6 @@ async function loginParent(code, pwd){
     }catch(e){}
   }
 
-  // Fallback démo uniquement : code 1003 + mot de passe Parent2026
   if(code==='1003' && pwd==='Parent2026'){
     saveSession({role:'parent',player_code:code,prenom:'Marie',nom:'Faure'});
     window.location.href='ffp-parents.html';
@@ -278,6 +278,8 @@ function init(){
   var role=detectRole();
   if(role==='parent'){setView('parent');setTimeout(function(){var p=document.getElementById('p0');if(p)p.focus();},100);}
   else if(role==='scout'){setView('coach');var sel=document.getElementById('c-role');if(sel)sel.value='scout';}
+  else if(role==='joueur'){setView('coach');var sel2=document.getElementById('c-role');if(sel2)sel2.value='joueur';}
+  else if(role==='directeur'){setView('coach');var sel3=document.getElementById('c-role');if(sel3)sel3.value='directeur';}
   else{setView('coach');}
 
   // Check existing session
@@ -304,10 +306,9 @@ function updateRoleUI(){
   var role=document.getElementById('c-role').value;
   if(role==='parent'){
     setView('parent');
-    document.getElementById('c-role').value='coach'; // reset pour la prochaine fois
+    document.getElementById('c-role').value='coach';
     return;
   }
-  // Le hint avec boutons démo cliquables est géré statiquement en HTML — pas d'écrasement ici
 }
 
 function fillDemoJoueur(){
@@ -325,7 +326,6 @@ function fillDemo(user, pwd, role) {
   if (u) { u.value = user; u.style.borderColor = '#1565C0'; }
   if (p) { p.value = pwd;  p.style.borderColor = '#1565C0'; }
   if (r && role) { r.value = role; }
-  // Flash visuel
   setTimeout(function() {
     if (u) u.style.borderColor = '';
     if (p) p.style.borderColor = '';
