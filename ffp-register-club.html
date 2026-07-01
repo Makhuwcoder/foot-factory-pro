@@ -138,6 +138,9 @@ async function submitRegistration() {
   }
 
   // Collecter données
+  // SECURITE : le mot de passe n'est JAMAIS mis en localStorage ni transmis
+  // ici. Le compte reel sera cree cote serveur (Edge Function + webhook
+  // Stripe) apres paiement confirme, via lien d'activation email.
   var data = {
     club_name: (document.getElementById('club-name')||{}).value||'',
     club_ville: (document.getElementById('club-ville')||{}).value||'',
@@ -147,7 +150,6 @@ async function submitRegistration() {
     admin_prenom: (document.getElementById('admin-prenom')||{}).value||'',
     admin_nom: (document.getElementById('admin-nom')||{}).value||'',
     admin_email: (document.getElementById('admin-email')||{}).value||'',
-    admin_pwd: (document.getElementById('admin-pwd')||{}).value||'',
     plan: 'club_base',
     consent_cgv: true,
     consent_rgpd: true,
@@ -156,7 +158,11 @@ async function submitRegistration() {
     consent_timestamp: new Date().toISOString()
   };
 
-  // Sauvegarder en localStorage (Supabase Auth + Stripe à connecter)
+  // Effacer immediatement le champ mot de passe du DOM (defense en profondeur)
+  var pwdField = document.getElementById('admin-pwd');
+  if (pwdField) pwdField.value = '';
+
+  // Sauvegarder en localStorage (SANS le mot de passe — voir note ci-dessus)
   try { localStorage.setItem('ffp_pending_registration', JSON.stringify(data)); } catch(e) {}
 
   // Rediriger vers paiement Stripe
