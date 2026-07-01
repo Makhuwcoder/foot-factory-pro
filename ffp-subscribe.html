@@ -82,6 +82,21 @@ function init() {
 
 var STRIPE_PK = 'pk_live_51NIpIDFrZ51E91QlnREDH6F18d0S02ZO5QL9NnXQiwLOBDcEhxbzZJoSJSDByxpdz7mfWY7LEZDzRaSxnbWSiXsz00K7MCvKRK';
 
+// ── Ouverture paiement "web-only" (voir ffp-stripe.js pour détails) ──
+function ffpOpenPayment(url) {
+  try {
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) {
+      if (window.Capacitor.Plugins && window.Capacitor.Plugins.Browser && typeof window.Capacitor.Plugins.Browser.open === 'function') {
+        window.Capacitor.Plugins.Browser.open({ url: url });
+        return;
+      }
+      window.open(url, '_system');
+      return;
+    }
+  } catch (e) { /* pas d'environnement natif : comportement web normal */ }
+  window.location.href = url;
+}
+
 async function goToStripe() {
   var btn = document.getElementById('pay-btn');
   if (btn) {
@@ -111,7 +126,7 @@ async function goToStripe() {
     var data = await res.json();
 
     if (data.url) {
-      window.location.href = data.url;
+      ffpOpenPayment(data.url);
     } else {
       throw new Error(data.error || 'Erreur inconnue');
     }
