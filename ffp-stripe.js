@@ -1,6 +1,24 @@
 // ONE SPORT — ffp-stripe.js
 // Payment Links Stripe — configurés le 01/06/2026
 
+// ── Ouverture paiement "web-only" ──────────────────────────────
+// Aujourd'hui (site web) : comportement inchangé, redirection classique.
+// Plus tard (app Capacitor) : ouvre Stripe dans le navigateur système,
+// jamais dans la WebView de l'app — condition requise par Apple (règle 3.1.1).
+function ffpOpenPayment(url) {
+  try {
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) {
+      if (window.Capacitor.Plugins && window.Capacitor.Plugins.Browser && typeof window.Capacitor.Plugins.Browser.open === 'function') {
+        window.Capacitor.Plugins.Browser.open({ url: url });
+        return;
+      }
+      window.open(url, '_system');
+      return;
+    }
+  } catch (e) { /* pas d'environnement natif : comportement web normal */ }
+  window.location.href = url;
+}
+
 var FFP_STRIPE = {
 
   // ── Liens de paiement ──────────────────────────────────────────
@@ -137,7 +155,7 @@ var FFP_STRIPE = {
     if (params && params.email) {
       url += (url.indexOf('?') >= 0 ? '&' : '?') + 'prefilled_email=' + encodeURIComponent(params.email);
     }
-    window.location.href = url;
+    ffpOpenPayment(url);
   },
 
   // ── Plan par cible ─────────────────────────────────────────────
