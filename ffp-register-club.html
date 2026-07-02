@@ -165,11 +165,15 @@ async function submitRegistration() {
   // Sauvegarder en localStorage (SANS le mot de passe — voir note ci-dessus)
   try { localStorage.setItem('ffp_pending_registration', JSON.stringify(data)); } catch(e) {}
 
-  // Rediriger vers paiement Stripe
-  // PLACEHOLDER : remplacer par votre Payment Link Stripe
+  // Rediriger vers paiement Stripe (create-checkout dynamique)
   window.location.href = 'ffp-subscribe.html?plan=club_base&coaches=' + data.nb_coaches
     + '&email=' + encodeURIComponent(data.admin_email)
-    + '&club=' + encodeURIComponent(data.club_name);
+    + '&club=' + encodeURIComponent(data.club_name)
+    + '&prenom=' + encodeURIComponent(data.admin_prenom)
+    + '&nom=' + encodeURIComponent(data.admin_nom)
+    + '&ville=' + encodeURIComponent(data.club_ville)
+    + '&region=' + encodeURIComponent(data.club_region || '')
+    + '&categories=' + encodeURIComponent(data.club_categories.join(','));
 }
 
 // Init
