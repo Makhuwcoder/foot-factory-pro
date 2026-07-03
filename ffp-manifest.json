@@ -1,21 +1,22 @@
 {
-  "name": "Foot Factory Pro",
-  "short_name": "FFP",
-  "description": "Plateforme de coaching football — Analyser. Développer. Performer.",
-  "start_url": "ffp-accueil.html",
+  "name": "One Sport",
+  "short_name": "One Sport",
+  "description": "Plateforme Sport-Tech — Analyser. Développer. Performer.",
+  "start_url": "/ffp-accueil.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#D4AF37",
+  "background_color": "#0D1B3E",
+  "theme_color": "#0D1B3E",
   "orientation": "any",
   "icons": [
     {
-      "src": "ffp-icon-192.png",
+      "src": "/ffp-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "ffp-icon-512.png",
+      "src": "/ffp-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
