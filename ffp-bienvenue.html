@@ -15,7 +15,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 .wrap{max-width:520px;margin:0 auto;padding:70px 20px;position:relative;z-index:1;text-align:center}
 .card{background:#F5F7FA;border:2px solid rgba(21,101,192,.3);border-radius:14px;padding:36px 28px}
 </style>
-</head>
+<link rel="manifest" href="/ffp-manifest.json"><meta name="theme-color" content="#0D1B3E"></head>
 <body>
 <header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(21,101,192,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px">
   <a href="ffp-accueil.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
@@ -45,5 +45,5 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
   </div>
 </div>
 
-</body>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/ffp-sw.js").catch(function(){});</script></body>
 </html>
