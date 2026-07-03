@@ -456,8 +456,8 @@ function init(){
   var session=getSession();
   var content=document.getElementById('dashboard-content');
 
-  // Directeur en mode démo actif → rediriger vers le panel admin dédié
-  if(session && session.role==='directeur' && session._demo){
+  // Directeur (démo ou réel) → rediriger vers le panel admin dédié
+  if(session && session.role==='directeur'){
     var qs = window.location.search || '';
     window.location.replace('ffp-admin.html'+qs);
     return;
