@@ -61,6 +61,19 @@ body { font-family:'Raleway',sans-serif; background:#FFFFFF; color:#0D1B3E; over
   text-decoration:none; white-space:nowrap; transition:all .2s; }
 .hdr-cta:hover { box-shadow:0 0 20px rgba(21,101,192,.5); transform:translateY(-1px); }
 
+.lang-selector{position:relative}
+.lang-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(21,101,192,.3);
+  border-radius:5px;color:#1565C0;padding:5px 10px;font-family:'Montserrat',sans-serif;font-size:10px;
+  font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .2s}
+.lang-btn:hover{border-color:#1565C0;background:rgba(21,101,192,.05)}
+.lang-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#0A0D10;
+  border:1px solid rgba(21,101,192,.3);border-radius:8px;list-style:none;padding:6px 0;min-width:150px;
+  z-index:300;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.lang-menu.open{display:block}
+.lang-menu li{padding:8px 16px;font-family:'Raleway',sans-serif;font-size:12px;color:#F0F0F0;
+  cursor:pointer;white-space:nowrap;transition:background .15s}
+.lang-menu li:hover{background:rgba(21,101,192,.08);color:#1565C0}
+
 /* Sections */
 .section { max-width:1300px; margin:0 auto; padding:80px 24px; }
 .section-sm { max-width:1300px; margin:0 auto; padding:56px 24px; }
@@ -293,7 +306,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
       <a href="/ffp-bilan.html" class="hdr-link" style="color:#1565C0">&#128203; <span data-i18n="fb_nav_bilans">Bilans</span> <span style="background:#fff;color:#1565C0;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:800;border:1px solid #1565C0;vertical-align:middle">GRATUIT</span></a>
       <a href="/" style="padding:5px 11px;color:#888;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-decoration:none;border-radius:5px;border:1px solid rgba(21,101,192,.3);transition:all .2s;display:inline-flex;align-items:center;gap:5px" onmouseover="this.style.color='#1565C0';this.style.borderColor='#1565C0'" onmouseout="this.style.color='#888';this.style.borderColor='rgba(21,101,192,.3)'">&#127760; <span data-i18n="fb_nav_onesport">One Sport</span></a>
     </nav>
-    <a href="/ffp-demo.html" data-i18n="fb_nav_demo" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#1E88E5;text-decoration:none;border:1px solid rgba(75,200,138,.25);border-radius:5px;padding:5px 11px;transition:all .2s">Démo</a><a href="/ffp-pricing.html" data-i18n="fb_nav_tarifs" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#1565C0;text-decoration:none;border:1px solid rgba(21,101,192,.3);border-radius:5px;padding:5px 11px;transition:all .2s;white-space:nowrap">Tarifs</a><a href="/shop" target="_blank" data-i18n="nav_shop" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1565C0;text-decoration:none;border:1px solid rgba(21,101,192,.3);border-radius:5px;padding:5px 11px;transition:all .2s;white-space:nowrap">🛒 Boutique</a><a href="/ffp-login.html" class="hdr-cta" data-i18n="fb_nav_connexion">Connexion →</a>
+    <a href="/ffp-demo.html" data-i18n="fb_nav_demo" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#1E88E5;text-decoration:none;border:1px solid rgba(75,200,138,.25);border-radius:5px;padding:5px 11px;transition:all .2s">Démo</a><a href="/ffp-pricing.html" data-i18n="fb_nav_tarifs" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;color:#1565C0;text-decoration:none;border:1px solid rgba(21,101,192,.3);border-radius:5px;padding:5px 11px;transition:all .2s;white-space:nowrap">Tarifs</a><a href="/shop" target="_blank" data-i18n="nav_shop" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1565C0;text-decoration:none;border:1px solid rgba(21,101,192,.3);border-radius:5px;padding:5px 11px;transition:all .2s;white-space:nowrap">🛒 Boutique</a><div class="lang-selector" id="langSelector"><button type="button" class="lang-btn" id="langBtn" onclick="toggleLangMenu()"><span id="langFlag">🇫🇷</span><span id="langCode">FR</span><span style="font-size:8px">▾</span></button><ul class="lang-menu" id="langMenu"><li onclick="setFBLang('fr')">🇫🇷 Français</li><li onclick="setFBLang('en')">🇬🇧 English</li><li onclick="setFBLang('es')">🇪🇸 Español</li><li onclick="setFBLang('it')">🇮🇹 Italiano</li><li onclick="setFBLang('ar')">🇸🇦 العربية</li><li onclick="setFBLang('zh')">🇨🇳 中文</li></ul></div><a href="/ffp-login.html" class="hdr-cta" data-i18n="fb_nav_connexion">Connexion →</a>
   </div>
 </header>
 
@@ -568,8 +581,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/i18n.js"></script>
 <script src="/fb-i18n.js"></script>
 <script>
+var LANG_FLAGS = { fr:'🇫🇷', en:'🇬🇧', es:'🇪🇸', it:'🇮🇹', ar:'🇸🇦', zh:'🇨🇳' };
+var LANG_CODES = { fr:'FR', en:'EN', es:'ES', it:'IT', ar:'AR', zh:'ZH' };
+
+// Fusionner les traductions football dans OS_TRANSLATIONS
 (function(){
-  // Fusionner les traductions football dans OS_TRANSLATIONS
   if (typeof OS_FB_I18N !== 'undefined' && typeof OS_TRANSLATIONS !== 'undefined') {
     Object.keys(OS_FB_I18N).forEach(function(lang){
       if (!OS_TRANSLATIONS[lang]) OS_TRANSLATIONS[lang] = {};
@@ -578,27 +594,50 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-
-  function applyFBLang(lang){
-    if (typeof OS_TRANSLATIONS === 'undefined' || !OS_TRANSLATIONS[lang]) return;
-    var t = OS_TRANSLATIONS[lang];
-    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-    document.documentElement.setAttribute('lang', lang);
-    document.querySelectorAll('[data-i18n]').forEach(function(el){
-      var key = el.getAttribute('data-i18n');
-      if (t[key] !== undefined) el.textContent = t[key];
-    });
-    if (t.fb_page_title) document.title = t.fb_page_title;
-  }
-
-  window.addEventListener('load', function(){
-    var saved = localStorage.getItem('os_lang');
-    var browser = navigator.language ? navigator.language.split('-')[0] : 'fr';
-    var supported = ['fr','en','es','it','ar','zh'];
-    var lang = saved || (supported.indexOf(browser) >= 0 ? browser : 'fr');
-    if (lang !== 'fr') applyFBLang(lang);
-  });
 })();
+
+function applyFBLang(lang){
+  if (typeof OS_TRANSLATIONS === 'undefined' || !OS_TRANSLATIONS[lang]) return;
+  var t = OS_TRANSLATIONS[lang];
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  document.documentElement.setAttribute('lang', lang);
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+  if (t.fb_page_title) document.title = t.fb_page_title;
+  var flag=document.getElementById('langFlag'), code=document.getElementById('langCode');
+  if(flag) flag.textContent = LANG_FLAGS[lang] || '🌐';
+  if(code) code.textContent = LANG_CODES[lang] || lang.toUpperCase();
+}
+
+function setFBLang(lang){
+  applyFBLang(lang);
+  try{ localStorage.setItem('os_lang', lang); }catch(e){}
+  var menu=document.getElementById('langMenu');
+  if(menu) menu.classList.remove('open');
+}
+
+function toggleLangMenu(){
+  var menu=document.getElementById('langMenu');
+  if(menu) menu.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e){
+  var sel=document.getElementById('langSelector');
+  if(sel && !sel.contains(e.target)) {
+    var menu=document.getElementById('langMenu');
+    if(menu) menu.classList.remove('open');
+  }
+});
+
+window.addEventListener('load', function(){
+  var saved = localStorage.getItem('os_lang');
+  var browser = navigator.language ? navigator.language.split('-')[0] : 'fr';
+  var supported = ['fr','en','es','it','ar','zh'];
+  var lang = saved || (supported.indexOf(browser) >= 0 ? browser : 'fr');
+  applyFBLang(lang);
+});
 </script>
 </body>
 </html>
