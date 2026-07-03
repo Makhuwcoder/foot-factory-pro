@@ -96,25 +96,28 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 var LS_SESSION = 'ffp_session';
 var USE_SUPABASE = false;
 
-// ── Comptes démo localStorage (fallback) ──
+// ── Comptes démo (publics, affichés sur cette page) ──
+// Ces comptes existent aussi côté Supabase, rattachés à un club sandbox dédié
+// ("Foot Factory Pro Academy"). Les policies RLS scopent tout par club_id :
+// impossible d'accéder aux données d'un vrai club via ces identifiants.
+// Pas de chiffrement ici par design : ces identifiants sont volontairement
+// publics (boutons "Comptes démo disponibles" plus haut sur cette page).
 var DEMO_COACHES = [
-  {id:'p1',username:'parent_demo',password:btoa('Parent2026'),prenom:'Marie',nom:'Martin',role:'parent',email:'parent@onesport.fr'},
+  {id:'p1',username:'parent_demo',password:'Parent2026',prenom:'Marie',nom:'Martin',role:'parent',email:'parent@onesport.fr'},
 
-  {id:'c1',username:'coach',password:btoa('Terrain2026'),prenom:'Coach',nom:'Principal',role:'coach',email:'coach@footfactorypro.app'},
-  {id:'c2',username:'directeur',password:btoa('FFP2026!'),prenom:'Jean-Pierre',nom:'Moreau',role:'directeur',email:'directeur@footfactorypro.app'}
+  {id:'c1',username:'coach',password:'Terrain2026',prenom:'Coach',nom:'Principal',role:'coach',email:'coach@footfactorypro.app'},
+  {id:'c2',username:'directeur',password:'FFP2026!',prenom:'Jean-Pierre',nom:'Moreau',role:'directeur',email:'directeur@footfactorypro.app'}
 ];
 var DEMO_SCOUTS = [
-  {id:'s1',username:'scout',password:btoa('Scout2026'),prenom:'Recruteur',nom:'Principal',role:'scout',club:'One Sport',email:'scout@footfactorypro.app'},
-  {id:'s2',username:'julien.r',password:btoa('Recruit23'),prenom:'Julien',nom:'Renard',role:'scout',club:'AS Monaco Academy',email:'julien.r@footfactorypro.app'}
+  {id:'s1',username:'scout',password:'Scout2026',prenom:'Recruteur',nom:'Principal',role:'scout',club:'One Sport',email:'scout@footfactorypro.app'},
+  {id:'s2',username:'julien.r',password:'Recruit23',prenom:'Julien',nom:'Renard',role:'scout',club:'AS Monaco Academy',email:'julien.r@footfactorypro.app'}
 ];
 
 var DEMO_PLAYERS = [
-  {id:'pl1',username:'joueur',password:btoa('Joueur2026'),prenom:'Kylian',nom:'Faure',role:'joueur',email:'joueur@onesport.fr'}
+  {id:'pl1',username:'joueur',password:'Joueur2026',prenom:'Kylian',nom:'Faure',role:'joueur',email:'joueur@onesport.fr'}
 ];
 
-function enc(s){try{return btoa(unescape(encodeURIComponent(s)));}catch(e){return btoa(s);}}
-function dec(s){try{return decodeURIComponent(escape(atob(s)));}catch(e){return '';};}
-function chk(pwd,stored){return stored===enc(pwd)||stored===pwd||dec(stored)===pwd;}
+function chk(pwd,stored){return stored===pwd;}
 
 // ── Session ──
 function saveSession(data){
