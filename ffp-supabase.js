@@ -24,6 +24,8 @@ function initSupabase() {
 function toEmail(username) {
   if (!username) return '';
   username = username.trim().toLowerCase();
+  // Déjà une adresse email valide (ex: comptes club invités par email réel) → on la garde telle quelle
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) return username;
   // Codes parents (1001-1030) → parent format
   if (/^\d{4}$/.test(username)) return 'parent' + username + '@footfactorypro.app';
   // Slugify (coach → coach@..., julien.r → julien.r@...)
