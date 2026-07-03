@@ -3,7 +3,7 @@
 // Offline support renforcé + cache management
 // ══════════════════════════════════════════════════════
 
-var CACHE_NAME = 'ffp-v2';
+var CACHE_NAME = 'ffp-v3';
 
 // App shell : pages et fichiers essentiels pour un fonctionnement hors-ligne réel
 var APP_SHELL = [
@@ -24,6 +24,10 @@ var APP_SHELL = [
   '/ffp-messagerie.html',
   '/ffp-media.html',
   '/ffp-guide.html',
+  '/ffp-register-club.html',
+  '/ffp-subscribe.html',
+  '/ffp-bienvenue.html',
+  '/shop/index.html',
   '/i18n.js',
   '/fb-i18n.js',
   '/ffp-stripe.js',
@@ -34,6 +38,8 @@ var APP_SHELL = [
   '/favicon.png',
   '/ffp-icon-192.png',
   '/ffp-icon-512.png',
+  '/apple-touch-icon.png',
+  '/logo-one-sport-shop.png',
   '/logo-one-sport-football.png',
   '/ffp-manifest.json'
 ];
