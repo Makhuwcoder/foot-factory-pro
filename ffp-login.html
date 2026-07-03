@@ -163,6 +163,7 @@ function showLoading(btnId, loading){
 function targetPageForRole(role){
   if(role==='joueur') return 'ffp-joueur.html';
   if(role==='scout') return 'ffp-scout.html';
+  if(role==='directeur') return 'ffp-admin.html';
   return 'ffp-dashboard.html';
 }
 
@@ -362,7 +363,7 @@ function init(){
     var raw=localStorage.getItem(LS_SESSION);
     if(raw){var d=JSON.parse(raw);if(d._exp&&Date.now()<d._exp&&d.role){
       if(d.role==='parent')window.location.href='ffp-parents.html';
-      else window.location.href='ffp-dashboard.html';
+      else window.location.href=targetPageForRole(d.role);
       return;
     }}
   }catch(e){}
