@@ -86,6 +86,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
   <div style="font-size:10px;color:#555;margin-top:8px;text-align:center">Cliquez sur un profil pour pré-remplir les champs</div>
 </div><div style="margin-bottom:12px"><label class="fl">Identifiant</label><input class="fi" id="c-user" type="text" placeholder="Votre identifiant" autocomplete="username"></div><div style="margin-bottom:16px"><label class="fl">Mot de passe</label><div style="position:relative"><input class="fi" id="c-pwd" type="password" placeholder="Mot de passe" autocomplete="current-password" style="padding-right:44px"><button class="eye-btn" onclick="toggleEye('c-pwd',this)" style="right:12px;top:50%;transform:translateY(-50%);position:absolute;background:none;border:none;cursor:pointer;font-size:15px;color:#475569">👁</button></div></div><div class="err" id="coach-err"></div><button class="btn" id="c-btn" data-label="Connexion →" onclick="loginCoach()">Connexion →</button><div class="sep"></div><div style="text-align:center"><button class="link" onclick="setView('role')">← Changer d'espace</button><span style="color:#1E293B;margin:0 8px">·</span><button class="link" onclick="setView('parent')">Espace parents</button></div></div></div>
 <div id="v-parent" class="wrap" style="display:none"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:24px"><img src="/logo-one-sport-football-white.png" style="height:36px;filter:drop-shadow(0 0 10px rgba(160,96,224,.5))"/><div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">One Sport</div><div style="font-size:9px;color:#A060E0;font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Espace Parents</div></div></a><div class="card" style="border-color:rgba(160,96,224,.3)"><div style="text-align:center;margin-bottom:18px"><span style="font-size:32px">🫂</span></div><div class="card-title" style="color:#A060E0">Code d'accès</div><div class="card-sub">Entrez le code à 4 chiffres fourni par votre coach</div><div class="hint" style="display:none">Code démo : <strong style="color:#A060E0">1003</strong> · Mot de passe démo : <strong style="color:#A060E0">Parent2026</strong></div><div style="display:flex;gap:10px;justify-content:center;margin-bottom:16px"><input class="pin-box" id="p0" type="text" maxlength="1" inputmode="numeric" autocomplete="off" style="border-color:rgba(160,96,224,.2)" onfocus="this.style.borderColor='rgba(160,96,224,.7)'" onblur="this.style.borderColor='rgba(160,96,224,.2)'"><input class="pin-box" id="p1" type="text" maxlength="1" inputmode="numeric" autocomplete="off" style="border-color:rgba(160,96,224,.2)" onfocus="this.style.borderColor='rgba(160,96,224,.7)'" onblur="this.style.borderColor='rgba(160,96,224,.2)'"><input class="pin-box" id="p2" type="text" maxlength="1" inputmode="numeric" autocomplete="off" style="border-color:rgba(160,96,224,.2)" onfocus="this.style.borderColor='rgba(160,96,224,.7)'" onblur="this.style.borderColor='rgba(160,96,224,.2)'"><input class="pin-box" id="p3" type="text" maxlength="1" inputmode="numeric" autocomplete="off" style="border-color:rgba(160,96,224,.2)" onfocus="this.style.borderColor='rgba(160,96,224,.7)'" onblur="this.style.borderColor='rgba(160,96,224,.2)'"></div><div style="margin-bottom:16px"><label class="fl">Mot de passe</label><input class="fi" id="p-pwd" type="password" placeholder="Mot de passe" autocomplete="current-password" style="border-color:rgba(160,96,224,.2)"></div><div class="err" id="parent-err"></div><button class="btn" id="p-btn" data-label="Accéder →" onclick="loginParent(PIN.join(''), document.getElementById('p-pwd').value)" style="background:linear-gradient(135deg,#A060E0,#C080FF);color:#fff">Accéder →</button><div class="sep"></div><div style="text-align:center"><button class="link" onclick="setView('role')">← Changer d'espace</button></div></div></div>
+<div id="v-setpwd" class="wrap" style="display:none"><a href="ffp-accueil.html" style="display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:24px"><img src="/logo-one-sport-football-white.png" style="height:36px;filter:drop-shadow(0 0 10px rgba(21,101,192,.5))"/><div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">One Sport</div><div style="font-size:9px;color:rgba(212,175,55,.5);font-family:Montserrat,sans-serif;font-weight:600;letter-spacing:2px;text-transform:uppercase">Activation du compte</div></div></a><div class="card"><div class="card-title">Bienvenue !</div><div class="card-sub">Choisissez votre mot de passe pour activer votre espace club</div><div style="margin-bottom:12px"><label class="fl">Nouveau mot de passe</label><input class="fi" id="sp-pwd" type="password" placeholder="8 caractères minimum" autocomplete="new-password"></div><div style="margin-bottom:16px"><label class="fl">Confirmer le mot de passe</label><input class="fi" id="sp-pwd2" type="password" placeholder="Retapez le mot de passe" autocomplete="new-password"></div><div class="err" id="setpwd-err"></div><button class="btn" id="sp-btn" data-label="Activer mon compte →" onclick="submitNewPassword()">Activer mon compte →</button></div></div>
 <script src="ffp-supabase.js"></script>
 <script>
 // ══════════════════════════════════════════════════════
@@ -136,7 +137,7 @@ function detectRole(){
 
 // ── UI ──
 function setView(view){
-  ['v-role','v-coach','v-parent','v-scout'].forEach(function(id){
+  ['v-role','v-coach','v-parent','v-scout','v-setpwd'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.style.display='none';
   });
   var el=document.getElementById('v-'+view);
@@ -273,8 +274,82 @@ function toggleEye(inputId,btnId){
   btn.textContent=inp.type==='password'?'👁':'🙈';
 }
 
+// ── Flux invitation / définition du mot de passe ──
+// Supabase (inviteUserByEmail / resetPasswordForEmail) redirige vers cette page
+// avec les tokens de session dans le hash de l'URL : #access_token=...&refresh_token=...&type=invite
+function parseHashParams(){
+  var hash = window.location.hash || '';
+  if(hash.charAt(0)==='#') hash = hash.substring(1);
+  var out = {};
+  hash.split('&').forEach(function(pair){
+    if(!pair) return;
+    var idx = pair.indexOf('=');
+    if(idx<0) return;
+    var k = decodeURIComponent(pair.substring(0,idx));
+    var v = decodeURIComponent(pair.substring(idx+1));
+    out[k]=v;
+  });
+  return out;
+}
+
+function handleInviteFlow(){
+  var params = parseHashParams();
+  var isInviteType = params.type==='invite' || params.type==='recovery';
+  if(!params.access_token || !isInviteType) return false;
+
+  // On retire le token de l'URL visible immédiatement (sécurité)
+  try{ history.replaceState(null,'',window.location.pathname+window.location.search); }catch(e){}
+
+  setView('setpwd');
+
+  if(!USE_SUPABASE || !FFP_DB){
+    showErr('setpwd-err','Service indisponible. Réessayez dans un instant.');
+    return true;
+  }
+
+  FFP_DB.auth.setSession({access_token:params.access_token, refresh_token:params.refresh_token}).then(function(res){
+    if(res.error){
+      showErr('setpwd-err','Lien invalide ou expiré. Contactez le support.');
+    }
+  });
+  return true;
+}
+
+async function submitNewPassword(){
+  clearErr('setpwd-err');
+  var pwd = ((document.getElementById('sp-pwd')||{}).value||'');
+  var pwd2 = ((document.getElementById('sp-pwd2')||{}).value||'');
+  if(pwd.length<8){showErr('setpwd-err','8 caractères minimum.');return;}
+  if(pwd!==pwd2){showErr('setpwd-err','Les mots de passe ne correspondent pas.');return;}
+  if(!FFP_DB){showErr('setpwd-err','Service indisponible. Réessayez dans un instant.');return;}
+  showLoading('sp-btn',true);
+  try{
+    var res = await FFP_DB.auth.updateUser({password:pwd});
+    if(res.error){
+      showLoading('sp-btn',false);
+      showErr('setpwd-err','Erreur : '+res.error.message);
+      return;
+    }
+    var userId = res.data.user.id;
+    var profile = await sbGetProfile(userId);
+    var role = (profile && profile.role) || 'directeur';
+    saveSession({role:role, prenom:(profile&&profile.prenom)||'', nom:(profile&&profile.nom)||'',
+      supabase_id:userId, club_id:(profile&&profile.club_id)||null});
+    window.location.href = targetPageForRole(role);
+  }catch(e){
+    showLoading('sp-btn',false);
+    showErr('setpwd-err','Erreur inattendue. Réessayez.');
+  }
+}
+
 // ── Init ──
 function init(){
+  // Init Supabase en premier (nécessaire pour traiter un lien d'invitation)
+  if(typeof initSupabase==='function'){USE_SUPABASE=initSupabase();}
+
+  // Lien d'invitation / réinitialisation → formulaire de mot de passe, on s'arrête là
+  if(handleInviteFlow()) return;
+
   var role=detectRole();
   if(role==='parent'){setView('parent');setTimeout(function(){var p=document.getElementById('p0');if(p)p.focus();},100);}
   else if(role==='scout'){setView('coach');var sel=document.getElementById('c-role');if(sel)sel.value='scout';}
@@ -293,9 +368,6 @@ function init(){
   }catch(e){}
 
   setupPIN();
-
-  // Init Supabase if available
-  if(typeof initSupabase==='function'){USE_SUPABASE=initSupabase();}
 }
 
 document.addEventListener('DOMContentLoaded',init);
