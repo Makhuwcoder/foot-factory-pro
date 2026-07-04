@@ -704,7 +704,7 @@
     .lang-menu li:hover { background: #1A1A1A; color: var(--gold); }
 
   </style>
-</head>
+<link rel="manifest" href="/ffp-manifest.json"><meta name="theme-color" content="#0D1B3E"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
 <body>
 
   <!-- WATERMARK -->
@@ -1199,5 +1199,5 @@
     if (lang !== 'fr') setLang(lang);
   });
   </script>
-</body>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/ffp-sw.js").catch(function(){});</script></body>
 </html>
