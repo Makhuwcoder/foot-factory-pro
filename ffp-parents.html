@@ -21,6 +21,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#F0F4F8}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
 </style>
 <script src="ffp-auth.js"></script>
+<script src="ffp-supabase.js"></script>
 </head>
 <body>
 <script>
@@ -256,6 +257,146 @@ function showView(){
   renderConfirmationsParent();
 }
 
+// ══════════════════════════════════════════════════════════════
+// DONNÉES RÉELLES (comptes parents non-démo) — Supabase
+// ══════════════════════════════════════════════════════════════
+
+function mapRealJoueurToViewModel(row){
+  var dob=row.date_naissance||'';
+  var age=dob?(new Date().getFullYear()-new Date(dob).getFullYear()):'–';
+  var neutralScores={technique:0,physique:0,tactique:0,mental:0,culture:0};
+  var neutralDetails={
+    technique:{controle:0,dribble:0,frappe:0,passe:0,tete:0},
+    physique:{vitesse:0,endurance:0,force:0,coordination:0,souplesse:0},
+    tactique:{positionnement:0,lecture:0,pressing:0},
+    mental:{motivation:0,concentration:0,combativite:0,leadership:0,stress:0},
+    culture:{reglesFIFA:0,nutrition:0,scolaire:0,ethique:0}
+  };
+  return {
+    idx:0, code:row.code_parent, joueurId:row.id,
+    prenom:row.prenom, nom:row.nom, poste:row.poste||'Non renseigné',
+    numero:row.numero_maillot||'–', dob:dob, age:age,
+    taille:row.taille||'–', poids:row.poids||'–', pied:row.pied||'Droit',
+    scores:neutralScores, details:neutralDetails, global:0, prof:'beginner',
+    rank:'–', equipe:'',
+    isReal:true, hasEvaluations:false,
+    dateNaissance:row.date_naissance||'', contactUrgence:row.contact_urgence||'',
+    infosMedicales:row.infos_medicales||'', ficheComplete:!!row.fiche_completee_par_parent,
+    photoUrl:row.photo_url||''
+  };
+}
+
+async function loadRealPlayer(code){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ USE_SUPABASE=initSupabase(); } }catch(e){}
+  if(!window.FFP_DB){ showLogin(); return; }
+  try{
+    var res=await FFP_DB.from('joueurs').select('*').eq('code_parent',code).maybeSingle();
+    if(res.error || !res.data){ showLogin(); return; }
+    CURRENT=mapRealJoueurToViewModel(res.data);
+    showView();
+    loadRealEvaluations(res.data.id);
+  }catch(e){ showLogin(); }
+}
+
+async function loadRealEvaluations(joueurId){
+  try{
+    var res=await FFP_DB.from('evaluations').select('*').eq('joueur_id',joueurId)
+      .order('created_at',{ascending:false}).limit(1).maybeSingle();
+    if(!res.error && res.data && CURRENT && CURRENT.joueurId===joueurId){
+      // Adapte selon la structure reelle de la table evaluations si elle differe
+      CURRENT.hasEvaluations=true;
+      renderPlayer();
+    }
+  }catch(e){}
+}
+
+// ── Fiche administrative : rendu ──
+function renderFicheAdminBlock(p){
+  if(!p.isReal) return '';
+  if(p.ficheComplete && !_ficheEditOpen){
+    return '<div style="background:rgba(75,200,138,.06);border:1px solid rgba(75,200,138,.3);border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+        +'<span style="font-size:16px">✅</span>'
+        +'<span style="font-size:12px;color:#4BC88A;font-weight:600">Fiche administrative complète</span>'
+      +'</div>'
+      +'<button class="link" onclick="toggleFicheEdit(true)" style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#1565C0;background:none;border:none;cursor:pointer">Modifier →</button>'
+    +'</div>';
+  }
+  return '<div id="fiche-admin-card" style="background:#0D0B05;border:1px solid rgba(226,180,60,.35);border-radius:12px;padding:18px 20px;margin-bottom:14px">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+      +'<span style="font-size:16px">'+(p.ficheComplete?'✅':'⏳')+'</span>'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:'+(p.ficheComplete?'#4BC88A':'#D4AF37')+'">'
+        +(p.ficheComplete?'Modifier la fiche administrative':'Complétez la fiche administrative de '+p.prenom)
+      +'</div>'
+    +'</div>'
+    +'<p style="font-size:11px;color:#888;margin-bottom:14px">Ces informations sont gérées par vous — le coach ne voit que la partie sportive.</p>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'
+      +'<div><label style="font-size:10px;color:#888;display:block;margin-bottom:4px">Date de naissance</label>'
+        +'<input type="date" id="fa-dob" value="'+p.dateNaissance+'" style="width:100%;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:9px 10px;color:#F0F0F0;font-size:13px"></div>'
+      +'<div><label style="font-size:10px;color:#888;display:block;margin-bottom:4px">Contact d\'urgence</label>'
+        +'<input type="tel" id="fa-contact" value="'+p.contactUrgence.replace(/"/g,'&quot;')+'" placeholder="06 12 34 56 78" style="width:100%;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:9px 10px;color:#F0F0F0;font-size:13px"></div>'
+    +'</div>'
+    +'<div style="margin-bottom:12px"><label style="font-size:10px;color:#888;display:block;margin-bottom:4px">Allergies / infos médicales</label>'
+      +'<textarea id="fa-medical" placeholder="Allergies, traitement en cours, PAI..." style="width:100%;min-height:60px;background:#111;border:1px solid rgba(212,175,55,.2);border-radius:8px;padding:9px 10px;color:#F0F0F0;font-size:13px;font-family:inherit;resize:vertical">'+p.infosMedicales.replace(/</g,'&lt;')+'</textarea></div>'
+    +'<div style="margin-bottom:14px"><label style="font-size:10px;color:#888;display:block;margin-bottom:4px">Photo</label>'
+      +(p.photoUrl?'<img src="'+p.photoUrl+'" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:6px;display:block">':'')
+      +'<input type="file" id="fa-photo" accept="image/png,image/jpeg,image/webp" style="width:100%;font-size:11px;color:#888"></div>'
+    +'<div class="err" id="fa-err" style="display:none;color:#E24B4A;font-size:11px;margin-bottom:10px"></div>'
+    +'<div style="display:flex;gap:8px">'
+      +'<button onclick="submitFicheAdmin()" id="fa-submit-btn" style="background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;cursor:pointer">Enregistrer</button>'
+      +(p.ficheComplete?'<button onclick="toggleFicheEdit(false)" style="background:transparent;border:1px solid rgba(255,255,255,.1);color:#888;border-radius:8px;padding:10px 16px;font-family:Montserrat,sans-serif;font-size:11px;cursor:pointer">Annuler</button>':'')
+    +'</div>'
+  +'</div>';
+}
+
+var _ficheEditOpen=false;
+function toggleFicheEdit(open){
+  _ficheEditOpen=open;
+  renderPlayer();
+}
+
+async function submitFicheAdmin(){
+  var errEl=document.getElementById('fa-err');
+  if(errEl){errEl.style.display='none';}
+  if(!CURRENT || !CURRENT.isReal) return;
+  var dob=(document.getElementById('fa-dob')||{}).value||'';
+  var contact=(document.getElementById('fa-contact')||{}).value||'';
+  var medical=(document.getElementById('fa-medical')||{}).value||'';
+  var photoInput=document.getElementById('fa-photo');
+  var btn=document.getElementById('fa-submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='Enregistrement...';}
+
+  try{
+    var photoUrl=CURRENT.photoUrl;
+    if(photoInput && photoInput.files && photoInput.files[0]){
+      var file=photoInput.files[0];
+      var path=CURRENT.code+'/'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'');
+      var upRes=await FFP_DB.storage.from('joueur-photos').upload(path,file,{upsert:true});
+      if(upRes.error) throw upRes.error;
+      var pub=FFP_DB.storage.from('joueur-photos').getPublicUrl(path);
+      photoUrl=pub.data.publicUrl;
+    }
+    var updatePayload={
+      date_naissance: dob||null,
+      contact_urgence: contact||null,
+      infos_medicales: medical||null,
+      photo_url: photoUrl||null,
+      fiche_completee_par_parent: true
+    };
+    var res=await FFP_DB.from('joueurs').update(updatePayload).eq('code_parent',CURRENT.code);
+    if(res.error) throw res.error;
+
+    CURRENT.dateNaissance=dob;CURRENT.dob=dob;
+    CURRENT.contactUrgence=contact;CURRENT.infosMedicales=medical;
+    CURRENT.photoUrl=photoUrl;CURRENT.ficheComplete=true;
+    _ficheEditOpen=false;
+    renderPlayer();
+  }catch(e){
+    if(errEl){errEl.textContent='Erreur : '+(e.message||'impossible d\'enregistrer, réessayez.');errEl.style.display='block';}
+    if(btn){btn.disabled=false;btn.textContent='Enregistrer';}
+  }
+}
+
 // ── Render player profile ──
 function renderPlayer(){
   var p=CURRENT;if(!p)return;
@@ -268,6 +409,9 @@ function renderPlayer(){
   var catKeys=['technique','physique','tactique','mental','culture'];
   var weakest=catKeys.reduce(function(a,b){return p.scores[a]<p.scores[b]?a:b;});
   var exercises=EXERCISES[weakest]||EXERCISES.technique;
+  if(p.isReal && !p.hasEvaluations){
+    exercises=['Pas encore de programme personnalisé — en attente de la première évaluation par le coach.'];
+  }
 
   // Radar SVG 5 categories
   var cats5=['TECH','PHYS','TACT','MENT','CULT'];
@@ -297,12 +441,16 @@ function renderPlayer(){
       +'</div>'
     +'</div>';
   }).join('');
+  if(p.isReal && !p.hasEvaluations){
+    radarSVG='<div style="text-align:center;padding:30px 10px;color:#475569;font-size:12px;line-height:1.6">📋 Aucune évaluation pour l\'instant.<br>Le coach évaluera '+p.prenom+' après les premières séances.</div>';
+    catBars='<div style="text-align:center;padding:20px 10px;color:#475569;font-size:12px">En attente de la première évaluation</div>';
+  }
 
   // Events
   var evtHTML='';
   try{
     var rawEvts=localStorage.getItem(LS_EVENTS);
-    var evts=rawEvts?JSON.parse(rawEvts):generateDemoEvents();
+    var evts=rawEvts?JSON.parse(rawEvts):(p.isReal?[]:generateDemoEvents());
     var upcoming=evts.filter(function(e){return new Date(e.date)>=new Date();}).slice(0,4);
     var ico={match:'⚽',entrainement:'🏃',tournoi:'🏆',stage:'🎯',réunion:'📋'};
     var col2={match:'#D4AF37',entrainement:'#4BC88A',tournoi:'#A060E0',stage:'#60A8D0',réunion:'#C89020'};
@@ -354,6 +502,9 @@ function renderPlayer(){
       +'</div>'
     +'</div>'
   +'</div>'
+
+  // ── Fiche administrative (délégation parent) ──
+  +renderFicheAdminBlock(p)
 
   // ── Grid 2 colonnes ──
   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'
@@ -484,8 +635,13 @@ function init(){
   // Check existing session
   var sess=getSession();
   if(sess&&sess.role==='parent'&&sess.player_code){
-    var player=ALL_PLAYERS.find(function(p){return p.code===sess.player_code;});
-    if(player){CURRENT=player;showView();return;}
+    if(sess._demo){
+      var player=ALL_PLAYERS.find(function(p){return p.code===sess.player_code;});
+      if(player){CURRENT=player;showView();return;}
+    } else {
+      loadRealPlayer(sess.player_code);
+      return;
+    }
   }
   showLogin();
   setTimeout(function(){var d=document.getElementById('d0');if(d)d.focus();},200);
