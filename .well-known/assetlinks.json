@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "fr.onesport.www.twa",
-      "sha256_cert_fingerprints": [
-        "1E:93:C6:20:5F:0E:65:51:D2:8C:1B:E2:71:FF:CC:60:B0:6E:2A:21:79:C6:60:8F:C9:09:1E:87:8A:F4:E4:50"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "fr.onesport.www.twa",
+        "sha256_cert_fingerprints": ["1E:D6:3D:40:C7:F4:36:10:78:15:24:51:81:EE:23:04:AC:B7:D0:FE:0F:7A:94:3C:68:BC:12:84:F8:FB:E9:02"]
+      }
+    }]
