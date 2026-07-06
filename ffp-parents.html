@@ -295,7 +295,49 @@ async function loadRealPlayer(code){
     CURRENT=mapRealJoueurToViewModel(res.data);
     showView();
     loadRealEvaluations(res.data.id);
+    loadRealConvocationsForParent(res.data.id, code);
   }catch(e){ showLogin(); }
+}
+
+var REAL_CONVOCS_PARENT=[];
+
+async function loadRealConvocationsForParent(joueurId, code){
+  try{
+    var cjRes=await FFP_DB.from('convocation_joueurs').select('*, convocations(*)').eq('joueur_id',joueurId);
+    if(cjRes.error || !cjRes.data){ REAL_CONVOCS_PARENT=[]; return; }
+    REAL_CONVOCS_PARENT=cjRes.data.filter(function(row){return row.convocations;}).map(function(row){
+      var c=row.convocations;
+      return {
+        id:c.id, titre:c.match_titre, adversaire:c.adversaire, date:c.date_match,
+        heure:c.heure_match, lieu:c.lieu, heure_rdv:c.heure_rdv, lieu_rdv:c.lieu_rdv,
+        tenue:c.tenue, note_coach:c.note_coach, categorie:c.category_id,
+        confirmant_type:'parent',
+        joueurs:[{id:joueurId, prenom:CURRENT.prenom, nom:CURRENT.nom, code_parent:code}],
+        _realReponse: row.reponse, _realReponseAt: row.reponse_at, _realRowId: row.id
+      };
+    });
+    renderConfirmationsParent();
+  }catch(e){ REAL_CONVOCS_PARENT=[]; }
+}
+
+async function setReponseParentReal(convocId, joueurId, statut, motif){
+  var row=REAL_CONVOCS_PARENT.find(function(c){return c.id===convocId;});
+  if(!row) return;
+  try{
+    await FFP_DB.from('convocation_joueurs').update({reponse:statut,reponse_at:new Date().toISOString()}).eq('id',row._realRowId);
+    row._realReponse=statut; row._realReponseAt=new Date().toISOString();
+    renderConfirmationsParent();
+  }catch(e){}
+}
+
+async function annulerReponseReal(convocId){
+  var row=REAL_CONVOCS_PARENT.find(function(c){return c.id===convocId;});
+  if(!row) return;
+  try{
+    await FFP_DB.from('convocation_joueurs').update({reponse:'en_attente',reponse_at:null}).eq('id',row._realRowId);
+    row._realReponse='en_attente'; row._realReponseAt=null;
+    renderConfirmationsParent();
+  }catch(e){}
 }
 
 async function loadRealEvaluations(joueurId){
@@ -685,6 +727,12 @@ function exitDemo(){
 // ══════════════════════════════════════════════════════════════
 
 function loadConfirmationsPending(codeParent) {
+  if(CURRENT && CURRENT.isReal){
+    return REAL_CONVOCS_PARENT.filter(function(c){
+      var d = c.date ? new Date(c.date+'T23:59:00').getTime() : Date.now();
+      return true; // filtrage temporel deja gere plus bas par 'actives'
+    });
+  }
   try {
     var all = JSON.parse(localStorage.getItem('ffp_confirmations_pending') || '[]');
     // Filtrer les convocations où ce parent a un joueur convoqué
@@ -697,6 +745,11 @@ function loadConfirmationsPending(codeParent) {
 }
 
 function getReponseParent(convocId, joueurId) {
+  if(CURRENT && CURRENT.isReal){
+    var c=REAL_CONVOCS_PARENT.find(function(x){return x.id===convocId;});
+    if(!c || !c._realReponse || c._realReponse==='en_attente') return null;
+    return {statut:c._realReponse, motif:'', par:'parent', ts:c._realReponseAt?new Date(c._realReponseAt).getTime():Date.now()};
+  }
   try {
     var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
     var rep = all[convocId] || {};
@@ -705,6 +758,10 @@ function getReponseParent(convocId, joueurId) {
 }
 
 function setReponseParent(convocId, joueurId, statut, motif) {
+  if(CURRENT && CURRENT.isReal){
+    setReponseParentReal(convocId, joueurId, statut, motif);
+    return;
+  }
   try {
     var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
     if (!all[convocId]) all[convocId] = {};
@@ -880,6 +937,10 @@ function cancelMotifBtn(btn) {
 }
 function annulerReponse(btn) {
   var convocId = btn.dataset.cid; var joueurId = btn.dataset.jid;
+  if(CURRENT && CURRENT.isReal){
+    annulerReponseReal(convocId);
+    return;
+  }
   try {
     var all = JSON.parse(localStorage.getItem('ffp_reponses') || '{}');
     if (all[convocId]) { delete all[convocId][joueurId]; }
