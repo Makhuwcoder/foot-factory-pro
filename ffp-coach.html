@@ -202,7 +202,7 @@ html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;colo
     <select class="inp" id="sp" onchange="renderJ()"><option value="">Tous postes</option></select>
   </div>
   <div class="card" style="padding:0;overflow:hidden"><div style="overflow-x:auto">
-    <table class="ptbl"><thead><tr><th>#</th><th></th><th>Joueur</th><th>Poste</th><th>Équipe</th><th>Tech</th><th>Phys</th><th>Tact</th><th>Ment</th><th>Cult</th><th>Score</th><th></th></tr></thead><tbody id="jlist"></tbody></table>
+    <table class="ptbl"><thead><tr><th>#</th><th></th><th>Joueur</th><th>Poste</th><th>Équipe</th><th>Tech</th><th>Phys</th><th>Tact</th><th>Ment</th><th>Cult</th><th>Score</th><th>Fiche</th></tr></thead><tbody id="jlist"></tbody></table>
   </div></div>
 </section>
 <section id="t-bilan" class="tab">
@@ -505,7 +505,80 @@ function ec(q){return q==='Équipe 1'?'c1':q==='Équipe 2'?'c2':'c3';}
 function eh(q){return q==='Équipe 1'?'e1':q==='Équipe 2'?'e2':'e3';}
 function mkP(i){var r=rng(i*7919+31337);var b=BA[PR[i]];var v=function(){return +Math.max(1,Math.min(10,b+(r()*4-2))).toFixed(1);};var pos=POS_LIST[Math.floor(r()*POS_LIST.length)];var h=140+Math.round(r()*20);var w=30+Math.round(r()*15);return{id:i,prenom:PN[i],nom:NN[i],poste:pos,technique:{controle:v(),dribble:v(),frappe:v(),passe:v(),tete:v()},physique:{vitesse:v(),endurance:v(),force:v(),coordination:v(),souplesse:v()},tactique:{positionnement:v(),lecture:v(),pressing:v()},mental:{motivation:v(),concentration:v(),combativite:v(),leadership:v(),stress:v()},culture:{reglesFIFA:v(),nutrition:v(),scolaire:v(),ethique:v()},sante:{taille:h,poids:w,imc:+(w/(h/100)**2).toFixed(1),etat:['Excellent','Bon','Correct'][Math.floor(r()*3)]},source:'demo'};}
 var PL=[];
-for(var _i=0;_i<30;_i++){var _p=mkP(_i);_p.score=gS(_p);PL.push(_p);}
+(function(){
+  var _s=getSession();
+  if(_s && _s._demo){
+    for(var _i=0;_i<30;_i++){var _p=mkP(_i);_p.score=gS(_p);PL.push(_p);}
+  }
+})();
+// ══════════════════════════════════════════════════════════════
+// DONNÉES RÉELLES (comptes coach non-démo) — Supabase
+// ══════════════════════════════════════════════════════════════
+var REAL_MODE=false;
+
+function mapRealJoueurToCoachViewModel(row, evalRow){
+  var neutral={controle:0,dribble:0,frappe:0,passe:0,tete:0};
+  var neutralP={vitesse:0,endurance:0,force:0,coordination:0,souplesse:0};
+  var neutralT={positionnement:0,lecture:0,pressing:0};
+  var neutralM={motivation:0,concentration:0,combativite:0,leadership:0,stress:0};
+  var neutralC={reglesFIFA:0,nutrition:0,scolaire:0,ethique:0};
+  var p={
+    id:row.id, prenom:row.prenom, nom:row.nom, poste:row.poste||'Non renseigné',
+    dob:row.date_naissance||'',
+    technique: evalRow?(evalRow.technique||neutral):neutral,
+    physique: evalRow?(evalRow.physique||neutralP):neutralP,
+    tactique: evalRow?(evalRow.tactique||neutralT):neutralT,
+    mental: evalRow?(evalRow.mental||neutralM):neutralM,
+    culture: evalRow?(evalRow.culture||neutralC):neutralC,
+    sante:{taille:row.taille||'–',poids:row.poids||'–',
+      imc:(row.taille&&row.poids)?+(row.poids/((row.taille/100)**2)).toFixed(1):'–',
+      etat:'—'},
+    source:'réel', joueurId:row.id, hasEvaluations:!!evalRow,
+    ficheComplete:!!row.fiche_completee_par_parent,
+    codeParent:row.code_parent
+  };
+  p.score=evalRow?gS(p):0;
+  return p;
+}
+
+async function loadRealPlayersForCoach(){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
+  if(!window.FFP_DB){ finishInit(); return; }
+  try{
+    var res=await FFP_DB.from('joueurs').select('*').eq('actif',true);
+    if(res.error || !res.data){ finishInit(); return; }
+    var rows=res.data;
+    var ids=rows.map(function(r){return r.id;});
+    var evalRes=await FFP_DB.from('evaluations').select('*').in('joueur_id',ids.length?ids:[-1])
+      .order('created_at',{ascending:false});
+    var latestByPlayer={};
+    if(!evalRes.error && evalRes.data){
+      evalRes.data.forEach(function(ev){ if(!latestByPlayer[ev.joueur_id]) latestByPlayer[ev.joueur_id]=ev; });
+    }
+    rows.forEach(function(row){
+      PL.push(mapRealJoueurToCoachViewModel(row, latestByPlayer[row.id]));
+    });
+  }catch(e){}
+  finishInit();
+}
+
+// Enregistre une evaluation reelle en base (upsert : une ligne par joueur+coach, la plus recente fait foi)
+async function saveEvalReal(p){
+  if(!window.FFP_DB) return;
+  var sess=getSession();
+  try{
+    var payload={
+      joueur_id:p.joueurId, club_id:sess.club_id, category_id:sess.category_id,
+      coach_id:sess.supabase_id, session_date:new Date().toISOString().slice(0,10),
+      technique:p.technique, physique:p.physique, tactique:p.tactique,
+      mental:p.mental, culture:p.culture, score_global:p.score
+    };
+    await FFP_DB.from('evaluations').insert(payload);
+    p.hasEvaluations=true;
+  }catch(e){}
+}
+
+
 function loadCustomPlayers(){try{var r=localStorage.getItem(LS_CUSTOM);if(!r)return;JSON.parse(r).forEach(function(cp){if(!PL.find(function(x){return x.id===cp.id;})){cp.score=gS(cp);PL.push(cp);}});}catch(e){}}
 function loadEvalScores(){try{var r=localStorage.getItem(LS_EVAL);if(!r)return;var s=JSON.parse(r);Object.keys(s).forEach(function(id){var p=PL.find(function(x){return x.id===+id;});if(!p)return;var sv=s[id];for(var c in sv){if(p[c]){for(var pm in sv[c]){p[c][pm]=sv[c][pm];}}}p.score=gS(p);});}catch(e){}}
 function sortAndRank(){PL.sort(function(a,b){return b.score-a.score;});PL.forEach(function(p,i){p.rank=i+1;p.equipe='Équipe '+(i<10?'1':i<20?'2':'3');});}
@@ -575,7 +648,7 @@ function renderJ(){
   var jcnt=document.getElementById('jcnt');if(jcnt)jcnt.textContent=f.length+' joueurs';
   var jlist=document.getElementById('jlist');
   if(!jlist)return;
-  jlist.innerHTML=f.map(function(p){var src=p.source!=='demo'?'<span style="font-size:9px;background:rgba(75,200,138,.15);color:#4BC88A;border-radius:4px;padding:1px 5px;margin-left:4px;font-family:Montserrat,sans-serif;font-weight:700">'+p.source+'</span>':'';return'<tr onclick="goPl('+p.id+')"><td class="rn">'+p.rank+'</td><td><div class="av" style="width:25px;height:25px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div></td><td style="font-weight:600">'+p.prenom+' '+p.nom+src+'</td><td><span class="pc">'+p.poste+'</span></td><td><span class="'+ec(p.equipe)+'" style="font-weight:600">'+p.equipe+'</span></td><td style="color:#888">'+cA(p,'technique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'physique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'tactique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'mental').toFixed(1)+'</td><td style="color:#888">'+cA(p,'culture').toFixed(1)+'</td><td><span class="sb '+sc(p.score)+'">'+p.score.toFixed(2)+'</span></td></tr>';}).join('');
+  jlist.innerHTML=f.map(function(p){var src=p.source!=='demo'?'<span style="font-size:9px;background:rgba(75,200,138,.15);color:#4BC88A;border-radius:4px;padding:1px 5px;margin-left:4px;font-family:Montserrat,sans-serif;font-weight:700">'+p.source+'</span>':'';var ficheBadge=REAL_MODE?(p.ficheComplete?'<span style="font-size:9px;background:rgba(75,200,138,.12);border:1px solid rgba(75,200,138,.35);color:#4BC88A;border-radius:5px;padding:2px 7px;font-family:Montserrat,sans-serif;font-weight:700;white-space:nowrap">✅ Complète</span>':'<span style="font-size:9px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);color:#D4AF37;border-radius:5px;padding:2px 7px;font-family:Montserrat,sans-serif;font-weight:700;white-space:nowrap">⏳ En attente</span>'):'';return'<tr onclick="goPl('+p.id+')"><td class="rn">'+p.rank+'</td><td><div class="av" style="width:25px;height:25px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div></td><td style="font-weight:600">'+p.prenom+' '+p.nom+src+'</td><td><span class="pc">'+p.poste+'</span></td><td><span class="'+ec(p.equipe)+'" style="font-weight:600">'+p.equipe+'</span></td><td style="color:#888">'+cA(p,'technique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'physique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'tactique').toFixed(1)+'</td><td style="color:#888">'+cA(p,'mental').toFixed(1)+'</td><td style="color:#888">'+cA(p,'culture').toFixed(1)+'</td><td><span class="sb '+sc(p.score)+'">'+p.score.toFixed(2)+'</span></td><td>'+ficheBadge+'</td></tr>';}).join('');
 }
 
 // ══ RENDER BILAN ══
@@ -657,7 +730,7 @@ var ECATS=[{key:'technique',lbl:'Technique',ico:'⚽',col:'#D4AF37',params:['con
 var ELBL={controle:'Contrôle',dribble:'Dribble',frappe:'Frappe',passe:'Passe',tete:'Tête',vitesse:'Vitesse',endurance:'Endurance',force:'Force',coordination:'Coordination',souplesse:'Souplesse',positionnement:'Positionnement',lecture:'Lecture du jeu',pressing:'Pressing',motivation:'Motivation',concentration:'Concentration',combativite:'Combativité',leadership:'Leadership',stress:'Gestion stress',reglesFIFA:'Règles FIFA',nutrition:'Nutrition',scolaire:'Scolaire',ethique:'Éthique'};
 var SAVED={};var CUR_EVAL=null;
 function loadEvalData(){try{var r=localStorage.getItem(LS_EVAL);if(!r)return;SAVED=JSON.parse(r);}catch(e){}}
-function evalDone(pid){return!!SAVED[pid];}
+function evalDone(pid){if(REAL_MODE){var p=PL.find(function(x){return x.id===pid;});return!!(p&&p.hasEvaluations);}return!!SAVED[pid];}
 function evalCount(){var n=0;for(var k in SAVED)n++;return n;}
 function renderEvalWidget(){var n=evalCount(),tot=PL.length,el=document.getElementById('eval-widget');if(!el)return;var pct=Math.round(n/tot*100);el.innerHTML='<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showTab(\'eval\',null)"><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:5px">Progression des évaluations</div><div style="height:5px;background:#222;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;background:linear-gradient(to right,#D4AF37,#FBCB57);border-radius:3px;width:'+pct+'%;transition:width .5s"></div></div><div style="font-size:12px;color:#888"><span style="color:#1565C0;font-weight:700">'+n+'</span> / '+tot+' joueurs évalués'+(n===0?' <span style="color:#475569;font-style:italic">(scores de démo)</span>':'')+'</div></div><div style="font-size:20px;color:rgba(21,101,192,.5)">→</div></div>';}
 function renderEvalList(){var el=document.getElementById('eval-list');if(!el)return;el.innerHTML=PL.map(function(p){var done=evalDone(p.id),sel=CUR_EVAL===p.id;return'<div class="eval-prow'+(sel?' sel':'')+'" onclick="openEval('+p.id+')"><div class="eval-dot '+(done?'ev-done':'ev-todo')+'"></div><div class="av" style="width:26px;height:26px;font-size:9px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#475569">'+POS_SHORT[p.poste]+' — '+p.equipe+'</div></div><span class="sb '+sc(p.score)+'" style="font-size:10px">'+p.score.toFixed(1)+'</span></div>';}).join('');var ep=document.getElementById('eval-prog');if(ep)ep.textContent=evalCount()+' / '+PL.length+' évalués';var eb=document.getElementById('eval-bar');if(eb)eb.style.width=Math.round(evalCount()/PL.length*100)+'%';}
@@ -665,12 +738,30 @@ function slGrad(val){var pct=((val-1)/9*100).toFixed(1);return'linear-gradient(t
 function openEval(pid){CUR_EVAL=pid;var p=PL.find(function(x){return x.id===pid;});if(!p)return;renderEvalList();var html='<div class="card" style="padding:0;overflow:hidden"><div style="background:linear-gradient(135deg,rgba(212,175,55,.1),transparent);border-bottom:1px solid rgba(212,175,55,.13);padding:16px 20px;display:flex;align-items:center;gap:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+' — '+p.equipe+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#475569;margin-top:3px">Rang #'+p.rank+' / '+PL.length+'</div><div style="font-size:10px;margin-top:2px;font-family:Montserrat,sans-serif;font-weight:600;color:'+(evalDone(pid)?'#4BC88A':'#444')+'">'+(evalDone(pid)?'✓ Évalué':'Non évalué')+'</div></div></div><div style="padding:18px 20px">';ECATS.forEach(function(cat){html+='<div style="margin-bottom:18px"><div class="eval-cat-hdr" style="color:'+cat.col+'">'+cat.ico+' '+cat.lbl+'<span style="margin-left:auto;font-size:11px;color:#475569;font-weight:400">Moy: <span id="ca-'+cat.key+'" style="color:'+cat.col+'">–</span></span></div>';cat.params.forEach(function(param){var val=(p[cat.key]&&p[cat.key][param])?p[cat.key][param]:5;html+='<div class="sl-row"><div class="sl-lbl">'+(ELBL[param]||param)+'</div><input type="range" class="sl" min="1" max="10" step="0.5" value="'+val+'" id="sl-'+pid+'-'+cat.key+'-'+param+'" oninput="onSl(this,'+pid+',\''+cat.key+'\',\''+param+'\')" style="background:'+slGrad(val)+'"><div class="sl-val" id="sv-'+pid+'-'+cat.key+'-'+param+'">'+val+'</div></div>';});html+='</div>';});html+='<button class="save-btn" onclick="saveEval('+pid+')">💾 Enregistrer les scores</button><div class="save-ok" id="ok-'+pid+'">✓ Scores enregistrés — classement mis à jour !</div></div></div>';var ef=document.getElementById('eval-form');if(ef)ef.innerHTML=html;ECATS.forEach(function(cat){refreshAvg(pid,cat.key,cat.params);});}
 function onSl(input,pid,catKey,param){var val=parseFloat(input.value);var sv=document.getElementById('sv-'+pid+'-'+catKey+'-'+param);if(sv)sv.textContent=val.toFixed(1);input.style.background=slGrad(val);var cat=ECATS.find(function(c){return c.key===catKey;});if(cat)refreshAvg(pid,catKey,cat.params);}
 function refreshAvg(pid,catKey,params){var sum=0;params.forEach(function(param){var sl=document.getElementById('sl-'+pid+'-'+catKey+'-'+param);if(sl)sum+=parseFloat(sl.value);});var el=document.getElementById('ca-'+catKey);if(el)el.textContent=(sum/params.length).toFixed(2);}
-function saveEval(pid){var p=PL.find(function(x){return x.id===pid;});if(!p)return;var scores={};ECATS.forEach(function(cat){scores[cat.key]={};cat.params.forEach(function(param){var sl=document.getElementById('sl-'+pid+'-'+cat.key+'-'+param);if(sl){var v=parseFloat(sl.value);scores[cat.key][param]=v;p[cat.key][param]=v;}});});SAVED[pid]=scores;try{localStorage.setItem(LS_EVAL,JSON.stringify(SAVED));}catch(e){}p.score=gS(p);sortAndRank();var ok=document.getElementById('ok-'+pid);if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},3000);}renderEvalList();renderEvalWidget();renderDash();renderJ();renderClass();refreshBsel();openEval(pid);}
+function saveEval(pid){var p=PL.find(function(x){return x.id===pid;});if(!p)return;var scores={};ECATS.forEach(function(cat){scores[cat.key]={};cat.params.forEach(function(param){var sl=document.getElementById('sl-'+pid+'-'+cat.key+'-'+param);if(sl){var v=parseFloat(sl.value);scores[cat.key][param]=v;p[cat.key][param]=v;}});});p.score=gS(p);
+  if(REAL_MODE){
+    saveEvalReal(p).then(function(){
+      sortAndRank();renderEvalList();renderEvalWidget();renderDash();renderJ();renderClass();refreshBsel();openEval(pid);
+      var ok=document.getElementById('ok-'+pid);if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},3000);}
+    });
+    return;
+  }
+  SAVED[pid]=scores;try{localStorage.setItem(LS_EVAL,JSON.stringify(SAVED));}catch(e){}sortAndRank();var ok=document.getElementById('ok-'+pid);if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},3000);}renderEvalList();renderEvalWidget();renderDash();renderJ();renderClass();refreshBsel();openEval(pid);}
 function resetEvals(){if(!confirm('Réinitialiser toutes les évaluations ?'))return;try{localStorage.removeItem(LS_EVAL);}catch(e){}location.reload();}
 
 // ══ INIT ══
 function init(){
-  loadCustomPlayers();loadEvalScores();loadEvalData();sortAndRank();
+  var sess=getSession();
+  if(sess && !sess._demo && sess.role==='coach'){
+    REAL_MODE=true;
+    loadRealPlayersForCoach();
+    return;
+  }
+  finishInit();
+}
+function finishInit(){
+  if(!REAL_MODE){ loadCustomPlayers();loadEvalScores(); }
+  loadEvalData();sortAndRank();
   var sp=document.getElementById('sp');
   if(sp){var postes=[];PL.forEach(function(p){if(postes.indexOf(p.poste)<0)postes.push(p.poste);});postes.sort().forEach(function(po){var o=document.createElement('option');o.textContent=po;sp.appendChild(o);});}
   var bs=document.getElementById('bsel');
