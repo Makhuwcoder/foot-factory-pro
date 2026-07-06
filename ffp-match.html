@@ -187,6 +187,93 @@ try{
   if(_ev){var _evd=JSON.parse(_ev);ALL_PLAYERS.forEach(function(p){if(_evd[p.id]){for(var c in _evd[p.id]){if(p.scores[c]!==undefined)p.scores[c]=_evd[p.id][c];}}});}
 }catch(e){}
 
+// ══════════════════════════════════════════════════════════════
+// DONNÉES RÉELLES (comptes non-démo) — Supabase
+// ══════════════════════════════════════════════════════════════
+var REAL_MODE=false;
+var REAL_MATCHES_CACHE=[];
+
+async function ensureFFPDB(){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
+  return !!window.FFP_DB;
+}
+
+async function loadRealPlayersForMatch(){
+  if(!(await ensureFFPDB())) return;
+  try{
+    var res=await FFP_DB.from('joueurs').select('id,prenom,nom,poste,numero_maillot').eq('actif',true);
+    if(res.error||!res.data) return;
+    var ids=res.data.map(function(r){return r.id;});
+    var evalRes=await FFP_DB.from('evaluations').select('joueur_id,technique,physique,tactique,mental,culture')
+      .in('joueur_id',ids.length?ids:[-1]).order('created_at',{ascending:false});
+    var evalByPlayer={};
+    if(!evalRes.error && evalRes.data){
+      evalRes.data.forEach(function(ev){ if(!evalByPlayer[ev.joueur_id]) evalByPlayer[ev.joueur_id]=ev; });
+    }
+    var neutral={technique:0,physique:0,tactique:0,mental:0,culture:0};
+    ALL_PLAYERS=res.data.map(function(r){
+      var ev=evalByPlayer[r.id];
+      var scores={
+        technique: ev&&ev.technique? avgOf(ev.technique):neutral.technique,
+        physique: ev&&ev.physique? avgOf(ev.physique):neutral.physique,
+        tactique: ev&&ev.tactique? avgOf(ev.tactique):neutral.tactique,
+        mental: ev&&ev.mental? avgOf(ev.mental):neutral.mental,
+        culture: ev&&ev.culture? avgOf(ev.culture):neutral.culture
+      };
+      return {id:r.id, prenom:r.prenom, nom:r.nom, poste:r.poste||'Non renseigné', numero:r.numero_maillot||'–', scores:scores};
+    });
+  }catch(e){}
+}
+function avgOf(obj){var vals=Object.values(obj).filter(function(v){return typeof v==='number';});return vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;}
+
+async function loadRealMatches(){
+  if(!(await ensureFFPDB())) return [];
+  try{
+    var res=await FFP_DB.from('matchs').select('*').order('created_at',{ascending:false});
+    if(res.error||!res.data) return [];
+    return res.data.map(mapRealMatchRow);
+  }catch(e){ return []; }
+}
+
+function mapRealMatchRow(r){
+  return {
+    id:r.id, titre:r.titre, adversaire:r.adversaire, date:r.date_match, type:r.type_match, lieu:r.lieu,
+    duree:r.duree, periode:r.periode, temps:r.temps, statut:r.statut,
+    score_home:r.score_home||0, score_away:r.score_away||0,
+    titulaires:r.titulaires||[], remplacants:r.remplacants||[],
+    evenements:r.evenements||[], stats:r.stats||{poss:50,tirs_h:0,tirs_a:0,tirs_c_h:0,tirs_c_a:0,corners_h:0,corners_a:0,fautes_h:0,fautes_a:0,hors_j_h:0,hors_j_a:0},
+    notes:r.notes_joueurs||{}, rating_match:r.rating_match, rapport_texte:r.rapport_coach||'', chrono_ms:r.chrono_ms||0
+  };
+}
+
+async function saveMatchReal(m){
+  if(!(await ensureFFPDB())) return;
+  var sess=(typeof getSession==="function")?getSession():null;
+  if(!sess){ try{sess=JSON.parse(localStorage.getItem('ffp_session'));}catch(e){sess=null;} }
+  if(!sess) return;
+  try{
+    var payload={
+      club_id:sess.club_id, category_id:sess.category_id, coach_id:sess.supabase_id,
+      titre:m.titre, adversaire:m.adversaire, date_match:m.date, type_match:m.type, lieu:m.lieu,
+      statut:m.statut, score_home:m.score_home, score_away:m.score_away,
+      titulaires:m.titulaires, remplacants:m.remplacants,
+      evenements:m.evenements, stats:m.stats, notes_joueurs:m.notes,
+      rapport_coach:m.rapport_texte, chrono_ms:m.chrono_ms,
+      duree:m.duree, periode:m.periode, temps:m.temps, rating_match:m.rating_match,
+      updated_at:new Date().toISOString()
+    };
+    var isNew=!m.id || String(m.id).indexOf('match_')===0;
+    if(isNew){
+      var insRes=await FFP_DB.from('matchs').insert(payload).select().single();
+      if(!insRes.error && insRes.data) m.id=insRes.data.id;
+    } else {
+      await FFP_DB.from('matchs').update(payload).eq('id',m.id);
+    }
+  }catch(e){}
+}
+
+
+
 // ── Event types ──
 var EVT = {
   but:         {ico:'⚽',label:'But',          col:'#4BC88A'},
@@ -207,9 +294,17 @@ var PHASE = 'setup'; // setup | live | rapport
 
 // ── Load/Save matches ──
 function loadMatches(){
+  if(REAL_MODE) return REAL_MATCHES_CACHE;
   try{return JSON.parse(localStorage.getItem(LS_MATCHES)||'[]');}catch(e){return [];}
 }
 function saveMatch(m){
+  if(REAL_MODE){
+    saveMatchReal(m).then(function(){
+      var idx=REAL_MATCHES_CACHE.findIndex(function(x){return x.id===m.id;});
+      if(idx>=0) REAL_MATCHES_CACHE[idx]=m; else REAL_MATCHES_CACHE.unshift(m);
+    });
+    return;
+  }
   var list=loadMatches();
   var idx=list.findIndex(function(x){return x.id===m.id;});
   if(idx>=0)list[idx]=m;else list.unshift(m);
@@ -219,7 +314,7 @@ function saveMatch(m){
 function genId(){return 'match_'+Date.now();}
 
 // ── Setup phase ──
-function newMatch(){
+async function newMatch(){
   var titre=((document.getElementById('m-titre')||{}).value||'').trim()||'Nouveau match';
   var adversaire=((document.getElementById('m-adv')||{}).value||'').trim()||'Adversaire';
   var date=((document.getElementById('m-date')||{}).value||new Date().toISOString().slice(0,10));
@@ -242,7 +337,8 @@ function newMatch(){
     stats:{poss:50,tirs_h:0,tirs_a:0,tirs_c_h:0,tirs_c_a:0,
            corners_h:0,corners_a:0,fautes_h:0,fautes_a:0,hors_j_h:0,hors_j_a:0},
     notes:{},rating_match:null,rapport_texte:'',chrono_ms:0};
-  saveMatch(MATCH);
+  if(REAL_MODE){ await saveMatchReal(MATCH); REAL_MATCHES_CACHE.unshift(MATCH); }
+  else saveMatch(MATCH);
   showPhase('live');
   renderLive();
 }
@@ -752,6 +848,18 @@ function showPhase(phase){
 
 // ── Init ──
 function init(){
+  var sess=(typeof getSession==="function")?getSession():null;
+  if(!sess){ try{sess=JSON.parse(localStorage.getItem('ffp_session'));}catch(e){sess=null;} }
+  if(sess && !sess._demo && sess.role==='coach'){
+    REAL_MODE=true;
+    Promise.all([loadRealPlayersForMatch(), loadRealMatches()]).then(function(results){
+      REAL_MATCHES_CACHE=results[1]||[];
+      renderMatchList();
+      renderSetup();
+      showPhase('setup');
+    });
+    return;
+  }
   renderMatchList();
   renderSetup();
   showPhase('setup');
