@@ -218,6 +218,7 @@ function getUnread(){
 }
 
 function markRead(msgId){
+  if(REAL_MODE){ markReadReal(msgId); return; }
   var m=MESSAGES.find(function(x){return x.id===msgId;});
   if(!m)return;
   var id=SESSION?(SESSION.role==='coach'?'coach':'parent_'+(SESSION.player_code||'')):'anon';
@@ -378,10 +379,16 @@ function showCompose(prefill){
   // Recipient options for coach
   var recipOpts='';
   if(isCoach){
-    recipOpts='<option value="all">📢 Tous les parents</option>';
-    for(var i=0;i<30;i++){
-      var code=String(1001+i);
-      recipOpts+='<option value="'+code+'"'+(prefill.to===code?' selected':'')+'>'+PN[i]+' '+NN[i]+'</option>';
+    if(REAL_MODE){
+      recipOpts=REAL_PLAYERS.map(function(p){
+        return '<option value="'+p.code_parent+'"'+(prefill.to===p.code_parent?' selected':'')+'>'+p.prenom+' '+p.nom+'</option>';
+      }).join('');
+    } else {
+      recipOpts='<option value="all">📢 Tous les parents</option>';
+      for(var i=0;i<30;i++){
+        var code=String(1001+i);
+        recipOpts+='<option value="'+code+'"'+(prefill.to===code?' selected':'')+'>'+PN[i]+' '+NN[i]+'</option>';
+      }
     }
   }
 
@@ -417,13 +424,30 @@ function showCompose(prefill){
   if(prefill.body){var ta=document.getElementById('c-body');if(ta)ta.value=prefill.body;}
 }
 
-function sendMessage(){
+async function sendMessage(){
   var isCoach=SESSION&&SESSION.role==='coach';
   var subject=((document.getElementById('c-subject')||{}).value||'').trim();
   var body=((document.getElementById('c-body')||{}).value||'').trim();
   var err=document.getElementById('c-err');
   if(err)err.textContent='';
   if(!subject||!body){if(err)err.textContent='Objet et message sont obligatoires.';return;}
+  var tag=((document.getElementById('c-tag')||{}).value||'général');
+  var pri=((document.getElementById('c-pri')||{}).value||'normale');
+
+  if(REAL_MODE){
+    var to=isCoach?((document.getElementById('c-to')||{}).value||'all'):'coach';
+    var sendBtn=document.querySelector('[onclick="sendMessage()"]');
+    if(sendBtn){sendBtn.disabled=true;sendBtn.textContent='Envoi...';}
+    var ok=await sendMessageReal(to, subject, body, tag, pri);
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Envoyer →';}
+    if(!ok) return;
+    await loadRealMessages();
+    updateNavTabs();
+    VIEW='sent';
+    renderSent();
+    showSendSuccess();
+    return;
+  }
 
   var to,to_label,from,from_name,from_code;
   if(isCoach){
@@ -436,9 +460,6 @@ function sendMessage(){
     from_code=SESSION.player_code||'';
   }
 
-  var tag=((document.getElementById('c-tag')||{}).value||'général');
-  var pri=((document.getElementById('c-pri')||{}).value||'normale');
-
   var msg={id:genId(),from:from,from_name:from_name,from_code:from_code||undefined,
     to:to,to_label:to_label,subject:subject,body:body,
     ts:Date.now(),read_by:[from==='coach'?'coach':'parent_'+(from_code||'')],
@@ -450,7 +471,10 @@ function sendMessage(){
   VIEW='sent';
   renderSent();
   openMsg(msg.id);
-  // Show success
+  showSendSuccess();
+}
+
+function showSendSuccess(){
   var srp=document.getElementById('read-panel');
   if(srp){
     var succ=document.createElement('div');
@@ -480,10 +504,126 @@ function searchMessages(q){
 }
 
 // ── Init ──
+// ══════════════════════════════════════════════════════════════
+// DONNÉES RÉELLES (comptes non-démo) — Supabase
+// ══════════════════════════════════════════════════════════════
+var REAL_MODE=false;
+var REAL_PLAYERS=[];        // pour le selecteur destinataire cote coach
+var REAL_PARENT_CLUB=null;  // {club_id, category_id} du parent, pour l'envoi
+
+function readMarker(){return SESSION.role==='coach'?'coach':'parent_'+(SESSION.player_code||'');}
+
+async function ensureFFPDB(){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
+  return !!window.FFP_DB;
+}
+
+async function loadRealMessages(){
+  if(!(await ensureFFPDB())){ MESSAGES=[]; return; }
+  try{
+    var res=await FFP_DB.from('messages_with_sender').select('*').order('created_at',{ascending:false});
+    if(res.error || !res.data){ MESSAGES=[]; return; }
+    var rows=res.data;
+    // Resoudre les player_code des expediteurs/destinataires parents pour matcher l'ancien modele
+    var ids=[];
+    rows.forEach(function(r){ if(r.from_user_id)ids.push(r.from_user_id); if(r.to_user_id)ids.push(r.to_user_id); });
+    ids=ids.filter(function(v,i){return ids.indexOf(v)===i;});
+    var codeById={}, nameById={};
+    if(ids.length){
+      var pRes=await FFP_DB.from('profiles').select('id,player_code,prenom,nom,role').in('id',ids);
+      if(!pRes.error && pRes.data){
+        pRes.data.forEach(function(pr){ codeById[pr.id]=pr.player_code; nameById[pr.id]=(pr.prenom||'')+' '+(pr.nom||''); });
+      }
+    }
+    MESSAGES=rows.map(function(r){
+      var fromCoach=r.sender_role==='coach'||r.sender_role==='directeur';
+      var toCode=r.to_user_id?codeById[r.to_user_id]:null;
+      return {
+        id:r.id,
+        from: fromCoach?'coach':'parent',
+        from_name: fromCoach?((r.sender_prenom||'Coach')+' '+(r.sender_nom||'')):(nameById[r.from_user_id]||'Parent'),
+        from_code: fromCoach?undefined:(codeById[r.from_user_id]||''),
+        to: fromCoach?(toCode||'all'):'coach',
+        to_label: fromCoach?(toCode?nameById[r.to_user_id]:'Tous les parents'):'Coach',
+        subject:r.sujet, body:r.corps, ts:new Date(r.created_at).getTime(),
+        read_by:r.lu_par||[], priority:r.priorite||'normale', tag:r.tag||'général'
+      };
+    });
+    MESSAGES.sort(function(a,b){return b.ts-a.ts;});
+  }catch(e){ MESSAGES=[]; }
+}
+
+async function loadRealPlayersForRecipients(){
+  if(!(await ensureFFPDB())) return;
+  try{
+    var res=await FFP_DB.from('joueurs').select('id,prenom,nom,code_parent').eq('actif',true);
+    if(!res.error && res.data) REAL_PLAYERS=res.data;
+  }catch(e){}
+}
+
+async function resolveParentSendContext(){
+  if(!(await ensureFFPDB())) return null;
+  try{
+    var jRes=await FFP_DB.from('joueurs').select('club_id,category_id').eq('code_parent',SESSION.player_code).maybeSingle();
+    if(jRes.error||!jRes.data) return null;
+    var cRes=await FFP_DB.from('profiles').select('id').eq('role','coach').eq('club_id',jRes.data.club_id).eq('category_id',jRes.data.category_id).limit(1).maybeSingle();
+    return {club_id:jRes.data.club_id, category_id:jRes.data.category_id, coach_id:cRes.data?cRes.data.id:null};
+  }catch(e){ return null; }
+}
+
+async function sendMessageReal(to, subject, body, tag, pri){
+  var err=document.getElementById('c-err');
+  try{
+    var payload={sujet:subject, corps:body, tag:tag, priorite:pri, lu_par:[readMarker()]};
+    if(SESSION.role==='coach'){
+      payload.club_id=SESSION.club_id;
+      payload.from_user_id=SESSION.supabase_id;
+      if(to==='all'){ payload.to_category=SESSION.category_id; payload.to_user_id=null; }
+      else{
+        var target=REAL_PLAYERS.find(function(p){return p.code_parent===to;});
+        if(!target){ if(err)err.textContent='Destinataire introuvable.'; return false; }
+        var pRes=await FFP_DB.from('profiles').select('id').eq('player_code',target.code_parent).eq('role','parent').maybeSingle();
+        if(pRes.error||!pRes.data){ if(err)err.textContent='Profil parent introuvable.'; return false; }
+        payload.to_user_id=pRes.data.id; payload.to_category=null;
+      }
+    } else {
+      var ctx=await resolveParentSendContext();
+      if(!ctx || !ctx.coach_id){ if(err)err.textContent='Coach introuvable pour votre catégorie.'; return false; }
+      payload.club_id=ctx.club_id;
+      payload.from_user_id=SESSION.supabase_id;
+      payload.to_user_id=ctx.coach_id; payload.to_category=null;
+    }
+    var res=await FFP_DB.from('messages').insert(payload);
+    if(res.error){ if(err)err.textContent='Erreur : '+res.error.message; return false; }
+    return true;
+  }catch(e){ if(err)err.textContent="Erreur d'envoi, réessayez."; return false; }
+}
+
+async function markReadReal(msgId){
+  var m=MESSAGES.find(function(x){return x.id===msgId;});
+  if(!m) return;
+  var marker=readMarker();
+  if(m.read_by.indexOf(marker)<0){
+    m.read_by.push(marker);
+    try{ await FFP_DB.from('messages').update({lu_par:m.read_by}).eq('id',msgId); }catch(e){}
+  }
+}
+
+
+
 function init(){
   SESSION=getSession();
-  loadMessages();
-
+  if(SESSION && !SESSION._demo){
+    REAL_MODE=true;
+    var jobs=[loadRealMessages()];
+    if(SESSION.role==='coach') jobs.push(loadRealPlayersForRecipients());
+    Promise.all(jobs).then(finishInit);
+  } else {
+    loadMessages();
+    finishInit();
+  }
+}
+function finishInit(){
   // Update header
   var hp=document.getElementById('session-pill');
   if(hp&&SESSION){
