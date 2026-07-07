@@ -185,8 +185,9 @@ async function loadRealConvocs(){
 }
 
 async function saveConvocReal(c){
-  if(!(await ensureFFPDB())) return;
+  if(!(await ensureFFPDB())){ console.error('[Convocations] Supabase non initialisé (FFP_DB absent).'); return false; }
   var sess=getSession();
+  if(!sess){ console.error('[Convocations] Session introuvable.'); return false; }
   try{
     var header={
       club_id:sess.club_id, category_id:sess.category_id, coach_id:sess.supabase_id,
@@ -199,34 +200,42 @@ async function saveConvocReal(c){
     var isNew=!convocId || convocId.indexOf('cv_')===0;
     if(isNew){
       var insRes=await FFP_DB.from('convocations').insert(header).select().single();
-      if(insRes.error) return;
+      if(insRes.error){ console.error('[Convocations] Erreur insertion en-tete:', insRes.error); return false; }
       convocId=insRes.data.id; c.id=convocId;
     } else {
-      await FFP_DB.from('convocations').update(header).eq('id',convocId);
+      var updRes=await FFP_DB.from('convocations').update(header).eq('id',convocId);
+      if(updRes.error){ console.error('[Convocations] Erreur mise a jour en-tete:', updRes.error); return false; }
     }
     // Sync roster: supprime puis reinsere (simple, correct pour ce volume)
-    await FFP_DB.from('convocation_joueurs').delete().eq('convocation_id',convocId);
+    var delRes=await FFP_DB.from('convocation_joueurs').delete().eq('convocation_id',convocId);
+    if(delRes.error){ console.error('[Convocations] Erreur nettoyage roster:', delRes.error); return false; }
     var rows=(c.titulaires||[]).map(function(id){return {convocation_id:convocId,joueur_id:id,club_id:sess.club_id,category_id:sess.category_id,role:'titulaire'};})
       .concat((c.remplacants||[]).map(function(id){return {convocation_id:convocId,joueur_id:id,club_id:sess.club_id,category_id:sess.category_id,role:'remplacant'};}));
-    if(rows.length) await FFP_DB.from('convocation_joueurs').insert(rows);
-  }catch(e){}
+    if(rows.length){
+      var rowRes=await FFP_DB.from('convocation_joueurs').insert(rows);
+      if(rowRes.error){ console.error('[Convocations] Erreur insertion roster:', rowRes.error); return false; }
+    }
+    return true;
+  }catch(e){ console.error('[Convocations] Exception saveConvocReal:', e); return false; }
 }
 
 async function sendConvocNotificationsReal(convoc, players, sujet, corpsBase){
-  if(!(await ensureFFPDB())) return;
+  if(!(await ensureFFPDB())){ console.error('[Convocations] Supabase non initialisé pour les notifications.'); return; }
   var sess=getSession();
   var allIds=(convoc.titulaires||[]).concat(convoc.remplacants||[]);
   var codes=allIds.map(function(id){var p=players.find(function(pl){return pl.id===id;});return p?p.code_parent:null;}).filter(Boolean);
-  if(!codes.length) return;
+  if(!codes.length){ console.warn('[Convocations] Aucun code parent resolu pour les notifications.'); return; }
   try{
     var pRes=await FFP_DB.from('profiles').select('id,player_code').in('player_code',codes).eq('role','parent');
-    if(pRes.error||!pRes.data) return;
+    if(pRes.error){ console.error('[Convocations] Erreur recherche profils parents:', pRes.error); return; }
+    if(!pRes.data || !pRes.data.length){ console.warn('[Convocations] Aucun profil parent trouve pour ces codes:', codes); return; }
     var rows=pRes.data.map(function(pr){
       return {club_id:sess.club_id, from_user_id:sess.supabase_id, to_user_id:pr.id, to_category:null,
         sujet:sujet, corps:corpsBase, priorite:'haute', tag:'convocation', lu_par:['coach']};
     });
-    if(rows.length) await FFP_DB.from('messages').insert(rows);
-  }catch(e){}
+    var insRes=await FFP_DB.from('messages').insert(rows);
+    if(insRes.error){ console.error('[Convocations] Erreur envoi notifications:', insRes.error); }
+  }catch(e){ console.error('[Convocations] Exception sendConvocNotificationsReal:', e); }
 }
 
 
@@ -374,7 +383,7 @@ function goPreview(){
   if(CONVOC.titulaires.length<7){alert('Sélectionnez au moins 7 titulaires.');return;}
   if(!CONVOC.adversaire||CONVOC.adversaire==='Adversaire'){alert('Renseignez le nom de l\'adversaire.');return;}
   if(!CONVOC.id)CONVOC.id=genId();
-  saveConvoc(CONVOC);
+  if(!REAL_MODE) saveConvoc(CONVOC); // en mode reel, la sauvegarde se fait uniquement a l'envoi (evite une double insertion)
   showPhase('preview');
   renderPreview();
 }
@@ -542,7 +551,8 @@ async function sendConvocMessages(){
 
   if(REAL_MODE){
     CONVOC.statut='envoyée';
-    await saveConvocReal(CONVOC);
+    var ok=await saveConvocReal(CONVOC);
+    if(!ok){ alert('Erreur lors de la sauvegarde de la convocation. Vérifiez la console (F12) pour le détail, et réessayez.'); return; }
     var freshList=await loadRealConvocs();REAL_CONVOCS_CACHE=freshList;
     await sendConvocNotificationsReal(CONVOC, ALL_PLAYERS, sujet, corps);
     showPhase('sent');renderSent(allPlayers.length);
