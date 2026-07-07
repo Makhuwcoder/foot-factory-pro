@@ -363,7 +363,7 @@ function renderSetup(){
     var scCol=sc>=7.5?'#4BC88A':sc>=6?'#D4AF37':'#888';
     return '<div class="squad-card" id="sq-'+p.id+'">'
       +'<div style="display:flex;align-items:center;gap:8px">'
-        +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#475569;min-width:22px;text-align:right">#'+p.numero+'</span>'
+        +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#475569;min-width:22px;text-align:right">N°'+p.numero+'</span>'
         +'<div style="flex:1">'
           +'<div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div>'
           +'<div style="font-size:10px;color:#888">'+p.poste+'</div>'
@@ -503,7 +503,7 @@ function openPlayerPicker(evtType){
           var cards=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&(e.type==='jaune'||e.type==='rouge');}).length;
           var hasRed=MATCH.evenements.some(function(e){return e.joueur_id===p.id&&e.type==='rouge';});
           return '<button onclick="addEvent(\''+evtType+'\','+p.id+');closePicker()" style="display:flex;align-items:center;gap:8px;background:#0D0B05;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;transition:all .2s;'+(hasRed?'opacity:.5':'')+(hasRed?' pointer-events:none':'')+'" onmouseover="this.style.borderColor=\''+evInfo.col+'55\'" onmouseout="this.style.borderColor=\'rgba(212,175,55,.15)\'">'
-            +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#475569;min-width:20px">#'+p.numero+'</span>'
+            +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:11px;color:#475569;min-width:20px">N°'+p.numero+'</span>'
             +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#F0F0F0">'+p.prenom+' '+p.nom+'</div>'
             +'<div style="font-size:10px;color:#888">'+p.poste+'</div></div>'
             +(cards===1?'<span style="font-size:14px">🟨</span>':cards>=2?'<span style="font-size:14px">🟥</span>':'')
@@ -609,7 +609,7 @@ function renderLive(){
     var jaunes=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='jaune';}).length;
     var rouge=MATCH.evenements.some(function(e){return e.joueur_id===p.id&&e.type==='rouge';});
     return '<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.025);cursor:default">'
-      +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#475569;min-width:22px">#'+p.numero+'</span>'
+      +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#475569;min-width:22px">N°'+p.numero+'</span>'
       +'<div style="flex:1"><div style="font-size:11px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:9px;color:#475569">'+POS_SH[p.poste]+'</div></div>'
       +(buts?'<span style="font-size:12px">⚽</span><span style="font-size:10px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700">'+buts+'</span>':'')
       +(jaunes===1?'<span style="font-size:12px">🟨</span>':jaunes>=2?'<span style="font-size:12px">🟥</span>':'')
@@ -637,7 +637,7 @@ function renderRapport(){
     var buts=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='but';}).length;
     var note=MATCH.notes[p.id]||6;
     return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
-      +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#475569;min-width:22px">#'+p.numero+'</span>'
+      +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#475569;min-width:22px">N°'+p.numero+'</span>'
       +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#888">'+p.poste+(buts?' · <span style="color:#4BC88A">'+buts+' but'+(buts>1?'s':'')+'</span>':'')+'</div></div>'
       +'<input type="range" min="1" max="10" step="0.5" value="'+note+'" style="-webkit-appearance:none;appearance:none;width:80px;height:3px;background:linear-gradient(to right,#D4AF37 0%,#D4AF37 '+(note*10)+'%,#222 '+(note*10)+'%,#222 100%);outline:none;border-radius:2px;cursor:pointer" oninput="setNote('+p.id+',this.value);this.style.background=\'linear-gradient(to right,#D4AF37 0%,#D4AF37 \'+(this.value*10)+\'%,#222 \'+(this.value*10)+\'%,#222 100%)\'" onchange="setNote('+p.id+',this.value)">'
       +'<div id="note-'+p.id+'" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0;min-width:28px;text-align:right">'+note+'</div>'
@@ -778,7 +778,7 @@ function exportRapportPDF(){
       var buts=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='but';}).length;
       var note=MATCH.notes[p.id]||'-';
       var noteCol=note>=8?'#2a7a5a':note>=7?'#7a6a1a':note>=5?'#555':'#7a2a2a';
-      return '<tr><td>#'+p.numero+'</td><td>'+p.prenom+' '+p.nom+'</td><td>'+p.poste+'</td><td>'+(buts||'-')+'</td><td style="font-weight:900;color:'+noteCol+'">'+note+'</td></tr>';
+      return '<tr><td>N°'+p.numero+'</td><td>'+p.prenom+' '+p.nom+'</td><td>'+p.poste+'</td><td>'+(buts||'-')+'</td><td style="font-weight:900;color:'+noteCol+'">'+note+'</td></tr>';
     }).join('')
     +'</tbody></table>'
     +(MATCH.rapport_texte?'<h3 style="color:#B8900F;margin-top:14px">Analyse du coach</h3><p>'+MATCH.rapport_texte+'</p>':'')
