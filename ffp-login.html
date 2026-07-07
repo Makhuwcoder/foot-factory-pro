@@ -240,7 +240,7 @@ async function loginParent(code, pwd){
 
   if(USE_SUPABASE && typeof sbLogin === 'function'){
     try{
-      var fakeEmail = 'parent.'+code+'@onesport.fr';
+      var fakeEmail = 'parent'+code+'@footfactorypro.app';
       var res = await sbLogin(fakeEmail, pwd);
       if(!res.error && res.data){
         var profile = res.data.profile || {};
