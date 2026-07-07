@@ -303,13 +303,14 @@ function renderSetup(){
     CONVOC.remplacants=autoRemps;
   }
 
-  el.innerHTML=sorted.map(function(p){
+  el.innerHTML=sorted.map(function(p,idx){
     var isTit=CONVOC.titulaires.indexOf(p.id)>=0;
     var isRemp=CONVOC.remplacants.indexOf(p.id)>=0;
     var sc=p.global>=7.5?'#4BC88A':p.global>=6?'#D4AF37':'#888';
     return '<div class="prow'+(isTit?' is-tit':isRemp?' is-remp':'')+'" id="pr-'+p.id+'">'
       +'<div style="display:flex;align-items:center;gap:8px;flex:1">'
-        +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#1E293B;min-width:24px">N°'+p.numero+'</span>'
+        +'<span style="font-family:Montserrat,sans-serif;font-size:9px;color:#94A3B8;min-width:46px">Joueur '+(idx+1)+'</span>'
+        +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#1E293B;min-width:34px">N°'+p.numero+'</span>'
         +'<div style="width:30px;height:30px;border-radius:50%;background:rgba(21,101,192,.07);border:1px solid rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#1565C0;flex-shrink:0">'+p.prenom[0]+p.nom[0]+'</div>'
         +'<div style="flex:1;min-width:0">'
           +'<div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0D1B3E">'+p.prenom+' '+p.nom+'</div>'
@@ -357,9 +358,16 @@ function togglePlayer(id,role){
 function updateSquadSummary(){
   var el=document.getElementById('squad-summary');if(!el)return;
   var t=CONVOC.titulaires.length,r=CONVOC.remplacants.length;
+  var total=ALL_PLAYERS.length;
+  var convoques=t+r;
+  var manquants=total-convoques;
   var hasGK=CONVOC.titulaires.some(function(id){var p=ALL_PLAYERS.find(function(x){return x.id===id;});return p&&p.poste==='Gardien';});
-  el.innerHTML='<span style="color:#4BC88A;font-weight:700">'+t+'</span> titulaires'
-    +' · <span style="color:#60A8D0;font-weight:700">'+r+'</span> remplaçants'
+  el.innerHTML='<span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:#0D1B3E">'+convoques+'</span><span style="font-size:11px;color:#475569"> convoqués</span>'
+    +' <span style="color:#CBD5E1">·</span> '
+    +'<span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:'+(manquants>0?'#E24B4A':'#94A3B8')+'">'+manquants+'</span><span style="font-size:11px;color:#475569"> manquants</span>'
+    +' <span style="color:#CBD5E1">·</span> <span style="font-size:11px;color:#94A3B8">'+total+' au total</span>'
+    +'<br><span style="color:#4BC88A;font-weight:700">'+t+'</span><span style="font-size:11px;color:#475569"> titulaires</span>'
+    +' · <span style="color:#60A8D0;font-weight:700">'+r+'</span><span style="font-size:11px;color:#475569"> remplaçants</span>'
     +(t<7?'<span style="color:#E24B4A;margin-left:8px;font-weight:600">⚠ Minimum 7 requis</span>':'')
     +(!hasGK&&t>0?'<span style="color:#388E3C;margin-left:8px;font-weight:600">⚠ Aucun gardien sélectionné</span>':'');
 }
