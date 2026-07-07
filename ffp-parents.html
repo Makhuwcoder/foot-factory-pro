@@ -303,10 +303,16 @@ var REAL_CONVOCS_PARENT=[];
 
 async function loadRealConvocationsForParent(joueurId, code){
   try{
-    var cjRes=await FFP_DB.from('convocation_joueurs').select('*, convocations(*)').eq('joueur_id',joueurId);
-    if(cjRes.error || !cjRes.data){ REAL_CONVOCS_PARENT=[]; return; }
-    REAL_CONVOCS_PARENT=cjRes.data.filter(function(row){return row.convocations;}).map(function(row){
-      var c=row.convocations;
+    var cjRes=await FFP_DB.from('convocation_joueurs').select('*').eq('joueur_id',joueurId);
+    if(cjRes.error){ console.error('[Parents] Erreur lecture convocation_joueurs:', cjRes.error); REAL_CONVOCS_PARENT=[]; return; }
+    if(!cjRes.data || !cjRes.data.length){ REAL_CONVOCS_PARENT=[]; return; }
+    var convocIds=cjRes.data.map(function(r){return r.convocation_id;});
+    var cRes=await FFP_DB.from('convocations').select('*').in('id',convocIds);
+    if(cRes.error){ console.error('[Parents] Erreur lecture convocations:', cRes.error); REAL_CONVOCS_PARENT=[]; return; }
+    var convocById={};
+    (cRes.data||[]).forEach(function(c){ convocById[c.id]=c; });
+    REAL_CONVOCS_PARENT=cjRes.data.filter(function(row){return convocById[row.convocation_id];}).map(function(row){
+      var c=convocById[row.convocation_id];
       return {
         id:c.id, titre:c.match_titre, adversaire:c.adversaire, date:c.date_match,
         heure:c.heure_match, lieu:c.lieu, heure_rdv:c.heure_rdv, lieu_rdv:c.lieu_rdv,
@@ -317,7 +323,7 @@ async function loadRealConvocationsForParent(joueurId, code){
       };
     });
     renderConfirmationsParent();
-  }catch(e){ REAL_CONVOCS_PARENT=[]; }
+  }catch(e){ console.error('[Parents] Exception loadRealConvocationsForParent:', e); REAL_CONVOCS_PARENT=[]; }
 }
 
 async function setReponseParentReal(convocId, joueurId, statut, motif){
@@ -491,7 +497,7 @@ function renderPlayer(){
   // Events
   var evtHTML='';
   try{
-    var rawEvts=localStorage.getItem(LS_EVENTS);
+    var rawEvts=p.isReal?null:localStorage.getItem(LS_EVENTS);
     var evts=rawEvts?JSON.parse(rawEvts):(p.isReal?[]:generateDemoEvents());
     var upcoming=evts.filter(function(e){return new Date(e.date)>=new Date();}).slice(0,4);
     var ico={match:'⚽',entrainement:'🏃',tournoi:'🏆',stage:'🎯',réunion:'📋'};
