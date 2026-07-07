@@ -785,10 +785,11 @@ function setReponseParent(convocId, joueurId, statut, motif) {
 
 function renderConfirmationsParent() {
   var el = document.getElementById('section-confirmations');
-  if (!el || !CURRENT) return;
+  if (!el || !CURRENT) { console.warn('[Confirmations] Abandon: el='+(!!el)+' CURRENT='+(!!CURRENT)); return; }
   
   var codeParent = CURRENT.code_parent || CURRENT.code;
   var convocs = loadConfirmationsPending(codeParent);
+  console.log('[Confirmations] codeParent='+codeParent+' isReal='+CURRENT.isReal+' REAL_CONVOCS_PARENT.length='+(typeof REAL_CONVOCS_PARENT!=='undefined'?REAL_CONVOCS_PARENT.length:'n/a')+' convocs.length='+convocs.length, convocs);
   
   // Filtrer uniquement les convocations futures (ou récentes < 24h)
   var now = Date.now();
@@ -797,6 +798,7 @@ function renderConfirmationsParent() {
     var d = new Date(c.date + 'T23:59:00').getTime();
     return d >= now - 86400000; // garder 24h après
   });
+  console.log('[Confirmations] actives.length='+actives.length, actives);
   
   if (!actives.length) {
     el.style.display = 'none';
