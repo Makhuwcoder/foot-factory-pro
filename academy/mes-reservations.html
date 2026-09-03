@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Sport Academy — Mes réservations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1929; --orange: #FD6A03; --orange-dark:#E05A00;
+    --cream: #F7F5F1; --white:#FFFFFF; --grey:#64748B; --grey-light:#94A3B8;
+    --green:#16A34A; --amber:#B45309; --red:#DC2626;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Raleway',sans-serif; background:var(--cream); color:var(--navy); }
+  h1,h2,h3 { font-family:'Montserrat',sans-serif; font-weight:700; letter-spacing:-0.01em; }
+
+  .top-bar { background:var(--navy); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .top-bar .brand { color:var(--white); font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.1rem; }
+  .top-bar .brand span { color:var(--orange); }
+  .top-bar .user-chip { color: var(--grey-light); font-size: 0.84rem; }
+
+  .container { max-width:1040px; margin:0 auto; padding:36px 24px 80px; }
+
+  .page-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-header h1 { font-size:1.4rem; }
+  .page-header .sub { color:var(--grey); font-size:0.88rem; margin-top:4px; }
+
+  .btn { font-family:'Montserrat',sans-serif; font-weight:700; font-size:0.82rem; padding:10px 18px; border-radius:3px; cursor:pointer; border:none; }
+  .btn-primary { background:var(--orange); color:var(--white); }
+  .btn-primary:hover { background:var(--orange-dark); }
+  .btn-primary:disabled { background:#D8D2C4; color:var(--grey-light); cursor:not-allowed; }
+  .btn-ghost { background:none; color:var(--grey); border:1.5px solid #E2DED2; }
+  .btn-ghost:hover { border-color:var(--navy); color:var(--navy); }
+
+  .stripe-banner {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    background:#FFF6EC; border:1px solid #FBD9AE; color:#8A4B00;
+    border-radius:6px; padding:16px 20px; margin-bottom:24px; font-size:0.88rem;
+  }
+  .stripe-banner.ok { background:#ECFDF3; border-color:#BBF7D0; color:#166534; }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:32px; }
+  .kpi-card { background:var(--white); border:1px solid #E8E4DA; border-radius:8px; padding:20px; }
+  .kpi-label { font-size:0.78rem; color:var(--grey-light); font-family:'Montserrat',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+  .kpi-value { font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.6rem; margin-top:6px; }
+  .kpi-value.orange { color:var(--orange); }
+  .kpi-sub { font-size:0.78rem; color:var(--grey-light); margin-top:4px; }
+
+  .section-title { font-family:'Montserrat',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--grey-light); margin:30px 0 14px; }
+
+  .filter-tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .filter-tab {
+    font-family:'Montserrat',sans-serif; font-weight:600; font-size:0.8rem;
+    padding:7px 15px; border-radius:16px; border:1.5px solid #E2DED2; color:var(--grey); cursor:pointer;
+  }
+  .filter-tab.selected { background:var(--navy); border-color:var(--navy); color:var(--white); }
+
+  .booking-row {
+    background:var(--white); border:1px solid #E8E4DA; border-radius:7px; padding:16px 20px;
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:16px; flex-wrap:wrap;
+  }
+  .booking-left { display:flex; align-items:center; gap:14px; }
+  .booking-date-box {
+    width:52px; height:52px; border-radius:6px; background:var(--cream); flex-shrink:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .booking-date-box .day { font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.05rem; color:var(--navy); line-height:1; }
+  .booking-date-box .month { font-size:0.65rem; color:var(--grey-light); text-transform:uppercase; }
+  .booking-title { font-family:'Montserrat',sans-serif; font-weight:700; font-size:0.92rem; }
+  .booking-meta { font-size:0.8rem; color:var(--grey); margin-top:2px; }
+  .booking-right { display:flex; align-items:center; gap:18px; }
+  .booking-amount { font-family:'Montserrat',sans-serif; font-weight:800; font-size:1rem; text-align:right; }
+  .booking-amount .sub { font-size:0.72rem; color:var(--grey-light); font-weight:600; }
+  .status-pill { font-size:0.74rem; font-weight:600; padding:4px 11px; border-radius:11px; white-space:nowrap; }
+  .status-confirmed { background:#ECFDF3; color:var(--green); }
+  .status-completed { background:#F1F5F9; color:var(--grey); }
+  .status-cancelled { background:#FEF2F2; color:var(--red); }
+  .status-pending { background:#FFF6EC; color:var(--amber); }
+
+  .empty-state { text-align:center; padding:50px 20px; color:var(--grey-light); }
+  .empty-state .icon { font-size:2rem; margin-bottom:12px; }
+
+  .loading-state { text-align:center; padding:60px 20px; color:var(--grey-light); font-size:0.9rem; }
+
+  .error-banner {
+    background:#FEF2F2; border:1px solid #FCA5A5; color:var(--red);
+    border-radius:5px; padding:13px 16px; font-size:0.85rem; margin-bottom:20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">ONE SPORT <span>ACADEMY</span></div>
+  <div class="user-chip" id="userChip"></div>
+</div>
+
+<div class="container">
+  <div id="loadingState" class="loading-state">Chargement de votre espace…</div>
+  <div id="appRoot" style="display:none;"></div>
+</div>
+
+<!-- Supabase JS via ESM, coherent avec les Edge Functions (esm.sh) -->
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  // ============================================
+  // CONFIGURATION — a completer avant deploiement
+  // ============================================
+  const SUPABASE_URL = 'https://qpabgwskavglvojhuzeq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_n814zGkCNq7wnSoro8w1Zg_ln31penJ';
+  const LOGIN_PAGE_URL = '/ffp-login.html';
+  const FUNCTIONS_URL = `${SUPABASE_URL}/functions/v1`;
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const loadingEl = document.getElementById('loadingState');
+  const appRoot = document.getElementById('appRoot');
+  const userChip = document.getElementById('userChip');
+
+  let currentTab = 'upcoming';
+  let allBookings = [];
+  let coachRow = null;
+  let session = null;
+
+  init();
+
+  async function init() {
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    if (!currentSession) {
+      window.location.href = LOGIN_PAGE_URL;
+      return;
+    }
+    session = currentSession;
+    userChip.textContent = session.user.email ?? '';
+
+    try {
+      await loadCoachAndBookings();
+    } catch (err) {
+      console.error(err);
+      renderError("Une erreur est survenue lors du chargement de votre espace.");
+    }
+  }
+
+  async function loadCoachAndBookings() {
+    // 1. Le coach connecte est-il membre d'une Academy ?
+    const { data: coach, error: coachErr } = await supabase
+      .from('academy_coaches')
+      .select(`
+        id, academy_id, role_in_academy, display_name, photo_url,
+        average_rating, total_reviews, is_active, documents_status,
+        academy_academies ( id, academy_name, logo_url, stripe_account_id, stripe_onboarding_complete, verification_status )
+      `)
+      .eq('profile_id', session.user.id)
+      .maybeSingle();
+
+    if (coachErr) throw coachErr;
+
+    if (!coach) {
+      renderNoAcademy();
+      return;
+    }
+    coachRow = coach;
+
+    // 2. Reservations de ce coach (RLS: academy_bookings_coach_read)
+    const { data: bookings, error: bookingsErr } = await supabase
+      .from('academy_bookings')
+      .select(`
+        id, participants_count, participant_names, amount_total_cents, coach_payout_cents,
+        payment_status, booking_status, created_at,
+        academy_availabilities ( start_time, end_time ),
+        academy_sessions ( title )
+      `)
+      .eq('coach_id', coach.id)
+      .order('created_at', { ascending: false });
+
+    if (bookingsErr) throw bookingsErr;
+
+    allBookings = bookings || [];
+    render();
+  }
+
+  function renderNoAcademy() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🏷️</div>
+        <h2 style="margin-bottom:8px;">Vous n'avez pas encore d'Academy</h2>
+        <p style="margin-bottom:20px; color:var(--grey);">Créez votre Academy pour commencer à proposer des cours particuliers.</p>
+        <a href="/academy/enregistrement.html" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Enregistrer mon Academy</a>
+      </div>
+    `;
+  }
+
+  function renderError(message) {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = `<div class="error-banner">${message}</div>`;
+  }
+
+  function render() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+
+    const academy = coachRow.academy_academies;
+    const isOwner = coachRow.role_in_academy === 'owner';
+
+    const kpis = computeKpis(allBookings);
+
+    appRoot.innerHTML = `
+      <div class="page-header">
+        <div>
+          <h1>Mes réservations</h1>
+          <div class="sub">${escapeHtml(academy.academy_name)}</div>
+        </div>
+        <button class="btn btn-ghost" id="exportBtn">Exporter (CSV)</button>
+      </div>
+
+      ${isOwner ? renderStripeBanner(academy) : ''}
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Revenus ce mois-ci</div>
+          <div class="kpi-value orange">${formatEuros(kpis.revenueThisMonthCents)}</div>
+          <div class="kpi-sub">Net perçu, après commission One Sport</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Cours réalisés</div>
+          <div class="kpi-value">${kpis.completedThisMonth}</div>
+          <div class="kpi-sub">Ce mois-ci</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Réservations à venir</div>
+          <div class="kpi-value">${kpis.upcomingCount}</div>
+          <div class="kpi-sub">Confirmées</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Note moyenne</div>
+          <div class="kpi-value">${coachRow.average_rating ?? '—'} ${coachRow.average_rating ? '★' : ''}</div>
+          <div class="kpi-sub">${coachRow.total_reviews ?? 0} avis</div>
+        </div>
+      </div>
+
+      <div class="section-title">Réservations</div>
+      <div class="filter-tabs">
+        <div class="filter-tab ${currentTab === 'upcoming' ? 'selected' : ''}" data-tab="upcoming">À venir</div>
+        <div class="filter-tab ${currentTab === 'past' ? 'selected' : ''}" data-tab="past">Passées</div>
+        <div class="filter-tab ${currentTab === 'cancelled' ? 'selected' : ''}" data-tab="cancelled">Annulées</div>
+      </div>
+
+      <div id="bookingsList"></div>
+    `;
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        currentTab = tab.dataset.tab;
+        render();
+      });
+    });
+
+    const stripeOnboardBtn = document.getElementById('stripeOnboardBtn');
+    if (stripeOnboardBtn) stripeOnboardBtn.addEventListener('click', handleStripeOnboarding);
+
+    const stripeDashboardBtn = document.getElementById('stripeDashboardBtn');
+    if (stripeDashboardBtn) stripeDashboardBtn.addEventListener('click', handleStripeDashboard);
+
+    document.getElementById('exportBtn')?.addEventListener('click', exportCsv);
+
+    renderBookingsList();
+  }
+
+  function renderStripeBanner(academy) {
+    if (!academy.stripe_onboarding_complete) {
+      return `
+        <div class="stripe-banner">
+          <span>⚠️ Configurez votre compte de paiement pour commencer à recevoir des réservations.</span>
+          <button class="btn btn-primary" id="stripeOnboardBtn">Configurer mes paiements</button>
+        </div>
+      `;
+    }
+    return `
+      <div class="stripe-banner ok">
+        <span>✓ Paiements actifs — les versements arrivent automatiquement sur votre compte bancaire.</span>
+        <button class="btn btn-ghost" id="stripeDashboardBtn">Voir mes versements Stripe</button>
+      </div>
+    `;
+  }
+
+  function computeKpis(bookings) {
+    const now = new Date();
+    const isThisMonth = (d) => d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+
+    let revenueThisMonthCents = 0;
+    let completedThisMonth = 0;
+    let upcomingCount = 0;
+
+    for (const b of bookings) {
+      const start = b.academy_availabilities ? new Date(b.academy_availabilities.start_time) : null;
+
+      if (b.payment_status === 'paid' && start && isThisMonth(start)) {
+        revenueThisMonthCents += b.coach_payout_cents;
+      }
+      if (b.booking_status === 'completed' && start && isThisMonth(start)) {
+        completedThisMonth += 1;
+      }
+      if (b.booking_status === 'confirmed' && start && start >= now) {
+        upcomingCount += 1;
+      }
+    }
+
+    return { revenueThisMonthCents, completedThisMonth, upcomingCount };
+  }
+
+  function filteredBookings() {
+    const now = new Date();
+    return allBookings.filter(b => {
+      const start = b.academy_availabilities ? new Date(b.academy_availabilities.start_time) : null;
+      const isCancelled = b.booking_status?.startsWith('cancelled');
+
+      if (currentTab === 'cancelled') return isCancelled;
+      if (currentTab === 'upcoming') return !isCancelled && start && start >= now && b.booking_status !== 'completed';
+      if (currentTab === 'past') return !isCancelled && (b.booking_status === 'completed' || (start && start < now));
+      return true;
+    });
+  }
+
+  function renderBookingsList() {
+    const list = document.getElementById('bookingsList');
+    const bookings = filteredBookings();
+
+    if (bookings.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📅</div>
+          <p>Aucune réservation ${currentTab === 'upcoming' ? 'à venir' : currentTab === 'past' ? 'passée' : 'annulée'} pour le moment.</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = bookings.map(renderBookingRow).join('');
+  }
+
+  function renderBookingRow(b) {
+    const start = b.academy_availabilities ? new Date(b.academy_availabilities.start_time) : null;
+    const day = start ? String(start.getDate()).padStart(2, '0') : '—';
+    const month = start ? start.toLocaleDateString('fr-FR', { month: 'short' }) : '';
+    const time = start ? start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+    const title = b.academy_sessions?.title ?? 'Cours';
+    const names = Array.isArray(b.participant_names) && b.participant_names.length
+      ? b.participant_names.join(', ')
+      : `${b.participants_count} participant${b.participants_count > 1 ? 's' : ''}`;
+
+    const { pillClass, pillLabel } = statusDisplay(b);
+    const amountLabel = b.payment_status === 'paid' ? 'net perçu' : 'estimé';
+
+    return `
+      <div class="booking-row">
+        <div class="booking-left">
+          <div class="booking-date-box"><div class="day">${day}</div><div class="month">${month}</div></div>
+          <div>
+            <div class="booking-title">${escapeHtml(names)}</div>
+            <div class="booking-meta">${escapeHtml(title)} · ${time} · ${b.participants_count} participant${b.participants_count > 1 ? 's' : ''}</div>
+          </div>
+        </div>
+        <div class="booking-right">
+          <span class="status-pill ${pillClass}">${pillLabel}</span>
+          <div class="booking-amount">${formatEuros(b.coach_payout_cents)}<div class="sub">${amountLabel}</div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function statusDisplay(b) {
+    if (b.booking_status?.startsWith('cancelled')) return { pillClass: 'status-cancelled', pillLabel: 'Annulé' };
+    if (b.booking_status === 'completed') return { pillClass: 'status-completed', pillLabel: 'Terminé' };
+    if (b.payment_status === 'pending') return { pillClass: 'status-pending', pillLabel: 'Paiement en attente' };
+    if (b.payment_status === 'failed') return { pillClass: 'status-cancelled', pillLabel: 'Paiement échoué' };
+    return { pillClass: 'status-confirmed', pillLabel: 'Confirmé' };
+  }
+
+  async function handleStripeOnboarding() {
+    await callFunctionAndRedirect('stripe-connect-onboarding');
+  }
+
+  async function handleStripeDashboard() {
+    await callFunctionAndRedirect('stripe-express-dashboard-link', true);
+  }
+
+  async function callFunctionAndRedirect(functionName, newTab = false) {
+    try {
+      const res = await fetch(`${FUNCTIONS_URL}/${functionName}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        alert(data.error || "Une erreur est survenue.");
+        return;
+      }
+      if (newTab) {
+        window.open(data.url, '_blank');
+      } else {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Impossible de contacter le serveur de paiement.");
+    }
+  }
+
+  function exportCsv() {
+    const rows = [['Date', 'Heure', 'Cours', 'Participants', 'Statut', 'Montant net (€)']];
+    for (const b of filteredBookings()) {
+      const start = b.academy_availabilities ? new Date(b.academy_availabilities.start_time) : null;
+      rows.push([
+        start ? start.toLocaleDateString('fr-FR') : '',
+        start ? start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
+        b.academy_sessions?.title ?? '',
+        String(b.participants_count),
+        statusDisplay(b).pillLabel,
+        (b.coach_payout_cents / 100).toFixed(2),
+      ]);
+    }
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reservations-${currentTab}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function formatEuros(cents) {
+    return ((cents || 0) / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>
