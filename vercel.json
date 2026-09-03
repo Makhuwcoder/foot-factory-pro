@@ -24,6 +24,14 @@
       "dest": "/shop/$1"
     },
     {
+      "src": "/academy/?",
+      "dest": "/academy/index.html"
+    },
+    {
+      "src": "/academy/(.*)",
+      "dest": "/academy/$1"
+    },
+    {
       "src": "/football/?",
       "dest": "/ffp-accueil.html"
     },
