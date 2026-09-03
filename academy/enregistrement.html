@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enregistrer mon Academy — One Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0A0A0A; --surface: #111111; --surface2: #181818;
+    --border: #2a2a2a; --text: #EEEEEE; --gold: #C9A84C; --red:#E05252; --green:#4ADE80;
+  }
+  body { background: var(--black); color: var(--text); font-family:'Barlow',sans-serif; min-height:100vh; }
+  a { color: inherit; }
+
+  nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 32px; border-bottom: 1px solid var(--border);
+  }
+  .nav-logo img { height: 36px; filter: invert(1); }
+  .nav-back { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
+  .nav-back:hover { color: var(--gold); }
+
+  .wrapper { max-width: 980px; margin: 0 auto; padding: 40px 20px 100px; display:grid; grid-template-columns:230px 1fr; gap: 30px; }
+
+  .stepper { padding-top: 20px; }
+  .step-item { position:relative; padding-left:32px; padding-bottom:36px; }
+  .step-item:last-child { padding-bottom:0; }
+  .step-item .lane { position:absolute; left:8px; top:24px; bottom:-14px; width:2px; background:var(--border); }
+  .step-item:last-child .lane { display:none; }
+  .step-item.done .lane { background: var(--gold); }
+  .step-dot {
+    position:absolute; left:0; top:0; width:18px; height:18px; border-radius:50%;
+    border:2px solid var(--border); background:var(--black);
+    display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; color:#666;
+  }
+  .step-item.active .step-dot, .step-item.done .step-dot { border-color:var(--gold); background:var(--gold); color:#0A0A0A; }
+  .step-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.86rem; text-transform:uppercase; letter-spacing:0.04em; color:#777; }
+  .step-item.active .step-title, .step-item.done .step-title { color:#FFF; }
+  .step-desc { font-size:0.74rem; color:#666; margin-top:2px; }
+
+  .panel { background: var(--surface); border:1px solid var(--border); border-radius:8px; padding:36px 40px; }
+  .panel h2 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.5rem; text-transform:uppercase; margin-bottom:6px; }
+  .panel-sub { color:#999; font-size:0.9rem; margin-bottom:28px; }
+
+  .field-group { margin-bottom: 22px; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  label { display:block; font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.84rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+  label .req { color: var(--gold); }
+  label .hint { display:block; font-family:'Barlow',sans-serif; font-weight:400; text-transform:none; letter-spacing:normal; font-size:0.78rem; color:#777; margin-top:3px; }
+
+  input[type=text], input[type=email], input[type=password], input[type=tel], input[type=number], select, textarea {
+    width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:3px;
+    background: var(--surface2); color:#FFF; font-family:'Barlow',sans-serif; font-size:0.94rem;
+  }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--gold); }
+  textarea { resize:vertical; min-height:90px; }
+
+  .chip-select { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip {
+    padding:8px 16px; border:1.5px solid var(--border); border-radius:20px;
+    font-size:0.85rem; font-family:'Barlow Condensed',sans-serif; font-weight:600;
+    color:#999; cursor:pointer; user-select:none;
+  }
+  .chip.selected { background: var(--gold); border-color:var(--gold); color:#0A0A0A; }
+
+  .avatar-upload { display:flex; align-items:center; gap:16px; margin-bottom:26px; }
+  .avatar-circle {
+    width:76px; height:76px; border-radius:50%; background:var(--surface2);
+    border:2px dashed var(--border); display:flex; align-items:center; justify-content:center;
+    color:#666; font-size:1.4rem; flex-shrink:0; overflow:hidden;
+  }
+  .avatar-circle.logo-circle { border-radius:12px; }
+  .avatar-circle img { width:100%; height:100%; object-fit:cover; }
+  .avatar-btn {
+    font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.8rem; text-transform:uppercase;
+    color:#FFF; background:var(--surface2); border:1.5px solid var(--border); padding:9px 16px; border-radius:3px; cursor:pointer;
+  }
+  .avatar-btn:hover { border-color:var(--gold); }
+
+  .dropzone {
+    border:1.5px dashed var(--border); border-radius:4px; padding:18px;
+    display:flex; align-items:center; gap:14px; cursor:pointer; position:relative;
+  }
+  .dropzone:hover { border-color: var(--gold); }
+  .dropzone.filled { border-style:solid; border-color:var(--green); }
+  .dz-icon { width:34px; height:34px; border-radius:6px; background:var(--gold); color:#0A0A0A; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; font-weight:700; }
+  .dropzone.filled .dz-icon { background: var(--green); }
+  .dz-title { font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.86rem; }
+  .dz-sub { font-size:0.76rem; color:#777; margin-top:2px; }
+  .dropzone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+
+  .tier-row { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:10px; align-items:center; margin-bottom:10px; }
+  .tier-row input { padding:9px 10px; }
+  .remove-tier { background:none; border:none; color:#666; cursor:pointer; font-size:1.1rem; width:26px; }
+  .add-tier-btn { font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.8rem; text-transform:uppercase; color:var(--gold); background:none; border:none; cursor:pointer; padding:6px 0; }
+
+  .notice { border-radius:4px; padding:13px 16px; font-size:0.85rem; margin-top:20px; display:flex; gap:10px; }
+  .notice.warn { background:rgba(224,82,82,0.1); border:1px solid rgba(224,82,82,0.4); color:#F5A3A3; }
+  .notice.info { background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.4); color:#E8D9AE; }
+  .notice.ok { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.4); color:#B3F0C4; }
+
+  .actions { display:flex; justify-content:space-between; margin-top:34px; padding-top:22px; border-top:1px solid var(--border); }
+  .btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.86rem; letter-spacing:0.05em; text-transform:uppercase; padding:13px 26px; border-radius:3px; cursor:pointer; border:none; }
+  .btn-primary { background: var(--gold); color:#0A0A0A; }
+  .btn-primary:hover { background:#DDBC5C; }
+  .btn-primary:disabled { background:#444; color:#888; cursor:not-allowed; }
+  .btn-ghost { background:none; color:#999; border:1.5px solid var(--border); }
+  .btn-ghost:hover { border-color:#FFF; color:#FFF; }
+
+  .recap-block { border:1px solid var(--border); border-radius:6px; padding:16px 20px; margin-bottom:14px; }
+  .recap-block h3 { font-family:'Barlow Condensed',sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:#777; margin-bottom:10px; }
+  .recap-row { display:flex; justify-content:space-between; font-size:0.88rem; padding:4px 0; }
+  .recap-row .k { color:#999; }
+  .recap-row .v { color:#FFF; font-weight:600; text-align:right; }
+
+  .success-screen { text-align:center; padding:60px 20px; }
+  .success-icon { width:66px; height:66px; border-radius:50%; background:var(--green); color:#0A0A0A; display:flex; align-items:center; justify-content:center; font-size:1.7rem; margin:0 auto 22px; font-weight:800; }
+
+  /* ── AUTH GATE ── */
+  .auth-wrapper { max-width:440px; margin:60px auto; padding: 20px; }
+  .auth-tabs { display:flex; gap:8px; margin-bottom:26px; }
+  .auth-tab { flex:1; text-align:center; padding:12px; border-radius:4px; border:1.5px solid var(--border); background:none; color:#999; font-family:'Barlow Condensed',sans-serif; font-weight:700; text-transform:uppercase; font-size:0.82rem; cursor:pointer; }
+  .auth-tab.active { background: var(--gold); border-color:var(--gold); color:#0A0A0A; }
+  .auth-panel { display:none; }
+  .auth-panel.active { display:block; }
+
+  .loading-state { text-align:center; padding:80px 20px; color:#777; }
+
+  @media (max-width:760px) {
+    .wrapper { grid-template-columns:1fr; }
+    .stepper { display:none; }
+    .field-row, .tier-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+  <a href="/academy/" class="nav-back">← Retour</a>
+</nav>
+
+<div id="loadingState" class="loading-state">Chargement…</div>
+<div id="appRoot" style="display:none;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function() {
+  var loadingEl = document.getElementById('loadingState');
+  var appRoot = document.getElementById('appRoot');
+
+  var DISCIPLINES = ['Football','Basketball','Rugby','Handball','Tennis','Judo','Volleyball','Natation','Athlétisme','Boxe','Cyclisme','Esport'];
+
+  var state = {
+    session: null,
+    profile: null,
+    academyId: null,
+    coachId: null,
+    step: 1,
+    academyName: '',
+    disciplines: [],
+    bio: '',
+    telephone: '',
+    ville: '',
+    logoUrl: null,
+    photoUrl: null,
+    sportCv: '',
+    diplomeUploaded: false,
+    assuranceUploaded: false,
+    statutUploaded: false,
+    identiteUploaded: false,
+    sessionTitle: '',
+    sessionDiscipline: '',
+    locationLabel: '',
+    minParticipants: 1,
+    maxParticipants: 4,
+    level: 'tous_niveaux',
+    durationMinutes: 60,
+    tiers: [{ min: 1, max: 1, price: 45 }, { min: 2, max: 4, price: 30 }]
+  };
+
+  init();
+
+  async function init() {
+    if (typeof initSupabase === 'function') initSupabase();
+    if (!FFP_DB) {
+      renderFatalError();
+      return;
+    }
+    var { data } = await FFP_DB.auth.getSession();
+    state.session = data.session;
+
+    if (state.session) {
+      await loadExistingAcademy();
+    }
+    renderRoot();
+  }
+
+  function renderFatalError() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="notice warn" style="max-width:500px;margin:60px auto;">Impossible de contacter le serveur. Merci de réessayer plus tard.</div>';
+  }
+
+  async function loadExistingAcademy() {
+    var { data: profile } = await FFP_DB.from('profiles').select('id, prenom, nom, email').eq('id', state.session.user.id).maybeSingle();
+    state.profile = profile;
+
+    var { data: coach } = await FFP_DB
+      .from('academy_coaches')
+      .select('id, academy_id, display_name, bio, sport_cv, disciplines, photo_url, academy_academies(id, academy_name, logo_url)')
+      .eq('profile_id', state.session.user.id)
+      .maybeSingle();
+
+    if (coach) {
+      state.coachId = coach.id;
+      state.academyId = coach.academy_id;
+      state.disciplines = coach.disciplines || [];
+      state.bio = coach.bio || '';
+      state.sportCv = coach.sport_cv || '';
+      state.photoUrl = coach.photo_url;
+      var academy = coach.academy_academies;
+      if (academy) {
+        state.academyName = academy.academy_name;
+        state.logoUrl = academy.logo_url;
+      }
+
+      // Documents deja envoyes ?
+      var { data: docs } = await FFP_DB.from('academy_documents').select('document_type, coach_id').eq('academy_id', state.academyId);
+      (docs || []).forEach(function(d) {
+        if (d.document_type === 'diplome') state.diplomeUploaded = true;
+        if (d.document_type === 'assurance') state.assuranceUploaded = true;
+        if (d.document_type === 'kbis') state.statutUploaded = true;
+        if (d.document_type === 'identite') state.identiteUploaded = true;
+      });
+
+      // Une session de cours existe deja ?
+      var { data: sessions } = await FFP_DB.from('academy_sessions').select('id').eq('coach_id', state.coachId).limit(1);
+      if (sessions && sessions.length) state.step = 5;
+      else if (state.diplomeUploaded && state.assuranceUploaded && state.statutUploaded && state.identiteUploaded) state.step = 4;
+      else if (state.sportCv) state.step = 3;
+      else state.step = 1;
+    }
+  }
+
+  function renderRoot() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+
+    if (!state.session) {
+      renderAuthGate();
+      return;
+    }
+    renderWizard();
+  }
+
+  // ═══════════════════════════ AUTH GATE ═══════════════════════════
+  function renderAuthGate() {
+    appRoot.innerHTML = `
+      <div class="auth-wrapper">
+        <h2 style="font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; font-size:1.4rem; margin-bottom:6px;">Enregistrer mon Academy</h2>
+        <p style="color:#999; font-size:0.9rem; margin-bottom:26px;">Créez votre accès pour commencer votre dossier d'inscription.</p>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabSignup" onclick="AcademyReg.showAuthTab('signup')">Créer un compte</button>
+          <button class="auth-tab" id="tabLogin" onclick="AcademyReg.showAuthTab('login')">J'ai déjà un compte</button>
+        </div>
+
+        <div class="auth-panel active" id="panelSignup">
+          <div class="field-row">
+            <div class="field-group"><label>Prénom</label><input type="text" id="suPrenom"></div>
+            <div class="field-group"><label>Nom</label><input type="text" id="suNom"></div>
+          </div>
+          <div class="field-group"><label>E-mail</label><input type="email" id="suEmail"></div>
+          <div class="field-group"><label>Mot de passe</label><input type="password" id="suPassword" placeholder="8 caractères minimum"></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="AcademyReg.doSignup()">Créer mon compte</button>
+          <div id="signupMsg" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="auth-panel" id="panelLogin">
+          <div class="field-group"><label>E-mail</label><input type="email" id="liEmail"></div>
+          <div class="field-group"><label>Mot de passe</label><input type="password" id="liPassword"></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="AcademyReg.doLogin()">Me connecter</button>
+          <div id="loginMsg" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function showAuthTab(which) {
+    document.getElementById('tabSignup').classList.toggle('active', which === 'signup');
+    document.getElementById('tabLogin').classList.toggle('active', which === 'login');
+    document.getElementById('panelSignup').classList.toggle('active', which === 'signup');
+    document.getElementById('panelLogin').classList.toggle('active', which === 'login');
+  }
+
+  async function doSignup() {
+    var prenom = document.getElementById('suPrenom').value.trim();
+    var nom = document.getElementById('suNom').value.trim();
+    var email = document.getElementById('suEmail').value.trim();
+    var password = document.getElementById('suPassword').value;
+    var msgEl = document.getElementById('signupMsg');
+
+    if (!prenom || !nom || !email || password.length < 8) {
+      msgEl.innerHTML = '<div class="notice warn">Merci de compléter tous les champs (mot de passe : 8 caractères minimum).</div>';
+      return;
+    }
+
+    var { data, error } = await FFP_DB.auth.signUp({
+      email: email,
+      password: password,
+      options: { data: { prenom: prenom, nom: nom, role: 'parent' } }
+    });
+
+    if (error) {
+      msgEl.innerHTML = '<div class="notice warn">' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+
+    if (data.session) {
+      state.session = data.session;
+      await loadExistingAcademy();
+      renderRoot();
+    } else {
+      msgEl.innerHTML = '<div class="notice info">Un e-mail de confirmation vous a été envoyé. Cliquez sur le lien reçu, puis reconnectez-vous ici via l\'onglet "J\'ai déjà un compte".</div>';
+    }
+  }
+
+  async function doLogin() {
+    var email = document.getElementById('liEmail').value.trim();
+    var password = document.getElementById('liPassword').value;
+    var msgEl = document.getElementById('loginMsg');
+
+    var { data, error } = await FFP_DB.auth.signInWithPassword({ email: email, password: password });
+    if (error) {
+      msgEl.innerHTML = '<div class="notice warn">' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+    state.session = data.session;
+    await loadExistingAcademy();
+    renderRoot();
+  }
+
+  // ═══════════════════════════ WIZARD ═══════════════════════════
+  var STEPS = [
+    { n: 1, title: 'Profil', desc: 'Votre Academy' },
+    { n: 2, title: 'Qualifications', desc: 'Diplômes & parcours' },
+    { n: 3, title: 'Documents légaux', desc: 'Assurance, statut' },
+    { n: 4, title: 'Votre offre', desc: 'Lieu, tarifs, créneaux' },
+    { n: 5, title: 'Récapitulatif', desc: 'Envoi du dossier' }
+  ];
+
+  function renderWizard() {
+    if (state.step === 6) { renderSuccess(); return; }
+
+    var stepperHtml = STEPS.map(function(s) {
+      var cls = s.n === state.step ? 'active' : (s.n < state.step ? 'done' : '');
+      return '<div class="step-item ' + cls + '"><div class="lane"></div><div class="step-dot">' + s.n + '</div><div class="step-title">' + s.title + '</div><div class="step-desc">' + s.desc + '</div></div>';
+    }).join('');
+
+    appRoot.innerHTML = `
+      <div class="wrapper">
+        <div class="stepper">${stepperHtml}</div>
+        <div class="panel" id="stepPanel"></div>
+      </div>
+    `;
+
+    renderStepPanel();
+  }
+
+  function renderStepPanel() {
+    var panel = document.getElementById('stepPanel');
+    if (state.step === 1) panel.innerHTML = stepProfileHtml();
+    else if (state.step === 2) panel.innerHTML = stepQualifHtml();
+    else if (state.step === 3) panel.innerHTML = stepDocsHtml();
+    else if (state.step === 4) panel.innerHTML = stepOfferHtml();
+    else if (state.step === 5) panel.innerHTML = stepRecapHtml();
+
+    // chips
+    panel.querySelectorAll('.chip[data-discipline]').forEach(function(chip) {
+      if (state.disciplines.indexOf(chip.dataset.discipline) >= 0) chip.classList.add('selected');
+      chip.addEventListener('click', function() {
+        var d = chip.dataset.discipline;
+        var idx = state.disciplines.indexOf(d);
+        if (idx >= 0) { state.disciplines.splice(idx, 1); chip.classList.remove('selected'); }
+        else { state.disciplines.push(d); chip.classList.add('selected'); }
+      });
+    });
+
+    if (state.step === 4) attachTierHandlers();
+  }
+
+  function stepProfileHtml() {
+    var disciplineChips = DISCIPLINES.map(function(d) {
+      return '<div class="chip" data-discipline="' + d + '">' + d + '</div>';
+    }).join('');
+
+    return `
+      <h2>Votre Academy</h2>
+      <p class="panel-sub">Chaque coach exerce sous sa propre Academy. Ces informations seront visibles publiquement une fois votre profil validé.</p>
+
+      <div class="field-group">
+        <label>Nom de votre Academy <span class="req">*</span>
+          <span class="hint">Le nom commercial sous lequel vous exercez, ex : "Académie Karim Benali"</span>
+        </label>
+        <input type="text" id="fAcademyName" value="${escapeAttr(state.academyName)}">
+      </div>
+
+      <div class="field-group">
+        <label>Logo de l'Academy</label>
+        <div class="avatar-upload">
+          <div class="avatar-circle logo-circle" id="logoPreview">${state.logoUrl ? '<img src="' + state.logoUrl + '">' : '🏷️'}</div>
+          <div>
+            <label class="avatar-btn" style="position:relative; display:inline-block;">
+              Choisir un logo
+              <input type="file" id="fLogo" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice info" style="margin:0 0 26px;">Le coach derrière l'Academy</div>
+
+      <div class="avatar-upload">
+        <div class="avatar-circle" id="photoPreview">${state.photoUrl ? '<img src="' + state.photoUrl + '">' : '📷'}</div>
+        <div>
+          <label class="avatar-btn" style="position:relative; display:inline-block;">
+            Choisir une photo
+            <input type="file" id="fPhoto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;">
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Disciplines enseignées <span class="req">*</span></label>
+        <div class="chip-select">${disciplineChips}</div>
+      </div>
+
+      <div class="field-group">
+        <label>Présentation <span class="req">*</span></label>
+        <textarea id="fBio">${escapeHtml(state.bio)}</textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group"><label>Téléphone</label><input type="tel" id="fTelephone" value="${escapeAttr(state.telephone)}"></div>
+        <div class="field-group"><label>Ville d'intervention <span class="req">*</span></label><input type="text" id="fVille" value="${escapeAttr(state.ville)}"></div>
+      </div>
+
+      <div id="step1Msg"></div>
+
+      <div class="actions">
+        <span></span>
+        <button class="btn btn-primary" id="step1Next" onclick="AcademyReg.saveStep1()">Continuer</button>
+      </div>
+    `;
+  }
+
+  function stepQualifHtml() {
+    return `
+      <h2>Vos qualifications</h2>
+      <p class="panel-sub">Votre parcours sportif et vos diplômes d'encadrement.</p>
+
+      <div class="field-group">
+        <label>Parcours sportif <span class="req">*</span></label>
+        <textarea id="fSportCv">${escapeHtml(state.sportCv)}</textarea>
+      </div>
+
+      <div class="field-group">
+        <label>Diplôme d'encadrement <span class="req">*</span></label>
+        <div class="dropzone ${state.diplomeUploaded ? 'filled' : ''}">
+          <div class="dz-icon">${state.diplomeUploaded ? '✓' : '↑'}</div>
+          <div><div class="dz-title">${state.diplomeUploaded ? 'Diplôme déjà envoyé' : 'Choisir un fichier'}</div><div class="dz-sub">PDF ou JPG</div></div>
+          <input type="file" id="fDiplome" accept=".pdf,image/*">
+        </div>
+      </div>
+
+      <div id="step2Msg"></div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="AcademyReg.goStep(1)">← Précédent</button>
+        <button class="btn btn-primary" onclick="AcademyReg.saveStep2()">Continuer</button>
+      </div>
+    `;
+  }
+
+  function stepDocsHtml() {
+    function dz(id, label, uploaded) {
+      return `
+        <div class="field-group">
+          <label>${label} <span class="req">*</span></label>
+          <div class="dropzone ${uploaded ? 'filled' : ''}">
+            <div class="dz-icon">${uploaded ? '✓' : '↑'}</div>
+            <div><div class="dz-title">${uploaded ? 'Document déjà envoyé' : 'Choisir un fichier'}</div><div class="dz-sub">PDF ou JPG</div></div>
+            <input type="file" id="${id}" accept=".pdf,image/*">
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <h2>Documents légaux</h2>
+      <p class="panel-sub">Vos documents restent privés et ne sont jamais publiés. Ils sont vérifiés manuellement sous 48h ouvrées.</p>
+      ${dz('fAssurance', "Attestation d'assurance RC Pro", state.assuranceUploaded)}
+      ${dz('fStatut', 'Justificatif de statut juridique (KBIS, avis SIRENE...)', state.statutUploaded)}
+      ${dz('fIdentite', "Pièce d'identité", state.identiteUploaded)}
+      <div id="step3Msg"></div>
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="AcademyReg.goStep(2)">← Précédent</button>
+        <button class="btn btn-primary" onclick="AcademyReg.saveStep3()">Continuer</button>
+      </div>
+    `;
+  }
+
+  function stepOfferHtml() {
+    var disciplineOptions = (state.disciplines.length ? state.disciplines : DISCIPLINES).map(function(d) {
+      return '<option ' + (state.sessionDiscipline === d ? 'selected' : '') + '>' + d + '</option>';
+    }).join('');
+
+    var tiersHtml = state.tiers.map(function(t, i) {
+      return `
+        <div class="tier-row" data-idx="${i}">
+          <input type="number" class="tierMin" value="${t.min}" min="1" max="8" placeholder="Min">
+          <input type="number" class="tierMax" value="${t.max}" min="1" max="8" placeholder="Max">
+          <input type="number" class="tierPrice" value="${t.price}" min="0" placeholder="€ / pers.">
+          <button class="remove-tier" data-remove="${i}">×</button>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <h2>Votre offre de cours</h2>
+      <p class="panel-sub">Un premier format de cours — vous pourrez en ajouter d'autres depuis votre espace une fois validé.</p>
+
+      <div class="field-group"><label>Intitulé du cours <span class="req">*</span></label><input type="text" id="fSessionTitle" value="${escapeAttr(state.sessionTitle)}"></div>
+
+      <div class="field-row">
+        <div class="field-group"><label>Discipline <span class="req">*</span></label><select id="fSessionDiscipline">${disciplineOptions}</select></div>
+        <div class="field-group"><label>Lieu <span class="req">*</span></label><input type="text" id="fLocation" value="${escapeAttr(state.locationLabel)}"></div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group"><label>Participants min. <span class="req">*</span></label><input type="number" id="fMinP" value="${state.minParticipants}" min="1" max="8"></div>
+        <div class="field-group"><label>Participants max. <span class="req">*</span></label><input type="number" id="fMaxP" value="${state.maxParticipants}" min="1" max="8"></div>
+      </div>
+
+      <div class="field-group">
+        <label>Tarification <span class="req">*</span> <span class="hint">Prix par personne selon le nombre de participants</span></label>
+        <div id="tiersContainer">${tiersHtml}</div>
+        <button class="add-tier-btn" id="addTierBtn">+ Ajouter un palier tarifaire</button>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group"><label>Durée d'une séance <span class="req">*</span></label>
+          <select id="fDuration">
+            <option value="45" ${state.durationMinutes==45?'selected':''}>45 min</option>
+            <option value="60" ${state.durationMinutes==60?'selected':''}>60 min</option>
+            <option value="90" ${state.durationMinutes==90?'selected':''}>90 min</option>
+            <option value="120" ${state.durationMinutes==120?'selected':''}>120 min</option>
+          </select>
+        </div>
+        <div class="field-group"><label>Niveau visé</label>
+          <select id="fLevel">
+            <option value="tous_niveaux" ${state.level=='tous_niveaux'?'selected':''}>Tous niveaux</option>
+            <option value="debutant" ${state.level=='debutant'?'selected':''}>Débutant</option>
+            <option value="intermediaire" ${state.level=='intermediaire'?'selected':''}>Intermédiaire</option>
+            <option value="avance" ${state.level=='avance'?'selected':''}>Avancé</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="step4Msg"></div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="AcademyReg.goStep(3)">← Précédent</button>
+        <button class="btn btn-primary" onclick="AcademyReg.saveStep4()">Continuer</button>
+      </div>
+    `;
+  }
+
+  function stepRecapHtml() {
+    var docsOk = state.diplomeUploaded && state.assuranceUploaded && state.statutUploaded && state.identiteUploaded;
+    return `
+      <h2>Dossier envoyé</h2>
+      <p class="panel-sub">Votre dossier est enregistré et sera vérifié par notre équipe sous 48h ouvrées.</p>
+
+      <div class="recap-block">
+        <h3>Academy</h3>
+        <div class="recap-row"><span class="k">Nom</span><span class="v">${escapeHtml(state.academyName)}</span></div>
+        <div class="recap-row"><span class="k">Disciplines</span><span class="v">${escapeHtml(state.disciplines.join(', '))}</span></div>
+        <div class="recap-row"><span class="k">Ville</span><span class="v">${escapeHtml(state.ville)}</span></div>
+      </div>
+      <div class="recap-block">
+        <h3>Documents</h3>
+        <div class="recap-row"><span class="k">Statut</span><span class="v" style="color:${docsOk ? 'var(--green)' : 'var(--red)'}">${docsOk ? 'Complets' : 'Incomplets'}</span></div>
+      </div>
+      <div class="recap-block">
+        <h3>Offre</h3>
+        <div class="recap-row"><span class="k">Cours</span><span class="v">${escapeHtml(state.sessionTitle)}</span></div>
+        <div class="recap-row"><span class="k">Format</span><span class="v">${state.minParticipants} à ${state.maxParticipants} participants</span></div>
+      </div>
+
+      <div class="notice ok">✓ Votre dossier est en cours de vérification. Vous recevrez un e-mail dès validation.</div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="AcademyReg.goStep(4)">← Précédent</button>
+        <a href="/academy/mes-reservations.html" class="btn btn-primary">Accéder à mon espace</a>
+      </div>
+    `;
+  }
+
+  function renderSuccess() {
+    appRoot.innerHTML = `
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2 style="font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; font-size:1.4rem;">Votre Academy a été enregistrée</h2>
+        <p style="color:#999; margin-top:10px;">Vous recevrez un e-mail dès que votre profil sera validé.</p>
+        <a href="/academy/mes-reservations.html" class="btn btn-primary" style="display:inline-block; margin-top:26px;">Accéder à mon espace</a>
+      </div>
+    `;
+  }
+
+  // ═══════════════════════════ ACTIONS ═══════════════════════════
+  function goStep(n) { state.step = n; renderWizard(); }
+
+  async function saveStep1() {
+    var academyName = document.getElementById('fAcademyName').value.trim();
+    var bio = document.getElementById('fBio').value.trim();
+    var ville = document.getElementById('fVille').value.trim();
+    var telephone = document.getElementById('fTelephone').value.trim();
+    var msgEl = document.getElementById('step1Msg');
+    var btn = document.getElementById('step1Next');
+
+    if (!academyName || !state.disciplines.length || !bio || !ville) {
+      msgEl.innerHTML = '<div class="notice warn">Merci de compléter les champs obligatoires.</div>';
+      return;
+    }
+
+    btn.disabled = true;
+    msgEl.innerHTML = '';
+
+    try {
+      state.academyName = academyName;
+      state.bio = bio;
+      state.ville = ville;
+      state.telephone = telephone;
+
+      var displayName = state.profile ? (state.profile.prenom + ' ' + state.profile.nom) : academyName;
+
+      if (!state.academyId) {
+        var { data: academy, error: e1 } = await FFP_DB.from('academy_academies')
+          .insert({ academy_name: academyName, owner_profile_id: state.session.user.id })
+          .select().single();
+        if (e1) throw e1;
+        state.academyId = academy.id;
+
+        var { data: coach, error: e2 } = await FFP_DB.from('academy_coaches')
+          .insert({ academy_id: state.academyId, profile_id: state.session.user.id, role_in_academy: 'owner', display_name: displayName, bio: bio, disciplines: state.disciplines })
+          .select().single();
+        if (e2) throw e2;
+        state.coachId = coach.id;
+      } else {
+        await FFP_DB.from('academy_academies').update({ academy_name: academyName }).eq('id', state.academyId);
+        await FFP_DB.from('academy_coaches').update({ bio: bio, disciplines: state.disciplines }).eq('id', state.coachId);
+      }
+
+      var logoFile = document.getElementById('fLogo').files[0];
+      if (logoFile) {
+        var logoPath = state.academyId + '/logo-' + Date.now() + '.' + extOf(logoFile.name);
+        var { error: upErr1 } = await FFP_DB.storage.from('academy-public').upload(logoPath, logoFile, { upsert: true });
+        if (!upErr1) {
+          var logoUrl = FFP_DB.storage.from('academy-public').getPublicUrl(logoPath).data.publicUrl;
+          await FFP_DB.from('academy_academies').update({ logo_url: logoUrl }).eq('id', state.academyId);
+          state.logoUrl = logoUrl;
+        }
+      }
+
+      var photoFile = document.getElementById('fPhoto').files[0];
+      if (photoFile) {
+        var photoPath = state.academyId + '/coach-' + state.coachId + '-' + Date.now() + '.' + extOf(photoFile.name);
+        var { error: upErr2 } = await FFP_DB.storage.from('academy-public').upload(photoPath, photoFile, { upsert: true });
+        if (!upErr2) {
+          var photoUrl = FFP_DB.storage.from('academy-public').getPublicUrl(photoPath).data.publicUrl;
+          await FFP_DB.from('academy_coaches').update({ photo_url: photoUrl }).eq('id', state.coachId);
+          state.photoUrl = photoUrl;
+        }
+      }
+
+      state.step = 2;
+      renderWizard();
+    } catch (err) {
+      console.error(err);
+      msgEl.innerHTML = '<div class="notice warn">Une erreur est survenue : ' + escapeHtml(err.message || String(err)) + '</div>';
+      btn.disabled = false;
+    }
+  }
+
+  async function saveStep2() {
+    var sportCv = document.getElementById('fSportCv').value.trim();
+    var msgEl = document.getElementById('step2Msg');
+    var diplomeFile = document.getElementById('fDiplome').files[0];
+
+    if (!sportCv || (!diplomeFile && !state.diplomeUploaded)) {
+      msgEl.innerHTML = '<div class="notice warn">Merci de renseigner votre parcours et d\'ajouter votre diplôme.</div>';
+      return;
+    }
+
+    try {
+      state.sportCv = sportCv;
+      await FFP_DB.from('academy_coaches').update({ sport_cv: sportCv }).eq('id', state.coachId);
+
+      if (diplomeFile) {
+        var path = state.academyId + '/diplome-' + state.coachId + '-' + Date.now() + '.' + extOf(diplomeFile.name);
+        var { error } = await FFP_DB.storage.from('academy-documents').upload(path, diplomeFile, { upsert: true });
+        if (!error) {
+          await FFP_DB.from('academy_documents').insert({ academy_id: state.academyId, coach_id: state.coachId, document_type: 'diplome', file_path: path, file_name: diplomeFile.name });
+          state.diplomeUploaded = true;
+        }
+      }
+
+      state.step = 3;
+      renderWizard();
+    } catch (err) {
+      console.error(err);
+      msgEl.innerHTML = '<div class="notice warn">Erreur : ' + escapeHtml(err.message || String(err)) + '</div>';
+    }
+  }
+
+  async function saveStep3() {
+    var msgEl = document.getElementById('step3Msg');
+    var assuranceFile = document.getElementById('fAssurance').files[0];
+    var statutFile = document.getElementById('fStatut').files[0];
+    var identiteFile = document.getElementById('fIdentite').files[0];
+
+    if ((!assuranceFile && !state.assuranceUploaded) || (!statutFile && !state.statutUploaded) || (!identiteFile && !state.identiteUploaded)) {
+      msgEl.innerHTML = '<div class="notice warn">Les trois documents sont obligatoires.</div>';
+      return;
+    }
+
+    try {
+      async function uploadDoc(file, type, coachScoped) {
+        if (!file) return;
+        var path = state.academyId + '/' + type + '-' + Date.now() + '.' + extOf(file.name);
+        var { error } = await FFP_DB.storage.from('academy-documents').upload(path, file, { upsert: true });
+        if (!error) {
+          await FFP_DB.from('academy_documents').insert({
+            academy_id: state.academyId,
+            coach_id: coachScoped ? state.coachId : null,
+            document_type: type, file_path: path, file_name: file.name
+          });
+        }
+      }
+
+      await uploadDoc(assuranceFile, 'assurance', false);
+      await uploadDoc(statutFile, 'kbis', false);
+      await uploadDoc(identiteFile, 'identite', true);
+
+      state.assuranceUploaded = true;
+      state.statutUploaded = true;
+      state.identiteUploaded = true;
+
+      state.step = 4;
+      renderWizard();
+    } catch (err) {
+      console.error(err);
+      msgEl.innerHTML = '<div class="notice warn">Erreur : ' + escapeHtml(err.message || String(err)) + '</div>';
+    }
+  }
+
+  function attachTierHandlers() {
+    document.getElementById('addTierBtn').addEventListener('click', function() {
+      state.tiers.push({ min: 1, max: 1, price: 0 });
+      renderStepPanel();
+    });
+    document.querySelectorAll('[data-remove]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        state.tiers.splice(parseInt(btn.dataset.remove), 1);
+        renderStepPanel();
+      });
+    });
+  }
+
+  function readTiersFromDom() {
+    var rows = document.querySelectorAll('#tiersContainer .tier-row');
+    var tiers = [];
+    rows.forEach(function(row) {
+      tiers.push({
+        min: parseInt(row.querySelector('.tierMin').value) || 1,
+        max: parseInt(row.querySelector('.tierMax').value) || 1,
+        price: Math.round((parseFloat(row.querySelector('.tierPrice').value) || 0) * 100)
+      });
+    });
+    return tiers;
+  }
+
+  async function saveStep4() {
+    var msgEl = document.getElementById('step4Msg');
+    var title = document.getElementById('fSessionTitle').value.trim();
+    var discipline = document.getElementById('fSessionDiscipline').value;
+    var location = document.getElementById('fLocation').value.trim();
+    var minP = parseInt(document.getElementById('fMinP').value);
+    var maxP = parseInt(document.getElementById('fMaxP').value);
+    var duration = parseInt(document.getElementById('fDuration').value);
+    var level = document.getElementById('fLevel').value;
+    var tiers = readTiersFromDom();
+
+    if (!title || !location || !tiers.length || minP < 1 || maxP > 8 || minP > maxP) {
+      msgEl.innerHTML = '<div class="notice warn">Merci de vérifier les champs (participants entre 1 et 8, au moins un palier tarifaire).</div>';
+      return;
+    }
+
+    try {
+      state.sessionTitle = title;
+      state.sessionDiscipline = discipline;
+      state.locationLabel = location;
+      state.minParticipants = minP;
+      state.maxParticipants = maxP;
+      state.durationMinutes = duration;
+      state.level = level;
+      state.tiers = tiers;
+
+      await FFP_DB.from('academy_sessions').insert({
+        coach_id: state.coachId,
+        title: title,
+        discipline: discipline,
+        location_label: location,
+        min_participants: minP,
+        max_participants: maxP,
+        level: level,
+        duration_minutes: duration,
+        price_per_person_cents: tiers[0].price,
+        pricing_tiers: tiers
+      });
+
+      state.step = 5;
+      renderWizard();
+    } catch (err) {
+      console.error(err);
+      msgEl.innerHTML = '<div class="notice warn">Erreur : ' + escapeHtml(err.message || String(err)) + '</div>';
+    }
+  }
+
+  function extOf(filename) { var parts = filename.split('.'); return parts.length > 1 ? parts.pop() : 'bin'; }
+  function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
+  function escapeAttr(str) { return escapeHtml(str).replace(/"/g, '&quot;'); }
+
+  window.AcademyReg = {
+    showAuthTab: showAuthTab,
+    doSignup: doSignup,
+    doLogin: doLogin,
+    goStep: goStep,
+    saveStep1: saveStep1,
+    saveStep2: saveStep2,
+    saveStep3: saveStep3,
+    saveStep4: saveStep4
+  };
+})();
+</script>
+</body>
+</html>
