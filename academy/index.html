@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="academy_page_title">One Sport Academy — Coaching sportif privé</title>
+  <meta name="description" content="Réservez des cours particuliers avec des coachs sportifs vérifiés, en individuel ou en petit groupe (1 à 8 participants), dans toutes les disciplines." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0A0A0A;
+      --surface: #111111;
+      --surface2: #181818;
+      --border:  #2a2a2a;
+      --text:    #EEEEEE;
+      --gold:    #C9A84C;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; }
+
+    /* ── NAVBAR (identique au reste du site) ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, transparent 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .nav-logo img { height: 44px; filter: invert(1) brightness(1); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      color:#FFFFFF; text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle { display: flex; align-items: center; gap: 4px; color: #FFFFFF !important; cursor: pointer; }
+    .dropdown-menu {
+      display: none; position: absolute; top: calc(100% + 12px); right: 0;
+      background: #111111; border: 1px solid #333; border-radius: 6px;
+      min-width: 220px; list-style: none; padding: 8px 0; z-index: 200;
+      box-shadow: 0 20px 60px rgba(0,0,0,.8);
+    }
+    .nav-dropdown:hover .dropdown-menu, .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-menu li { display: flex; align-items: center; justify-content: space-between; padding: 0; }
+    .dropdown-menu a {
+      display: block; padding: 10px 16px; font-size: 13px; text-transform: none;
+      letter-spacing: normal; font-family: 'Barlow', sans-serif; color: #EEEEEE; flex: 1;
+    }
+    .dropdown-menu a:hover { background: #1A1A1A; color: var(--gold); }
+    .dropdown-menu a.soon { color: #888; }
+    .dd-badge { font-size: 10px; padding: 2px 8px; margin-right: 12px; border-radius: 10px; background: #222; color: #888; }
+    .dd-badge.live { background: rgba(201,168,76,0.15); color: var(--gold); }
+
+    .lang-selector { position: relative; }
+    .lang-btn {
+      display: flex; align-items: center; gap: 6px; background: transparent;
+      border: 1px solid var(--border); color: #FFFFFF; padding: 7px 12px;
+      border-radius: 20px; cursor: pointer; font-family: 'Barlow', sans-serif; font-size: 13px;
+    }
+    .lang-btn:hover { border-color: var(--gold); }
+    .lang-menu {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      background: #111111; border: 1px solid #333; border-radius: 6px;
+      min-width: 160px; list-style: none; padding: 6px 0; z-index: 200;
+      box-shadow: 0 20px 60px rgba(0,0,0,.8); font-size: 13px;
+    }
+    .lang-menu.open { display: block; }
+    .lang-menu li { padding: 9px 16px; cursor: pointer; }
+    .lang-menu li:hover { background: #1A1A1A; color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 92vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 140px 24px 80px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 55%),
+        var(--black);
+    }
+    .hero-eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 22px;
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900; text-transform: uppercase;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: 1.05; letter-spacing: 0.01em;
+      max-width: 900px; margin-bottom: 24px;
+    }
+    .hero-title em { color: var(--gold); font-style: normal; }
+    .hero-sub {
+      font-size: 18px; line-height: 1.6; color: #CCCCCC;
+      max-width: 620px; margin-bottom: 40px;
+    }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 16px 32px; border-radius: 3px; text-decoration: none;
+      display: inline-block; cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--gold); color: #0A0A0A; font-weight: 700; }
+    .btn-primary:hover { background: #DDBC5C; }
+    .btn-outline { background: transparent; color: #FFFFFF; border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-trust { margin-top: 56px; display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #999; }
+    .trust-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+
+    /* ── SECTION GENERIQUE ── */
+    section { position: relative; z-index: 1; padding: 90px 24px; }
+    .section-inner { max-width: 1080px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); text-align: center; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: clamp(26px, 4vw, 38px); text-align: center; text-transform: uppercase;
+      margin-bottom: 56px; max-width: 700px; margin-left: auto; margin-right: auto;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 30px 24px; text-align: center;
+    }
+    .feature-icon { font-size: 30px; margin-bottom: 16px; }
+    .feature-title {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase;
+      font-size: 16px; letter-spacing: 0.04em; margin-bottom: 10px;
+    }
+    .feature-desc { font-size: 14px; color: #AAAAAA; line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .how-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .how-col { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 36px 32px; }
+    .how-col-title {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase;
+      font-size: 20px; margin-bottom: 26px; color: var(--gold);
+    }
+    .how-step { display: flex; gap: 16px; margin-bottom: 22px; }
+    .how-step:last-child { margin-bottom: 0; }
+    .how-step-num {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid var(--gold); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px;
+    }
+    .how-step-text h4 { font-size: 15px; margin-bottom: 4px; }
+    .how-step-text p { font-size: 13.5px; color: #999; line-height: 1.5; }
+
+    /* ── WAITLIST ── */
+    .waitlist-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 36px; }
+    .waitlist-tab {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 10px 22px; border-radius: 20px; border: 1.5px solid var(--border);
+      color: #999; cursor: pointer; background: transparent;
+    }
+    .waitlist-tab.active { background: var(--gold); border-color: var(--gold); color: #0A0A0A; }
+    .waitlist-panel { display: none; max-width: 460px; margin: 0 auto; text-align: center; }
+    .waitlist-panel.active { display: block; }
+    .waitlist-panel p { color: #AAA; font-size: 14px; margin-bottom: 22px; line-height: 1.6; }
+    .waitlist-form { display: flex; gap: 10px; }
+    .waitlist-form input[type=email] {
+      flex: 1; padding: 14px 16px; border-radius: 3px; border: 1.5px solid var(--border);
+      background: var(--surface2); color: #FFFFFF; font-size: 14px; font-family: 'Barlow', sans-serif;
+    }
+    .waitlist-form input[type=email]:focus { outline: none; border-color: var(--gold); }
+    .waitlist-form button {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--gold); color: #0A0A0A; border: none;
+      padding: 0 24px; border-radius: 3px; cursor: pointer; white-space: nowrap;
+    }
+    .waitlist-form button:hover { background: #DDBC5C; }
+    .waitlist-msg { margin-top: 16px; font-size: 13.5px; }
+    .waitlist-msg.success { color: #4ADE80; }
+    .waitlist-msg.error { color: #F87171; }
+
+    /* ── FOOTER ── */
+    footer { position: relative; z-index: 1; text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color:#FFFFFF; font-size: 12px; letter-spacing: 0.08em; }
+    footer img { height: 28px; filter: invert(1); opacity: 0.3; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .how-columns { grid-template-columns: 1fr; }
+      .waitlist-form { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="/logo-one-sport-officiel.png" alt="One Sport" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#apropos" data-i18n="nav_about">À propos</a></li>
+      <li><a href="/shop/" style="color:#C9A84C;font-weight:700" data-i18n="nav_shop">🛒 Boutique</a></li>
+      <li><a href="/academy/" style="color:#C9A84C;font-weight:700" data-i18n="nav_academy">🎓 Coaching Privé</a></li>
+      <li class="nav-dropdown">
+        <a href="#" class="nav-dropdown-toggle" data-i18n="nav_sport">Mon Sport ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="/football/">⚽ Football</a><span class="dd-badge live">En ligne</span></li>
+          <li><a href="/basketball/" class="soon">🏀 Basketball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/rugby/" class="soon">🏉 Rugby</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/handball/" class="soon">🤾 Handball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/tennis/" class="soon">🎾 Tennis</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/judo/" class="soon">🥋 Judo</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/volleyball/" class="soon">🏐 Volleyball</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/natation/" class="soon">🏊 Natation</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/athletisme/" class="soon">🏃 Athlétisme</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/boxe/" class="soon">🥊 Boxe</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/cyclisme/" class="soon">🚴 Cyclisme</a><span class="dd-badge">Bientôt</span></li>
+          <li><a href="/esport/" class="soon">🎮 Esport</a><span class="dd-badge">Bientôt</span></li>
+        </ul>
+      </li>
+    </ul>
+    <div class="lang-selector" id="langSelector">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangMenu()">
+        <span id="langFlag">🇫🇷</span><span id="langCode">FR</span><span style="font-size:10px">▾</span>
+      </button>
+      <ul class="lang-menu" id="langMenu">
+        <li onclick="setLang('fr')">🇫🇷 Français</li>
+        <li onclick="setLang('en')">🇬🇧 English</li>
+        <li onclick="setLang('es')">🇪🇸 Español</li>
+        <li onclick="setLang('it')">🇮🇹 Italiano</li>
+        <li onclick="setLang('ar')">🇸🇦 العربية</li>
+        <li onclick="setLang('zh')">🇨🇳 中文</li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">One Sport Academy</div>
+    <h1 class="hero-title">Un coach <em>rien que pour lui.</em><br>Pas pour toute l'équipe.</h1>
+    <p class="hero-sub">
+      Au-delà de l'entraînement collectif : réservez des séances individuelles ou en petit groupe choisi
+      (jusqu'à 8 participants), avec un coach vérifié, sur la discipline et l'objectif précis de votre enfant.
+    </p>
+    <div class="hero-ctas">
+      <a href="#trouver" class="btn btn-primary" onclick="showWaitlist('parent')">Trouver mon coach</a>
+      <a href="#devenir" class="btn btn-outline" onclick="showWaitlist('coach')">Devenir coach</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><span class="dot"></span> Diplômes vérifiés</div>
+      <div class="trust-item"><span class="dot"></span> Assurance RC Pro contrôlée</div>
+      <div class="trust-item"><span class="dot"></span> Paiement sécurisé Stripe</div>
+      <div class="trust-item"><span class="dot"></span> Avis certifiés</div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <div class="section-inner">
+      <p class="section-label">Pourquoi le coaching privé</p>
+      <h2 class="section-title">Le collectif fait progresser l'équipe.<br>Le privé fait progresser VOTRE joueur.</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Sur-mesure</div>
+          <div class="feature-desc">De 1 à 8 participants, un format adapté au niveau et aux objectifs précis de chaque joueur.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <div class="feature-title">Coachs vérifiés</div>
+          <div class="feature-desc">Diplômes, attestation d'assurance et statut juridique contrôlés avant toute mise en ligne.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💳</div>
+          <div class="feature-title">Paiement sécurisé</div>
+          <div class="feature-desc">Réservation et paiement en ligne via Stripe. Aucune espèce, aucune ambiguïté.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <div class="feature-title">Avis certifiés</div>
+          <div class="feature-desc">Chaque séance peut être notée par les parents, pour un niveau de qualité constant.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section style="background:var(--surface2); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="section-inner">
+      <p class="section-label">Comment ça marche</p>
+      <h2 class="section-title">Deux parcours, une seule plateforme</h2>
+      <div class="how-columns">
+        <div class="how-col">
+          <div class="how-col-title">👨‍👩‍👧 Pour les parents</div>
+          <div class="how-step">
+            <div class="how-step-num">1</div>
+            <div class="how-step-text"><h4>Recherchez un coach</h4><p>Par discipline, ville et niveau recherché.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">2</div>
+            <div class="how-step-text"><h4>Réservez un créneau</h4><p>Individuel ou en petit groupe, selon vos besoins.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">3</div>
+            <div class="how-step-text"><h4>Payez en ligne</h4><p>Paiement sécurisé, confirmation immédiate.</p></div>
+          </div>
+        </div>
+        <div class="how-col">
+          <div class="how-col-title">🎓 Pour les coachs</div>
+          <div class="how-step">
+            <div class="how-step-num">1</div>
+            <div class="how-step-text"><h4>Créez votre Academy</h4><p>Votre structure, votre équipe (jusqu'à 20 coachs).</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">2</div>
+            <div class="how-step-text"><h4>Faites valider vos documents</h4><p>Diplômes, assurance, statut juridique.</p></div>
+          </div>
+          <div class="how-step">
+            <div class="how-step-num">3</div>
+            <div class="how-step-text"><h4>Recevez vos réservations</h4><p>Paiements automatiques, sans gestion administrative.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section id="waitlist-section">
+    <div class="section-inner">
+      <p class="section-label">Ouverture progressive</p>
+      <h2 class="section-title">One Sport Academy arrive bientôt dans votre région</h2>
+
+      <div class="waitlist-tabs">
+        <button class="waitlist-tab active" id="tab-parent" onclick="showWaitlist('parent')">Je cherche un coach</button>
+        <button class="waitlist-tab" id="tab-coach" onclick="showWaitlist('coach')">Je suis coach</button>
+      </div>
+
+      <div class="waitlist-panel active" id="panel-parent">
+        <p>Laissez votre e-mail pour être prévenu dès qu'un coach est disponible près de chez vous.</p>
+        <form class="waitlist-form" onsubmit="submitWaitlist(event, 'parent')">
+          <input type="email" placeholder="votre@email.com" required>
+          <button type="submit">M'avertir</button>
+        </form>
+        <div class="waitlist-msg" id="msg-parent"></div>
+      </div>
+
+      <div class="waitlist-panel" id="panel-coach">
+        <p>Laissez votre e-mail pour être parmi les premiers coachs à créer votre Academy sur One Sport.</p>
+        <form class="waitlist-form" onsubmit="submitWaitlist(event, 'coach')">
+          <input type="email" placeholder="votre@email.com" required>
+          <button type="submit">Être averti</button>
+        </form>
+        <div class="waitlist-msg" id="msg-coach"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="/logo-one-sport-officiel.png" alt="One Sport" />
+    <p>© 2026 One Sport — FLANDRE TECH · Clichy · France</p>
+    <p style="margin-top:6px;">Toutes les disciplines. Une seule plateforme.</p>
+  </footer>
+
+  <!-- Supabase JS Client (meme pattern que le reste du site) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/ffp-supabase.js"></script>
+  <script src="/i18n.js"></script>
+  <script>
+    if (typeof initSupabase === 'function') { initSupabase(); }
+
+    function showWaitlist(which) {
+      document.getElementById('tab-parent').classList.toggle('active', which === 'parent');
+      document.getElementById('tab-coach').classList.toggle('active', which === 'coach');
+      document.getElementById('panel-parent').classList.toggle('active', which === 'parent');
+      document.getElementById('panel-coach').classList.toggle('active', which === 'coach');
+      document.getElementById('waitlist-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    async function submitWaitlist(evt, interest) {
+      evt.preventDefault();
+      var form = evt.target;
+      var email = form.querySelector('input[type=email]').value.trim();
+      var msgEl = document.getElementById('msg-' + interest);
+      var btn = form.querySelector('button');
+
+      if (!email) return;
+      btn.disabled = true;
+      msgEl.textContent = '';
+      msgEl.className = 'waitlist-msg';
+
+      try {
+        if (typeof FFP_DB === 'undefined' || !FFP_DB) throw new Error('no_db');
+        var res = await FFP_DB.from('academy_waitlist').insert({ email: email, interest: interest });
+        if (res.error) throw res.error;
+        msgEl.textContent = '✓ Merci ! Nous vous préviendrons dès l\'ouverture.';
+        msgEl.className = 'waitlist-msg success';
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        msgEl.textContent = "Une erreur est survenue, merci de réessayer.";
+        msgEl.className = 'waitlist-msg error';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // ── Langue (identique au reste du site) ──
+    var LANG_FLAGS = { fr:'🇫🇷', en:'🇬🇧', es:'🇪🇸', it:'🇮🇹', ar:'🇸🇦', zh:'🇨🇳' };
+    var LANG_CODES = { fr:'FR', en:'EN', es:'ES', it:'IT', ar:'AR', zh:'ZH' };
+
+    function toggleLangMenu() { document.getElementById('langMenu').classList.toggle('open'); }
+
+    document.addEventListener('click', function(e) {
+      if (!document.getElementById('langSelector').contains(e.target)) {
+        document.getElementById('langMenu').classList.remove('open');
+      }
+    });
+
+    function setLang(lang) {
+      if (typeof OS_TRANSLATIONS === 'undefined' || !OS_TRANSLATIONS[lang]) return;
+      var t = OS_TRANSLATIONS[lang];
+      document.getElementById('langMenu').classList.remove('open');
+      document.getElementById('langFlag').textContent = LANG_FLAGS[lang];
+      document.getElementById('langCode').textContent = LANG_CODES[lang];
+      localStorage.setItem('os_lang', lang);
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      document.documentElement.setAttribute('lang', lang);
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+    }
+
+    window.addEventListener('load', function() {
+      var saved = localStorage.getItem('os_lang');
+      var browser = navigator.language ? navigator.language.split('-')[0] : 'fr';
+      var supported = ['fr','en','es','it','ar','zh'];
+      var lang = saved || (supported.indexOf(browser) >= 0 ? browser : 'fr');
+      if (lang !== 'fr') setLang(lang);
+    });
+  </script>
+  <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/ffp-sw.js").catch(function(){});</script>
+</body>
+</html>
