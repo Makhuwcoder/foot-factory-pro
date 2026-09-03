@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Réserver un coach — One Sport Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --black:#0A0A0A; --surface:#111111; --surface2:#181818; --border:#2a2a2a;
+    --text:#EEEEEE; --gold:#C9A84C; --red:#E05252; --green:#4ADE80;
+  }
+  body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; }
+  a { color:inherit; }
+  h1,h2,h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
+  .nav-logo img { height:36px; filter:invert(1); }
+  .nav-back { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
+  .nav-back:hover { color:var(--gold); }
+
+  .container { max-width:920px; margin:0 auto; padding:36px 20px 90px; }
+  .loading-state, .empty-state { text-align:center; padding:80px 20px; color:#777; }
+  .error-banner { background:rgba(224,82,82,0.1); border:1px solid rgba(224,82,82,0.4); color:#F5A3A3; border-radius:5px; padding:14px 18px; font-size:0.88rem; max-width:600px; margin:60px auto; text-align:center; }
+
+  /* ── PROFIL ── */
+  .profile-header { display:flex; gap:22px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:28px; }
+  .profile-photo { width:88px; height:88px; border-radius:50%; background:var(--surface2); border:2px solid var(--border); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#666; }
+  .profile-photo img { width:100%; height:100%; object-fit:cover; }
+  .profile-info h1 { font-size:1.35rem; text-transform:uppercase; }
+  .academy-tag { display:inline-flex; align-items:center; gap:8px; font-size:0.82rem; color:#999; margin-top:6px; }
+  .academy-tag img { width:20px; height:20px; border-radius:4px; object-fit:cover; }
+  .rating-row { display:flex; align-items:center; gap:8px; margin-top:10px; }
+  .stars { color:var(--gold); font-size:0.95rem; }
+  .rating-count { font-size:0.82rem; color:#777; }
+  .verified-tag { display:inline-flex; align-items:center; gap:5px; font-size:0.76rem; font-weight:600; color:var(--green); background:rgba(74,222,128,0.1); padding:3px 10px; border-radius:12px; margin-top:8px; }
+  .profile-disciplines { display:flex; gap:6px; margin-top:12px; flex-wrap:wrap; }
+  .mini-chip { font-size:0.74rem; font-family:'Barlow Condensed',sans-serif; font-weight:600; padding:4px 11px; border-radius:11px; background:var(--surface2); color:#999; }
+  .profile-bio { color:#AAA; font-size:0.9rem; margin-top:16px; line-height:1.6; max-width:560px; }
+
+  .section-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:#777; margin:30px 0 14px; }
+
+  .session-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:14px; }
+  .session-card h3 { font-size:1rem; margin-bottom:4px; text-transform:none; }
+  .session-meta { font-size:0.84rem; color:#999; }
+  .session-price .from { font-size:0.74rem; color:#777; }
+  .session-price .amount { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.3rem; color:#FFF; }
+
+  .review-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:10px; }
+  .review-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .review-author { font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.86rem; }
+  .review-text { font-size:0.86rem; color:#999; }
+
+  .btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.84rem; letter-spacing:0.05em; text-transform:uppercase; padding:11px 22px; border-radius:3px; cursor:pointer; border:none; text-decoration:none; display:inline-block; }
+  .btn-primary { background:var(--gold); color:#0A0A0A; }
+  .btn-primary:hover { background:#DDBC5C; }
+  .btn-primary:disabled { background:#444; color:#888; cursor:not-allowed; }
+  .btn-ghost { background:none; color:#999; border:1.5px solid var(--border); }
+  .btn-ghost:hover { border-color:#FFF; color:#FFF; }
+
+  /* ── RESERVATION ── */
+  .booking-layout { display:grid; grid-template-columns:1fr 300px; gap:22px; align-items:start; }
+  .booking-main { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:28px; }
+  .booking-sub { color:#999; font-size:0.88rem; margin-bottom:22px; }
+
+  label { display:block; font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px; }
+  .day-tabs { display:flex; gap:8px; margin-bottom:18px; overflow-x:auto; }
+  .day-tab { font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.8rem; padding:9px 16px; border-radius:20px; border:1.5px solid var(--border); color:#999; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+  .day-tab.selected { background:var(--gold); border-color:var(--gold); color:#0A0A0A; }
+
+  .slot-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:10px; margin-bottom:26px; }
+  .slot { padding:10px 8px; text-align:center; border:1.5px solid var(--border); border-radius:5px; font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; }
+  .slot:hover { border-color:var(--gold); }
+  .slot.selected { background:var(--gold); border-color:var(--gold); color:#0A0A0A; }
+
+  .participant-stepper { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+  .stepper-btn { width:36px; height:36px; border-radius:50%; border:1.5px solid var(--border); background:var(--surface2); color:#FFF; font-size:1.1rem; font-weight:700; cursor:pointer; }
+  .participant-count { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.3rem; min-width:24px; text-align:center; }
+  .participant-hint { font-size:0.78rem; color:#777; }
+  .field-group { margin-bottom:18px; }
+  input[type=text] { width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:3px; background:var(--surface2); color:#FFF; font-size:0.9rem; }
+
+  .summary-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; position:sticky; top:20px; }
+  .summary-box h3 { font-size:1rem; margin-bottom:16px; text-transform:uppercase; }
+  .summary-row { display:flex; justify-content:space-between; font-size:0.88rem; padding:6px 0; color:#999; }
+  .summary-row.total { border-top:1px solid var(--border); margin-top:8px; padding-top:14px; font-weight:700; color:#FFF; font-size:1rem; }
+  .summary-coach { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+  .summary-coach .photo { width:38px; height:38px; border-radius:50%; background:var(--surface2); overflow:hidden; }
+  .summary-coach .photo img { width:100%; height:100%; object-fit:cover; }
+  .summary-coach .name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.86rem; }
+
+  /* ── AUTH INLINE ── */
+  .auth-tabs { display:flex; gap:8px; margin-bottom:20px; }
+  .auth-tab { flex:1; text-align:center; padding:11px; border-radius:4px; border:1.5px solid var(--border); background:none; color:#999; font-family:'Barlow Condensed',sans-serif; font-weight:700; text-transform:uppercase; font-size:0.8rem; cursor:pointer; }
+  .auth-tab.active { background:var(--gold); border-color:var(--gold); color:#0A0A0A; }
+  .auth-panel { display:none; }
+  .auth-panel.active { display:block; }
+  input[type=email], input[type=password] { width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:3px; background:var(--surface2); color:#FFF; font-size:0.9rem; margin-bottom:14px; }
+
+  /* ── PAIEMENT ── */
+  .pay-main { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:28px; }
+  #payment-element { margin-bottom:20px; }
+  .secure-notice { display:flex; gap:10px; align-items:flex-start; background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.3); color:#E8D9AE; border-radius:5px; padding:13px 15px; font-size:0.83rem; margin-bottom:20px; }
+  .notice-error { background:rgba(224,82,82,0.1); border:1px solid rgba(224,82,82,0.4); color:#F5A3A3; border-radius:5px; padding:12px 14px; font-size:0.85rem; margin-top:14px; }
+
+  /* ── CONFIRMATION ── */
+  .confirm-box { max-width:520px; margin:40px auto 0; text-align:center; }
+  .confirm-icon { width:70px; height:70px; border-radius:50%; background:var(--green); color:#0A0A0A; display:flex; align-items:center; justify-content:center; font-size:1.9rem; margin:0 auto 22px; font-weight:800; }
+  .confirm-details { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:left; margin-top:28px; }
+  .confirm-row { display:flex; justify-content:space-between; padding:8px 0; font-size:0.9rem; border-bottom:1px solid var(--border); }
+  .confirm-row:last-child { border-bottom:none; }
+  .confirm-row .k { color:#999; }
+  .confirm-row .v { font-weight:600; }
+
+  @media (max-width:760px) { .booking-layout { grid-template-columns:1fr; } .profile-header { flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+  <a href="/academy/" class="nav-back">← Retour</a>
+</nav>
+
+<div class="container">
+  <div id="loadingState" class="loading-state">Chargement…</div>
+  <div id="appRoot" style="display:none;"></div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function() {
+  var STRIPE_PUBLISHABLE_KEY = 'pk_live_51NIpIDFrZ51E91QlnREDH6F18d0S02ZO5QL9NnXQiwLOBDcEhxbzZJoSJSDByxpdz7mfWY7LEZDzRaSxnbWSiXsz00K7MCvKRK';
+  var SUPABASE_URL = 'https://qpabgwskavglvojhuzeq.supabase.co';
+  var FUNCTIONS_URL = SUPABASE_URL + '/functions/v1';
+
+  var stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  var elements = null;
+
+  var loadingEl = document.getElementById('loadingState');
+  var appRoot = document.getElementById('appRoot');
+
+  var params = new URLSearchParams(window.location.search);
+  var coachId = params.get('id');
+
+  var state = {
+    session: null,
+    coach: null,
+    academy: null,
+    sessions: [],
+    reviews: [],
+    view: 'profile', // profile | booking | payment | confirm
+    selectedSession: null,
+    availabilities: [],
+    selectedDay: null,
+    selectedAvailability: null,
+    participants: 1,
+    clientSecret: null,
+    bookingId: null
+  };
+
+  init();
+
+  async function init() {
+    if (typeof initSupabase === 'function') initSupabase();
+
+    // Retour Stripe apres paiement (redirect_status dans l'URL)
+    if (params.get('redirect_status')) {
+      state.view = 'confirm';
+      var { data } = await FFP_DB.auth.getSession();
+      state.session = data.session;
+      await renderConfirmFromRedirect();
+      return;
+    }
+
+    if (!coachId) {
+      renderError("Aucun coach spécifié.");
+      return;
+    }
+
+    var { data: sessionData } = await FFP_DB.auth.getSession();
+    state.session = sessionData.session;
+
+    try {
+      await loadCoach();
+      render();
+    } catch (err) {
+      console.error(err);
+      renderError("Une erreur est survenue lors du chargement du profil.");
+    }
+  }
+
+  async function loadCoach() {
+    var { data: coach, error } = await FFP_DB
+      .from('academy_coaches')
+      .select('id, display_name, bio, sport_cv, photo_url, disciplines, average_rating, total_reviews, is_active, documents_status, academy_academies(id, academy_name, logo_url, verification_status, is_active)')
+      .eq('id', coachId)
+      .maybeSingle();
+
+    if (error || !coach) { renderError("Ce coach est introuvable."); throw new Error('not_found'); }
+
+    var academy = coach.academy_academies;
+    if (!coach.is_active || coach.documents_status !== 'approved' || !academy || academy.verification_status !== 'verified' || !academy.is_active) {
+      renderError("Ce profil n'est pas encore disponible à la réservation.");
+      throw new Error('not_bookable');
+    }
+
+    state.coach = coach;
+    state.academy = academy;
+
+    var { data: sessions } = await FFP_DB.from('academy_sessions').select('*').eq('coach_id', coachId).eq('is_active', true);
+    state.sessions = sessions || [];
+
+    var { data: reviews } = await FFP_DB.from('academy_reviews').select('rating, comment, created_at').eq('target_coach_id', coachId).order('created_at', { ascending: false }).limit(5);
+    state.reviews = reviews || [];
+  }
+
+  function renderError(msg) {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>';
+  }
+
+  function render() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    if (state.view === 'profile') renderProfile();
+    else if (state.view === 'booking') renderBooking();
+    else if (state.view === 'payment') renderPayment();
+  }
+
+  // ═══════════════════ PROFIL ═══════════════════
+  function renderProfile() {
+    var c = state.coach, a = state.academy;
+    var stars = '★★★★★'.slice(0, Math.round(c.average_rating || 0)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(c.average_rating || 0));
+
+    var sessionsHtml = state.sessions.length
+      ? state.sessions.map(function(s) {
+          var minPrice = Math.min.apply(null, (s.pricing_tiers || []).map(function(t){return t.price;}).concat([s.price_per_person_cents]));
+          return `
+            <div class="session-card">
+              <div>
+                <h3>${escapeHtml(s.title)}</h3>
+                <div class="session-meta">${s.duration_minutes} min · ${s.min_participants} à ${s.max_participants} participants · ${escapeHtml(s.location_label || '')}</div>
+              </div>
+              <div class="session-price">
+                <div class="from">à partir de</div>
+                <div class="amount">${(minPrice/100).toFixed(0)} € <span style="font-size:0.7rem;font-weight:600;color:#777;">/ pers.</span></div>
+                <button class="btn btn-primary" style="margin-top:10px;" onclick="CoachPage.selectSession('${s.id}')">Réserver</button>
+              </div>
+            </div>
+          `;
+        }).join('')
+      : '<div class="empty-state">Aucun cours disponible pour le moment.</div>';
+
+    var reviewsHtml = state.reviews.length
+      ? state.reviews.map(function(r) {
+          var st = '★★★★★'.slice(0, r.rating);
+          return `<div class="review-card"><div class="review-top"><span class="review-author">Parent vérifié</span><span class="stars">${st}</span></div>${r.comment ? '<div class="review-text">' + escapeHtml(r.comment) + '</div>' : ''}</div>`;
+        }).join('')
+      : '<div class="empty-state">Pas encore d\'avis.</div>';
+
+    appRoot.innerHTML = `
+      <div class="profile-header">
+        <div class="profile-photo">${c.photo_url ? '<img src="'+c.photo_url+'">' : '👤'}</div>
+        <div class="profile-info">
+          <h1>${escapeHtml(c.display_name)}</h1>
+          <div class="academy-tag">${a.logo_url ? '<img src="'+a.logo_url+'">' : ''} ${escapeHtml(a.academy_name)}</div>
+          <div class="rating-row"><span class="stars">${stars}</span><span class="rating-count">${c.average_rating || '—'} · ${c.total_reviews || 0} avis</span></div>
+          <div class="verified-tag">✓ Profil vérifié</div>
+          <div class="profile-disciplines">${(c.disciplines||[]).map(function(d){return '<span class="mini-chip">'+escapeHtml(d)+'</span>';}).join('')}</div>
+          <p class="profile-bio">${escapeHtml(c.bio || '')}</p>
+        </div>
+      </div>
+      <div class="section-title">Cours proposés</div>
+      ${sessionsHtml}
+      <div class="section-title">Avis des parents</div>
+      ${reviewsHtml}
+    `;
+  }
+
+  // ═══════════════════ RESERVATION ═══════════════════
+  async function selectSession(sessionId) {
+    state.selectedSession = state.sessions.find(function(s){ return s.id === sessionId; });
+    state.participants = state.selectedSession.min_participants;
+
+    var { data: avail } = await FFP_DB
+      .from('academy_availabilities')
+      .select('id, start_time, end_time')
+      .eq('session_id', sessionId)
+      .eq('is_booked', false)
+      .gte('start_time', new Date().toISOString())
+      .order('start_time', { ascending: true });
+
+    state.availabilities = avail || [];
+    state.selectedDay = null;
+    state.selectedAvailability = null;
+    state.view = 'booking';
+    render();
+  }
+
+  function priceForParticipants(session, n) {
+    var tiers = session.pricing_tiers || [];
+    var match = tiers.find(function(t){ return n >= t.min && n <= t.max; });
+    return match ? match.price : session.price_per_person_cents;
+  }
+
+  function renderBooking() {
+    var s = state.selectedSession;
+
+    if (!state.availabilities.length) {
+      appRoot.innerHTML = `
+        <div class="booking-main">
+          <h2>${escapeHtml(s.title)}</h2>
+          <p class="booking-sub">${escapeHtml(state.coach.display_name)} — ${escapeHtml(s.location_label || '')}</p>
+          <div class="empty-state">Aucun créneau disponible pour le moment. Revenez bientôt !</div>
+          <button class="btn btn-ghost" onclick="CoachPage.backToProfile()">← Retour au profil</button>
+        </div>
+      `;
+      return;
+    }
+
+    var days = {};
+    state.availabilities.forEach(function(a) {
+      var d = new Date(a.start_time);
+      var key = d.toDateString();
+      if (!days[key]) days[key] = [];
+      days[key].push(a);
+    });
+    var dayKeys = Object.keys(days);
+    if (!state.selectedDay) state.selectedDay = dayKeys[0];
+
+    var dayTabsHtml = dayKeys.map(function(k) {
+      var d = new Date(k);
+      var label = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+      return '<div class="day-tab ' + (k === state.selectedDay ? 'selected' : '') + '" data-day="' + k + '">' + label + '</div>';
+    }).join('');
+
+    var slotsHtml = days[state.selectedDay].map(function(a) {
+      var time = new Date(a.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      var sel = state.selectedAvailability && state.selectedAvailability.id === a.id;
+      return '<div class="slot ' + (sel ? 'selected' : '') + '" data-avail="' + a.id + '">' + time + '</div>';
+    }).join('');
+
+    var price = priceForParticipants(s, state.participants);
+    var total = price * state.participants;
+
+    appRoot.innerHTML = `
+      <div class="booking-layout">
+        <div class="booking-main">
+          <h2>${escapeHtml(s.title)}</h2>
+          <p class="booking-sub">${escapeHtml(state.coach.display_name)} — ${escapeHtml(s.location_label || '')} — ${s.duration_minutes} min</p>
+
+          <label>Choisissez un jour</label>
+          <div class="day-tabs">${dayTabsHtml}</div>
+
+          <label>Choisissez un horaire</label>
+          <div class="slot-grid">${slotsHtml}</div>
+
+          <label>Nombre de participants</label>
+          <div class="participant-stepper">
+            <button class="stepper-btn" id="pMinus">−</button>
+            <div class="participant-count" id="pCount">${state.participants}</div>
+            <button class="stepper-btn" id="pPlus">+</button>
+            <span class="participant-hint">de ${s.min_participants} à ${s.max_participants} participants</span>
+          </div>
+
+          <div class="field-group">
+            <label>Nom(s) du/des joueur(s)</label>
+            <input type="text" id="participantNames" placeholder="Ex : Lucas Martin, Nina Martin">
+          </div>
+
+          <div id="bookingMsg"></div>
+
+          <button class="btn btn-primary" style="width:100%; padding:14px;" id="continueBtn" ${state.selectedAvailability ? '' : 'disabled'}>Continuer vers le paiement</button>
+          <button class="btn btn-ghost" style="width:100%; margin-top:10px;" onclick="CoachPage.backToProfile()">← Retour au profil</button>
+        </div>
+
+        <div class="summary-box">
+          <h3>Récapitulatif</h3>
+          <div class="summary-coach">
+            <div class="photo">${state.coach.photo_url ? '<img src="'+state.coach.photo_url+'">' : ''}</div>
+            <div><div class="name">${escapeHtml(state.coach.display_name)}</div></div>
+          </div>
+          <div class="summary-row"><span>Participants</span><span id="summaryParticipants">${state.participants}</span></div>
+          <div class="summary-row"><span>Tarif</span><span id="summaryPrice">${(price/100).toFixed(0)} € / pers.</span></div>
+          <div class="summary-row total"><span>Total</span><span id="summaryTotal">${(total/100).toFixed(2)} €</span></div>
+        </div>
+      </div>
+    `;
+
+    document.querySelectorAll('.day-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        state.selectedDay = tab.dataset.day;
+        state.selectedAvailability = null;
+        renderBooking();
+      });
+    });
+    document.querySelectorAll('.slot').forEach(function(slot) {
+      slot.addEventListener('click', function() {
+        state.selectedAvailability = state.availabilities.find(function(a){ return a.id === slot.dataset.avail; });
+        renderBooking();
+      });
+    });
+    var pMinus = document.getElementById('pMinus');
+    var pPlus = document.getElementById('pPlus');
+    if (pMinus) pMinus.addEventListener('click', function() { changeParticipants(-1); });
+    if (pPlus) pPlus.addEventListener('click', function() { changeParticipants(1); });
+
+    var continueBtn = document.getElementById('continueBtn');
+    if (continueBtn) continueBtn.addEventListener('click', goToPayment);
+  }
+
+  function changeParticipants(delta) {
+    var s = state.selectedSession;
+    state.participants = Math.min(s.max_participants, Math.max(s.min_participants, state.participants + delta));
+    document.getElementById('pCount').textContent = state.participants;
+    document.getElementById('summaryParticipants').textContent = state.participants;
+    var price = priceForParticipants(s, state.participants);
+    document.getElementById('summaryPrice').textContent = (price/100).toFixed(0) + ' € / pers.';
+    document.getElementById('summaryTotal').textContent = ((price*state.participants)/100).toFixed(2) + ' €';
+  }
+
+  function backToProfile() { state.view = 'profile'; render(); }
+
+  // ═══════════════════ PAIEMENT ═══════════════════
+  async function goToPayment() {
+    if (!state.session) {
+      renderAuthGateForBooking();
+      return;
+    }
+    await createPaymentIntent();
+  }
+
+  function renderAuthGateForBooking() {
+    appRoot.innerHTML = `
+      <div class="booking-main" style="max-width:440px; margin:0 auto;">
+        <h2>Connectez-vous pour réserver</h2>
+        <p class="booking-sub">Créez un compte ou connectez-vous pour finaliser votre réservation.</p>
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabSignup">Créer un compte</button>
+          <button class="auth-tab" id="tabLogin">J'ai déjà un compte</button>
+        </div>
+        <div class="auth-panel active" id="panelSignup">
+          <input type="text" id="suPrenom" placeholder="Prénom">
+          <input type="text" id="suNom" placeholder="Nom" style="margin-top:10px;">
+          <input type="email" id="suEmail" placeholder="E-mail" style="margin-top:10px;">
+          <input type="password" id="suPassword" placeholder="Mot de passe (8 caractères min.)" style="margin-top:10px;">
+          <button class="btn btn-primary" style="width:100%;" id="doSignupBtn">Créer mon compte</button>
+          <div id="authMsg"></div>
+        </div>
+        <div class="auth-panel" id="panelLogin">
+          <input type="email" id="liEmail" placeholder="E-mail">
+          <input type="password" id="liPassword" placeholder="Mot de passe" style="margin-top:10px;">
+          <button class="btn btn-primary" style="width:100%;" id="doLoginBtn">Me connecter</button>
+          <div id="authMsg2"></div>
+        </div>
+        <button class="btn btn-ghost" style="width:100%; margin-top:14px;" onclick="CoachPage.backToBooking()">← Retour</button>
+      </div>
+    `;
+    document.getElementById('tabSignup').addEventListener('click', function() { toggleAuthTab('signup'); });
+    document.getElementById('tabLogin').addEventListener('click', function() { toggleAuthTab('login'); });
+    document.getElementById('doSignupBtn').addEventListener('click', handleSignup);
+    document.getElementById('doLoginBtn').addEventListener('click', handleLogin);
+  }
+
+  function toggleAuthTab(which) {
+    document.getElementById('tabSignup').classList.toggle('active', which === 'signup');
+    document.getElementById('tabLogin').classList.toggle('active', which === 'login');
+    document.getElementById('panelSignup').classList.toggle('active', which === 'signup');
+    document.getElementById('panelLogin').classList.toggle('active', which === 'login');
+  }
+
+  async function handleSignup() {
+    var prenom = document.getElementById('suPrenom').value.trim();
+    var nom = document.getElementById('suNom').value.trim();
+    var email = document.getElementById('suEmail').value.trim();
+    var password = document.getElementById('suPassword').value;
+    var msgEl = document.getElementById('authMsg');
+
+    if (!prenom || !nom || !email || password.length < 8) {
+      msgEl.innerHTML = '<div class="notice-error">Merci de compléter tous les champs (mot de passe 8 caractères min.).</div>';
+      return;
+    }
+
+    var { data, error } = await FFP_DB.auth.signUp({ email: email, password: password, options: { data: { prenom: prenom, nom: nom, role: 'parent' } } });
+    if (error) { msgEl.innerHTML = '<div class="notice-error">' + escapeHtml(error.message) + '</div>'; return; }
+
+    if (data.session) {
+      state.session = data.session;
+      await createPaymentIntent();
+    } else {
+      msgEl.innerHTML = '<div class="notice-error" style="background:rgba(201,168,76,0.1); border-color:rgba(201,168,76,0.4); color:#E8D9AE;">Un e-mail de confirmation vous a été envoyé. Confirmez puis reconnectez-vous via l\'onglet "J\'ai déjà un compte".</div>';
+    }
+  }
+
+  async function handleLogin() {
+    var email = document.getElementById('liEmail').value.trim();
+    var password = document.getElementById('liPassword').value;
+    var msgEl = document.getElementById('authMsg2');
+
+    var { data, error } = await FFP_DB.auth.signInWithPassword({ email: email, password: password });
+    if (error) { msgEl.innerHTML = '<div class="notice-error">' + escapeHtml(error.message) + '</div>'; return; }
+    state.session = data.session;
+    await createPaymentIntent();
+  }
+
+  function backToBooking() { state.view = 'booking'; render(); }
+
+  async function createPaymentIntent() {
+    appRoot.innerHTML = '<div class="loading-state">Préparation du paiement…</div>';
+
+    var participantNamesRaw = document.getElementById('participantNames');
+    var participantNames = participantNamesRaw ? participantNamesRaw.value.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+
+    try {
+      var res = await fetch(FUNCTIONS_URL + '/create-academy-payment-intent', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + state.session.access_token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          availability_id: state.selectedAvailability.id,
+          participants_count: state.participants,
+          participant_names: participantNames
+        })
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la préparation du paiement.');
+
+      state.clientSecret = data.client_secret;
+      state.bookingId = data.booking_id;
+      state.view = 'payment';
+      renderPayment();
+    } catch (err) {
+      console.error(err);
+      appRoot.innerHTML = '<div class="error-banner">' + escapeHtml(err.message) + '</div><div style="text-align:center; margin-top:16px;"><button class="btn btn-ghost" onclick="CoachPage.backToBooking()">← Retour</button></div>';
+    }
+  }
+
+  async function renderPayment() {
+    var s = state.selectedSession;
+    var price = priceForParticipants(s, state.participants);
+    var total = price * state.participants;
+
+    appRoot.innerHTML = `
+      <div class="booking-layout">
+        <div class="pay-main">
+          <h2>Paiement sécurisé</h2>
+          <div class="secure-notice">🔒 Paiement traité par Stripe. One Sport ne stocke jamais vos coordonnées bancaires.</div>
+          <div id="payment-element"></div>
+          <div id="paymentMsg"></div>
+          <button class="btn btn-primary" style="width:100%; padding:14px; margin-top:16px;" id="submitPaymentBtn">Payer ${(total/100).toFixed(2)} €</button>
+        </div>
+        <div class="summary-box">
+          <h3>Récapitulatif</h3>
+          <div class="summary-coach">
+            <div class="photo">${state.coach.photo_url ? '<img src="'+state.coach.photo_url+'">' : ''}</div>
+            <div><div class="name">${escapeHtml(state.coach.display_name)}</div></div>
+          </div>
+          <div class="summary-row"><span>${escapeHtml(s.title)}</span><span>${state.participants} pers.</span></div>
+          <div class="summary-row total"><span>Total</span><span>${(total/100).toFixed(2)} €</span></div>
+        </div>
+      </div>
+    `;
+
+    var appearance = {
+      theme: 'night',
+      variables: { colorPrimary: '#C9A84C', colorBackground: '#181818', colorText: '#EEEEEE', borderRadius: '3px' }
+    };
+    elements = stripe.elements({ clientSecret: state.clientSecret, appearance: appearance });
+    var paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    document.getElementById('submitPaymentBtn').addEventListener('click', submitPayment);
+  }
+
+  async function submitPayment() {
+    var btn = document.getElementById('submitPaymentBtn');
+    var msgEl = document.getElementById('paymentMsg');
+    btn.disabled = true;
+    msgEl.innerHTML = '';
+
+    var { error } = await stripe.confirmPayment({
+      elements: elements,
+      confirmParams: { return_url: window.location.origin + '/academy/coach.html?id=' + coachId }
+    });
+
+    if (error) {
+      msgEl.innerHTML = '<div class="notice-error">' + escapeHtml(error.message) + '</div>';
+      btn.disabled = false;
+    }
+    // Si pas d'erreur, Stripe redirige automatiquement vers return_url
+  }
+
+  // ═══════════════════ CONFIRMATION (retour Stripe) ═══════════════════
+  async function renderConfirmFromRedirect() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+
+    var clientSecret = params.get('payment_intent_client_secret');
+    if (!clientSecret) { renderError("Impossible de vérifier le paiement."); return; }
+
+    var { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
+
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      appRoot.innerHTML = `
+        <div class="confirm-box">
+          <div class="confirm-icon">✓</div>
+          <h2>Réservation confirmée</h2>
+          <p style="color:#999; margin-top:8px;">Un e-mail de confirmation vous a été envoyé. Le coach a été notifié.</p>
+          <div class="confirm-details">
+            <div class="confirm-row"><span class="k">Montant payé</span><span class="v">${(paymentIntent.amount/100).toFixed(2)} €</span></div>
+            <div class="confirm-row"><span class="k">Référence</span><span class="v">${paymentIntent.id}</span></div>
+          </div>
+          <a href="/academy/" class="btn btn-ghost" style="margin-top:24px;">Retour à l'accueil</a>
+        </div>
+      `;
+    } else {
+      appRoot.innerHTML = `
+        <div class="confirm-box">
+          <h2>Paiement non finalisé</h2>
+          <p style="color:#999; margin-top:8px;">Statut : ${escapeHtml((paymentIntent && paymentIntent.status) || 'inconnu')}. Aucun montant n'a été débité si le paiement n'est pas confirmé.</p>
+          <a href="/academy/" class="btn btn-ghost" style="margin-top:24px;">Retour à l'accueil</a>
+        </div>
+      `;
+    }
+  }
+
+  function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
+
+  window.CoachPage = {
+    selectSession: selectSession,
+    backToProfile: backToProfile,
+    backToBooking: backToBooking
+  };
+})();
+</script>
+</body>
+</html>
