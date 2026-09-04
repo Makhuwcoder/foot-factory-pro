@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mes disponibilités — One Sport Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --black:#0A0A0A; --surface:#111111; --surface2:#181818; --border:#2a2a2a;
+    --text:#EEEEEE; --gold:#C9A84C; --red:#E05252; --green:#4ADE80;
+  }
+  body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; }
+  a { color:inherit; }
+  h1,h2,h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
+  .nav-logo img { height:36px; filter:invert(1); }
+  .nav-links { display:flex; gap:20px; }
+  .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
+  .nav-links a:hover, .nav-links a.active { color:var(--gold); }
+
+  .container { max-width:900px; margin:0 auto; padding:36px 20px 90px; }
+  .loading-state, .empty-state { text-align:center; padding:60px 20px; color:#777; }
+  .error-banner, .notice-error { background:rgba(224,82,82,0.1); border:1px solid rgba(224,82,82,0.4); color:#F5A3A3; border-radius:5px; padding:14px 16px; font-size:0.85rem; margin-bottom:16px; }
+  .notice-ok { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.4); color:#B3F0C4; border-radius:5px; padding:12px 14px; font-size:0.85rem; margin-bottom:16px; }
+
+  .page-header { margin-bottom:26px; }
+  .page-header h1 { font-size:1.4rem; text-transform:uppercase; }
+  .page-header .sub { color:#999; font-size:0.88rem; margin-top:4px; }
+
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:28px; margin-bottom:24px; }
+  label { display:block; font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+  select, input[type=date], input[type=time], input[type=number] {
+    width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:3px;
+    background:var(--surface2); color:#FFF; font-family:'Barlow',sans-serif; font-size:0.9rem;
+  }
+  select:focus, input:focus { outline:none; border-color:var(--gold); }
+  .field-group { margin-bottom:18px; }
+  .field-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .checkbox-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .checkbox-row input { width:auto; }
+
+  .btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.84rem; letter-spacing:0.05em; text-transform:uppercase; padding:12px 22px; border-radius:3px; cursor:pointer; border:none; }
+  .btn-primary { background:var(--gold); color:#0A0A0A; }
+  .btn-primary:hover { background:#DDBC5C; }
+  .btn-primary:disabled { background:#444; color:#888; cursor:not-allowed; }
+  .btn-danger { background:none; color:var(--red); border:1.5px solid rgba(224,82,82,0.4); font-size:0.76rem; padding:6px 12px; }
+  .btn-danger:hover { background:rgba(224,82,82,0.1); }
+
+  .section-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:#777; margin:28px 0 14px; }
+
+  .slot-row {
+    display:flex; align-items:center; justify-content:space-between; background:var(--surface);
+    border:1px solid var(--border); border-radius:6px; padding:14px 18px; margin-bottom:8px;
+  }
+  .slot-date { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.92rem; }
+  .slot-time { color:#999; font-size:0.84rem; margin-top:1px; }
+  .status-pill { font-size:0.74rem; font-weight:600; padding:4px 11px; border-radius:11px; }
+  .status-free { background:rgba(74,222,128,0.12); color:var(--green); }
+  .status-booked { background:rgba(201,168,76,0.12); color:var(--gold); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+  <div class="nav-links">
+    <a href="/academy/mes-reservations.html">Réservations</a>
+    <a href="/academy/mes-disponibilites.html" class="active">Disponibilités</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div id="loadingState" class="loading-state">Chargement…</div>
+  <div id="appRoot" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function() {
+  var loadingEl = document.getElementById('loadingState');
+  var appRoot = document.getElementById('appRoot');
+  var LOGIN_PAGE_URL = '/ffp-login.html';
+
+  var state = {
+    session: null,
+    coachId: null,
+    sessions: [],
+    selectedSessionId: null,
+    availabilities: []
+  };
+
+  init();
+
+  async function init() {
+    if (typeof initSupabase === 'function') initSupabase();
+    if (!FFP_DB) { renderError("Impossible de contacter le serveur."); return; }
+
+    var { data } = await FFP_DB.auth.getSession();
+    if (!data.session) { window.location.href = LOGIN_PAGE_URL; return; }
+    state.session = data.session;
+
+    try {
+      await loadCoachSessions();
+      render();
+    } catch (err) {
+      console.error(err);
+      renderError("Une erreur est survenue lors du chargement de votre espace.");
+    }
+  }
+
+  async function loadCoachSessions() {
+    var { data: coach, error: coachErr } = await FFP_DB
+      .from('academy_coaches')
+      .select('id')
+      .eq('profile_id', state.session.user.id)
+      .maybeSingle();
+
+    if (coachErr || !coach) { renderNoAcademy(); throw new Error('no_academy'); }
+    state.coachId = coach.id;
+
+    var { data: sessions, error: sessErr } = await FFP_DB
+      .from('academy_sessions')
+      .select('id, title, discipline, duration_minutes')
+      .eq('coach_id', state.coachId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+
+    if (sessErr) throw sessErr;
+    state.sessions = sessions || [];
+    if (state.sessions.length) state.selectedSessionId = state.sessions[0].id;
+  }
+
+  function renderNoAcademy() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="empty-state">Vous n\'avez pas encore d\'Academy. <a href="/academy/enregistrement.html" style="color:var(--gold);">Enregistrez-la ici</a>.</div>';
+  }
+
+  function renderError(msg) {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>';
+  }
+
+  async function render() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+
+    if (!state.sessions.length) {
+      appRoot.innerHTML = `
+        <div class="page-header"><h1>Mes disponibilités</h1><div class="sub">Aucun cours créé pour le moment.</div></div>
+        <div class="empty-state">Vous devez d'abord créer une offre de cours depuis votre inscription pour pouvoir ajouter des créneaux.</div>
+      `;
+      return;
+    }
+
+    await loadAvailabilities();
+
+    var sessionOptions = state.sessions.map(function(s) {
+      return '<option value="' + s.id + '" ' + (s.id === state.selectedSessionId ? 'selected' : '') + '>' + escapeHtml(s.title) + ' (' + escapeHtml(s.discipline) + ')</option>';
+    }).join('');
+
+    appRoot.innerHTML = `
+      <div class="page-header">
+        <h1>Mes disponibilités</h1>
+        <div class="sub">Ajoutez les créneaux sur lesquels les parents pourront réserver.</div>
+      </div>
+
+      <div class="panel">
+        <div class="field-group">
+          <label>Cours concerné</label>
+          <select id="sessionSelect">${sessionOptions}</select>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group"><label>Date</label><input type="date" id="slotDate"></div>
+          <div class="field-group"><label>Heure de début</label><input type="time" id="slotTime"></div>
+          <div class="field-group"><label>Durée</label><input type="text" id="slotDuration" disabled></div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="repeatCheck">
+          <label style="margin:0;" for="repeatCheck">Répéter chaque semaine</label>
+          <input type="number" id="repeatCount" min="1" max="12" value="4" style="width:70px;" disabled>
+          <span style="font-size:0.82rem; color:#999;">semaines</span>
+        </div>
+
+        <div id="addMsg"></div>
+        <button class="btn btn-primary" id="addSlotBtn">+ Ajouter le créneau</button>
+      </div>
+
+      <div class="section-title">Créneaux à venir</div>
+      <div id="slotsList"></div>
+    `;
+
+    document.getElementById('sessionSelect').addEventListener('change', async function(e) {
+      state.selectedSessionId = e.target.value;
+      await loadAvailabilities();
+      renderSlotsList();
+      updateDurationField();
+    });
+    document.getElementById('repeatCheck').addEventListener('change', function(e) {
+      document.getElementById('repeatCount').disabled = !e.target.checked;
+    });
+    document.getElementById('addSlotBtn').addEventListener('click', addSlot);
+
+    updateDurationField();
+    renderSlotsList();
+  }
+
+  function currentSession() {
+    return state.sessions.find(function(s) { return s.id === state.selectedSessionId; });
+  }
+
+  function updateDurationField() {
+    var s = currentSession();
+    document.getElementById('slotDuration').value = s ? s.duration_minutes + ' min' : '';
+  }
+
+  async function loadAvailabilities() {
+    var { data, error } = await FFP_DB
+      .from('academy_availabilities')
+      .select('id, start_time, end_time, is_booked')
+      .eq('session_id', state.selectedSessionId)
+      .gte('start_time', new Date().toISOString())
+      .order('start_time', { ascending: true });
+
+    if (error) throw error;
+    state.availabilities = data || [];
+  }
+
+  function renderSlotsList() {
+    var listEl = document.getElementById('slotsList');
+    if (!listEl) return;
+
+    if (!state.availabilities.length) {
+      listEl.innerHTML = '<div class="empty-state">Aucun créneau à venir pour ce cours.</div>';
+      return;
+    }
+
+    listEl.innerHTML = state.availabilities.map(function(a) {
+      var d = new Date(a.start_time);
+      var dateLabel = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+      var timeLabel = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) + ' – ' + new Date(a.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="slot-row">
+          <div>
+            <div class="slot-date">${capitalize(dateLabel)}</div>
+            <div class="slot-time">${timeLabel}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <span class="status-pill ${a.is_booked ? 'status-booked' : 'status-free'}">${a.is_booked ? 'Réservé' : 'Disponible'}</span>
+            ${a.is_booked ? '' : '<button class="btn-danger" data-delete="' + a.id + '">Supprimer</button>'}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    listEl.querySelectorAll('[data-delete]').forEach(function(btn) {
+      btn.addEventListener('click', function() { deleteSlot(btn.dataset.delete); });
+    });
+  }
+
+  async function addSlot() {
+    var msgEl = document.getElementById('addMsg');
+    var dateVal = document.getElementById('slotDate').value;
+    var timeVal = document.getElementById('slotTime').value;
+    var repeat = document.getElementById('repeatCheck').checked;
+    var repeatCount = parseInt(document.getElementById('repeatCount').value) || 1;
+    var session = currentSession();
+
+    if (!dateVal || !timeVal || !session) {
+      msgEl.innerHTML = '<div class="notice-error">Merci de renseigner une date et une heure.</div>';
+      return;
+    }
+
+    var btn = document.getElementById('addSlotBtn');
+    btn.disabled = true;
+    msgEl.innerHTML = '';
+
+    try {
+      var occurrences = repeat ? repeatCount : 1;
+      var rows = [];
+      for (var i = 0; i < occurrences; i++) {
+        var start = new Date(dateVal + 'T' + timeVal + ':00');
+        start.setDate(start.getDate() + i * 7);
+        var end = new Date(start.getTime() + session.duration_minutes * 60000);
+        rows.push({ session_id: session.id, start_time: start.toISOString(), end_time: end.toISOString(), is_booked: false });
+      }
+
+      var { error } = await FFP_DB.from('academy_availabilities').insert(rows);
+      if (error) throw error;
+
+      msgEl.innerHTML = '<div class="notice-ok">✓ ' + occurrences + ' créneau(x) ajouté(s).</div>';
+      await loadAvailabilities();
+      renderSlotsList();
+    } catch (err) {
+      console.error(err);
+      msgEl.innerHTML = '<div class="notice-error">Erreur : ' + escapeHtml(err.message || String(err)) + '</div>';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function deleteSlot(id) {
+    if (!confirm('Supprimer ce créneau ?')) return;
+    var { error } = await FFP_DB.from('academy_availabilities').delete().eq('id', id).eq('is_booked', false);
+    if (error) { alert("Impossible de supprimer ce créneau."); return; }
+    await loadAvailabilities();
+    renderSlotsList();
+  }
+
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
+})();
+</script>
+</body>
+</html>
