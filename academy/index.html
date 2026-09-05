@@ -7,6 +7,8 @@
   <meta name="description" content="Réservez des cours particuliers avec des coachs sportifs vérifiés, en individuel ou en petit groupe (1 à 8 participants), dans toutes les disciplines." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&family=Cinzel:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -225,6 +227,50 @@
     .waitlist-msg.success { color: #4ADE80; }
     .waitlist-msg.error { color: #F87171; }
 
+    /* ── CARTE COACHS ── */
+    #coachMap {
+      width: 100%; height: 420px; border-radius: 8px; border: 1px solid var(--border);
+      margin-bottom: 24px; background: #0d1117;
+    }
+    .leaflet-popup-content-wrapper { background:#111111; color:#EEEEEE; border-radius:8px; }
+    .leaflet-popup-tip { background:#111111; }
+    .leaflet-popup-content { margin:14px 16px; font-family:'Barlow',sans-serif; }
+    .coach-popup { display:flex; gap:10px; align-items:flex-start; min-width:200px; }
+    .coach-popup img { width:44px; height:44px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+    .coach-popup-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; }
+    .coach-popup-disc { font-size:11px; color:var(--gold); margin-top:2px; }
+    .coach-popup-link { display:inline-block; margin-top:8px; font-size:12px; color:var(--gold); text-decoration:none; font-weight:600; }
+
+    .coach-marker-icon {
+      width:34px; height:34px; border-radius:50%; background:var(--gold);
+      border:2px solid #0A0A0A; box-shadow:0 0 0 rgba(201,168,76,0.5);
+      display:flex; align-items:center; justify-content:center; font-size:15px;
+      opacity:0; transform:scale(0.3); transition:opacity 0.35s ease, transform 0.35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .coach-marker-icon.dropped { opacity:1; transform:scale(1); }
+    .coach-marker-icon.pulse { animation: markerPulse 1.6s ease-out; }
+    @keyframes markerPulse {
+      0% { box-shadow: 0 0 0 0 rgba(201,168,76,0.6); }
+      100% { box-shadow: 0 0 0 16px rgba(201,168,76,0); }
+    }
+
+    .coach-cards-track {
+      display: flex; gap: 16px; overflow-x: auto; padding: 4px 4px 16px; scroll-behavior: smooth;
+    }
+    .coach-card {
+      flex: 0 0 240px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 18px; text-align: left; cursor: pointer; transition: border-color 0.2s, opacity 0.4s, transform 0.4s;
+      opacity: 0; transform: translateY(14px);
+    }
+    .coach-card.shown { opacity: 1; transform: translateY(0); }
+    .coach-card:hover, .coach-card.highlighted { border-color: var(--gold); }
+    .coach-card-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .coach-card-photo { width:44px; height:44px; border-radius:50%; object-fit:cover; background:var(--surface2); flex-shrink:0; }
+    .coach-card-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; }
+    .coach-card-academy { font-size:11px; color:#888; }
+    .coach-card-disc { font-size:11px; color:var(--gold); margin-bottom:8px; }
+    .coach-card-bio { font-size:12.5px; color:#999; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
     /* ── FOOTER ── */
     footer { position: relative; z-index: 1; text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color:#FFFFFF; font-size: 12px; letter-spacing: 0.08em; }
     footer img { height: 28px; filter: invert(1); opacity: 0.3; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
@@ -386,13 +432,20 @@
         <button class="waitlist-tab" id="tab-coach" onclick="showWaitlist('coach')">Je suis coach</button>
       </div>
 
-      <div class="waitlist-panel active" id="panel-parent">
-        <p>Laissez votre e-mail pour être prévenu dès qu'un coach est disponible près de chez vous.</p>
-        <form class="waitlist-form" onsubmit="submitWaitlist(event, 'parent')">
-          <input type="email" placeholder="votre@email.com" required>
-          <button type="submit">M'avertir</button>
-        </form>
-        <div class="waitlist-msg" id="msg-parent"></div>
+      <div class="waitlist-panel active" id="panel-parent" style="max-width:100%;">
+        <div id="coachMapWrapper" style="display:none;">
+          <p style="max-width:600px; margin:0 auto 24px;">Découvrez les coachs déjà disponibles près de chez vous.</p>
+          <div id="coachMap"></div>
+          <div id="coachCardsTrack" class="coach-cards-track"></div>
+        </div>
+        <div id="noCoachYet">
+          <p>Laissez votre e-mail pour être prévenu dès qu'un coach est disponible près de chez vous.</p>
+          <form class="waitlist-form" onsubmit="submitWaitlist(event, 'parent')">
+            <input type="email" placeholder="votre@email.com" required>
+            <button type="submit">M'avertir</button>
+          </form>
+          <div class="waitlist-msg" id="msg-parent"></div>
+        </div>
       </div>
 
       <div class="waitlist-panel" id="panel-coach">
@@ -415,6 +468,103 @@
   <script src="/i18n.js"></script>
   <script>
     if (typeof initSupabase === 'function') { initSupabase(); }
+    loadCoachMap();
+
+    async function loadCoachMap() {
+      try {
+        if (!FFP_DB) return;
+
+        var { data: rows, error } = await FFP_DB
+          .from('academy_sessions')
+          .select('id, title, discipline, location_label, location_lat, location_lng, coach_id, academy_coaches(id, display_name, photo_url, bio, disciplines, academy_academies(academy_name))')
+          .eq('is_active', true)
+          .not('location_lat', 'is', null)
+          .limit(30);
+
+        if (error || !rows || !rows.length) return; // reste sur le formulaire d'attente
+
+        document.getElementById('noCoachYet').style.display = 'none';
+        var wrapper = document.getElementById('coachMapWrapper');
+        wrapper.style.display = 'block';
+
+        var map = L.map('coachMap', { scrollWheelZoom: false }).setView([46.6, 2.4], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          maxZoom: 18
+        }).addTo(map);
+
+        var markers = {};
+        var cardsTrack = document.getElementById('coachCardsTrack');
+
+        rows.forEach(function(row, i) {
+          var coach = row.academy_coaches;
+          if (!coach) return;
+          var academyName = coach.academy_academies ? coach.academy_academies.academy_name : '';
+          var photo = coach.photo_url || '';
+          var bio = coach.bio || '';
+
+          // ── Marqueur (icone custom, animation d'apparition en cascade) ──
+          var icon = L.divIcon({
+            className: '',
+            html: '<div class="coach-marker-icon" id="marker-' + row.id + '">🎓</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17]
+          });
+          var marker = L.marker([row.location_lat, row.location_lng], { icon: icon }).addTo(map);
+          marker.bindPopup(
+            '<div class="coach-popup">' +
+              (photo ? '<img src="' + photo + '">' : '') +
+              '<div>' +
+                '<div class="coach-popup-name">' + escapeHtml(coach.display_name) + '</div>' +
+                '<div class="coach-popup-disc">' + escapeHtml((coach.disciplines||[]).join(', ')) + '</div>' +
+                '<a class="coach-popup-link" href="/academy/coach.html?id=' + coach.id + '">Voir le profil →</a>' +
+              '</div>' +
+            '</div>'
+          );
+          markers[row.id] = marker;
+
+          // ── Carte coach (apparition en cascade synchronisee) ──
+          var card = document.createElement('div');
+          card.className = 'coach-card';
+          card.id = 'card-' + row.id;
+          card.innerHTML =
+            '<div class="coach-card-top">' +
+              (photo ? '<img class="coach-card-photo" src="' + photo + '">' : '<div class="coach-card-photo"></div>') +
+              '<div><div class="coach-card-name">' + escapeHtml(coach.display_name) + '</div><div class="coach-card-academy">' + escapeHtml(academyName) + '</div></div>' +
+            '</div>' +
+            '<div class="coach-card-disc">' + escapeHtml((coach.disciplines||[]).join(' · ')) + ' — ' + escapeHtml(row.location_label || '') + '</div>' +
+            '<div class="coach-card-bio">' + escapeHtml(bio) + '</div>';
+
+          card.addEventListener('click', function() {
+            document.querySelectorAll('.coach-card').forEach(function(c) { c.classList.remove('highlighted'); });
+            card.classList.add('highlighted');
+            map.flyTo([row.location_lat, row.location_lng], 11, { duration: 0.8 });
+            markers[row.id].openPopup();
+            pulseMarker(row.id);
+          });
+          cardsTrack.appendChild(card);
+
+          // ── Sequencement de l'animation (marqueurs + cartes en cascade) ──
+          setTimeout(function() {
+            var el = document.getElementById('marker-' + row.id);
+            if (el) el.classList.add('dropped');
+            card.classList.add('shown');
+          }, 120 * i);
+        });
+      } catch (err) {
+        console.warn('Carte coachs non chargee:', err);
+      }
+    }
+
+    function pulseMarker(id) {
+      var el = document.getElementById('marker-' + id);
+      if (!el) return;
+      el.classList.remove('pulse');
+      void el.offsetWidth; // reset animation
+      el.classList.add('pulse');
+    }
+
+    function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 
     function showWaitlist(which) {
       document.getElementById('tab-parent').classList.toggle('active', which === 'parent');
