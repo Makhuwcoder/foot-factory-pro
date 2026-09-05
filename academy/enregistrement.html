@@ -821,11 +821,15 @@
       state.level = level;
       state.tiers = tiers;
 
+      var coords = await geocodeLocation(location);
+
       await FFP_DB.from('academy_sessions').insert({
         coach_id: state.coachId,
         title: title,
         discipline: discipline,
         location_label: location,
+        location_lat: coords ? coords.lat : null,
+        location_lng: coords ? coords.lng : null,
         min_participants: minP,
         max_participants: maxP,
         level: level,
@@ -843,6 +847,26 @@
   }
 
   function extOf(filename) { var parts = filename.split('.'); return parts.length > 1 ? parts.pop() : 'bin'; }
+
+  // Geocodage du lieu saisi en texte libre -> coordonnees GPS, via Nominatim
+  // (OpenStreetMap, gratuit, sans cle API). Echec silencieux : la session est
+  // quand meme enregistree, simplement non affichee sur la carte.
+  async function geocodeLocation(locationText) {
+    try {
+      var query = encodeURIComponent(locationText + ', France');
+      var res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=' + query, {
+        headers: { 'Accept-Language': 'fr' }
+      });
+      var results = await res.json();
+      if (results && results.length) {
+        return { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+      }
+    } catch (err) {
+      console.warn('Geocodage impossible pour "' + locationText + '":', err);
+    }
+    return null;
+  }
+
   function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
   function escapeAttr(str) { return escapeHtml(str).replace(/"/g, '&quot;'); }
 
