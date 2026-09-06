@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Administration — One Coach Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --black:#0A0A0A; --surface:#111111; --surface2:#181818; --border:#2a2a2a; --gold:#C9A84C; --red:#E05252; --green:#4ADE80; }
+  body { background:var(--black); color:#EEE; font-family:'Barlow',sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+  a { color:inherit; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
+  .nav-logo img { height:36px; filter:invert(1); }
+  .nav-back { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
+  .nav-back:hover { color:var(--gold); }
+
+  .wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+  .card { width:100%; max-width:400px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:36px 32px; }
+  .card h1 { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.3rem; text-transform:uppercase; text-align:center; margin-bottom:4px; }
+  .card .sub { text-align:center; color:#999; font-size:0.85rem; margin-bottom:28px; }
+
+  label { display:block; font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+  input[type=email], input[type=password] {
+    width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:3px;
+    background:var(--surface2); color:#FFF; font-family:'Barlow',sans-serif; font-size:0.92rem; margin-bottom:18px;
+  }
+  input:focus { outline:none; border-color:var(--gold); }
+
+  .btn { width:100%; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.88rem; letter-spacing:0.05em; text-transform:uppercase; padding:13px; border-radius:3px; cursor:pointer; border:none; background:var(--gold); color:#0A0A0A; }
+  .btn:hover { background:#DDBC5C; }
+  .btn:disabled { background:#444; color:#888; cursor:not-allowed; }
+
+  .msg { margin-top:14px; font-size:0.85rem; text-align:center; }
+  .msg.err { color:#F5A3A3; }
+  .msg.ok { color:var(--green); }
+
+  .forgot { display:block; text-align:center; margin-top:16px; font-size:0.8rem; color:#777; text-decoration:none; }
+  .forgot:hover { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+  <a href="/academy/" class="nav-back">← Retour</a>
+</nav>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Administration</h1>
+    <div class="sub">Accès réservé aux administrateurs One Sport</div>
+
+    <label>E-mail</label>
+    <input type="email" id="adminEmail" autocomplete="username">
+
+    <label>Mot de passe</label>
+    <input type="password" id="adminPassword" autocomplete="current-password">
+
+    <button class="btn" id="loginBtn">Se connecter →</button>
+    <div class="msg" id="loginMsg"></div>
+    <a href="#" class="forgot" id="forgotLink">Mot de passe oublié ?</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function() {
+  if (typeof initSupabase === 'function') initSupabase();
+
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  document.getElementById('adminPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('forgotLink').addEventListener('click', doForgotPassword);
+
+  // Deja connecte avec le bon role ? on saute direct.
+  checkExistingSession();
+
+  async function checkExistingSession() {
+    if (!FFP_DB) return;
+    var { data } = await FFP_DB.auth.getSession();
+    if (!data.session) return;
+    var { data: profile } = await FFP_DB.from('profiles').select('role').eq('id', data.session.user.id).maybeSingle();
+    if (profile && profile.role === 'superadmin') {
+      window.location.href = '/academy/admin-validation.html';
+    }
+  }
+
+  async function doLogin() {
+    var email = document.getElementById('adminEmail').value.trim();
+    var password = document.getElementById('adminPassword').value;
+    var msgEl = document.getElementById('loginMsg');
+    var btn = document.getElementById('loginBtn');
+
+    if (!email || !password) {
+      msgEl.className = 'msg err';
+      msgEl.textContent = "Merci de renseigner l'e-mail et le mot de passe.";
+      return;
+    }
+
+    btn.disabled = true;
+    msgEl.textContent = '';
+
+    var { data, error } = await FFP_DB.auth.signInWithPassword({ email: email, password: password });
+
+    if (error) {
+      msgEl.className = 'msg err';
+      msgEl.textContent = "Identifiants incorrects.";
+      btn.disabled = false;
+      return;
+    }
+
+    var { data: profile } = await FFP_DB.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
+
+    if (!profile || profile.role !== 'superadmin') {
+      msgEl.className = 'msg err';
+      msgEl.textContent = "Ce compte n'a pas les droits administrateur.";
+      btn.disabled = false;
+      return;
+    }
+
+    msgEl.className = 'msg ok';
+    msgEl.textContent = '✓ Connexion réussie…';
+    window.location.href = '/academy/admin-validation.html';
+  }
+
+  async function doForgotPassword(e) {
+    e.preventDefault();
+    var email = document.getElementById('adminEmail').value.trim();
+    var msgEl = document.getElementById('loginMsg');
+    if (!email) {
+      msgEl.className = 'msg err';
+      msgEl.textContent = "Renseignez d'abord votre e-mail ci-dessus.";
+      return;
+    }
+    var { error } = await FFP_DB.auth.resetPasswordForEmail(email);
+    msgEl.className = error ? 'msg err' : 'msg ok';
+    msgEl.textContent = error ? "Erreur : " + error.message : "✓ E-mail de réinitialisation envoyé.";
+  }
+})();
+</script>
+</body>
+</html>
