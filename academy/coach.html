@@ -190,7 +190,9 @@
       render();
     } catch (err) {
       console.error(err);
-      renderError("Une erreur est survenue lors du chargement du profil.");
+      if (err.message !== 'not_found' && err.message !== 'not_bookable') {
+        renderError("Une erreur est survenue lors du chargement du profil.");
+      }
     }
   }
 
