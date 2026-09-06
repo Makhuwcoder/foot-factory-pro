@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Validation Academies — Administration One Sport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --black:#0A0A0A; --surface:#111111; --surface2:#181818; --border:#2a2a2a;
+    --text:#EEEEEE; --gold:#C9A84C; --red:#E05252; --green:#4ADE80;
+  }
+  body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; }
+  a { color:inherit; }
+  h1,h2,h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
+  .nav-logo img { height:36px; filter:invert(1); }
+
+  .container { max-width:1000px; margin:0 auto; padding:36px 20px 90px; }
+  .loading-state, .empty-state { text-align:center; padding:60px 20px; color:#777; }
+  .denied { text-align:center; padding:100px 20px; color:#F5A3A3; }
+
+  .page-header { margin-bottom:28px; }
+  .page-header h1 { font-size:1.4rem; text-transform:uppercase; }
+  .page-header .sub { color:#999; font-size:0.88rem; margin-top:4px; }
+
+  .section-title {
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.85rem;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); margin:34px 0 16px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .count-badge { background:var(--gold); color:#0A0A0A; border-radius:10px; padding:1px 9px; font-size:0.78rem; }
+
+  .review-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:16px; }
+  .review-top { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+  .review-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.1rem; }
+  .review-meta { font-size:0.84rem; color:#999; margin-top:4px; }
+  .review-meta div { margin-top:2px; }
+
+  .docs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin:16px 0; }
+  .doc-chip {
+    display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border);
+    border-radius:5px; padding:10px 12px; text-decoration:none; color:#EEE; font-size:0.82rem;
+  }
+  .doc-chip:hover { border-color:var(--gold); }
+  .doc-chip .icon { font-size:1rem; }
+  .doc-missing { color:#666; font-style:italic; font-size:0.82rem; padding:10px 0; }
+
+  textarea {
+    width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:3px;
+    background:var(--surface2); color:#FFF; font-family:'Barlow',sans-serif; font-size:0.88rem;
+    min-height:60px; margin:10px 0;
+  }
+  textarea:focus { outline:none; border-color:var(--gold); }
+
+  .actions { display:flex; gap:10px; margin-top:14px; }
+  .btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; letter-spacing:0.05em; text-transform:uppercase; padding:10px 20px; border-radius:3px; cursor:pointer; border:none; }
+  .btn-approve { background:var(--green); color:#0A0A0A; }
+  .btn-approve:hover { background:#6EE89A; }
+  .btn-reject { background:none; color:var(--red); border:1.5px solid rgba(224,82,82,0.4); }
+  .btn-reject:hover { background:rgba(224,82,82,0.1); }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+  .status-pill { font-size:0.72rem; font-weight:600; padding:3px 10px; border-radius:10px; text-transform:uppercase; }
+  .status-pending { background:rgba(201,168,76,0.12); color:var(--gold); }
+  .status-msg { margin-top:10px; font-size:0.84rem; }
+  .status-msg.ok { color:var(--green); }
+  .status-msg.err { color:#F5A3A3; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+</nav>
+
+<div class="container">
+  <div id="loadingState" class="loading-state">Chargement…</div>
+  <div id="appRoot" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function() {
+  var loadingEl = document.getElementById('loadingState');
+  var appRoot = document.getElementById('appRoot');
+  var LOGIN_PAGE_URL = '/ffp-login.html';
+  var myProfileId = null;
+
+  init();
+
+  async function init() {
+    if (typeof initSupabase === 'function') initSupabase();
+    if (!FFP_DB) { renderDenied("Impossible de contacter le serveur."); return; }
+
+    var { data } = await FFP_DB.auth.getSession();
+    if (!data.session) { window.location.href = LOGIN_PAGE_URL; return; }
+    myProfileId = data.session.user.id;
+
+    var { data: profile } = await FFP_DB.from('profiles').select('role').eq('id', myProfileId).maybeSingle();
+    if (!profile || profile.role !== 'superadmin') {
+      renderDenied("Accès réservé aux administrateurs One Sport.");
+      return;
+    }
+
+    await renderDashboard();
+  }
+
+  function renderDenied(msg) {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="denied">⛔ ' + escapeHtml(msg) + '</div>';
+  }
+
+  async function renderDashboard() {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+
+    var { data: academies } = await FFP_DB
+      .from('academy_academies')
+      .select('id, academy_name, created_at, owner_profile_id, profiles:owner_profile_id(prenom, nom, email)')
+      .eq('verification_status', 'pending')
+      .order('created_at', { ascending: true });
+
+    var { data: coaches } = await FFP_DB
+      .from('academy_coaches')
+      .select('id, display_name, bio, sport_cv, created_at, academy_id, academy_academies(academy_name)')
+      .eq('documents_status', 'pending')
+      .order('created_at', { ascending: true });
+
+    appRoot.innerHTML = `
+      <div class="page-header">
+        <h1>Validation Academies</h1>
+        <div class="sub">Vérifiez les documents avant de rendre un profil public et réservable.</div>
+      </div>
+
+      <div class="section-title">Academies en attente <span class="count-badge">${(academies||[]).length}</span></div>
+      <div id="academiesList"></div>
+
+      <div class="section-title">Coachs en attente <span class="count-badge">${(coaches||[]).length}</span></div>
+      <div id="coachesList"></div>
+    `;
+
+    await renderAcademies(academies || []);
+    await renderCoaches(coaches || []);
+  }
+
+  // ═══════════════════ ACADEMIES ═══════════════════
+  async function renderAcademies(academies) {
+    var listEl = document.getElementById('academiesList');
+    if (!academies.length) { listEl.innerHTML = '<div class="empty-state">Aucune Academy en attente.</div>'; return; }
+
+    for (var i = 0; i < academies.length; i++) {
+      var a = academies[i];
+      var owner = a.profiles || {};
+
+      var { data: docs } = await FFP_DB
+        .from('academy_documents')
+        .select('id, document_type, file_path, file_name')
+        .eq('academy_id', a.id)
+        .is('coach_id', null);
+
+      var assurance = (docs || []).find(function(d) { return d.document_type === 'assurance'; });
+      var kbis = (docs || []).find(function(d) { return d.document_type === 'kbis'; });
+
+      var assuranceLink = await docChipHtml(assurance, '🛡️ Assurance RC Pro');
+      var kbisLink = await docChipHtml(kbis, '📄 Statut juridique (KBIS)');
+
+      var card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="review-top">
+          <div>
+            <div class="review-title">${escapeHtml(a.academy_name)}</div>
+            <div class="review-meta">
+              <div>Propriétaire : ${escapeHtml((owner.prenom||'') + ' ' + (owner.nom||''))} — ${escapeHtml(owner.email||'')}</div>
+              <div>Soumis le ${new Date(a.created_at).toLocaleDateString('fr-FR')}</div>
+            </div>
+          </div>
+          <span class="status-pill status-pending">En attente</span>
+        </div>
+        <div class="docs-grid">${assuranceLink}${kbisLink}</div>
+        <textarea placeholder="Motif de refus (optionnel si validé)" id="notes-academy-${a.id}"></textarea>
+        <div class="actions">
+          <button class="btn btn-approve" data-approve-academy="${a.id}">✓ Valider l'Academy</button>
+          <button class="btn btn-reject" data-reject-academy="${a.id}">✕ Rejeter</button>
+        </div>
+        <div class="status-msg" id="msg-academy-${a.id}"></div>
+      `;
+      listEl.appendChild(card);
+    }
+
+    listEl.querySelectorAll('[data-approve-academy]').forEach(function(btn) {
+      btn.addEventListener('click', function() { reviewAcademy(btn.dataset.approveAcademy, 'verified', btn); });
+    });
+    listEl.querySelectorAll('[data-reject-academy]').forEach(function(btn) {
+      btn.addEventListener('click', function() { reviewAcademy(btn.dataset.rejectAcademy, 'rejected', btn); });
+    });
+  }
+
+  async function reviewAcademy(academyId, status, btnEl) {
+    var notes = document.getElementById('notes-academy-' + academyId).value.trim();
+    var msgEl = document.getElementById('msg-academy-' + academyId);
+    var card = btnEl.closest('.review-card');
+    card.querySelectorAll('button').forEach(function(b) { b.disabled = true; });
+
+    var { error } = await FFP_DB.from('academy_academies').update({
+      verification_status: status,
+      verification_notes: notes || null,
+      verified_at: new Date().toISOString(),
+      verified_by: myProfileId
+    }).eq('id', academyId);
+
+    if (error) {
+      msgEl.className = 'status-msg err';
+      msgEl.textContent = 'Erreur : ' + error.message;
+      card.querySelectorAll('button').forEach(function(b) { b.disabled = false; });
+    } else {
+      msgEl.className = 'status-msg ok';
+      msgEl.textContent = status === 'verified' ? '✓ Academy validée.' : '✕ Academy rejetée.';
+      setTimeout(function() { card.style.display = 'none'; }, 1200);
+    }
+  }
+
+  // ═══════════════════ COACHS ═══════════════════
+  async function renderCoaches(coaches) {
+    var listEl = document.getElementById('coachesList');
+    if (!coaches.length) { listEl.innerHTML = '<div class="empty-state">Aucun coach en attente.</div>'; return; }
+
+    for (var i = 0; i < coaches.length; i++) {
+      var c = coaches[i];
+      var academyName = c.academy_academies ? c.academy_academies.academy_name : '';
+
+      var { data: docs } = await FFP_DB
+        .from('academy_documents')
+        .select('id, document_type, file_path, file_name')
+        .eq('coach_id', c.id);
+
+      var diplome = (docs || []).find(function(d) { return d.document_type === 'diplome'; });
+      var identite = (docs || []).find(function(d) { return d.document_type === 'identite'; });
+
+      var diplomeLink = await docChipHtml(diplome, '🎓 Diplôme');
+      var identiteLink = await docChipHtml(identite, '🪪 Pièce d\'identité');
+
+      var card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="review-top">
+          <div>
+            <div class="review-title">${escapeHtml(c.display_name)}</div>
+            <div class="review-meta">
+              <div>Academy : ${escapeHtml(academyName)}</div>
+              <div>Soumis le ${new Date(c.created_at).toLocaleDateString('fr-FR')}</div>
+            </div>
+          </div>
+          <span class="status-pill status-pending">En attente</span>
+        </div>
+        <p style="font-size:0.86rem; color:#AAA; margin-bottom:10px;">${escapeHtml(c.sport_cv || '')}</p>
+        <div class="docs-grid">${diplomeLink}${identiteLink}</div>
+        <textarea placeholder="Motif de refus (optionnel si validé)" id="notes-coach-${c.id}"></textarea>
+        <div class="actions">
+          <button class="btn btn-approve" data-approve-coach="${c.id}">✓ Valider le coach</button>
+          <button class="btn btn-reject" data-reject-coach="${c.id}">✕ Rejeter</button>
+        </div>
+        <div class="status-msg" id="msg-coach-${c.id}"></div>
+      `;
+      listEl.appendChild(card);
+    }
+
+    listEl.querySelectorAll('[data-approve-coach]').forEach(function(btn) {
+      btn.addEventListener('click', function() { reviewCoach(btn.dataset.approveCoach, 'approved', btn); });
+    });
+    listEl.querySelectorAll('[data-reject-coach]').forEach(function(btn) {
+      btn.addEventListener('click', function() { reviewCoach(btn.dataset.rejectCoach, 'rejected', btn); });
+    });
+  }
+
+  async function reviewCoach(coachId, status, btnEl) {
+    var notes = document.getElementById('notes-coach-' + coachId).value.trim();
+    var msgEl = document.getElementById('msg-coach-' + coachId);
+    var card = btnEl.closest('.review-card');
+    card.querySelectorAll('button').forEach(function(b) { b.disabled = true; });
+
+    var { error } = await FFP_DB.from('academy_coaches').update({
+      documents_status: status,
+      validation_notes: notes || null
+    }).eq('id', coachId);
+
+    if (error) {
+      msgEl.className = 'status-msg err';
+      msgEl.textContent = 'Erreur : ' + error.message;
+      card.querySelectorAll('button').forEach(function(b) { b.disabled = false; });
+    } else {
+      msgEl.className = 'status-msg ok';
+      msgEl.textContent = status === 'approved' ? '✓ Coach validé.' : '✕ Coach rejeté.';
+      setTimeout(function() { card.style.display = 'none'; }, 1200);
+    }
+  }
+
+  // ═══════════════════ HELPERS ═══════════════════
+  async function docChipHtml(doc, label) {
+    if (!doc) return '<div class="doc-missing">' + label + ' — non fourni</div>';
+    var { data, error } = await FFP_DB.storage.from('academy-documents').createSignedUrl(doc.file_path, 600);
+    var url = (!error && data) ? data.signedUrl : '#';
+    return '<a class="doc-chip" href="' + url + '" target="_blank" rel="noopener"><span class="icon">📎</span> ' + label + '</a>';
+  }
+
+  function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
+})();
+</script>
+</body>
+</html>
