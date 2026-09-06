@@ -853,7 +853,8 @@
   // quand meme enregistree, simplement non affichee sur la carte.
   async function geocodeLocation(locationText) {
     try {
-      var query = encodeURIComponent(locationText + ', France');
+      var cleaned = simplifyLocationForGeocoding(locationText);
+      var query = encodeURIComponent(cleaned + ', France');
       var res = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q=' + query, {
         headers: { 'Accept-Language': 'fr' }
       });
@@ -865,6 +866,15 @@
       console.warn('Geocodage impossible pour "' + locationText + '":', err);
     }
     return null;
+  }
+
+  // Nominatim gere mal "Paris 15", "Lyon 3e", "Marseille 8eme" etc. (confond
+  // le numero d'arrondissement avec un numero de rue) -> on ne garde que le
+  // nom de ville pour le geocodage, tout en conservant le texte original
+  // affiche a l'utilisateur (location_label).
+  function simplifyLocationForGeocoding(text) {
+    var match = text.match(/^([a-zA-ZÀ-ÿ''\-\s]+?)\s*\d{1,2}\s*(er|e|ème|eme)?\.?\s*$/i);
+    return match ? match[1].trim() : text.trim();
   }
 
   function escapeHtml(str) { var d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
