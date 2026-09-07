@@ -285,6 +285,7 @@ html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;colo
 <!-- JS chargé en externe pour fiabilité maximale -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ffp-supabase.js"></script>
+<script src="sport-config.js"></script>
 <script>
 
 // ONE SPORT — Coach JS
@@ -487,6 +488,7 @@ var LS_PENDING = 'ffp_pending';
 var LS_EVENTS  = 'ffp_events';
 
 // ── Shared lookups ──
+var CURRENT_SPORT = 'football';
 var POS_LIST  = ['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Milieu Défensif','Milieu Central','Milieu Offensif','Ailier Droit','Ailier Gauche','Avant-Centre'];
 var POS_SHORT = {'Gardien':'GK','Défenseur Central':'DC','Latéral Droit':'LD','Latéral Gauche':'LG','Milieu Défensif':'MD','Milieu Central':'MC','Milieu Offensif':'MO','Ailier Droit':'AD','Ailier Gauche':'AG','Avant-Centre':'AC'};
 var AB = ['#1A1200','#00121A','#0A1A00','#1A0010','#0C0C1A','#1A0C00','#001A16','#1A0600','#06001A','#0C1A0C'];
@@ -517,19 +519,15 @@ var PL=[];
 var REAL_MODE=false;
 
 function mapRealJoueurToCoachViewModel(row, evalRow){
-  var neutral={controle:0,dribble:0,frappe:0,passe:0,tete:0};
-  var neutralP={vitesse:0,endurance:0,force:0,coordination:0,souplesse:0};
-  var neutralT={positionnement:0,lecture:0,pressing:0};
-  var neutralM={motivation:0,concentration:0,combativite:0,leadership:0,stress:0};
-  var neutralC={reglesFIFA:0,nutrition:0,scolaire:0,ethique:0};
+  var neutralAll = (typeof buildDefaultCriteres==='function') ? buildDefaultCriteres(CURRENT_SPORT, 0) : {technique:{},physique:{},tactique:{},mental:{},culture:{}};
   var p={
     id:row.id, prenom:row.prenom, nom:row.nom, poste:row.poste||'Non renseigné',
     dob:row.date_naissance||'',
-    technique: evalRow?(evalRow.technique||neutral):neutral,
-    physique: evalRow?(evalRow.physique||neutralP):neutralP,
-    tactique: evalRow?(evalRow.tactique||neutralT):neutralT,
-    mental: evalRow?(evalRow.mental||neutralM):neutralM,
-    culture: evalRow?(evalRow.culture||neutralC):neutralC,
+    technique: evalRow?(evalRow.technique||neutralAll.technique):neutralAll.technique,
+    physique: evalRow?(evalRow.physique||neutralAll.physique):neutralAll.physique,
+    tactique: evalRow?(evalRow.tactique||neutralAll.tactique):neutralAll.tactique,
+    mental: evalRow?(evalRow.mental||neutralAll.mental):neutralAll.mental,
+    culture: evalRow?(evalRow.culture||neutralAll.culture):neutralAll.culture,
     sante:{taille:row.taille||'–',poids:row.poids||'–',
       imc:(row.taille&&row.poids)?+(row.poids/((row.taille/100)**2)).toFixed(1):'–',
       etat:'—'},
@@ -544,6 +542,10 @@ function mapRealJoueurToCoachViewModel(row, evalRow){
 async function loadRealPlayersForCoach(){
   try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
   if(!window.FFP_DB){ finishInit(); return; }
+  try{
+    var _sport = await sbGetMyClubSport();
+    applySport(_sport);
+  }catch(e){}
   try{
     var res=await FFP_DB.from('joueurs').select('*').eq('actif',true);
     if(res.error || !res.data){ finishInit(); return; }
@@ -658,8 +660,8 @@ function renderB(){
   var tb_=tb(p);
   var cats=[['Technique','technique','30%'],['Physique','physique','25%'],['Tactique','tactique','20%'],['Mental','mental','15%'],['Culture','culture','10%']];
   var bars=cats.map(function(c){return'<div class="bw"><div class="bwl"><span class="ll">'+c[0]+' <span style="font-size:10px;color:#475569">'+c[2]+'</span></span><span class="vv">'+cA(p,c[1]).toFixed(2)+'/10</span></div><div class="btr"><div class="bfi" style="width:'+cA(p,c[1])*10+'%"></div></div></div>';}).join('');
-  var str=tb_.top.map(function(t){return'<div class="swr"><div class="swd g"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
-  var wk=tb_.bot.map(function(t){return'<div class="swr"><div class="swd r"></div><div><div class="swk">'+t.k+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
+  var str=tb_.top.map(function(t){return'<div class="swr"><div class="swd g"></div><div><div class="swk">'+(ELBL[t.k]||t.k)+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
+  var wk=tb_.bot.map(function(t){return'<div class="swr"><div class="swd r"></div><div><div class="swk">'+(ELBL[t.k]||t.k)+' <span style="font-size:10px;color:#475569;font-weight:400">('+t.c+') '+t.v+'/10</span></div>'+(EX[t.k]||[]).map(function(e){return'<div class="swe">'+e+'</div>';}).join('')+'</div></div>';}).join('');
   var html='<div class="b2"><div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:12px"><div class="av" style="width:48px;height:48px;font-size:16px;background:'+AB[p.id%10]+';color:'+AT[p.id%10]+'">'+p.prenom[0]+p.nom[0]+'</div><div style="flex:1"><div class="pn">'+p.prenom+' '+p.nom+'</div><div style="font-size:12px;color:#888">'+p.poste+'</div></div><div style="text-align:right"><span class="sb '+sc(p.score)+'" style="font-size:14px;padding:4px 12px">'+p.score.toFixed(2)+'</span><div style="font-size:11px;color:#475569;margin-top:3px">Rang #'+p.rank+' · '+p.equipe+'</div></div></div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="pc">'+p.poste+'</span><span class="pc">'+p.sante.taille+'cm</span><span class="pc">'+p.sante.poids+'kg</span><span class="pc">IMC '+p.sante.imc+'</span><span class="pc">'+p.sante.etat+'</span></div><div class="sep"></div><div class="ct">Scores</div>'+bars+'</div><div class="rcrd"><div class="ct" style="align-self:flex-start">Radar</div>'+radarSVG(p)+'<div style="font-size:11px;color:#475569;margin-top:4px">Score : <span style="color:#1565C0;font-weight:700">'+p.score.toFixed(2)+'/10</span></div></div></div><div class="swg"><div class="swc"><div class="swh gd"><div class="swd g" style="width:9px;height:9px"></div><div class="swt g">Points forts</div></div>'+str+'</div><div class="swc"><div class="swh rd"><div class="swd r" style="width:9px;height:9px"></div><div class="swt r">Lacunes</div></div>'+wk+'</div></div><div class="ao" id="aout"><div class="ct">Programme IA</div><div class="at" id="atxt"></div></div>';
   var bcnt=document.getElementById('bcnt');if(bcnt)bcnt.innerHTML=html;
 }
@@ -722,12 +724,32 @@ function renderPending(){
   if(pending.length===0){wrap.innerHTML='<div style="text-align:center;padding:40px;color:#475569"><div style="font-size:32px;margin-bottom:12px">📭</div><div style="font-family:Montserrat,sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Aucune demande en attente</div><div style="font-size:12px;margin-top:6px">Les inscriptions des parents apparaîtront ici</div></div>';return;}
   wrap.innerHTML=pending.map(function(req,idx){return'<div class="pend-card"><div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px"><div class="av" style="width:44px;height:44px;font-size:15px;background:#2A1800;color:#E8C49A;flex-shrink:0">'+req.prenom[0]+req.nom[0]+'</div><div style="flex:1"><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#388E3C">'+req.prenom+' '+req.nom+'</div><div style="font-size:12px;color:#888;margin-top:2px">'+req.poste+'</div>'+(req.dob?'<div style="font-size:11px;color:#475569;margin-top:2px">Né(e) le : '+req.dob+'</div>':'')+(req.taille?'<div style="font-size:11px;color:#475569">'+req.taille+'cm · '+req.poids+'kg</div>':'')+'</div><div style="text-align:right;flex-shrink:0"><div style="font-size:10px;color:#475569;font-family:Montserrat,sans-serif">Soumis le</div><div style="font-size:11px;color:#888">'+new Date(req.submitted_at).toLocaleDateString('fr-FR')+'</div></div></div>'+(req.parent_name?'<div style="font-size:12px;color:#888;margin-bottom:4px">👤 Parent : <strong style="color:#F0F0F0">'+req.parent_name+'</strong>'+(req.parent_contact?' · '+req.parent_contact:'')+'</div>':'')+(req.notes?'<div style="font-size:12px;color:#888;margin-bottom:10px;padding:8px;background:#1A1A1A;border-radius:6px;border-left:2px solid #D4AF37">📝 '+req.notes+'</div>':'')+'<div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="validatePlayer('+idx+')" style="background:linear-gradient(135deg,#4BC88A,#2A8A5A);color:#000;border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">✓ Valider et intégrer</button><button onclick="rejectPlayer('+idx+')" style="background:transparent;color:#E24B4A;border:1px solid rgba(226,75,74,.35);border-radius:6px;padding:8px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase">✕ Refuser</button></div></div>';}).join('');
 }
-function validatePlayer(idx){var pending=getPending();var req=pending[idx];if(!req)return;var def=5.0,newId=getNextId();var newP={id:newId,prenom:req.prenom,nom:req.nom,poste:req.poste,source:'parent',dob:req.dob||'',notes:req.notes||'',technique:{controle:def,dribble:def,frappe:def,passe:def,tete:def},physique:{vitesse:def,endurance:def,force:def,coordination:def,souplesse:def},tactique:{positionnement:def,lecture:def,pressing:def},mental:{motivation:def,concentration:def,combativite:def,leadership:def,stress:def},culture:{reglesFIFA:def,nutrition:def,scolaire:def,ethique:def},sante:{taille:req.taille||145,poids:req.poids||38,imc:+((req.poids||38)/((req.taille||145)/100)**2).toFixed(1),etat:'Bon'}};newP.score=gS(newP);try{var cs=JSON.parse(localStorage.getItem(LS_CUSTOM)||'[]');cs.push(newP);localStorage.setItem(LS_CUSTOM,JSON.stringify(cs));pending.splice(idx,1);localStorage.setItem(LS_PENDING,JSON.stringify(pending));}catch(e){alert('Erreur localStorage');return;}PL.push(newP);sortAndRank();renderDash();renderJ();renderClass();refreshBsel();renderPending();renderPendingBadge();alert('✓ '+newP.prenom+' '+newP.nom+' intégré(e) ! Code parent : '+playerCode(newP));}
+function validatePlayer(idx){var pending=getPending();var req=pending[idx];if(!req)return;var def=5.0,newId=getNextId();var _defaults=(typeof buildDefaultCriteres==='function')?buildDefaultCriteres(CURRENT_SPORT,def):{technique:{},physique:{},tactique:{},mental:{},culture:{}};var newP={id:newId,prenom:req.prenom,nom:req.nom,poste:req.poste,source:'parent',dob:req.dob||'',notes:req.notes||'',technique:_defaults.technique,physique:_defaults.physique,tactique:_defaults.tactique,mental:_defaults.mental,culture:_defaults.culture,sante:{taille:req.taille||145,poids:req.poids||38,imc:+((req.poids||38)/((req.taille||145)/100)**2).toFixed(1),etat:'Bon'}};newP.score=gS(newP);try{var cs=JSON.parse(localStorage.getItem(LS_CUSTOM)||'[]');cs.push(newP);localStorage.setItem(LS_CUSTOM,JSON.stringify(cs));pending.splice(idx,1);localStorage.setItem(LS_PENDING,JSON.stringify(pending));}catch(e){alert('Erreur localStorage');return;}PL.push(newP);sortAndRank();renderDash();renderJ();renderClass();refreshBsel();renderPending();renderPendingBadge();alert('✓ '+newP.prenom+' '+newP.nom+' intégré(e) ! Code parent : '+playerCode(newP));}
 function rejectPlayer(idx){if(!confirm('Refuser cette demande ?'))return;var p=getPending();p.splice(idx,1);try{localStorage.setItem(LS_PENDING,JSON.stringify(p));}catch(e){}renderPending();renderPendingBadge();}
 
 // ══ EVALUATIONS ══
 var ECATS=[{key:'technique',lbl:'Technique',ico:'⚽',col:'#D4AF37',params:['controle','dribble','frappe','passe','tete']},{key:'physique',lbl:'Physique',ico:'💪',col:'#60A8D0',params:['vitesse','endurance','force','coordination','souplesse']},{key:'tactique',lbl:'Tactique',ico:'♟',col:'#8080D0',params:['positionnement','lecture','pressing']},{key:'mental',lbl:'Mental',ico:'🧠',col:'#C89020',params:['motivation','concentration','combativite','leadership','stress']},{key:'culture',lbl:'Culture',ico:'🎓',col:'#70C870',params:['reglesFIFA','nutrition','scolaire','ethique']}];
 var ELBL={controle:'Contrôle',dribble:'Dribble',frappe:'Frappe',passe:'Passe',tete:'Tête',vitesse:'Vitesse',endurance:'Endurance',force:'Force',coordination:'Coordination',souplesse:'Souplesse',positionnement:'Positionnement',lecture:'Lecture du jeu',pressing:'Pressing',motivation:'Motivation',concentration:'Concentration',combativite:'Combativité',leadership:'Leadership',stress:'Gestion stress',reglesFIFA:'Règles FIFA',nutrition:'Nutrition',scolaire:'Scolaire',ethique:'Éthique'};
+
+// Applique le référentiel d'un sport (postes, critères d'évaluation, exercices) aux
+// variables globales ci-dessus. Appelé une fois le sport du club connu (club réel).
+function applySport(sportId){
+  if(!sportId || sportId==='football' || typeof SPORT_CONFIG==='undefined' || !SPORT_CONFIG[sportId]) return;
+  CURRENT_SPORT = sportId;
+  var cfg = SPORT_CONFIG[sportId];
+  POS_LIST = cfg.postes.slice();
+  POS_SHORT = Object.assign({}, cfg.postesShort);
+  var em = buildEvalMeta(sportId);
+  ECATS = em.ecats;
+  ELBL = em.elbl;
+  EX = cfg.exercices || {};
+  populatePosteSelect();
+}
+function populatePosteSelect(){
+  var sel = document.getElementById('add-poste');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">Choisir</option>' + POS_LIST.map(function(p){ return '<option>'+p+'</option>'; }).join('');
+}
 var SAVED={};var CUR_EVAL=null;
 function loadEvalData(){try{var r=localStorage.getItem(LS_EVAL);if(!r)return;SAVED=JSON.parse(r);}catch(e){}}
 function evalDone(pid){if(REAL_MODE){var p=PL.find(function(x){return x.id===pid;});return!!(p&&p.hasEvaluations);}return!!SAVED[pid];}
@@ -1167,10 +1189,10 @@ function exportPDF(pid){
     // Strengths & weaknesses
     +'<div class="swot">'
     +'<div class="sw-box"><div class="sw-head g">✅ Points forts</div>'
-    +tb_.top.map(function(t){return'<div class="sw-row"><div class="k">'+t.k+' <span style="color:#888;font-weight:400">('+t.v+'/10)</span></div>'+(EX[t.k]||[]).slice(0,1).map(function(e){return'<div class="ex">→ '+e+'</div>';}).join('')+'</div>';}).join('')
+    +tb_.top.map(function(t){return'<div class="sw-row"><div class="k">'+(ELBL[t.k]||t.k)+' <span style="color:#888;font-weight:400">('+t.v+'/10)</span></div>'+(EX[t.k]||[]).slice(0,1).map(function(e){return'<div class="ex">→ '+e+'</div>';}).join('')+'</div>';}).join('')
     +'</div>'
     +'<div class="sw-box"><div class="sw-head r">🎯 Axes de progression</div>'
-    +tb_.bot.slice(0,4).map(function(t){return'<div class="sw-row"><div class="k">'+t.k+' <span style="color:#888;font-weight:400">('+t.v+'/10)</span></div>'+(EX[t.k]||[]).slice(0,1).map(function(e){return'<div class="ex">→ '+e+'</div>';}).join('')+'</div>';}).join('')
+    +tb_.bot.slice(0,4).map(function(t){return'<div class="sw-row"><div class="k">'+(ELBL[t.k]||t.k)+' <span style="color:#888;font-weight:400">('+t.v+'/10)</span></div>'+(EX[t.k]||[]).slice(0,1).map(function(e){return'<div class="ex">→ '+e+'</div>';}).join('')+'</div>';}).join('')
     +'</div></div>';
 
   // AI Program if available
