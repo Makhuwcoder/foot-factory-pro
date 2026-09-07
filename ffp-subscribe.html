@@ -113,6 +113,7 @@ async function goToStripe() {
   var ville      = getParam('ville') || '';
   var region     = getParam('region') || '';
   var categories = getParam('categories') || '';
+  var sport      = getParam('sport') || 'football';
 
   try {
     var res = await fetch(
@@ -126,7 +127,8 @@ async function goToStripe() {
         },
         body: JSON.stringify({
           plan: plan, coaches: coaches, email: email, club: club,
-          prenom: prenom, nom: nom, ville: ville, region: region, categories: categories
+          prenom: prenom, nom: nom, ville: ville, region: region, categories: categories,
+          sport: sport
         })
       }
     );
