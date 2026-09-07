@@ -225,6 +225,10 @@ document.addEventListener('DOMContentLoaded', function(){
   renderSportGrid();
   updateProgress(0);
   updateCoachCount(3);
+  try {
+    var pre = new URLSearchParams(window.location.search).get('sport');
+    if (pre && SPORT_CONFIG[pre]) selectSport(pre);
+  } catch(e) {}
 });
 
 
