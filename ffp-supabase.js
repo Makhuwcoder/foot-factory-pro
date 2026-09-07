@@ -188,6 +188,20 @@ async function sbGetMyClubId() {
   } catch(e) { return null; }
 }
 
+// Sport du club connecté ('football' par défaut si non trouvé/hors ligne).
+// Résultat mis en cache en mémoire pour la durée de la session (évite un aller-retour DB répété).
+var _CLUB_SPORT_CACHE = null;
+async function sbGetMyClubSport() {
+  if (_CLUB_SPORT_CACHE) return _CLUB_SPORT_CACHE;
+  try {
+    var clubId = await sbGetMyClubId();
+    if (!clubId || !FFP_DB) return 'football';
+    var res = await FFP_DB.from('clubs').select('sport').eq('id', clubId).single();
+    _CLUB_SPORT_CACHE = (res.data && res.data.sport) || 'football';
+    return _CLUB_SPORT_CACHE;
+  } catch(e) { return 'football'; }
+}
+
 // ── Realtime ─────────────────────────────────────────
 function sbSubscribeMessages(clubId, callback) {
   if (!FFP_DB) return null;
