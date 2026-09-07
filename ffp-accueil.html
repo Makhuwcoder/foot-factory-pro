@@ -6,7 +6,8 @@
 <link rel="apple-touch-icon" href="/favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title data-i18n="fb_page_title">One Sport — Connecter. Partager. Progresser.</title>
-<meta name="description" content="Plateforme de coaching football premium. IA, évaluations, highlights, recrutement.">
+<meta name="description" content="Plateforme de coaching football premium. IA, évaluations, highlights, recrutement." id="meta-desc">
+<script src="/sport-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
@@ -294,7 +295,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
 <header class="hdr">
   <div class="hdr-inner">
     <a href="#" class="hdr-logo">
-      <img src="/logo-one-sport-football.png" alt="One Sport Football" style="height:48px;width:auto"/>
+      <img src="/logo-one-sport-football.png" alt="One Sport Football" class="js-sport-logo" style="height:48px;width:auto"/>
 
     </a>
     <nav class="hdr-nav">
@@ -318,7 +319,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
 
   <div class="hero-content">
     <div style="animation:fadeUp .8s ease both;margin-bottom:24px">
-      <img src="/logo-one-sport-football.png" alt="One Sport" style="width:min(280px,50vw);height:auto;animation:float 3.5s ease-in-out infinite"/>
+      <img src="/logo-one-sport-football.png" alt="One Sport" class="js-sport-logo" style="width:min(280px,50vw);height:auto;animation:float 3.5s ease-in-out infinite"/>
     </div>
     <div style="animation:fadeUp .85s ease both .1s;opacity:0">
       <div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:clamp(32px,7vw,80px);letter-spacing:6px;text-transform:uppercase;line-height:1;background:linear-gradient(135deg,#0D1B3E 0%,#1565C0 50%,#1565C0 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite,fadeUp .85s ease both .1s">ONE SPORT</div>
@@ -334,7 +335,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
       <span data-i18n="fb_hero_desc_l3">nous transformons la donnée en progression.</span>
     </p>
     <div class="hero-btns" style="animation:fadeUp .9s ease both .45s;opacity:0;margin-top:8px">
-      <a href="/ffp-register-club.html" class="btn-admin-club" data-i18n="fb_btn_admin" onclick="clearAnyDemoSession()">🏟️ Admin Club</a>
+      <a href="/ffp-register-club.html" id="admin-club-link" class="btn-admin-club" data-i18n="fb_btn_admin" onclick="clearAnyDemoSession()">🏟️ Admin Club</a>
       <a href="/ffp-dashboard.html" class="btn-primary" data-i18n="fb_btn_coach" onclick="clearAnyDemoSession()">Espace Coach →</a>
       <div style="flex-basis:100%;height:0"></div>
       <a href="/ffp-login.html?role=parent" class="btn-secondary" data-i18n="fb_btn_parents" onclick="clearAnyDemoSession()">Espace Parents</a>
@@ -412,7 +413,7 @@ footer { border-top:1px solid rgba(0,0,0,.08); padding:40px 24px 30px;
 <div class="sep"></div>
 
 <!-- ══ SECTION BOUTIQUE ══ -->
-<section style="position:relative;z-index:1;padding:60px 20px;background:linear-gradient(135deg,#EBF4FF 0%,#DCEEFF 100%)">
+<section id="shop-section" style="position:relative;z-index:1;padding:60px 20px;background:linear-gradient(135deg,#EBF4FF 0%,#DCEEFF 100%)">
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:48px;flex-wrap:wrap">
     <div style="flex:1;min-width:260px">
       <div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:.2em;color:#1565C0;text-transform:uppercase;margin-bottom:10px" data-i18n="fb_shop_new">Nouveauté</div>
@@ -638,6 +639,39 @@ window.addEventListener('load', function(){
   var lang = saved || (supported.indexOf(browser) >= 0 ? browser : 'fr');
   applyFBLang(lang);
 });
+</script>
+<script>
+(function applySportBranding(){
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var sportId = params.get('sport') || 'football';
+    if (typeof SPORT_CONFIG === 'undefined' || !SPORT_CONFIG[sportId]) sportId = 'football';
+    var cfg = SPORT_CONFIG[sportId];
+
+    // Lien Admin Club : on transmet le sport pour pré-remplir l'étape 1 de l'inscription
+    var adminLink = document.getElementById('admin-club-link');
+    if (adminLink) adminLink.href = '/ffp-register-club.html?sport=' + encodeURIComponent(sportId);
+
+    if (sportId === 'football') return; // page déjà brandée football par défaut
+
+    var metaDesc = document.getElementById('meta-desc');
+    if (metaDesc) metaDesc.setAttribute('content', 'Plateforme de coaching ' + cfg.label.toLowerCase() + ' premium. IA, évaluations, bilans, convocations.');
+
+    document.title = document.title.replace(/football/i, cfg.label);
+
+    document.querySelectorAll('.js-sport-logo').forEach(function(img){
+      img.src = cfg.logoLight;
+      img.alt = 'One Sport ' + cfg.label;
+    });
+
+    var tagline = document.querySelector('[data-i18n="fb_piliers_sub"]');
+    if (tagline) tagline.textContent = 'La donnée. Le travail. La progression. Le ' + cfg.label.toLowerCase() + '. L\'avenir.';
+
+    // La boutique physique ne propose que du matériel football pour l'instant
+    var shopSection = document.getElementById('shop-section');
+    if (shopSection) shopSection.style.display = 'none';
+  } catch(e) { console.warn('Sport branding error:', e); }
+})();
 </script>
 </body>
 </html>
