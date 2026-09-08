@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>One Sport — Gestionnaires de Données</title>
+<meta name="description" content="Un(e) stagiaire dédié(e) à la gestion des données de votre club sportif. Filmer, saisir, analyser — sans mobiliser vos coachs.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#0D1B3E">
+<style>
+:root{--navy:#0D1B3E;--blue:#1565C0;--gold:#D4AF37}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#050810;color:#F0F0F0;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(21,101,192,.08),transparent 60%);z-index:0}
+h1,h2,h3{font-family:'Montserrat',sans-serif;font-weight:900}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+header{padding:18px 0}
+header a.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16px;letter-spacing:2px;background:linear-gradient(135deg,#1565C0,#4BC88A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero{text-align:center;padding:50px 0 30px}
+.eyebrow{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.hero h1{font-size:clamp(28px,5vw,46px);line-height:1.15;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(135deg,#1565C0,#4BC88A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{max-width:640px;margin:0 auto;color:#AAB4C4;font-size:15px;line-height:1.7}
+
+.pain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:40px 0}
+.pain-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px 14px;text-align:center}
+.pain-card .ic{font-size:26px;margin-bottom:8px}
+.pain-card .t{font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#EEE}
+
+.solution{background:rgba(21,101,192,.06);border:1px solid rgba(21,101,192,.2);border-radius:16px;padding:32px;margin:40px 0;text-align:center}
+.solution h2{font-size:22px;margin-bottom:12px}
+.solution p{color:#AAB4C4;max-width:680px;margin:0 auto;line-height:1.7}
+
+.tabs{display:flex;gap:10px;justify-content:center;margin:44px 0 24px}
+.tab-btn{font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:13px 28px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#AAB4C4;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:linear-gradient(135deg,var(--navy),var(--blue));border-color:transparent;color:#fff;box-shadow:0 4px 20px rgba(21,101,192,.35)}
+
+.panel{display:none;max-width:640px;margin:0 auto 60px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px}
+.panel.active{display:block}
+.panel h3{font-size:18px;margin-bottom:8px}
+.panel .sub{color:#AAB4C4;font-size:13px;margin-bottom:24px;line-height:1.6}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8896AC;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:#0B1220;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 13px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
+.field textarea{resize:vertical;min-height:70px}
+.checks{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.checks label{display:flex;align-items:center;gap:8px;font-size:13px;color:#DDE3EC;text-transform:none;font-family:Raleway,sans-serif;font-weight:400;cursor:pointer}
+.checks input{width:auto}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn-submit{width:100%;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;border-radius:10px;padding:15px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-top:10px;transition:all .2s}
+.btn-submit:hover{box-shadow:0 6px 24px rgba(21,101,192,.45)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.msg{margin-top:14px;font-size:13px;text-align:center}
+.msg.error{color:#E24B4A}
+.msg.ok{color:#4BC88A}
+.success-block{text-align:center;padding:20px 0}
+.success-block .ic{font-size:44px;margin-bottom:14px}
+@media(max-width:700px){.pain-grid{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a href="/ffp-accueil.html" class="logo"><span class="logo-text">ONE SPORT</span></a>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Nouveau programme — en phase de test</div>
+    <h1>Vos données méritent mieux<br>qu'un <span>coach débordé</span></h1>
+    <p>Filmer les matchs, saisir les évaluations, gérer les convocations, enregistrer les résultats des tests — ce travail existe, mais aucun coach n'a le temps de le faire sérieusement en plus d'entraîner. One Sport prépare un vivier d'étudiants stagiaires dédiés à la gestion des données de club, en lien direct avec les clubs adhérents.</p>
+  </section>
+
+  <div class="pain-grid">
+    <div class="pain-card"><div class="ic">🎥</div><div class="t">Filmer matchs<br>et entraînements</div></div>
+    <div class="pain-card"><div class="ic">📊</div><div class="t">Saisir évaluations<br>et performances</div></div>
+    <div class="pain-card"><div class="ic">🧪</div><div class="t">Enregistrer résultats<br>de tests</div></div>
+    <div class="pain-card"><div class="ic">📋</div><div class="t">Gérer les<br>convocations</div></div>
+  </div>
+
+  <div class="solution">
+    <h2>L'idée : un poste de Gestionnaire de Données, tenu par des stagiaires</h2>
+    <p>BTS, université, école d'ingénieur — selon le cycle scolaire, un stage de 2 à 6 mois consécutifs, directement au sein du club, pour prendre en charge cette gestion de données pendant que le coach coache. Avant de construire la plateforme de mise en relation, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-club" onclick="switchTab('club')">🏟️ Je suis un club</button>
+    <button class="tab-btn" id="tab-candidat" onclick="switchTab('candidat')">🎓 Je suis étudiant(e)</button>
+  </div>
+
+  <!-- ═══ FORMULAIRE CLUB ═══ -->
+  <div class="panel active" id="panel-club">
+    <div id="club-form-wrap">
+      <h3>Votre club a besoin d'un coup de main sur la donnée ?</h3>
+      <p class="sub">Laissez-nous vos coordonnées : on vous recontacte dès qu'un vivier de candidats est prêt dans votre région.</p>
+      <div class="field"><label>Nom du club</label><input id="c-club-nom" type="text" placeholder="AS Voltaire Paris"></div>
+      <div class="row2">
+        <div class="field"><label>Votre nom</label><input id="c-contact-nom" type="text" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Fonction</label><input id="c-contact-fonction" type="text" placeholder="Coach, Directeur..."></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Email</label><input id="c-email" type="email" placeholder="vous@club.fr"></div>
+        <div class="field"><label>Téléphone</label><input id="c-tel" type="tel" placeholder="06 12 34 56 78"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Sport principal</label><input id="c-sport" type="text" placeholder="Football, Rugby, Basketball..."></div>
+        <div class="field"><label>Nombre d'équipes / coachs</label><input id="c-taille" type="text" placeholder="ex: 6 équipes, 8 coachs"></div>
+      </div>
+      <div class="field">
+        <label>Tâches que vous aimeriez déléguer</label>
+        <div class="checks">
+          <label><input type="checkbox" value="Filmer matchs/entraînements"> Filmer matchs et entraînements</label>
+          <label><input type="checkbox" value="Saisir évaluations"> Saisir les évaluations joueurs</label>
+          <label><input type="checkbox" value="Saisir résultats tests"> Saisir les résultats de tests</label>
+          <label><input type="checkbox" value="Gérer convocations"> Gérer les convocations</label>
+          <label><input type="checkbox" value="Suivre matchs en live"> Suivre les matchs en live sur One Sport</label>
+        </div>
+      </div>
+      <div class="field"><label>Message (optionnel)</label><textarea id="c-message" placeholder="Période souhaitée, contraintes particulières..."></textarea></div>
+      <div id="club-err" class="msg error" style="display:none"></div>
+      <button class="btn-submit" onclick="submitLead('club')">Manifester mon intérêt</button>
+    </div>
+    <div class="success-block" id="club-success" style="display:none">
+      <div class="ic">✅</div>
+      <h3>Merci !</h3>
+      <p class="sub">Votre demande est enregistrée. On revient vers vous dès que le vivier est prêt dans votre secteur.</p>
+    </div>
+  </div>
+
+  <!-- ═══ FORMULAIRE CANDIDAT ═══ -->
+  <div class="panel" id="panel-candidat">
+    <div id="candidat-form-wrap">
+      <h3>Envie d'un stage utile dans le sport-tech ?</h3>
+      <p class="sub">Rejoignez le vivier de futurs Gestionnaires de Données One Sport. On vous met en relation avec des clubs adhérents dès que le programme démarre dans votre secteur.</p>
+      <div class="row2">
+        <div class="field"><label>Prénom Nom</label><input id="s-nom" type="text" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Niveau d'études</label><select id="s-niveau"><option value="">Choisir</option><option value="BTS">BTS</option><option value="Licence">Licence (université)</option><option value="Master">Master (université)</option><option value="Ecole ingenieur">École d'ingénieur</option><option value="Autre">Autre</option></select></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Email</label><input id="s-email" type="email" placeholder="vous@etu.fr"></div>
+        <div class="field"><label>Téléphone</label><input id="s-tel" type="tel" placeholder="06 12 34 56 78"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>École / Université</label><input id="s-ecole" type="text" placeholder="Nom de l'établissement"></div>
+        <div class="field"><label>Durée de stage disponible</label><input id="s-duree" type="text" placeholder="ex: 2 mois, 6 mois"></div>
+      </div>
+      <div class="field"><label>Sport(s) qui vous intéresse(nt)</label><input id="s-sport" type="text" placeholder="Football, Basketball, tous sports..."></div>
+      <div class="field"><label>Pourquoi ce stage vous intéresse (quelques lignes)</label><textarea id="s-motivation" placeholder="Motivation, compétences (Excel, data, vidéo...)..."></textarea></div>
+      <div id="candidat-err" class="msg error" style="display:none"></div>
+      <button class="btn-submit" onclick="submitLead('candidat')">Rejoindre le vivier</button>
+    </div>
+    <div class="success-block" id="candidat-success" style="display:none">
+      <div class="ic">✅</div>
+      <h3>Candidature enregistrée !</h3>
+      <p class="sub">On vous recontacte dès qu'un club adhérent recherche un profil comme le vôtre.</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="ffp-supabase.js"></script>
+<script>
+function switchTab(which){
+  document.getElementById('tab-club').classList.toggle('active', which==='club');
+  document.getElementById('tab-candidat').classList.toggle('active', which==='candidat');
+  document.getElementById('panel-club').classList.toggle('active', which==='club');
+  document.getElementById('panel-candidat').classList.toggle('active', which==='candidat');
+}
+
+async function ensureDB(){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
+  return !!window.FFP_DB;
+}
+
+async function submitLead(type){
+  var errEl=document.getElementById(type+'-err');
+  errEl.style.display='none';
+
+  var nom, email, tel, details;
+
+  if(type==='club'){
+    nom=(document.getElementById('c-club-nom').value||'').trim();
+    var contactNom=(document.getElementById('c-contact-nom').value||'').trim();
+    email=(document.getElementById('c-email').value||'').trim();
+    tel=(document.getElementById('c-tel').value||'').trim();
+    if(!nom||!contactNom||!email){
+      errEl.textContent='Nom du club, contact et email sont requis.';
+      errEl.style.display='block';
+      return;
+    }
+    var taches=Array.prototype.slice.call(document.querySelectorAll('#panel-club .checks input:checked')).map(function(i){return i.value;});
+    details={
+      contact_nom:contactNom,
+      fonction:(document.getElementById('c-contact-fonction').value||'').trim(),
+      sport:(document.getElementById('c-sport').value||'').trim(),
+      taille:(document.getElementById('c-taille').value||'').trim(),
+      taches:taches,
+      message:(document.getElementById('c-message').value||'').trim()
+    };
+  } else {
+    nom=(document.getElementById('s-nom').value||'').trim();
+    email=(document.getElementById('s-email').value||'').trim();
+    tel=(document.getElementById('s-tel').value||'').trim();
+    var niveau=document.getElementById('s-niveau').value;
+    if(!nom||!email||!niveau){
+      errEl.textContent="Nom, email et niveau d'études sont requis.";
+      errEl.style.display='block';
+      return;
+    }
+    details={
+      niveau:niveau,
+      ecole:(document.getElementById('s-ecole').value||'').trim(),
+      duree:(document.getElementById('s-duree').value||'').trim(),
+      sport:(document.getElementById('s-sport').value||'').trim(),
+      motivation:(document.getElementById('s-motivation').value||'').trim()
+    };
+  }
+
+  if(!(await ensureDB())){
+    errEl.textContent='Service momentanément indisponible, réessayez.';
+    errEl.style.display='block';
+    return;
+  }
+
+  try{
+    var res=await FFP_DB.from('data_manager_leads').insert({
+      type:type, nom:nom, email:email, telephone:tel||null, details:details
+    });
+    if(res.error){
+      console.warn(res.error);
+      errEl.textContent="Erreur lors de l'envoi, réessayez.";
+      errEl.style.display='block';
+      return;
+    }
+    document.getElementById(type+'-form-wrap').style.display='none';
+    document.getElementById(type+'-success').style.display='block';
+  }catch(e){
+    console.warn(e);
+    errEl.textContent='Erreur réseau, réessayez.';
+    errEl.style.display='block';
+  }
+}
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>
