@@ -185,7 +185,19 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
         <div class="field"><label>Durée de stage disponible</label><input id="s-duree" type="text" placeholder="ex: 2 mois, 6 mois"></div>
       </div>
       <div class="field"><label>Sport(s) qui vous intéresse(nt)</label><input id="s-sport" type="text" placeholder="Football, Basketball, tous sports..."></div>
-      <div class="field"><label>Pourquoi ce stage vous intéresse (quelques lignes)</label><textarea id="s-motivation" placeholder="Motivation, compétences (Excel, data, vidéo...)..."></textarea></div>
+      <div class="field">
+        <label>Compétences que vous pouvez apporter</label>
+        <div class="checks">
+          <label><input type="checkbox" value="Analyse de données"> Analyse de données</label>
+          <label><input type="checkbox" value="Synthèse / rédaction"> Synthèse &amp; rédaction</label>
+          <label><input type="checkbox" value="Communication digitale"> Communication digitale (réseaux, contenus)</label>
+          <label><input type="checkbox" value="Excel / tableurs"> Excel / tableurs</label>
+          <label><input type="checkbox" value="Vidéo / montage"> Vidéo / montage</label>
+          <label><input type="checkbox" value="Gestion de projet"> Gestion de projet</label>
+          <label><input type="checkbox" value="Anglais courant"> Anglais courant</label>
+        </div>
+      </div>
+      <div class="field"><label>Pourquoi ce stage vous intéresse (quelques lignes)</label><textarea id="s-motivation" placeholder="Motivation, expériences pertinentes..."></textarea></div>
       <div id="candidat-err" class="msg error" style="display:none"></div>
       <button class="btn-submit" onclick="submitLead('candidat')">Rejoindre le vivier</button>
     </div>
@@ -255,12 +267,14 @@ async function submitLead(type){
       errEl.style.display='block';
       return;
     }
+    var competences=Array.prototype.slice.call(document.querySelectorAll('#panel-candidat .checks input:checked')).map(function(i){return i.value;});
     details={
       niveau:niveau,
       poste_type:document.getElementById('s-poste-type').value,
       ecole:(document.getElementById('s-ecole').value||'').trim(),
       duree:(document.getElementById('s-duree').value||'').trim(),
       sport:(document.getElementById('s-sport').value||'').trim(),
+      competences:competences,
       motivation:(document.getElementById('s-motivation').value||'').trim()
     };
   }
