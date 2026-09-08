@@ -62,6 +62,12 @@
   .status-completed { background:var(--surface2); color:#999; }
   .status-cancelled { background:rgba(224,82,82,0.12); color:var(--red); }
   .status-noshow { background:rgba(212,168,87,0.12); color:var(--amber); }
+  .btn-cancel { font-size:0.74rem; font-family:'Barlow Condensed',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; color:#999; background:none; border:1px solid var(--border); border-radius:4px; padding:6px 12px; cursor:pointer; margin-top:6px; }
+  .btn-cancel:hover { border-color:var(--red); color:var(--red); }
+  .btn-cancel:disabled { opacity:0.5; cursor:not-allowed; }
+  .cancel-msg { font-size:0.76rem; margin-top:6px; }
+  .cancel-msg.ok { color:var(--green); }
+  .cancel-msg.error { color:#F5A3A3; }
 </style>
 </head>
 <body>
@@ -221,13 +227,26 @@
     var amount = ((b.amount_total_cents || 0) / 100).toFixed(2).replace('.', ',');
     var payLabel = b.payment_status === 'paid' ? 'Payé' : b.payment_status === 'refunded' ? 'Remboursé' : b.payment_status === 'failed' ? 'Échec paiement' : 'En attente';
 
-    return '<div class="booking-row">' +
+    var canCancel = b.booking_status === 'confirmed' && start && start >= new Date();
+    var hoursLeft = start ? (start.getTime() - Date.now()) / 3600000 : 0;
+    var cancelBlock = '';
+    if (canCancel) {
+      var noticeTxt = hoursLeft >= 24
+        ? 'Annulation gratuite possible.'
+        : 'Hors délai de 24h : annulation possible mais sans remboursement.';
+      cancelBlock =
+        '<button class="btn-cancel" id="cancelBtn-' + b.id + '" onclick="ClientBookings.doCancel(\'' + b.id + '\')">Annuler</button>' +
+        '<div class="cancel-msg" id="cancelNotice-' + b.id + '" style="color:#777;">' + noticeTxt + '</div>';
+    }
+
+    return '<div class="booking-row" id="bookingRow-' + b.id + '">' +
       '<div class="booking-left">' +
       '<div class="booking-date-box"><span class="day">' + day + '</span><span class="month">' + month + '</span></div>' +
       '<div>' +
       '<div class="booking-title">' + escapeHtml(s.title || 'Séance') + '</div>' +
       '<div class="booking-meta">' + escapeHtml(coach.display_name || '') + (s.discipline ? ' · ' + escapeHtml(s.discipline) : '') + (timeStr ? ' · ' + timeStr : '') + '</div>' +
       '<div class="booking-meta">' + escapeHtml(s.location_label || '') + ' · ' + (b.participants_count || 1) + ' participant(s)</div>' +
+      cancelBlock +
       '</div>' +
       '</div>' +
       '<div class="booking-right">' +
@@ -237,7 +256,41 @@
       '</div>';
   }
 
-  window.ClientBookings = { doLogin: doLogin, doForgotPassword: doForgotPassword, doLogout: doLogout };
+  var CURRENT_SESSION = null;
+
+  async function doCancel(bookingId) {
+    var ok = window.confirm('Confirmer l\'annulation de cette réservation ?');
+    if (!ok) return;
+    var btn = document.getElementById('cancelBtn-' + bookingId);
+    var notice = document.getElementById('cancelNotice-' + bookingId);
+    if (btn) { btn.disabled = true; btn.textContent = 'Annulation…'; }
+
+    try {
+      var { data: sessData } = await FFP_DB.auth.getSession();
+      var token = sessData && sessData.session ? sessData.session.access_token : null;
+      if (!token) { if (notice) { notice.className = 'cancel-msg error'; notice.textContent = 'Session expirée, reconnectez-vous.'; } return; }
+
+      var res = await fetch('https://qpabgwskavglvojhuzeq.supabase.co/functions/v1/cancel-academy-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ booking_id: bookingId })
+      });
+      var out = await res.json();
+      if (!res.ok) {
+        if (notice) { notice.className = 'cancel-msg error'; notice.textContent = out.error || 'Erreur lors de l\'annulation.'; }
+        if (btn) { btn.disabled = false; btn.textContent = 'Annuler'; }
+        return;
+      }
+      if (notice) { notice.className = 'cancel-msg ok'; notice.textContent = out.message; }
+      if (btn) btn.style.display = 'none';
+      setTimeout(function () { FFP_DB.auth.getSession().then(function (r) { renderBookings(r.data.session); }); }, 1200);
+    } catch (e) {
+      if (notice) { notice.className = 'cancel-msg error'; notice.textContent = 'Erreur réseau, réessayez.'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Annuler'; }
+    }
+  }
+
+  window.ClientBookings = { doLogin: doLogin, doForgotPassword: doForgotPassword, doLogout: doLogout, doCancel: doCancel };
   init();
 })();
 </script>
