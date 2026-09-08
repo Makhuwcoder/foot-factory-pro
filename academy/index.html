@@ -540,7 +540,6 @@
         counts[d] = (counts[d] || 0) + 1;
       });
       var disciplines = Object.keys(counts).sort(function(a, b) { return a.localeCompare(b); });
-      if (disciplines.length < 2) return; // pas utile de filtrer une seule discipline
 
       var bar = document.getElementById('coachFilterBar');
       bar.style.display = 'flex';
