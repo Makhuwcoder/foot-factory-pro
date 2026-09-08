@@ -42,6 +42,16 @@
   .top-header .user-chip { font-size:0.82rem; color:#999; }
   .top-header .logout { font-size:0.78rem; color:#999; background:none; border:1px solid var(--border); border-radius:4px; padding:6px 12px; cursor:pointer; font-family:'Barlow',sans-serif; }
   .top-header .logout:hover { border-color:var(--gold); color:var(--gold); }
+  .notif-wrap { position:relative; }
+  .notif-bell { background:none; border:none; color:var(--text); font-size:1.1rem; cursor:pointer; position:relative; padding:4px; }
+  .notif-badge { position:absolute; top:-2px; right:-2px; background:var(--gold); color:#0A0A0A; font-size:0.6rem; font-weight:800; border-radius:9px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; font-family:'Barlow Condensed',sans-serif; }
+  .notif-dropdown { display:none; position:absolute; top:34px; right:0; width:300px; max-height:380px; overflow-y:auto; background:var(--surface); border:1px solid var(--border); border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.4); z-index:100; }
+  .notif-dropdown.open { display:block; }
+  .notif-item { padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.82rem; color:var(--text); }
+  .notif-item:last-child { border-bottom:none; }
+  .notif-item.unread { background:rgba(201,168,76,0.08); }
+  .notif-time { font-size:0.7rem; color:#777; margin-top:3px; }
+  .notif-empty { padding:24px 16px; text-align:center; color:#777; font-size:0.84rem; }
 
   .section-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:#777; margin:26px 0 12px; }
 
@@ -219,12 +229,15 @@
     });
 
     var html = '<div class="top-header"><h1>Mes réservations</h1>' +
-      '<div style="display:flex; align-items:center; gap:14px;"><span class="user-chip">' + escapeHtml(session.user.email) + '</span>' +
+      '<div style="display:flex; align-items:center; gap:14px;">' +
+      '<div class="notif-wrap"><button class="notif-bell" id="notifBell" onclick="ClientBookings.toggleNotifDropdown()">🔔<span class="notif-badge" id="notifBadge" style="display:none;">0</span></button><div class="notif-dropdown" id="notifDropdown"></div></div>' +
+      '<span class="user-chip">' + escapeHtml(session.user.email) + '</span>' +
       '<button class="logout" onclick="ClientBookings.doLogout()">Déconnexion</button></div></div>';
 
     if (!rows || !rows.length) {
       html += '<div class="empty-state">Vous n\'avez pas encore de réservation.<br><br><a href="/academy/#trouver" style="color:var(--gold); text-decoration:underline;">Trouver un coach →</a></div>';
       appRoot.innerHTML = html;
+      loadNotifications();
       return;
     }
 
@@ -235,7 +248,63 @@
     html += past.length ? past.map(function (b) { return renderBookingRow(b, reviewsByBooking[b.id], receivedByBooking[b.id]); }).join('') : '<div class="empty-state">Aucun historique pour le moment.</div>';
 
     appRoot.innerHTML = html;
+    loadNotifications();
   }
+
+  var CACHED_NOTIFS = [];
+
+  function timeAgo(iso) {
+    var diffMs = Date.now() - new Date(iso).getTime();
+    var mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return "à l'instant";
+    if (mins < 60) return 'il y a ' + mins + ' min';
+    var hours = Math.floor(mins / 60);
+    if (hours < 24) return 'il y a ' + hours + ' h';
+    return 'il y a ' + Math.floor(hours / 24) + ' j';
+  }
+
+  async function loadNotifications() {
+    var { data: notifs } = await FFP_DB
+      .from('academy_notifications')
+      .select('id, type, message, is_read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(15);
+    CACHED_NOTIFS = notifs || [];
+    var unreadCount = CACHED_NOTIFS.filter(function (n) { return !n.is_read; }).length;
+    var badge = document.getElementById('notifBadge');
+    if (badge) {
+      badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+      badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+    }
+  }
+
+  async function toggleNotifDropdown() {
+    var dd = document.getElementById('notifDropdown');
+    if (!dd) return;
+    var willOpen = !dd.classList.contains('open');
+    dd.classList.toggle('open', willOpen);
+    if (!willOpen) return;
+
+    dd.innerHTML = CACHED_NOTIFS.length
+      ? CACHED_NOTIFS.map(function (n) {
+          return '<div class="notif-item ' + (n.is_read ? '' : 'unread') + '">' + escapeHtml(n.message) + '<div class="notif-time">' + timeAgo(n.created_at) + '</div></div>';
+        }).join('')
+      : '<div class="notif-empty">Aucune notification pour le moment.</div>';
+
+    var unreadIds = CACHED_NOTIFS.filter(function (n) { return !n.is_read; }).map(function (n) { return n.id; });
+    if (unreadIds.length) {
+      await FFP_DB.from('academy_notifications').update({ is_read: true }).in('id', unreadIds);
+      var badge = document.getElementById('notifBadge');
+      if (badge) badge.style.display = 'none';
+      CACHED_NOTIFS = CACHED_NOTIFS.map(function (n) { return Object.assign({}, n, { is_read: true }); });
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var wrap = document.querySelector('.notif-wrap');
+    var dd = document.getElementById('notifDropdown');
+    if (wrap && dd && dd.classList.contains('open') && !wrap.contains(e.target)) dd.classList.remove('open');
+  });
 
   function renderBookingRow(b, existingReview, receivedReview) {
     var s = b.academy_sessions || {};
@@ -387,7 +456,7 @@
     }
   }
 
-  window.ClientBookings = { doLogin: doLogin, doForgotPassword: doForgotPassword, doLogout: doLogout, doCancel: doCancel, openReviewForm: openReviewForm, setRating: setRating, submitReview: submitReview };
+  window.ClientBookings = { doLogin: doLogin, doForgotPassword: doForgotPassword, doLogout: doLogout, doCancel: doCancel, openReviewForm: openReviewForm, setRating: setRating, submitReview: submitReview, toggleNotifDropdown: toggleNotifDropdown };
   init();
 })();
 </script>
