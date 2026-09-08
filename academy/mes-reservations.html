@@ -95,6 +95,17 @@
   .cancel-msg { font-size:0.76rem; margin-top:6px; }
   .cancel-msg.ok { color:var(--green); }
   .cancel-msg.error { color:var(--red); }
+
+  .btn-review { font-family:'Montserrat',sans-serif; font-weight:600; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--orange); background:none; border:1px solid var(--orange); border-radius:4px; padding:6px 12px; cursor:pointer; margin-top:8px; }
+  .btn-review:hover { background:#FFF6EC; }
+  .review-form { margin-top:10px; background:var(--cream); border:1px solid #E2DED2; border-radius:6px; padding:14px; max-width:340px; }
+  .star-picker { font-size:1.4rem; letter-spacing:4px; margin-bottom:10px; }
+  .star-choice { color:#D8D2C4; cursor:pointer; transition:color 0.15s; }
+  .star-choice.selected { color:var(--orange); }
+  .review-form textarea { width:100%; min-height:60px; background:var(--white); border:1px solid #E2DED2; border-radius:4px; color:var(--navy); font-family:'Raleway',sans-serif; font-size:0.85rem; padding:8px; resize:vertical; margin-bottom:10px; }
+  .review-display { margin-top:8px; }
+  .review-display .stars-shown { color:var(--orange); font-size:0.95rem; letter-spacing:2px; }
+  .review-comment { font-size:0.82rem; color:var(--grey); margin-top:4px; font-style:italic; }
 </style>
 </head>
 <body>
@@ -132,6 +143,7 @@
 
   let currentTab = 'upcoming';
   let allBookings = [];
+  let reviewsByBooking = {};
   let coachRow = null;
   let session = null;
 
@@ -178,7 +190,7 @@
     const { data: bookings, error: bookingsErr } = await supabase
       .from('academy_bookings')
       .select(`
-        id, participants_count, participant_names, amount_total_cents, coach_payout_cents,
+        id, booked_by, participants_count, participant_names, amount_total_cents, coach_payout_cents,
         payment_status, booking_status, created_at,
         academy_availabilities ( start_time, end_time ),
         academy_sessions ( title )
@@ -189,6 +201,16 @@
     if (bookingsErr) throw bookingsErr;
 
     allBookings = bookings || [];
+
+    // Avis deja donnes par ce coach a ses clients (reviewer_id = ce coach)
+    const { data: myReviews } = await supabase
+      .from('academy_reviews')
+      .select('booking_id, rating, comment')
+      .eq('reviewer_id', session.user.id)
+      .eq('reviewer_type', 'coach');
+    reviewsByBooking = {};
+    (myReviews || []).forEach(r => { reviewsByBooking[r.booking_id] = r; });
+
     render();
   }
 
@@ -373,6 +395,19 @@
       <div class="cancel-msg" id="cancelNotice-${b.id}"></div>
     ` : '';
 
+    let reviewBlock = '';
+    if (b.booking_status === 'completed') {
+      const existing = reviewsByBooking[b.id];
+      if (existing) {
+        reviewBlock = `<div class="review-display"><span class="stars-shown">${'★'.repeat(existing.rating)}${'☆'.repeat(5 - existing.rating)}</span>${existing.comment ? `<div class="review-comment">${escapeHtml(existing.comment)}</div>` : ''}</div>`;
+      } else {
+        reviewBlock = `
+          <button class="btn-review" id="reviewBtn-${b.id}" onclick="CoachBookings.openReviewForm('${b.id}','${b.booked_by}')">Noter ce client</button>
+          <div id="reviewFormWrap-${b.id}"></div>
+        `;
+      }
+    }
+
     return `
       <div class="booking-row" id="bookingRow-${b.id}">
         <div class="booking-left">
@@ -381,6 +416,7 @@
             <div class="booking-title">${escapeHtml(names)}</div>
             <div class="booking-meta">${escapeHtml(title)} · ${time} · ${b.participants_count} participant${b.participants_count > 1 ? 's' : ''}</div>
             ${cancelBlock}
+            ${reviewBlock}
           </div>
         </div>
         <div class="booking-right">
@@ -389,6 +425,57 @@
         </div>
       </div>
     `;
+  }
+
+  const PENDING_RATINGS = {};
+
+  function openReviewForm(bookingId, targetProfileId) {
+    const btn = document.getElementById(`reviewBtn-${bookingId}`);
+    if (btn) btn.style.display = 'none';
+    const wrap = document.getElementById(`reviewFormWrap-${bookingId}`);
+    const stars = [1, 2, 3, 4, 5].map(i => `<span class="star-choice" id="star-${bookingId}-${i}" data-val="${i}" onclick="CoachBookings.setRating('${bookingId}',${i})">★</span>`).join('');
+    wrap.innerHTML = `
+      <div class="review-form">
+        <div class="star-picker" id="starPicker-${bookingId}">${stars}</div>
+        <textarea id="reviewComment-${bookingId}" placeholder="Commentaire (optionnel, visible par les autres coachs et ce client)"></textarea>
+        <button class="btn-primary" id="reviewSubmit-${bookingId}" onclick="CoachBookings.submitReview('${bookingId}','${targetProfileId}')">Envoyer</button>
+        <div class="cancel-msg" id="reviewMsg-${bookingId}"></div>
+      </div>
+    `;
+  }
+
+  function setRating(bookingId, val) {
+    PENDING_RATINGS[bookingId] = val;
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById(`star-${bookingId}-${i}`);
+      if (el) el.classList.toggle('selected', i <= val);
+    }
+  }
+
+  async function submitReview(bookingId, targetProfileId) {
+    const rating = PENDING_RATINGS[bookingId];
+    const msgEl = document.getElementById(`reviewMsg-${bookingId}`);
+    if (!rating) { if (msgEl) { msgEl.className = 'cancel-msg error'; msgEl.textContent = 'Choisissez une note avant d\'envoyer.'; } return; }
+    const comment = (document.getElementById(`reviewComment-${bookingId}`).value || '').trim();
+    const btn = document.getElementById(`reviewSubmit-${bookingId}`);
+    if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+
+    const { error } = await supabase.from('academy_reviews').insert({
+      booking_id: bookingId,
+      reviewer_id: session.user.id,
+      reviewer_type: 'coach',
+      target_profile_id: targetProfileId,
+      rating,
+      comment: comment || null,
+    });
+
+    if (error) {
+      if (msgEl) { msgEl.className = 'cancel-msg error'; msgEl.textContent = "Erreur lors de l'envoi. Réessayez."; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Envoyer'; }
+      return;
+    }
+    const wrap = document.getElementById(`reviewFormWrap-${bookingId}`);
+    if (wrap) wrap.innerHTML = `<div class="review-display"><span class="stars-shown">${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</span>${comment ? `<div class="review-comment">${escapeHtml(comment)}</div>` : ''}</div>`;
   }
 
   async function doCancelBooking(bookingId) {
@@ -419,7 +506,7 @@
     }
   }
 
-  window.CoachBookings = { doCancel: doCancelBooking };
+  window.CoachBookings = { doCancel: doCancelBooking, openReviewForm: openReviewForm, setRating: setRating, submitReview: submitReview };
 
   function statusDisplay(b) {
     if (b.booking_status?.startsWith('cancelled')) return { pillClass: 'status-cancelled', pillLabel: 'Annulé' };
