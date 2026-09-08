@@ -358,8 +358,8 @@
       <a href="/academy/enregistrement.html" class="btn btn-outline">Devenir coach</a>
     </div>
     <div class="hero-ctas" style="margin-top:14px;">
-      <a href="/academy/enregistrement.html?login=1" class="btn btn-outline" style="font-size:12px; padding:10px 20px; opacity:0.85;">Accéder à mon espace coach</a>
       <a href="/academy/mes-reservations-client.html" class="btn btn-outline" style="font-size:12px; padding:10px 20px; opacity:0.85;">Accéder à mon espace client</a>
+      <a href="/academy/enregistrement.html?login=1" class="btn btn-outline" style="font-size:12px; padding:10px 20px; opacity:0.85;">Accéder à mon espace coach</a>
     </div>
     <div class="hero-trust">
       <div class="trust-item"><span class="dot"></span> Diplômes vérifiés</div>
@@ -537,12 +537,24 @@
       }
     }
 
+    // Un coach peut proposer plusieurs disciplines (coach.disciplines) même si une session
+    // donnée n'en affiche qu'une (row.discipline) : on prend l'union des deux pour le filtrage,
+    // afin qu'un coach Football+Basketball apparaisse bien dans les deux filtres.
+    function rowDisciplines(row) {
+      var set = {};
+      if (row.discipline) set[row.discipline] = true;
+      var coach = row.academy_coaches;
+      (coach && coach.disciplines || []).forEach(function(d) { if (d) set[d] = true; });
+      return Object.keys(set);
+    }
+
     // Construit la barre de filtres à partir des disciplines réellement proposées
     function buildDisciplineFilterBar(rows) {
       var counts = {};
       rows.forEach(function(row) {
-        var d = row.discipline || 'Autre';
-        counts[d] = (counts[d] || 0) + 1;
+        rowDisciplines(row).forEach(function(d) {
+          counts[d] = (counts[d] || 0) + 1;
+        });
       });
       var disciplines = Object.keys(counts).sort(function(a, b) { return a.localeCompare(b); });
 
@@ -583,7 +595,7 @@
       var cardsTrack = document.getElementById('coachCardsTrack');
       cardsTrack.innerHTML = '';
 
-      var filtered = discipline === 'all' ? ALL_COACH_ROWS : ALL_COACH_ROWS.filter(function(r) { return (r.discipline || 'Autre') === discipline; });
+      var filtered = discipline === 'all' ? ALL_COACH_ROWS : ALL_COACH_ROWS.filter(function(r) { return rowDisciplines(r).indexOf(discipline) >= 0; });
 
       if (!filtered.length) {
         cardsTrack.innerHTML = '<div class="coach-cards-empty">Aucun coach pour cette discipline pour le moment.</div>';
