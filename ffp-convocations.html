@@ -90,6 +90,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
 <div id="phase-confirmations" style="display:none;padding:16px"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ffp-supabase.js"></script>
+<script src="sport-config.js"></script>
 <script>
 
 // ══════════════════════════════════════════════════════
@@ -112,6 +113,25 @@ var POS=['Gardien','Défenseur Central','Latéral Droit','Latéral Gauche','Mili
 var POS_SH={'Gardien':'GK','Défenseur Central':'DC','Latéral Droit':'LD','Latéral Gauche':'LG',
             'Milieu Défensif':'MD','Milieu Central':'MC','Milieu Offensif':'MO',
             'Ailier Droit':'AD','Ailier Gauche':'AG','Avant-Centre':'AC'};
+var CURRENT_SPORT='football';
+var SQUAD_MIN_CONVOC=7;
+var HAS_GK_CONCEPT=true;
+var POS_ORDER={};
+function rebuildPosOrder(){ POS_ORDER={}; POS.forEach(function(p,i){ POS_ORDER[p]=i; }); }
+rebuildPosOrder();
+
+// Applique le referentiel du sport du club connecte (postes, seuil d'effectif, notion de gardien).
+// Appele une fois le sport reel connu ; en mode demo, le club reste sur le referentiel football par defaut.
+function applyConvocSport(sportId){
+  if(!sportId || sportId==='football' || typeof SPORT_CONFIG==='undefined' || !SPORT_CONFIG[sportId]) return;
+  CURRENT_SPORT=sportId;
+  var cfg=SPORT_CONFIG[sportId];
+  POS=cfg.postes.slice();
+  POS_SH=Object.assign({},cfg.postesShort);
+  SQUAD_MIN_CONVOC=cfg.match.effectifMin;
+  HAS_GK_CONCEPT=POS.indexOf('Gardien')>=0;
+  rebuildPosOrder();
+}
 var PROFS=['elite','elite','good','good','good','good','good',
            'average','average','average','average','average','average','average','average',
            'developing','developing','developing','developing','developing','developing','developing',
@@ -288,8 +308,7 @@ function renderSetup(){
   var el=document.getElementById('squad-grid');if(!el)return;
 
   // Sort by position group then score
-  var posOrder={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,
-    'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  var posOrder=POS_ORDER;
   var sorted=ALL_PLAYERS.slice().sort(function(a,b){
     var pa=posOrder[a.poste]||5,pb=posOrder[b.poste]||5;
     return pa!==pb?pa-pb:b.global-a.global;
@@ -361,15 +380,15 @@ function updateSquadSummary(){
   var total=ALL_PLAYERS.length;
   var convoques=t+r;
   var manquants=total-convoques;
-  var hasGK=CONVOC.titulaires.some(function(id){var p=ALL_PLAYERS.find(function(x){return x.id===id;});return p&&p.poste==='Gardien';});
+  var hasGK=HAS_GK_CONCEPT&&CONVOC.titulaires.some(function(id){var p=ALL_PLAYERS.find(function(x){return x.id===id;});return p&&p.poste==='Gardien';});
   el.innerHTML='<span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:#0D1B3E">'+convoques+'</span><span style="font-size:11px;color:#475569"> convoqués</span>'
     +' <span style="color:#CBD5E1">·</span> '
     +'<span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:'+(manquants>0?'#E24B4A':'#94A3B8')+'">'+manquants+'</span><span style="font-size:11px;color:#475569"> manquants</span>'
     +' <span style="color:#CBD5E1">·</span> <span style="font-size:11px;color:#94A3B8">'+total+' au total</span>'
     +'<br><span style="color:#4BC88A;font-weight:700">'+t+'</span><span style="font-size:11px;color:#475569"> titulaires</span>'
     +' · <span style="color:#60A8D0;font-weight:700">'+r+'</span><span style="font-size:11px;color:#475569"> remplaçants</span>'
-    +(t<7?'<span style="color:#E24B4A;margin-left:8px;font-weight:600">⚠ Minimum 7 requis</span>':'')
-    +(!hasGK&&t>0?'<span style="color:#388E3C;margin-left:8px;font-weight:600">⚠ Aucun gardien sélectionné</span>':'');
+    +(t<SQUAD_MIN_CONVOC?'<span style="color:#E24B4A;margin-left:8px;font-weight:600">⚠ Minimum '+SQUAD_MIN_CONVOC+' requis</span>':'')
+    +(HAS_GK_CONCEPT&&!hasGK&&t>0?'<span style="color:#388E3C;margin-left:8px;font-weight:600">⚠ Aucun gardien sélectionné</span>':'');
 }
 
 function readSetupForm(){
@@ -403,8 +422,7 @@ function renderPreview(){
   var remps=CONVOC.remplacants.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
 
   // Sort tits by position
-  var posOrd={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,
-    'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  var posOrd=POS_ORDER;
   tits.sort(function(a,b){return (posOrd[a.poste]||5)-(posOrd[b.poste]||5);});
 
   var dateStr=CONVOC.date?new Date(CONVOC.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
@@ -490,7 +508,7 @@ function renderPreview(){
 function exportConvocPDF(){
   var tits=CONVOC.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
   var remps=CONVOC.remplacants.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
-  var posOrd={'Gardien':0,'Défenseur Central':1,'Latéral Droit':2,'Latéral Gauche':3,'Milieu Défensif':4,'Milieu Central':5,'Milieu Offensif':6,'Ailier Droit':7,'Ailier Gauche':8,'Avant-Centre':9};
+  var posOrd=POS_ORDER;
   tits.sort(function(a,b){return (posOrd[a.poste]||5)-(posOrd[b.poste]||5);});
   var dateStr=CONVOC.date?new Date(CONVOC.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
   var w=window.open('','_blank');
@@ -658,7 +676,11 @@ function init(){
   SESSION=getSession();
   if(SESSION && !SESSION._demo && SESSION.role==='coach'){
     REAL_MODE=true;
-    loadRealPlayers().then(function(){
+    Promise.all([
+      loadRealPlayers(),
+      (typeof sbGetMyClubSport==='function'?sbGetMyClubSport():Promise.resolve('football'))
+    ]).then(function(results){
+      applyConvocSport(results[1]);
       return loadRealConvocs();
     }).then(function(list){
       REAL_CONVOCS_CACHE=list;
