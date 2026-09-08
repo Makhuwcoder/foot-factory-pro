@@ -20,6 +20,16 @@
   .top-bar .brand { color:var(--white); font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.1rem; }
   .top-bar .brand span { color:var(--orange); }
   .top-bar .user-chip { color: var(--grey-light); font-size: 0.84rem; }
+  .notif-wrap { position:relative; }
+  .notif-bell { background:none; border:none; color:var(--white); font-size:1.15rem; cursor:pointer; position:relative; padding:4px; }
+  .notif-badge { position:absolute; top:-2px; right:-2px; background:var(--orange); color:var(--white); font-size:0.62rem; font-weight:800; border-radius:9px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; font-family:'Montserrat',sans-serif; }
+  .notif-dropdown { display:none; position:absolute; top:36px; right:0; width:320px; max-height:400px; overflow-y:auto; background:var(--white); border:1px solid #E8E4DA; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.15); z-index:100; }
+  .notif-dropdown.open { display:block; }
+  .notif-item { padding:12px 16px; border-bottom:1px solid #F0EDE4; font-size:0.82rem; color:var(--navy); }
+  .notif-item:last-child { border-bottom:none; }
+  .notif-item.unread { background:#FFF9F0; }
+  .notif-time { font-size:0.7rem; color:var(--grey-light); margin-top:3px; }
+  .notif-empty { padding:24px 16px; text-align:center; color:var(--grey-light); font-size:0.84rem; }
 
   .container { max-width:1040px; margin:0 auto; padding:36px 24px 80px; }
 
@@ -114,6 +124,10 @@
   <div class="brand">ONE COACH <span>ACADEMY</span></div>
   <div style="display:flex; align-items:center; gap:20px;">
     <a href="/academy/mes-disponibilites.html" style="color:#94A3B8; font-size:0.84rem; text-decoration:none;">Gérer mes disponibilités</a>
+    <div class="notif-wrap">
+      <button class="notif-bell" id="notifBell" onclick="toggleNotifDropdown()">🔔<span class="notif-badge" id="notifBadge" style="display:none;">0</span></button>
+      <div class="notif-dropdown" id="notifDropdown"></div>
+    </div>
     <div class="user-chip" id="userChip"></div>
   </div>
 </div>
@@ -157,6 +171,7 @@
     }
     session = currentSession;
     userChip.textContent = session.user.email ?? '';
+    loadNotifications();
 
     try {
       await loadCoachAndBookings();
@@ -165,6 +180,59 @@
       renderError("Une erreur est survenue lors du chargement de votre espace.");
     }
   }
+
+  function timeAgo(iso) {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return "à l'instant";
+    if (mins < 60) return `il y a ${mins} min`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `il y a ${hours} h`;
+    return `il y a ${Math.floor(hours / 24)} j`;
+  }
+
+  async function loadNotifications() {
+    const { data: notifs } = await supabase
+      .from('academy_notifications')
+      .select('id, type, message, is_read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(15);
+    window.__notifs = notifs || [];
+    const unreadCount = window.__notifs.filter(n => !n.is_read).length;
+    const badge = document.getElementById('notifBadge');
+    if (badge) {
+      badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+      badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+    }
+  }
+
+  async function toggleNotifDropdown() {
+    const dd = document.getElementById('notifDropdown');
+    const willOpen = !dd.classList.contains('open');
+    dd.classList.toggle('open', willOpen);
+    if (!willOpen) return;
+
+    const notifs = window.__notifs || [];
+    dd.innerHTML = notifs.length
+      ? notifs.map(n => `<div class="notif-item ${n.is_read ? '' : 'unread'}">${escapeHtml(n.message)}<div class="notif-time">${timeAgo(n.created_at)}</div></div>`).join('')
+      : '<div class="notif-empty">Aucune notification pour le moment.</div>';
+
+    const unreadIds = notifs.filter(n => !n.is_read).map(n => n.id);
+    if (unreadIds.length) {
+      await supabase.from('academy_notifications').update({ is_read: true }).in('id', unreadIds);
+      document.getElementById('notifBadge').style.display = 'none';
+      window.__notifs = notifs.map(n => ({ ...n, is_read: true }));
+    }
+  }
+
+  window.toggleNotifDropdown = toggleNotifDropdown;
+  document.addEventListener('click', function(e) {
+    var wrap = document.querySelector('.notif-wrap');
+    var dd = document.getElementById('notifDropdown');
+    if (wrap && dd && dd.classList.contains('open') && !wrap.contains(e.target)) {
+      dd.classList.remove('open');
+    }
+  });
 
   async function loadCoachAndBookings() {
     // 1. Le coach connecte est-il membre d'une Academy ?
