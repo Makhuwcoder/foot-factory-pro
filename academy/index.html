@@ -274,6 +274,17 @@
     .coach-card-disc { font-size:11px; color:var(--gold); margin-bottom:8px; }
     .coach-card-bio { font-size:12.5px; color:#999; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 
+    .coach-filter-bar { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:20px; }
+    .coach-filter-chip {
+      font-family:'Barlow',sans-serif; font-size:12px; font-weight:600; letter-spacing:0.03em;
+      padding:7px 16px; border-radius:20px; border:1.5px solid var(--border); background:transparent;
+      color:#999; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+    }
+    .coach-filter-chip:hover { border-color: var(--gold); color:#EEE; }
+    .coach-filter-chip.active { background: var(--gold); border-color: var(--gold); color:#0A0A0A; }
+    .coach-filter-count { font-size:10px; opacity:0.7; margin-left:4px; }
+    .coach-cards-empty { text-align:center; color:#777; font-size:13px; padding:30px 10px; }
+
     /* ── FOOTER ── */
     footer { position: relative; z-index: 1; text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color:#FFFFFF; font-size: 12px; letter-spacing: 0.08em; }
     footer img { height: 28px; filter: invert(1); opacity: 0.3; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
@@ -426,6 +437,7 @@
 
   <!-- WAITLIST -->
   <section id="waitlist-section">
+    <a id="trouver"></a>
     <div class="section-inner">
       <p class="section-label">Ouverture progressive</p>
       <h2 class="section-title">One Coach Academy arrive bientôt dans votre région</h2>
@@ -438,6 +450,7 @@
       <div class="waitlist-panel active" id="panel-parent" style="max-width:100%;">
         <div id="coachMapWrapper" style="display:none;">
           <p style="max-width:600px; margin:0 auto 24px;">Découvrez les coachs déjà disponibles près de chez vous.</p>
+          <div id="coachFilterBar" class="coach-filter-bar" style="display:none;"></div>
           <div id="coachMap"></div>
           <div id="coachCardsTrack" class="coach-cards-track"></div>
         </div>
@@ -474,6 +487,11 @@
     if (typeof initSupabase === 'function') { initSupabase(); }
     loadCoachMap();
 
+    var COACH_MAP = null;
+    var COACH_MARKERS = {};
+    var ALL_COACH_ROWS = [];
+    var CURRENT_DISCIPLINE_FILTER = 'all';
+
     async function loadCoachMap() {
       try {
         if (!FFP_DB) return;
@@ -487,77 +505,142 @@
 
         if (error || !rows || !rows.length) return; // reste sur le formulaire d'attente
 
+        // Classement par défaut : discipline (alphabétique), puis nom du coach
+        rows.sort(function(a, b) {
+          var da = (a.discipline || '').localeCompare(b.discipline || '');
+          if (da !== 0) return da;
+          var na = (a.academy_coaches && a.academy_coaches.display_name) || '';
+          var nb = (b.academy_coaches && b.academy_coaches.display_name) || '';
+          return na.localeCompare(nb);
+        });
+        ALL_COACH_ROWS = rows;
+
         document.getElementById('noCoachYet').style.display = 'none';
         var wrapper = document.getElementById('coachMapWrapper');
         wrapper.style.display = 'block';
 
-        var map = L.map('coachMap', { scrollWheelZoom: false }).setView([46.6, 2.4], 6);
+        COACH_MAP = L.map('coachMap', { scrollWheelZoom: false }).setView([46.6, 2.4], 6);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',
           maxZoom: 19
-        }).addTo(map);
+        }).addTo(COACH_MAP);
 
-        var markers = {};
-        var cardsTrack = document.getElementById('coachCardsTrack');
-
-        rows.forEach(function(row, i) {
-          var coach = row.academy_coaches;
-          if (!coach) return;
-          var academyName = coach.academy_academies ? coach.academy_academies.academy_name : '';
-          var photo = coach.photo_url || '';
-          var bio = coach.bio || '';
-
-          // ── Marqueur (icone custom, animation d'apparition en cascade) ──
-          var icon = L.divIcon({
-            className: '',
-            html: '<div class="coach-marker-icon" id="marker-' + row.id + '">🎓</div>',
-            iconSize: [34, 34],
-            iconAnchor: [17, 17]
-          });
-          var marker = L.marker([row.location_lat, row.location_lng], { icon: icon }).addTo(map);
-          marker.bindPopup(
-            '<div class="coach-popup">' +
-              (photo ? '<img src="' + photo + '">' : '') +
-              '<div>' +
-                '<div class="coach-popup-name">' + escapeHtml(coach.display_name) + '</div>' +
-                '<div class="coach-popup-disc">' + escapeHtml((coach.disciplines||[]).join(', ')) + '</div>' +
-                '<a class="coach-popup-link" href="/academy/coach.html?id=' + coach.id + '">Voir le profil →</a>' +
-              '</div>' +
-            '</div>'
-          );
-          markers[row.id] = marker;
-
-          // ── Carte coach (apparition en cascade synchronisee) ──
-          var card = document.createElement('div');
-          card.className = 'coach-card';
-          card.id = 'card-' + row.id;
-          card.innerHTML =
-            '<div class="coach-card-top">' +
-              (photo ? '<img class="coach-card-photo" src="' + photo + '">' : '<div class="coach-card-photo"></div>') +
-              '<div><div class="coach-card-name">' + escapeHtml(coach.display_name) + '</div><div class="coach-card-academy">' + escapeHtml(academyName) + '</div></div>' +
-            '</div>' +
-            '<div class="coach-card-disc">' + escapeHtml((coach.disciplines||[]).join(' · ')) + ' — ' + escapeHtml(row.location_label || '') + '</div>' +
-            '<div class="coach-card-bio">' + escapeHtml(bio) + '</div>';
-
-          card.addEventListener('click', function() {
-            document.querySelectorAll('.coach-card').forEach(function(c) { c.classList.remove('highlighted'); });
-            card.classList.add('highlighted');
-            map.flyTo([row.location_lat, row.location_lng], 11, { duration: 0.8 });
-            markers[row.id].openPopup();
-            pulseMarker(row.id);
-          });
-          cardsTrack.appendChild(card);
-
-          // ── Sequencement de l'animation (marqueurs + cartes en cascade) ──
-          setTimeout(function() {
-            var el = document.getElementById('marker-' + row.id);
-            if (el) el.classList.add('dropped');
-            card.classList.add('shown');
-          }, 120 * i);
-        });
+        buildDisciplineFilterBar(rows);
+        renderCoaches('all');
       } catch (err) {
         console.warn('Carte coachs non chargee:', err);
       }
+    }
+
+    // Construit la barre de filtres à partir des disciplines réellement proposées
+    function buildDisciplineFilterBar(rows) {
+      var counts = {};
+      rows.forEach(function(row) {
+        var d = row.discipline || 'Autre';
+        counts[d] = (counts[d] || 0) + 1;
+      });
+      var disciplines = Object.keys(counts).sort(function(a, b) { return a.localeCompare(b); });
+      if (disciplines.length < 2) return; // pas utile de filtrer une seule discipline
+
+      var bar = document.getElementById('coachFilterBar');
+      bar.style.display = 'flex';
+      bar.innerHTML = '';
+
+      var allChip = document.createElement('button');
+      allChip.className = 'coach-filter-chip active';
+      allChip.textContent = 'Toutes les disciplines';
+      allChip.setAttribute('data-filter', 'all');
+      allChip.onclick = function() { selectDisciplineFilter('all'); };
+      bar.appendChild(allChip);
+
+      disciplines.forEach(function(d) {
+        var chip = document.createElement('button');
+        chip.className = 'coach-filter-chip';
+        chip.setAttribute('data-filter', d);
+        chip.innerHTML = escapeHtml(d) + '<span class="coach-filter-count">(' + counts[d] + ')</span>';
+        chip.onclick = function() { selectDisciplineFilter(d); };
+        bar.appendChild(chip);
+      });
+    }
+
+    function selectDisciplineFilter(discipline) {
+      CURRENT_DISCIPLINE_FILTER = discipline;
+      document.querySelectorAll('.coach-filter-chip').forEach(function(c) {
+        c.classList.toggle('active', c.getAttribute('data-filter') === discipline);
+      });
+      renderCoaches(discipline);
+    }
+
+    // (Re)construit marqueurs + cartes pour la discipline sélectionnée ('all' = tout afficher)
+    function renderCoaches(discipline) {
+      // Nettoyage : marqueurs et cartes précédents
+      Object.keys(COACH_MARKERS).forEach(function(id) { COACH_MAP.removeLayer(COACH_MARKERS[id]); });
+      COACH_MARKERS = {};
+      var cardsTrack = document.getElementById('coachCardsTrack');
+      cardsTrack.innerHTML = '';
+
+      var filtered = discipline === 'all' ? ALL_COACH_ROWS : ALL_COACH_ROWS.filter(function(r) { return (r.discipline || 'Autre') === discipline; });
+
+      if (!filtered.length) {
+        cardsTrack.innerHTML = '<div class="coach-cards-empty">Aucun coach pour cette discipline pour le moment.</div>';
+        return;
+      }
+
+      filtered.forEach(function(row, i) {
+        var coach = row.academy_coaches;
+        if (!coach) return;
+        var academyName = coach.academy_academies ? coach.academy_academies.academy_name : '';
+        var photo = coach.photo_url || '';
+        var bio = coach.bio || '';
+
+        // ── Marqueur (icone custom, animation d'apparition en cascade) ──
+        var icon = L.divIcon({
+          className: '',
+          html: '<div class="coach-marker-icon" id="marker-' + row.id + '">🎓</div>',
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+        var marker = L.marker([row.location_lat, row.location_lng], { icon: icon }).addTo(COACH_MAP);
+        marker.bindPopup(
+          '<div class="coach-popup">' +
+            (photo ? '<img src="' + photo + '">' : '') +
+            '<div>' +
+              '<div class="coach-popup-name">' + escapeHtml(coach.display_name) + '</div>' +
+              '<div class="coach-popup-disc">' + escapeHtml((coach.disciplines||[]).join(', ')) + '</div>' +
+              '<a class="coach-popup-link" href="/academy/coach.html?id=' + coach.id + '">Voir le profil →</a>' +
+            '</div>' +
+          '</div>'
+        );
+        COACH_MARKERS[row.id] = marker;
+
+        // ── Carte coach (apparition en cascade synchronisee) ──
+        var card = document.createElement('div');
+        card.className = 'coach-card';
+        card.id = 'card-' + row.id;
+        card.innerHTML =
+          '<div class="coach-card-top">' +
+            (photo ? '<img class="coach-card-photo" src="' + photo + '">' : '<div class="coach-card-photo"></div>') +
+            '<div><div class="coach-card-name">' + escapeHtml(coach.display_name) + '</div><div class="coach-card-academy">' + escapeHtml(academyName) + '</div></div>' +
+          '</div>' +
+          '<div class="coach-card-disc">' + escapeHtml((coach.disciplines||[]).join(' · ')) + ' — ' + escapeHtml(row.location_label || '') + '</div>' +
+          '<div class="coach-card-bio">' + escapeHtml(bio) + '</div>';
+
+        card.addEventListener('click', function() {
+          document.querySelectorAll('.coach-card').forEach(function(c) { c.classList.remove('highlighted'); });
+          card.classList.add('highlighted');
+          COACH_MAP.flyTo([row.location_lat, row.location_lng], 11, { duration: 0.8 });
+          COACH_MARKERS[row.id].openPopup();
+          pulseMarker(row.id);
+        });
+        cardsTrack.appendChild(card);
+
+        // ── Sequencement de l'animation (marqueurs + cartes en cascade) ──
+        setTimeout(function() {
+          var el = document.getElementById('marker-' + row.id);
+          if (el) el.classList.add('dropped');
+          card.classList.add('shown');
+        }, 120 * i);
+      });
     }
 
     function pulseMarker(id) {
