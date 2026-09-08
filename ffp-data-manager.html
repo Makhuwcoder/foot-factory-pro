@@ -5,8 +5,8 @@
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>One Sport — Gestionnaires de Données</title>
-<meta name="description" content="Un(e) stagiaire dédié(e) à la gestion des données de votre club sportif. Filmer, saisir, analyser — sans mobiliser vos coachs.">
+<title>One Sport — Gestionnaires de Données &amp; Sport Business Managers</title>
+<meta name="description" content="Des stagiaires dédiés à la gestion des données et au développement business de votre club sportif — sans mobiliser vos coachs ni votre direction.">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="ffp-manifest.json">
 <meta name="theme-color" content="#0D1B3E">
@@ -72,8 +72,8 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
 
   <section class="hero">
     <div class="eyebrow">Nouveau programme — en phase de test</div>
-    <h1>Vos données méritent mieux<br>qu'un <span>coach débordé</span></h1>
-    <p>Filmer les matchs, saisir les évaluations, gérer les convocations, enregistrer les résultats des tests — ce travail existe, mais aucun coach n'a le temps de le faire sérieusement en plus d'entraîner. One Sport prépare un vivier d'étudiants stagiaires dédiés à la gestion des données de club, en lien direct avec les clubs adhérents.</p>
+    <h1>Deux métiers du sport<br>que <span>personne ne finance</span> encore</h1>
+    <p>Filmer les matchs, saisir les évaluations, gérer les convocations — personne n'a le temps de le faire sérieusement en plus d'entraîner. Structurer des partenariats, professionnaliser la gestion d'un club — personne n'a le profil pour le faire en interne. One Sport prépare un vivier d'étudiants stagiaires sur ces deux métiers, en lien direct avec les clubs adhérents.</p>
   </section>
 
   <div class="pain-grid">
@@ -83,9 +83,18 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
     <div class="pain-card"><div class="ic">📋</div><div class="t">Gérer les<br>convocations</div></div>
   </div>
 
+  <div class="pain-grid">
+    <div class="pain-card"><div class="ic">🤝</div><div class="t">Structurer les<br>partenariats</div></div>
+    <div class="pain-card"><div class="ic">📈</div><div class="t">Business intelligence<br>&amp; reporting</div></div>
+    <div class="pain-card"><div class="ic">🏟️</div><div class="t">Professionnaliser<br>la gestion du club</div></div>
+    <div class="pain-card"><div class="ic">🗂️</div><div class="t">Piloter des projets<br>transverses</div></div>
+  </div>
+
   <div class="solution">
-    <h2>L'idée : un poste de Gestionnaire de Données, tenu par des stagiaires</h2>
-    <p>BTS, université, école d'ingénieur — selon le cycle scolaire, un stage de 2 à 6 mois consécutifs, directement au sein du club, pour prendre en charge cette gestion de données pendant que le coach coache. Avant de construire la plateforme de mise en relation, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
+    <h2>Deux profils de stagiaires, deux niveaux de mission</h2>
+    <p><strong style="color:#EEE">Gestionnaire de Données</strong> — BTS, université, école d'ingénieur, stage de 2 à 6 mois, pour prendre en charge la saisie et le suivi de la performance pendant que le coach coache.<br><br>
+    <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus en école de commerce ou STAPS, stage de 6 à 7 mois rémunéré, pour structurer, développer et professionnaliser un club — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
+    Avant de construire la plateforme de mise en relation, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
   </div>
 
   <div class="tabs">
@@ -112,6 +121,14 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
         <div class="field"><label>Nombre d'équipes / coachs</label><input id="c-taille" type="text" placeholder="ex: 6 équipes, 8 coachs"></div>
       </div>
       <div class="field">
+        <label>Type de profil recherché</label>
+        <select id="c-poste-type" onchange="toggleClubTasks()">
+          <option value="Gestionnaire de Données">Gestionnaire de Données (saisie, suivi performance)</option>
+          <option value="Sport Business Manager">Sport Business Manager (partenariats, structuration, business)</option>
+          <option value="Les deux">Les deux profils m'intéressent</option>
+        </select>
+      </div>
+      <div class="field" id="c-tasks-data">
         <label>Tâches que vous aimeriez déléguer</label>
         <div class="checks">
           <label><input type="checkbox" value="Filmer matchs/entraînements"> Filmer matchs et entraînements</label>
@@ -119,6 +136,16 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
           <label><input type="checkbox" value="Saisir résultats tests"> Saisir les résultats de tests</label>
           <label><input type="checkbox" value="Gérer convocations"> Gérer les convocations</label>
           <label><input type="checkbox" value="Suivre matchs en live"> Suivre les matchs en live sur One Sport</label>
+        </div>
+      </div>
+      <div class="field" id="c-tasks-business" style="display:none">
+        <label>Missions envisagées</label>
+        <div class="checks">
+          <label><input type="checkbox" value="Structurer partenariats"> Structurer et démarcher des partenaires</label>
+          <label><input type="checkbox" value="Business intelligence"> Business intelligence / reporting</label>
+          <label><input type="checkbox" value="Gestion de projet"> Piloter un projet transverse</label>
+          <label><input type="checkbox" value="Professionnalisation club"> Professionnaliser la gestion du club</label>
+          <label><input type="checkbox" value="Relations institutionnelles"> Relations institutionnelles / fédérations</label>
         </div>
       </div>
       <div class="field"><label>Message (optionnel)</label><textarea id="c-message" placeholder="Période souhaitée, contraintes particulières..."></textarea></div>
@@ -139,7 +166,15 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
       <p class="sub">Rejoignez le vivier de futurs Gestionnaires de Données One Sport. On vous met en relation avec des clubs adhérents dès que le programme démarre dans votre secteur.</p>
       <div class="row2">
         <div class="field"><label>Prénom Nom</label><input id="s-nom" type="text" placeholder="Prénom Nom"></div>
-        <div class="field"><label>Niveau d'études</label><select id="s-niveau"><option value="">Choisir</option><option value="BTS">BTS</option><option value="Licence">Licence (université)</option><option value="Master">Master (université)</option><option value="Ecole ingenieur">École d'ingénieur</option><option value="Autre">Autre</option></select></div>
+        <div class="field"><label>Niveau d'études</label><select id="s-niveau"><option value="">Choisir</option><option value="BTS">BTS</option><option value="STAPS">STAPS</option><option value="Licence">Licence (université)</option><option value="Master">Master (université)</option><option value="Ecole ingenieur">École d'ingénieur</option><option value="Ecole de commerce">École de commerce</option><option value="Autre">Autre</option></select></div>
+      </div>
+      <div class="field">
+        <label>Profil qui vous correspond</label>
+        <select id="s-poste-type">
+          <option value="Gestionnaire de Données">Gestionnaire de Données (saisie, suivi performance)</option>
+          <option value="Sport Business Manager">Sport Business Manager (partenariats, structuration, business)</option>
+          <option value="Les deux">Les deux m'intéressent</option>
+        </select>
       </div>
       <div class="row2">
         <div class="field"><label>Email</label><input id="s-email" type="email" placeholder="vous@etu.fr"></div>
@@ -166,6 +201,12 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ffp-supabase.js"></script>
 <script>
+function toggleClubTasks(){
+  var val=document.getElementById('c-poste-type').value;
+  document.getElementById('c-tasks-data').style.display=(val==='Sport Business Manager')?'none':'block';
+  document.getElementById('c-tasks-business').style.display=(val==='Gestionnaire de Données')?'none':'block';
+}
+
 function switchTab(which){
   document.getElementById('tab-club').classList.toggle('active', which==='club');
   document.getElementById('tab-candidat').classList.toggle('active', which==='candidat');
@@ -196,6 +237,7 @@ async function submitLead(type){
     }
     var taches=Array.prototype.slice.call(document.querySelectorAll('#panel-club .checks input:checked')).map(function(i){return i.value;});
     details={
+      poste_type:document.getElementById('c-poste-type').value,
       contact_nom:contactNom,
       fonction:(document.getElementById('c-contact-fonction').value||'').trim(),
       sport:(document.getElementById('c-sport').value||'').trim(),
@@ -215,6 +257,7 @@ async function submitLead(type){
     }
     details={
       niveau:niveau,
+      poste_type:document.getElementById('s-poste-type').value,
       ecole:(document.getElementById('s-ecole').value||'').trim(),
       duree:(document.getElementById('s-duree').value||'').trim(),
       sport:(document.getElementById('s-sport').value||'').trim(),
