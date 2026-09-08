@@ -61,6 +61,32 @@ var SPORT_CONFIG = {
       unite: 'buts'
     },
 
+    matchEvents: {
+      quick: [
+        {key:'but', ico:'⚽', label:'But', col:'#4BC88A', perPlayer:true, scoreDelta:1, statDelta:{tirs_h:1,tirs_c_h:1}},
+        {key:'jaune', ico:'🟨', label:'Jaune', col:'#FBCB57', perPlayer:true},
+        {key:'rouge', ico:'🟥', label:'Rouge', col:'#E24B4A', perPlayer:true},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true},
+        {key:'but_csc', ico:'🙈', label:'C.S.C.', col:'#E24B4A', perPlayer:true, scoreDeltaAway:1},
+        {key:'occasion', ico:'💫', label:'Occasion', col:'#1565C0', perPlayer:true, statDelta:{tirs_h:1}},
+        {key:'arret', ico:'🧤', label:'Arrêt', col:'#A060E0', perPlayer:true, statDelta:{tirs_a:1,tirs_c_a:1}},
+        {key:'corner', ico:'⛳', label:'Corner', col:'#888', perPlayer:false, statDelta:{corners_h:1}}
+      ],
+      stats: [
+        {key:'tirs_h', label:'+ Tir', col:'#60A8D0'},
+        {key:'tirs_c_h', label:'+ Cadré', col:'#4BC88A'},
+        {key:'corners_h', label:'+ Corner', col:'#1565C0'},
+        {key:'fautes_h', label:'+ Faute', col:'#C89020'}
+      ],
+      statPairs: [
+        {key:'tirs', label:'Tirs'},
+        {key:'tirs_c', label:'Tirs cadrés'},
+        {key:'corners', label:'Corners'},
+        {key:'fautes', label:'Fautes'}
+      ],
+      scorersLabel: 'Buteurs'
+    },
+
     joueurExtra: { pied: { label: 'Pied fort', options: ['Droit','Gauche','Ambidextre'] } }
   },
 
@@ -116,6 +142,32 @@ var SPORT_CONFIG = {
       effectifTitulaires: 15,
       effectifMin: 10,
       unite: 'points'
+    },
+
+    matchEvents: {
+      quick: [
+        {key:'essai', ico:'🏉', label:'Essai', col:'#4BC88A', perPlayer:true, scoreDelta:5, statDelta:{essais_h:1}},
+        {key:'transformation', ico:'🎯', label:'Transfo', col:'#1565C0', perPlayer:true, scoreDelta:2},
+        {key:'penalite', ico:'🎯', label:'Pénalité', col:'#1565C0', perPlayer:true, scoreDelta:3},
+        {key:'drop', ico:'🎯', label:'Drop', col:'#1565C0', perPlayer:true, scoreDelta:3},
+        {key:'jaune', ico:'🟨', label:'Jaune', col:'#FBCB57', perPlayer:true},
+        {key:'rouge', ico:'🟥', label:'Rouge', col:'#E24B4A', perPlayer:true},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true},
+        {key:'plaquage', ico:'🛡️', label:'Plaquage', col:'#A060E0', perPlayer:true, statDelta:{plaquages_h:1}}
+      ],
+      stats: [
+        {key:'melees_h', label:'+ Mêlée gagnée', col:'#60A8D0'},
+        {key:'touches_h', label:'+ Touche gagnée', col:'#4BC88A'},
+        {key:'plaquages_h', label:'+ Plaquage', col:'#A060E0'},
+        {key:'fautes_h', label:'+ Faute', col:'#C89020'}
+      ],
+      statPairs: [
+        {key:'melees', label:'Mêlées gagnées'},
+        {key:'touches', label:'Touches gagnées'},
+        {key:'plaquages', label:'Plaquages'},
+        {key:'fautes', label:'Fautes'}
+      ],
+      scorersLabel: 'Marqueurs d\'essais'
     },
 
     joueurExtra: { pied: null }
@@ -175,6 +227,32 @@ var SPORT_CONFIG = {
       unite: 'points'
     },
 
+    matchEvents: {
+      quick: [
+        {key:'panier2', ico:'🏀', label:'2 pts', col:'#4BC88A', perPlayer:true, scoreDelta:2, statDelta:{tirs_h:1,tirs_reussis_h:1}},
+        {key:'panier3', ico:'🎯', label:'3 pts', col:'#4BC88A', perPlayer:true, scoreDelta:3, statDelta:{tirs_h:1,tirs_reussis_h:1}},
+        {key:'lancerfranc', ico:'🎯', label:'Lancer franc', col:'#1565C0', perPlayer:true, scoreDelta:1, statDelta:{tirs_h:1,tirs_reussis_h:1}},
+        {key:'rebond', ico:'🔁', label:'Rebond', col:'#60A8D0', perPlayer:true, statDelta:{rebonds_h:1}},
+        {key:'passe_decisive', ico:'🤝', label:'Passe déc.', col:'#A060E0', perPlayer:true, statDelta:{passes_h:1}},
+        {key:'faute', ico:'🟨', label:'Faute', col:'#C89020', perPlayer:true, statDelta:{fautes_h:1}},
+        {key:'balle_perdue', ico:'❌', label:'Balle perdue', col:'#E24B4A', perPlayer:true, statDelta:{pertes_h:1}},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true}
+      ],
+      stats: [
+        {key:'tirs_reussis_h', label:'+ Tir réussi', col:'#4BC88A'},
+        {key:'rebonds_h', label:'+ Rebond', col:'#60A8D0'},
+        {key:'passes_h', label:'+ Passe déc.', col:'#A060E0'},
+        {key:'fautes_h', label:'+ Faute', col:'#C89020'}
+      ],
+      statPairs: [
+        {key:'tirs_reussis', label:'Tirs réussis'},
+        {key:'rebonds', label:'Rebonds'},
+        {key:'passes', label:'Passes décisives'},
+        {key:'fautes', label:'Fautes'}
+      ],
+      scorersLabel: 'Meilleurs marqueurs'
+    },
+
     joueurExtra: { pied: null }
   },
 
@@ -216,6 +294,30 @@ var SPORT_CONFIG = {
       ethique:['Discussion fair-play et respect arbitral']
     },
     match: { label:'Match', periodeLabel:'Mi-temps', nbPeriodes:2, dureePeriode:30, effectifTitulaires:7, effectifMin:5, unite:'buts' },
+    matchEvents: {
+      quick: [
+        {key:'but', ico:'🤾', label:'But', col:'#4BC88A', perPlayer:true, scoreDelta:1, statDelta:{tirs_h:1}},
+        {key:'jet7m', ico:'🎯', label:'Jet de 7m', col:'#1565C0', perPlayer:true, scoreDelta:1, statDelta:{tirs_h:1}},
+        {key:'jaune', ico:'🟨', label:'Avertissement', col:'#FBCB57', perPlayer:true},
+        {key:'exclusion', ico:'⏱️', label:'Exclusion 2min', col:'#E24B4A', perPlayer:true},
+        {key:'rouge', ico:'🟥', label:'Rouge', col:'#E24B4A', perPlayer:true},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true},
+        {key:'arret', ico:'🧤', label:'Arrêt', col:'#A060E0', perPlayer:true, statDelta:{arrets_h:1}}
+      ],
+      stats: [
+        {key:'tirs_h', label:'+ Tir', col:'#60A8D0'},
+        {key:'arrets_h', label:'+ Arrêt', col:'#A060E0'},
+        {key:'exclusions_h', label:'+ Exclusion', col:'#E24B4A'},
+        {key:'fautes_h', label:'+ Faute', col:'#C89020'}
+      ],
+      statPairs: [
+        {key:'tirs', label:'Tirs'},
+        {key:'arrets', label:'Arrêts'},
+        {key:'exclusions', label:'Exclusions'},
+        {key:'fautes', label:'Fautes'}
+      ],
+      scorersLabel: 'Buteurs'
+    },
     joueurExtra: { pied: null }
   },
 
@@ -257,6 +359,28 @@ var SPORT_CONFIG = {
       ethique:['Discussion fair-play et respect arbitral']
     },
     match: { label:'Match', periodeLabel:'Set', nbPeriodes:5, dureePeriode:0, effectifTitulaires:6, effectifMin:4, unite:'sets' },
+    matchEvents: {
+      quick: [
+        {key:'point_attaque', ico:'💥', label:'Point attaque', col:'#4BC88A', perPlayer:true, scoreDelta:1, statDelta:{attaques_h:1}},
+        {key:'ace', ico:'🎯', label:'Ace service', col:'#4BC88A', perPlayer:true, scoreDelta:1, statDelta:{aces_h:1}},
+        {key:'bloc', ico:'🧱', label:'Point bloc', col:'#4BC88A', perPlayer:true, scoreDelta:1, statDelta:{blocs_h:1}},
+        {key:'faute', ico:'🟨', label:'Faute', col:'#C89020', perPlayer:true, scoreDeltaAway:1},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true}
+      ],
+      stats: [
+        {key:'attaques_h', label:'+ Attaque réussie', col:'#4BC88A'},
+        {key:'aces_h', label:'+ Ace', col:'#1565C0'},
+        {key:'blocs_h', label:'+ Bloc', col:'#A060E0'},
+        {key:'fautes_h', label:'+ Faute', col:'#C89020'}
+      ],
+      statPairs: [
+        {key:'attaques', label:'Attaques réussies'},
+        {key:'aces', label:'Aces'},
+        {key:'blocs', label:'Blocs'},
+        {key:'fautes', label:'Fautes'}
+      ],
+      scorersLabel: 'Meilleurs attaquants'
+    },
     joueurExtra: { pied: null }
   },
 
@@ -543,6 +667,28 @@ var SPORT_CONFIG = {
       ethique:['Sensibilisation anti-triche et fair-play']
     },
     match: { label:'Match', periodeLabel:'Manche', nbPeriodes:3, dureePeriode:0, effectifTitulaires:5, effectifMin:5, unite:'rounds' },
+    matchEvents: {
+      quick: [
+        {key:'elimination', ico:'🎯', label:'Élimination', col:'#4BC88A', perPlayer:true, statDelta:{kills_h:1}},
+        {key:'mort', ico:'💀', label:'Mort', col:'#E24B4A', perPlayer:true, statDelta:{morts_h:1}},
+        {key:'objectif', ico:'🏆', label:'Objectif pris', col:'#1565C0', perPlayer:true, scoreDelta:1, statDelta:{objectifs_h:1}},
+        {key:'manche_gagnee', ico:'🏁', label:'Manche gagnée', col:'#4BC88A', perPlayer:false, scoreDelta:1},
+        {key:'remplacement', ico:'🔄', label:'Remplacement', col:'#60A8D0', perPlayer:true}
+      ],
+      stats: [
+        {key:'kills_h', label:'+ Élimination', col:'#4BC88A'},
+        {key:'morts_h', label:'+ Mort', col:'#E24B4A'},
+        {key:'objectifs_h', label:'+ Objectif', col:'#1565C0'},
+        {key:'assists_h', label:'+ Assist', col:'#A060E0'}
+      ],
+      statPairs: [
+        {key:'kills', label:'Éliminations'},
+        {key:'morts', label:'Morts'},
+        {key:'objectifs', label:'Objectifs pris'},
+        {key:'assists', label:'Assists'}
+      ],
+      scorersLabel: 'Meilleurs joueurs'
+    },
     joueurExtra: { pied: null }
   }
 
