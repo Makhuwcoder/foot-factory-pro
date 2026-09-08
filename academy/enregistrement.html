@@ -289,6 +289,10 @@
         </div>
       </div>
     `;
+    // Arrivée via un lien "Déjà inscrit ? Se connecter" (?login=1) : ouvrir directement l'onglet connexion
+    try {
+      if (new URLSearchParams(window.location.search).get('login') === '1') showAuthTab('login');
+    } catch(e) {}
   }
 
   function showAuthTab(which) {
