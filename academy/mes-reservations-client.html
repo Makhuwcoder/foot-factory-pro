@@ -199,6 +199,10 @@
     var reviewsByBooking = {};
     (myReviews || []).forEach(function (r) { reviewsByBooking[r.booking_id] = r; });
 
+    var { data: receivedReviews } = await FFP_DB.from('academy_reviews').select('booking_id, rating, comment').eq('target_profile_id', session.user.id).eq('reviewer_type', 'coach');
+    var receivedByBooking = {};
+    (receivedReviews || []).forEach(function (r) { receivedByBooking[r.booking_id] = r; });
+
     var now = new Date();
     var upcoming = [], past = [];
     (rows || []).forEach(function (b) {
@@ -228,12 +232,12 @@
     html += upcoming.length ? upcoming.map(renderBookingRow).join('') : '<div class="empty-state">Aucune réservation à venir.</div>';
 
     html += '<div class="section-title">Historique (' + past.length + ')</div>';
-    html += past.length ? past.map(function (b) { return renderBookingRow(b, reviewsByBooking[b.id]); }).join('') : '<div class="empty-state">Aucun historique pour le moment.</div>';
+    html += past.length ? past.map(function (b) { return renderBookingRow(b, reviewsByBooking[b.id], receivedByBooking[b.id]); }).join('') : '<div class="empty-state">Aucun historique pour le moment.</div>';
 
     appRoot.innerHTML = html;
   }
 
-  function renderBookingRow(b, existingReview) {
+  function renderBookingRow(b, existingReview, receivedReview) {
     var s = b.academy_sessions || {};
     var coach = b.academy_coaches || {};
     var av = b.academy_availabilities;
@@ -255,6 +259,14 @@
       cancelBlock =
         '<button class="btn-cancel" id="cancelBtn-' + b.id + '" onclick="ClientBookings.doCancel(\'' + b.id + '\')">Annuler</button>' +
         '<div class="cancel-msg" id="cancelNotice-' + b.id + '" style="color:#777;">' + noticeTxt + '</div>';
+    }
+
+    var receivedBlock = '';
+    if (receivedReview) {
+      receivedBlock = '<div class="review-display" style="opacity:0.85;"><div class="booking-meta" style="margin-bottom:2px;">Note reçue du coach :</div>' +
+        '<span class="stars-shown">' + '★'.repeat(receivedReview.rating) + '☆'.repeat(5 - receivedReview.rating) + '</span>' +
+        (receivedReview.comment ? '<div class="review-comment">' + escapeHtml(receivedReview.comment) + '</div>' : '') +
+        '</div>';
     }
 
     var reviewBlock = '';
@@ -279,6 +291,7 @@
       '<div class="booking-meta">' + escapeHtml(s.location_label || '') + ' · ' + (b.participants_count || 1) + ' participant(s)</div>' +
       cancelBlock +
       reviewBlock +
+      receivedBlock +
       '</div>' +
       '</div>' +
       '<div class="booking-right">' +
