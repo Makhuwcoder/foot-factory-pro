@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mes réservations — One Sport Academy</title>
+<meta name="description" content="Consultez vos réservations de coaching privé One Sport Academy." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --black:#0A0A0A; --surface:#111111; --surface2:#181818; --border:#2a2a2a; --text:#EEEEEE; --gold:#C9A84C; --red:#E05252; --green:#4ADE80; --amber:#D4A857; }
+  body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; }
+  a { color:inherit; }
+  h1,h2,h3 { font-family:'Barlow Condensed',sans-serif; font-weight:700; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
+  .nav-logo img { height:36px; filter:invert(1); }
+  .nav-back { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
+  .nav-back:hover { color:var(--gold); }
+
+  .container { max-width:760px; margin:0 auto; padding:40px 20px 90px; }
+  .loading-state { text-align:center; padding:80px 20px; color:#777; }
+  .error-banner { background:rgba(224,82,82,0.1); border:1px solid rgba(224,82,82,0.4); color:#F5A3A3; border-radius:5px; padding:14px 18px; font-size:0.88rem; margin-bottom:20px; }
+
+  .auth-wrapper { max-width:400px; margin:60px auto; }
+  .auth-wrapper h1 { font-size:1.4rem; text-transform:uppercase; margin-bottom:6px; }
+  .auth-wrapper p.sub { color:#999; font-size:0.88rem; margin-bottom:26px; }
+  .field-group { margin-bottom:14px; }
+  .field-group label { display:block; font-size:0.78rem; color:#999; margin-bottom:5px; font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:0.04em; }
+  .field-group input { width:100%; padding:11px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--text); font-family:'Barlow',sans-serif; font-size:0.9rem; }
+  .btn { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.84rem; letter-spacing:0.05em; text-transform:uppercase; padding:12px 22px; border-radius:3px; cursor:pointer; border:none; text-decoration:none; display:inline-block; width:100%; text-align:center; }
+  .btn-primary { background:var(--gold); color:#0A0A0A; }
+  .btn-primary:hover { background:#DDBC5C; }
+  .link-btn { background:none; border:none; color:#999; font-size:0.82rem; cursor:pointer; text-decoration:underline; padding:0; font-family:'Barlow',sans-serif; }
+  .msg { margin-top:14px; font-size:0.85rem; }
+  .msg.error { color:#F5A3A3; }
+  .msg.ok { color:var(--green); }
+
+  .top-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:10px; }
+  .top-header h1 { font-size:1.3rem; text-transform:uppercase; }
+  .top-header .user-chip { font-size:0.82rem; color:#999; }
+  .top-header .logout { font-size:0.78rem; color:#999; background:none; border:1px solid var(--border); border-radius:4px; padding:6px 12px; cursor:pointer; font-family:'Barlow',sans-serif; }
+  .top-header .logout:hover { border-color:var(--gold); color:var(--gold); }
+
+  .section-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:#777; margin:26px 0 12px; }
+
+  .empty-state { text-align:center; padding:36px 20px; color:#777; font-size:0.9rem; }
+
+  .booking-row { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:16px; flex-wrap:wrap; }
+  .booking-left { display:flex; align-items:center; gap:14px; }
+  .booking-date-box { width:54px; height:54px; border-radius:6px; background:var(--surface2); flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--border); }
+  .booking-date-box .day { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.15rem; color:var(--text); line-height:1; }
+  .booking-date-box .month { font-size:0.62rem; color:#999; text-transform:uppercase; }
+  .booking-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.95rem; }
+  .booking-meta { font-size:0.8rem; color:#999; margin-top:3px; }
+  .booking-right { display:flex; align-items:center; gap:16px; }
+  .booking-amount { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1rem; text-align:right; }
+  .booking-amount .sub { font-size:0.7rem; color:#777; font-weight:400; display:block; text-transform:none; letter-spacing:0; }
+  .status-pill { font-size:0.72rem; font-weight:600; padding:4px 11px; border-radius:11px; white-space:nowrap; font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:0.03em; }
+  .status-confirmed { background:rgba(74,222,128,0.12); color:var(--green); }
+  .status-completed { background:var(--surface2); color:#999; }
+  .status-cancelled { background:rgba(224,82,82,0.12); color:var(--red); }
+  .status-noshow { background:rgba(212,168,87,0.12); color:var(--amber); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
+  <a href="/academy/" class="nav-back">← Retour</a>
+</nav>
+
+<div class="container">
+  <div id="loadingState" class="loading-state">Chargement…</div>
+  <div id="appRoot" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/ffp-supabase.js"></script>
+<script>
+(function () {
+  var appRoot = document.getElementById('appRoot');
+  var loadingEl = document.getElementById('loadingState');
+
+  var STATUS_LABELS = {
+    confirmed: ['Confirmée', 'status-confirmed'],
+    cancelled_by_parent: ['Annulée', 'status-cancelled'],
+    cancelled_by_coach: ['Annulée par le coach', 'status-cancelled'],
+    completed: ['Terminée', 'status-completed'],
+    no_show: ['Absence', 'status-noshow']
+  };
+  var MONTHS = ['JANV', 'FÉVR', 'MARS', 'AVR', 'MAI', 'JUIN', 'JUIL', 'AOÛT', 'SEPT', 'OCT', 'NOV', 'DÉC'];
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  async function init() {
+    try { if (typeof initSupabase === 'function' && !window.FFP_DB) initSupabase(); } catch (e) {}
+    if (!window.FFP_DB) { renderError('Connexion au service impossible. Réessayez plus tard.'); return; }
+    var { data } = await FFP_DB.auth.getSession();
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    if (data && data.session) renderBookings(data.session);
+    else renderLogin();
+  }
+
+  function renderError(msg) {
+    loadingEl.style.display = 'none';
+    appRoot.style.display = 'block';
+    appRoot.innerHTML = '<div class="error-banner">' + escapeHtml(msg) + '</div>';
+  }
+
+  function renderLogin() {
+    appRoot.innerHTML =
+      '<div class="auth-wrapper">' +
+      '<h1>Mes réservations</h1>' +
+      '<p class="sub">Connectez-vous avec le compte créé lors de votre réservation.</p>' +
+      '<div class="field-group"><label>E-mail</label><input type="email" id="liEmail" autocomplete="email"></div>' +
+      '<div class="field-group"><label>Mot de passe</label><input type="password" id="liPassword" autocomplete="current-password"></div>' +
+      '<button class="btn btn-primary" onclick="ClientBookings.doLogin()">Me connecter</button>' +
+      '<div style="text-align:center; margin-top:16px;"><button class="link-btn" onclick="ClientBookings.doForgotPassword()">Mot de passe oublié ?</button></div>' +
+      '<div id="loginMsg" class="msg"></div>' +
+      '</div>';
+  }
+
+  async function doLogin() {
+    var email = (document.getElementById('liEmail').value || '').trim();
+    var password = document.getElementById('liPassword').value || '';
+    var msgEl = document.getElementById('loginMsg');
+    msgEl.className = 'msg';
+    msgEl.textContent = '';
+    if (!email || !password) { msgEl.className = 'msg error'; msgEl.textContent = 'Merci de renseigner e-mail et mot de passe.'; return; }
+    var { data, error } = await FFP_DB.auth.signInWithPassword({ email: email, password: password });
+    if (error) {
+      msgEl.className = 'msg error';
+      msgEl.textContent = 'Identifiants incorrects, ou aucun compte associé à cet e-mail.';
+      return;
+    }
+    renderBookings(data.session);
+  }
+
+  async function doForgotPassword() {
+    var email = (document.getElementById('liEmail').value || '').trim();
+    var msgEl = document.getElementById('loginMsg');
+    if (!email) { msgEl.className = 'msg error'; msgEl.textContent = 'Indiquez votre e-mail ci-dessus, puis cliquez à nouveau.'; return; }
+    var { error } = await FFP_DB.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/academy/mes-reservations-client.html' });
+    msgEl.className = error ? 'msg error' : 'msg ok';
+    msgEl.textContent = error ? "Erreur lors de l'envoi. Réessayez." : 'E-mail de réinitialisation envoyé si un compte existe pour cette adresse.';
+  }
+
+  async function doLogout() {
+    await FFP_DB.auth.signOut();
+    location.reload();
+  }
+
+  async function renderBookings(session) {
+    appRoot.innerHTML = '<div class="loading-state">Chargement de vos réservations…</div>';
+    var { data: rows, error } = await FFP_DB
+      .from('academy_bookings')
+      .select(
+        'id, participants_count, participant_names, amount_total_cents, payment_status, booking_status, created_at, ' +
+        'academy_availabilities(start_time, end_time), ' +
+        'academy_sessions(id, title, discipline, location_label, duration_minutes), ' +
+        'academy_coaches(id, display_name, photo_url)'
+      )
+      .eq('booked_by', session.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      appRoot.innerHTML = '<div class="error-banner">Impossible de charger vos réservations. Réessayez plus tard.</div>';
+      return;
+    }
+
+    var now = new Date();
+    var upcoming = [], past = [];
+    (rows || []).forEach(function (b) {
+      var av = b.academy_availabilities;
+      var start = av ? new Date(av.start_time) : null;
+      if (start && start >= now && b.booking_status === 'confirmed') upcoming.push(b);
+      else past.push(b);
+    });
+    upcoming.sort(function (a, b) { return new Date(a.academy_availabilities.start_time) - new Date(b.academy_availabilities.start_time); });
+    past.sort(function (a, b) {
+      var da = a.academy_availabilities ? a.academy_availabilities.start_time : a.created_at;
+      var db = b.academy_availabilities ? b.academy_availabilities.start_time : b.created_at;
+      return new Date(db) - new Date(da);
+    });
+
+    var html = '<div class="top-header"><h1>Mes réservations</h1>' +
+      '<div style="display:flex; align-items:center; gap:14px;"><span class="user-chip">' + escapeHtml(session.user.email) + '</span>' +
+      '<button class="logout" onclick="ClientBookings.doLogout()">Déconnexion</button></div></div>';
+
+    if (!rows || !rows.length) {
+      html += '<div class="empty-state">Vous n\'avez pas encore de réservation.<br><br><a href="/academy/#trouver" style="color:var(--gold); text-decoration:underline;">Trouver un coach →</a></div>';
+      appRoot.innerHTML = html;
+      return;
+    }
+
+    html += '<div class="section-title">À venir (' + upcoming.length + ')</div>';
+    html += upcoming.length ? upcoming.map(renderBookingRow).join('') : '<div class="empty-state">Aucune réservation à venir.</div>';
+
+    html += '<div class="section-title">Historique (' + past.length + ')</div>';
+    html += past.length ? past.map(renderBookingRow).join('') : '<div class="empty-state">Aucun historique pour le moment.</div>';
+
+    appRoot.innerHTML = html;
+  }
+
+  function renderBookingRow(b) {
+    var s = b.academy_sessions || {};
+    var coach = b.academy_coaches || {};
+    var av = b.academy_availabilities;
+    var start = av ? new Date(av.start_time) : null;
+    var day = start ? start.getDate() : '–';
+    var month = start ? MONTHS[start.getMonth()] : '';
+    var timeStr = start ? start.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
+    var statusInfo = STATUS_LABELS[b.booking_status] || ['—', 'status-completed'];
+    var amount = ((b.amount_total_cents || 0) / 100).toFixed(2).replace('.', ',');
+    var payLabel = b.payment_status === 'paid' ? 'Payé' : b.payment_status === 'refunded' ? 'Remboursé' : b.payment_status === 'failed' ? 'Échec paiement' : 'En attente';
+
+    return '<div class="booking-row">' +
+      '<div class="booking-left">' +
+      '<div class="booking-date-box"><span class="day">' + day + '</span><span class="month">' + month + '</span></div>' +
+      '<div>' +
+      '<div class="booking-title">' + escapeHtml(s.title || 'Séance') + '</div>' +
+      '<div class="booking-meta">' + escapeHtml(coach.display_name || '') + (s.discipline ? ' · ' + escapeHtml(s.discipline) : '') + (timeStr ? ' · ' + timeStr : '') + '</div>' +
+      '<div class="booking-meta">' + escapeHtml(s.location_label || '') + ' · ' + (b.participants_count || 1) + ' participant(s)</div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="booking-right">' +
+      '<div class="booking-amount">' + amount + ' €<span class="sub">' + payLabel + '</span></div>' +
+      '<span class="status-pill ' + statusInfo[1] + '">' + statusInfo[0] + '</span>' +
+      '</div>' +
+      '</div>';
+  }
+
+  window.ClientBookings = { doLogin: doLogin, doForgotPassword: doForgotPassword, doLogout: doLogout };
+  init();
+})();
+</script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("/ffp-sw.js").catch(function () {});</script>
+</body>
+</html>
