@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>One Sport — Compétitions individuelles</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--os-blue:#1565C0;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.rcard{background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:11px}
+.m-inp{background:#111;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.m-inp:focus{border-color:rgba(21,101,192,.5)}.m-inp option{background:#111}
+.lbl{font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px}
+.btn-primary{background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:8px;padding:12px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .25s}
+.btn-primary:hover{box-shadow:0 0 20px rgba(21,101,192,.5)}
+.comp-row{background:transparent;border:1px solid rgba(212,175,55,.1);border-radius:9px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.comp-row:hover{background:rgba(212,175,55,.05);border-color:rgba(21,101,192,.4)}
+.pill{font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:10px;background:rgba(21,101,192,.1);color:#1565C0;white-space:nowrap}
+.result-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.03);flex-wrap:wrap}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#F0F4F8}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:700px){.resp-2{grid-template-columns:1fr!important}}
+</style>
+<script src="ffp-auth.js"></script>
+</head>
+<body>
+<script>
+(function(){
+  var LS='ffp_session';
+  var roles=['coach','directeur','parent'];
+  function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
+  var s=get(LS);
+  if(!s){window.location.replace('ffp-login.html');return;}
+  if(roles.length>0&&roles.indexOf(s.role)<0){window.location.replace('ffp-login.html');return;}
+})();
+</script>
+
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
+<a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ONE SPORT</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a>
+<div style="display:flex;gap:7px;margin-left:auto;align-items:center"><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div>
+</header>
+
+<div style="max-width:1100px;margin:0 auto;padding:16px 18px;position:relative;z-index:1">
+
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center">
+    <div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:8px" id="page-title">Compétitions individuelles</div>
+    <div id="back-to-list-wrap" style="display:none;margin-left:auto"><button onclick="showList()" style="background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#888;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase">← Toutes les compétitions</button></div>
+  </div>
+
+  <!-- ═══ VUE LISTE ═══ -->
+  <div id="view-list">
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start" class="resp-2">
+      <div class="rcard" style="border-top:3px solid #D4AF37">
+        <div class="ct">Nouvelle compétition</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><label class="lbl">Intitulé</label><input class="m-inp" id="c-titre" type="text" placeholder="Championnat régional"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><label class="lbl">Date</label><input class="m-inp" id="c-date" type="date"></div>
+            <div><label class="lbl">Type</label><select class="m-inp" id="c-type"><option value="interne">Interne</option><option value="officielle" selected>Officielle</option><option value="qualification">Qualification</option><option value="championnat">Championnat</option></select></div>
+          </div>
+          <div><label class="lbl">Lieu</label><input class="m-inp" id="c-lieu" type="text" placeholder="Gymnase / Piscine / Circuit..."></div>
+          <div id="create-err" style="display:none;color:#E24B4A;font-size:11px;font-family:Montserrat,sans-serif;font-weight:600"></div>
+          <button class="btn-primary" onclick="createCompetition()">+ Créer la compétition</button>
+        </div>
+      </div>
+      <div class="rcard">
+        <div class="ct">Compétitions passées</div>
+        <div id="comp-list"><div style="color:#475569;font-size:12px;padding:10px 0">Chargement…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VUE DÉTAIL ═══ -->
+  <div id="view-detail" style="display:none">
+    <div class="rcard" style="border-top:3px solid #D4AF37">
+      <div id="detail-header"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;align-items:start" class="resp-2">
+      <div class="rcard">
+        <div class="ct">Ajouter un résultat</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><label class="lbl">Athlète</label><select class="m-inp" id="r-joueur"><option value="">Choisir un athlète</option></select></div>
+          <div><label class="lbl">Épreuve / Catégorie</label><input class="m-inp" id="r-epreuve" type="text" placeholder="ex: 100m nage libre, -73kg, Sprint"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><label class="lbl">Résultat</label><input class="m-inp" id="r-resultat" type="text" placeholder="58.32s, 6.20m, Ippon..."></div>
+            <div><label class="lbl">Classement</label><input class="m-inp" id="r-classement" type="number" min="1" placeholder="ex: 3"></div>
+          </div>
+          <div><label class="lbl">Temps (secondes, optionnel — pour suivre le record personnel)</label><input class="m-inp" id="r-secondes" type="number" step="0.01" placeholder="58.32"></div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#888;cursor:pointer"><input type="checkbox" id="r-record"> Record personnel</label>
+          <div id="result-err" style="display:none;color:#E24B4A;font-size:11px;font-family:Montserrat,sans-serif;font-weight:600"></div>
+          <button class="btn-primary" onclick="addResult()">+ Ajouter le résultat</button>
+        </div>
+      </div>
+
+      <div class="rcard" style="padding:0;overflow:hidden">
+        <div style="padding:14px 16px 0"><div class="ct">Résultats</div></div>
+        <div id="results-list" style="padding:0 16px 12px"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="ffp-supabase.js"></script>
+<script src="sport-config.js"></script>
+<script>
+var ALL_PLAYERS_C = [];
+var CURRENT_COMP = null;
+var SESS = null;
+
+function getSess(){
+  var s=(typeof getSession==="function")?getSession():null;
+  if(!s){ try{s=JSON.parse(localStorage.getItem('ffp_session'));}catch(e){s=null;} }
+  return s;
+}
+
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
+
+async function ensureDB(){
+  try{ if(typeof initSupabase==='function' && !window.FFP_DB){ initSupabase(); } }catch(e){}
+  return !!window.FFP_DB;
+}
+
+function showList(){
+  document.getElementById('view-list').style.display='block';
+  document.getElementById('view-detail').style.display='none';
+  document.getElementById('back-to-list-wrap').style.display='none';
+  document.getElementById('page-title').textContent='Compétitions individuelles';
+  CURRENT_COMP=null;
+  loadCompetitions();
+}
+
+function showDetail(comp){
+  CURRENT_COMP=comp;
+  document.getElementById('view-list').style.display='none';
+  document.getElementById('view-detail').style.display='block';
+  document.getElementById('back-to-list-wrap').style.display='block';
+  document.getElementById('page-title').textContent=comp.titre;
+
+  var typeLabels={interne:'Interne',officielle:'Officielle',qualification:'Qualification',championnat:'Championnat'};
+  document.getElementById('detail-header').innerHTML=
+    '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'
+    +'<div><div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px">'+escapeHtml(comp.titre)+'</div>'
+    +'<div style="font-size:12px;color:#888;margin-top:4px">'+(comp.date_competition||'Date non renseignée')+(comp.lieu?' · '+escapeHtml(comp.lieu):'')+'</div></div>'
+    +'<span class="pill">'+(typeLabels[comp.type_competition]||comp.type_competition||'')+'</span>'
+    +'</div>';
+
+  loadResults(comp.id);
+}
+
+async function loadPlayers(){
+  if(!(await ensureDB())) return;
+  try{
+    var res=await FFP_DB.from('joueurs').select('id,prenom,nom,poste').eq('actif',true).order('nom');
+    ALL_PLAYERS_C=res.data||[];
+    var sel=document.getElementById('r-joueur');
+    sel.innerHTML='<option value="">Choisir un athlète</option>'+ALL_PLAYERS_C.map(function(p){
+      return '<option value="'+p.id+'">'+escapeHtml(p.prenom+' '+p.nom)+(p.poste?' — '+escapeHtml(p.poste):'')+'</option>';
+    }).join('');
+  }catch(e){ console.warn('Erreur chargement joueurs:', e); }
+}
+
+async function loadCompetitions(){
+  if(!(await ensureDB())) return;
+  var el=document.getElementById('comp-list');
+  try{
+    var res=await FFP_DB.from('individual_competitions').select('*').order('date_competition',{ascending:false});
+    var rows=res.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:#475569;font-size:12px;padding:10px 0">Aucune compétition enregistrée pour le moment.</div>'; return; }
+    var typeLabels={interne:'Interne',officielle:'Officielle',qualification:'Qualification',championnat:'Championnat'};
+    el.innerHTML=rows.map(function(c){
+      return '<div class="comp-row" onclick=\'showDetail('+JSON.stringify(c).replace(/'/g,"&#39;")+')\'>'
+        +'<div><div style="font-weight:700;font-size:13px">'+escapeHtml(c.titre)+'</div>'
+        +'<div style="font-size:11px;color:#888;margin-top:2px">'+(c.date_competition||'Date non renseignée')+(c.lieu?' · '+escapeHtml(c.lieu):'')+'</div></div>'
+        +'<span class="pill">'+(typeLabels[c.type_competition]||c.type_competition||'')+'</span>'
+        +'</div>';
+    }).join('');
+  }catch(e){
+    el.innerHTML='<div style="color:#E24B4A;font-size:12px;padding:10px 0">Erreur de chargement.</div>';
+    console.warn(e);
+  }
+}
+
+async function createCompetition(){
+  var titre=(document.getElementById('c-titre').value||'').trim();
+  var errEl=document.getElementById('create-err');
+  errEl.style.display='none';
+  if(!titre){ errEl.textContent='Merci de renseigner un intitulé.'; errEl.style.display='block'; return; }
+  if(!(await ensureDB())) return;
+  SESS=SESS||getSess();
+  if(!SESS){ errEl.textContent='Session expirée, reconnectez-vous.'; errEl.style.display='block'; return; }
+
+  var payload={
+    club_id:SESS.club_id,
+    titre:titre,
+    date_competition:document.getElementById('c-date').value||null,
+    lieu:(document.getElementById('c-lieu').value||'').trim()||null,
+    type_competition:document.getElementById('c-type').value
+  };
+
+  try{
+    var res=await FFP_DB.from('individual_competitions').insert(payload).select().single();
+    if(res.error){ errEl.textContent="Erreur lors de la création."; errEl.style.display='block'; console.warn(res.error); return; }
+    document.getElementById('c-titre').value='';
+    document.getElementById('c-lieu').value='';
+    document.getElementById('c-date').value='';
+    showDetail(res.data);
+  }catch(e){
+    errEl.textContent='Erreur réseau.'; errEl.style.display='block'; console.warn(e);
+  }
+}
+
+async function loadResults(competitionId){
+  if(!(await ensureDB())) return;
+  var el=document.getElementById('results-list');
+  el.innerHTML='<div style="color:#475569;font-size:12px;padding:10px 0">Chargement…</div>';
+  try{
+    var res=await FFP_DB.from('individual_results').select('*, joueurs(prenom,nom)').eq('competition_id',competitionId).order('created_at',{ascending:false});
+    var rows=res.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:#475569;font-size:12px;padding:10px 0">Aucun résultat enregistré pour cette compétition.</div>'; return; }
+    el.innerHTML=rows.map(function(r){
+      var p=r.joueurs;
+      return '<div class="result-row">'
+        +'<div style="flex:1;min-width:140px"><div style="font-size:12px;font-weight:700">'+(p?escapeHtml(p.prenom+' '+p.nom):'—')+'</div>'
+        +'<div style="font-size:10px;color:#888">'+escapeHtml(r.epreuve)+'</div></div>'
+        +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:13px;color:#1565C0;min-width:80px">'+escapeHtml(r.resultat_texte)+'</div>'
+        +(r.classement?'<span class="pill">'+r.classement+'e</span>':'')
+        +(r.record_personnel?'<span style="font-size:14px" title="Record personnel">🏅</span>':'')
+        +'<button onclick="deleteResult(\''+r.id+'\')" style="background:none;border:none;color:#475569;cursor:pointer;font-size:14px;padding:2px 6px" title="Supprimer">×</button>'
+        +'</div>';
+    }).join('');
+  }catch(e){
+    el.innerHTML='<div style="color:#E24B4A;font-size:12px;padding:10px 0">Erreur de chargement.</div>';
+    console.warn(e);
+  }
+}
+
+async function addResult(){
+  var errEl=document.getElementById('result-err');
+  errEl.style.display='none';
+  if(!CURRENT_COMP){ return; }
+  var joueurId=document.getElementById('r-joueur').value;
+  var epreuve=(document.getElementById('r-epreuve').value||'').trim();
+  var resultat=(document.getElementById('r-resultat').value||'').trim();
+  if(!joueurId||!epreuve||!resultat){ errEl.textContent='Athlète, épreuve et résultat sont requis.'; errEl.style.display='block'; return; }
+  if(!(await ensureDB())) return;
+  SESS=SESS||getSess();
+  if(!SESS){ errEl.textContent='Session expirée, reconnectez-vous.'; errEl.style.display='block'; return; }
+
+  var secondesVal=document.getElementById('r-secondes').value;
+  var classementVal=document.getElementById('r-classement').value;
+
+  var payload={
+    competition_id:CURRENT_COMP.id,
+    club_id:SESS.club_id,
+    category_id:SESS.category_id,
+    joueur_id:parseInt(joueurId,10),
+    epreuve:epreuve,
+    resultat_texte:resultat,
+    resultat_secondes:secondesVal?parseFloat(secondesVal):null,
+    classement:classementVal?parseInt(classementVal,10):null,
+    record_personnel:document.getElementById('r-record').checked
+  };
+
+  try{
+    var res=await FFP_DB.from('individual_results').insert(payload);
+    if(res.error){ errEl.textContent="Erreur lors de l'ajout — vérifiez que le résultat concerne bien un athlète de votre catégorie."; errEl.style.display='block'; console.warn(res.error); return; }
+    document.getElementById('r-joueur').value='';
+    document.getElementById('r-epreuve').value='';
+    document.getElementById('r-resultat').value='';
+    document.getElementById('r-classement').value='';
+    document.getElementById('r-secondes').value='';
+    document.getElementById('r-record').checked=false;
+    loadResults(CURRENT_COMP.id);
+  }catch(e){
+    errEl.textContent='Erreur réseau.'; errEl.style.display='block'; console.warn(e);
+  }
+}
+
+async function deleteResult(id){
+  if(!(await ensureDB())) return;
+  if(!window.confirm('Supprimer ce résultat ?')) return;
+  try{
+    await FFP_DB.from('individual_results').delete().eq('id',id);
+    if(CURRENT_COMP) loadResults(CURRENT_COMP.id);
+  }catch(e){ console.warn(e); }
+}
+
+(function init(){
+  SESS=getSess();
+  loadPlayers();
+  loadCompetitions();
+})();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
+</body>
+</html>
