@@ -140,7 +140,7 @@ function ffpRecruteurGuard() {
 <header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
 <a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ONE SPORT</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a>
 <div style="display:flex;gap:7px;margin-left:auto;align-items:center"><a href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Coach</a><a href="ffp-accueil.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a></div></header>
-<div style="max-width:1300px;margin:0 auto;padding:16px 18px;position:relative;z-index:1"><div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:8px">Feuille de match</div><button id="tab-setup" class="phase-tab on" onclick="showPhase('setup')">📋 Setup</button><button id="tab-live" class="phase-tab" onclick="showPhase('live')" style="color:rgba(75,200,138,.7)">🔴 Live</button><button id="tab-rapport" class="phase-tab" onclick="if(MATCH)showPhase('rapport')">📊 Rapport</button><div style="margin-left:auto;font-family:Montserrat,sans-serif;font-size:11px;color:#475569">Historique : <button onclick="renderMatchList();document.getElementById('history-panel').style.display=document.getElementById('history-panel').style.display==='none'?'block':'none'" style="background:transparent;border:none;color:#1565C0;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700">Voir matchs →</button></div></div><div id="history-panel" style="display:none;background:#0D0B05;border:1px solid rgba(0,0,0,.12);border-radius:10px;overflow:hidden;margin-bottom:16px"><div style="padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Matchs récents</div><button onclick="document.getElementById('history-panel').style.display='none'" style="background:none;border:none;color:#888;cursor:pointer;font-size:14px">×</button></div><div id="match-list"></div></div><div id="phase-setup"><div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start" class="resp-2"><div><div class="rcard" style="border-top:3px solid #D4AF37"><div class="ct">Configuration du match</div><div style="display:flex;flex-direction:column;gap:10px"><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Intitulé</label><input class="m-inp" id="m-titre" type="text" placeholder="FFP vs FC Horizon"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Adversaire</label><input class="m-inp" id="m-adv" type="text" placeholder="Nom de l'équipe adverse"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Date</label><input class="m-inp" id="m-date" type="date"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Type</label><select class="m-inp" id="m-type"><option value="amical">Amical</option><option value="championnat">Championnat</option><option value="coupe">Coupe</option><option value="tournoi">Tournoi</option></select></div></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Lieu</label><input class="m-inp" id="m-lieu" type="text" placeholder="Terrain principal"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Durée (min)</label><input class="m-inp" id="m-duree" type="number" value="60" min="20" max="120"></div></div></div><div style="background:rgba(212,175,55,.04);border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:12px;margin-top:0"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#1565C0;text-transform:uppercase;margin-bottom:6px">Composition</div><div id="squad-count" style="font-size:11px;color:#888;margin-bottom:10px">0 titulaires · 0 remplaçants</div><div id="setup-err" style="display:none;color:#E24B4A;font-size:11px;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:8px"></div><button onclick="newMatch()" style="width:100%;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .25s" onmouseover="this.style.boxShadow='0 0 20px rgba(21,101,192,.5)'" onmouseout="this.style.boxShadow='none'">🚀 Démarrer le match</button></div></div><div class="rcard"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="ct" style="margin:0">Sélection de l'effectif</div><div style="font-size:11px;color:#475569" id="squad-hint">Les 11 meilleurs sont pré-sélectionnés</div></div><div id="squad-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:520px;overflow-y:auto"></div></div></div></div><div id="phase-live" style="display:none"><div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start" class="resp-2"><div><div style="background:linear-gradient(135deg,#0A0800,#141410);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:22px;margin-bottom:16px;border-top:3px solid #D4AF37"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px"><div id="match-title-live" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#888"></div><div style="display:flex;align-items:center;gap:10px"><div id="chrono-display" style="font-family:Montserrat,sans-serif;font-weight:900;font-size:32px;color:#4BC88A;min-width:80px;text-align:center;font-variant-numeric:tabular-nums">0:00</div><div style="display:flex;flex-direction:column;gap:5px"><button id="chrono-btn" onclick="toggleChrono()" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:7px;color:#4BC88A;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap">▶ Démarrer</button><button onclick="endMatch()" style="background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.2);border-radius:7px;color:#E24B4A;padding:5px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap">Terminer</button></div></div></div><div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap"><div class="score-box"><div class="score-team">One Sport</div><div class="score-num" id="score-home">0</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button onclick="changeScore('home',-1)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#E24B4A;font-weight:700;font-size:14px">−</button><button onclick="changeScore('home',1)" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#4BC88A;font-weight:700;font-size:14px">+</button></div></div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:28px;color:#475569">–</div><div class="score-box"><div class="score-team" id="score-away-team">Adversaire</div><div class="score-num" id="score-away" style="color:#888">0</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button onclick="changeScore('away',-1)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#E24B4A;font-weight:700;font-size:14px">−</button><button onclick="changeScore('away',1)" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#4BC88A;font-weight:700;font-size:14px">+</button></div></div></div></div><div class="rcard" style="margin-bottom:16px"><div class="ct">Événements rapides</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="evt-btn" onclick="openPlayerPicker('but')"><span style="font-size:22px">⚽</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#4BC88A;text-transform:uppercase">But</span></button><button class="evt-btn" onclick="openPlayerPicker('jaune')"><span style="font-size:22px">🟨</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#388E3C;text-transform:uppercase">Jaune</span></button><button class="evt-btn" onclick="openPlayerPicker('rouge')"><span style="font-size:22px">🟥</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#E24B4A;text-transform:uppercase">Rouge</span></button><button class="evt-btn" onclick="openPlayerPicker('remplacement')"><span style="font-size:22px">🔄</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#60A8D0;text-transform:uppercase">Remplacement</span></button><button class="evt-btn" onclick="openPlayerPicker('but_csc')"><span style="font-size:22px">🙈</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#E24B4A;text-transform:uppercase">C.S.C.</span></button><button class="evt-btn" onclick="openPlayerPicker('occasion')"><span style="font-size:22px">💫</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#1565C0;text-transform:uppercase">Occasion</span></button><button class="evt-btn" onclick="openPlayerPicker('arret')"><span style="font-size:22px">🧤</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#A060E0;text-transform:uppercase">Arrêt</span></button><button class="evt-btn" onclick="quickEvent('corner')"><span style="font-size:22px">⛳</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:#888;text-transform:uppercase">Corner</span></button></div></div><div class="rcard"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px"><div class="ct" style="margin:0">Statistiques live</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button onclick="incrementStat('tirs_h')" style="background:transparent;border:1px solid rgba(96,168,208,.2);border-radius:5px;padding:4px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#60A8D0;text-transform:uppercase">+ Tir</button><button onclick="incrementStat('tirs_c_h')" style="background:transparent;border:1px solid rgba(75,200,138,.2);border-radius:5px;padding:4px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#4BC88A;text-transform:uppercase">+ Cadré</button><button onclick="incrementStat('corners_h')" style="background:transparent;border:1px solid rgba(0,0,0,.15);border-radius:5px;padding:4px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#1565C0;text-transform:uppercase">+ Corner</button><button onclick="incrementStat('fautes_h')" style="background:transparent;border:1px solid rgba(200,130,32,.2);border-radius:5px;padding:4px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#C89020;text-transform:uppercase">+ Faute</button></div></div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:#888"><span>Possession</span><span id="poss-val">50% — 50%</span></div><input type="range" min="0" max="100" value="50" style="-webkit-appearance:none;appearance:none;width:100%;height:5px;background:linear-gradient(to right,#D4AF37 50%,#333 50%);border-radius:3px;outline:none;cursor:pointer" oninput="updatePossession(this.value);this.style.background='linear-gradient(to right,#D4AF37 0%,#D4AF37 '+this.value+'%,#333 '+this.value+'%,#333 100%)'"></div><div id="live-stats"></div></div></div><div><div class="rcard" style="padding:0;overflow:hidden;margin-bottom:14px"><div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Effectif titulaire</div></div><div id="live-squad" style="max-height:400px;overflow-y:auto"></div></div><div class="rcard" style="padding:0;overflow:hidden"><div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Fil des événements</div><button onclick="MATCH&&MATCH.evenements.length&&(MATCH.evenements=[],saveMatch(MATCH),renderEventLog())" style="background:none;border:none;color:#1E293B;cursor:pointer;font-size:11px;font-family:Montserrat,sans-serif" onmouseover="this.style.color='#E24B4A'" onmouseout="this.style.color='#333'">Effacer</button></div><div id="event-log" style="max-height:300px;overflow-y:auto"></div></div></div></div></div><div id="phase-rapport" style="display:none"><div id="rapport-content"></div></div></div><div id="picker-modal" style="display:none"></div>
+<div style="max-width:1300px;margin:0 auto;padding:16px 18px;position:relative;z-index:1"><div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:8px">Feuille de match</div><button id="tab-setup" class="phase-tab on" onclick="showPhase('setup')">📋 Setup</button><button id="tab-live" class="phase-tab" onclick="showPhase('live')" style="color:rgba(75,200,138,.7)">🔴 Live</button><button id="tab-rapport" class="phase-tab" onclick="if(MATCH)showPhase('rapport')">📊 Rapport</button><div style="margin-left:auto;font-family:Montserrat,sans-serif;font-size:11px;color:#475569">Historique : <button onclick="renderMatchList();document.getElementById('history-panel').style.display=document.getElementById('history-panel').style.display==='none'?'block':'none'" style="background:transparent;border:none;color:#1565C0;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700">Voir matchs →</button></div></div><div id="history-panel" style="display:none;background:#0D0B05;border:1px solid rgba(0,0,0,.12);border-radius:10px;overflow:hidden;margin-bottom:16px"><div style="padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Matchs récents</div><button onclick="document.getElementById('history-panel').style.display='none'" style="background:none;border:none;color:#888;cursor:pointer;font-size:14px">×</button></div><div id="match-list"></div></div><div id="phase-setup"><div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;align-items:start" class="resp-2"><div><div class="rcard" style="border-top:3px solid #D4AF37"><div class="ct">Configuration du match</div><div style="display:flex;flex-direction:column;gap:10px"><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Intitulé</label><input class="m-inp" id="m-titre" type="text" placeholder="FFP vs FC Horizon"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Adversaire</label><input class="m-inp" id="m-adv" type="text" placeholder="Nom de l'équipe adverse"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Date</label><input class="m-inp" id="m-date" type="date"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Type</label><select class="m-inp" id="m-type"><option value="amical">Amical</option><option value="championnat">Championnat</option><option value="coupe">Coupe</option><option value="tournoi">Tournoi</option></select></div></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Lieu</label><input class="m-inp" id="m-lieu" type="text" placeholder="Terrain principal"></div><div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Durée (min)</label><input class="m-inp" id="m-duree" type="number" value="60" min="20" max="120"></div></div></div><div style="background:rgba(212,175,55,.04);border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:12px;margin-top:0"><div style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;color:#1565C0;text-transform:uppercase;margin-bottom:6px">Composition</div><div id="squad-count" style="font-size:11px;color:#888;margin-bottom:10px">0 titulaires · 0 remplaçants</div><div id="setup-err" style="display:none;color:#E24B4A;font-size:11px;font-family:Montserrat,sans-serif;font-weight:600;margin-bottom:8px"></div><button onclick="newMatch()" style="width:100%;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:8px;padding:13px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .25s" onmouseover="this.style.boxShadow='0 0 20px rgba(21,101,192,.5)'" onmouseout="this.style.boxShadow='none'">🚀 Démarrer le match</button></div></div><div class="rcard"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="ct" style="margin:0">Sélection de l'effectif</div><div style="font-size:11px;color:#475569" id="squad-hint">Les 11 meilleurs sont pré-sélectionnés</div></div><div id="squad-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:520px;overflow-y:auto"></div></div></div></div><div id="phase-live" style="display:none"><div style="display:grid;grid-template-columns:1fr 320px;gap:16px;align-items:start" class="resp-2"><div><div style="background:linear-gradient(135deg,#0A0800,#141410);border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:22px;margin-bottom:16px;border-top:3px solid #D4AF37"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px"><div id="match-title-live" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#888"></div><div style="display:flex;align-items:center;gap:10px"><div id="chrono-display" style="font-family:Montserrat,sans-serif;font-weight:900;font-size:32px;color:#4BC88A;min-width:80px;text-align:center;font-variant-numeric:tabular-nums">0:00</div><div style="display:flex;flex-direction:column;gap:5px"><button id="chrono-btn" onclick="toggleChrono()" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.3);border-radius:7px;color:#4BC88A;padding:7px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap">▶ Démarrer</button><button onclick="endMatch()" style="background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.2);border-radius:7px;color:#E24B4A;padding:5px 14px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap">Terminer</button></div></div></div><div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap"><div class="score-box"><div class="score-team">One Sport</div><div class="score-num" id="score-home">0</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button onclick="changeScore('home',-1)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#E24B4A;font-weight:700;font-size:14px">−</button><button onclick="changeScore('home',1)" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#4BC88A;font-weight:700;font-size:14px">+</button></div></div><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:28px;color:#475569">–</div><div class="score-box"><div class="score-team" id="score-away-team">Adversaire</div><div class="score-num" id="score-away" style="color:#888">0</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px"><button onclick="changeScore('away',-1)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#E24B4A;font-weight:700;font-size:14px">−</button><button onclick="changeScore('away',1)" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.2);border-radius:5px;padding:5px 10px;cursor:pointer;color:#4BC88A;font-weight:700;font-size:14px">+</button></div></div></div></div><div class="rcard" style="margin-bottom:16px"><div class="ct">Événements rapides</div><div id="quick-events-row" style="display:flex;gap:8px;flex-wrap:wrap"></div></div><div class="rcard"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px"><div class="ct" style="margin:0">Statistiques live</div><div id="stat-buttons-row" style="display:flex;gap:8px;flex-wrap:wrap"></div></div></div><div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;color:#888"><span>Possession</span><span id="poss-val">50% — 50%</span></div><input type="range" min="0" max="100" value="50" style="-webkit-appearance:none;appearance:none;width:100%;height:5px;background:linear-gradient(to right,#D4AF37 50%,#333 50%);border-radius:3px;outline:none;cursor:pointer" oninput="updatePossession(this.value);this.style.background='linear-gradient(to right,#D4AF37 0%,#D4AF37 '+this.value+'%,#333 '+this.value+'%,#333 100%)'"></div><div id="live-stats"></div></div></div><div><div class="rcard" style="padding:0;overflow:hidden;margin-bottom:14px"><div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Effectif titulaire</div></div><div id="live-squad" style="max-height:400px;overflow-y:auto"></div></div><div class="rcard" style="padding:0;overflow:hidden"><div style="padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between"><div class="ct" style="margin:0">Fil des événements</div><button onclick="MATCH&&MATCH.evenements.length&&(MATCH.evenements=[],saveMatch(MATCH),renderEventLog())" style="background:none;border:none;color:#1E293B;cursor:pointer;font-size:11px;font-family:Montserrat,sans-serif" onmouseover="this.style.color='#E24B4A'" onmouseout="this.style.color='#333'">Effacer</button></div><div id="event-log" style="max-height:300px;overflow-y:auto"></div></div></div></div></div><div id="phase-rapport" style="display:none"><div id="rapport-content"></div></div></div><div id="picker-modal" style="display:none"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="ffp-supabase.js"></script>
 <script src="sport-config.js"></script>
@@ -204,6 +204,9 @@ function applyMatchSport(sportId){
   SQUAD_MIN=cfg.match.effectifMin;
   var hint=document.getElementById('squad-hint');
   if(hint) hint.textContent='Les '+SQUAD_AUTO+' meilleurs sont pré-sélectionnés';
+  EVT=buildEvtMeta();
+  renderQuickEventsRow();
+  renderStatButtonsRow();
 }
 
 async function ensureFFPDB(){
@@ -287,18 +290,46 @@ async function saveMatchReal(m){
 
 
 
-// ── Event types ──
-var EVT = {
-  but:         {ico:'⚽',label:'But',          col:'#4BC88A'},
-  but_csc:     {ico:'⚽',label:'C.S.C.',       col:'#E24B4A'},
-  jaune:       {ico:'🟨',label:'Carton jaune', col:'#FBCB57'},
-  rouge:       {ico:'🟥',label:'Carton rouge', col:'#E24B4A'},
-  remplacement:{ico:'🔄',label:'Remplacement', col:'#60A8D0'},
-  occasion:    {ico:'💫',label:'Occasion',     col:'#D4AF37'},
-  arret:       {ico:'🧤',label:'Arrêt',        col:'#A060E0'},
-  penalty:     {ico:'🎯',label:'Penalty',      col:'#C89020'},
-  corner:      {ico:'⛳',label:'Corner',       col:'#888'}
-};
+// ── Event types (sport-aware ; retombe sur le vocabulaire football si aucune config) ──
+var EVT_FOOTBALL_FALLBACK = [
+  {key:'but', ico:'⚽',label:'But',          col:'#4BC88A', perPlayer:true, scoreDelta:1},
+  {key:'but_csc', ico:'⚽',label:'C.S.C.',       col:'#E24B4A', perPlayer:true, scoreDeltaAway:1},
+  {key:'jaune', ico:'🟨',label:'Carton jaune', col:'#FBCB57', perPlayer:true},
+  {key:'rouge', ico:'🟥',label:'Carton rouge', col:'#E24B4A', perPlayer:true},
+  {key:'remplacement', ico:'🔄',label:'Remplacement', col:'#60A8D0', perPlayer:true},
+  {key:'occasion', ico:'💫',label:'Occasion',     col:'#D4AF37', perPlayer:true},
+  {key:'arret', ico:'🧤',label:'Arrêt',        col:'#A060E0', perPlayer:true},
+  {key:'corner', ico:'⛳',label:'Corner',       col:'#888', perPlayer:false}
+];
+function getQuickEventsConfig(){
+  var cfg=(typeof SPORT_CONFIG!=='undefined'&&SPORT_CONFIG[CURRENT_SPORT]&&SPORT_CONFIG[CURRENT_SPORT].matchEvents)?SPORT_CONFIG[CURRENT_SPORT].matchEvents:null;
+  return cfg?cfg.quick:EVT_FOOTBALL_FALLBACK;
+}
+function buildEvtMeta(){
+  var out={};
+  getQuickEventsConfig().forEach(function(e){ out[e.key]=e; });
+  return out;
+}
+var EVT = buildEvtMeta();
+renderQuickEventsRow();
+renderStatButtonsRow();
+
+function renderQuickEventsRow(){
+  var el=document.getElementById('quick-events-row');if(!el)return;
+  el.innerHTML=getQuickEventsConfig().map(function(e){
+    var action=e.perPlayer===false?"quickEvent('"+e.key+"')":"openPlayerPicker('"+e.key+"')";
+    return '<button class="evt-btn" onclick="'+action+'"><span style="font-size:22px">'+e.ico+'</span><span style="font-size:9px;font-family:Montserrat,sans-serif;font-weight:700;color:'+e.col+';text-transform:uppercase">'+e.label+'</span></button>';
+  }).join('');
+}
+
+function renderStatButtonsRow(){
+  var el=document.getElementById('stat-buttons-row');if(!el)return;
+  var cfg=(typeof SPORT_CONFIG!=='undefined'&&SPORT_CONFIG[CURRENT_SPORT]&&SPORT_CONFIG[CURRENT_SPORT].matchEvents)?SPORT_CONFIG[CURRENT_SPORT].matchEvents.stats:null;
+  var buttons=cfg||[{key:'tirs_h',label:'+ Tir',col:'#60A8D0'},{key:'tirs_c_h',label:'+ Cadré',col:'#4BC88A'},{key:'corners_h',label:'+ Corner',col:'#1565C0'},{key:'fautes_h',label:'+ Faute',col:'#C89020'}];
+  el.innerHTML=buttons.map(function(b){
+    return '<button onclick="incrementStat(\''+b.key+'\')" style="background:transparent;border:1px solid '+b.col+'33;border-radius:5px;padding:4px 9px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:'+b.col+';text-transform:uppercase">'+b.label+'</button>';
+  }).join('');
+}
 
 // ── Current match state ──
 var MATCH = null;
@@ -478,15 +509,22 @@ function addEvent(type,pid){
     joueur_id:pid,joueur_nom:p?(p.prenom+' '+p.nom):'',
     detail:''};
 
-  // Auto-update score for goals
-  if(type==='but'){MATCH.score_home++;updateScore();}
-  if(type==='but_csc'){MATCH.score_away++;updateScore();}
-
-  // Auto-update stats
-  if(type==='corner'){MATCH.stats.corners_h++;}
-  if(type==='faute'){MATCH.stats.fautes_h++;}
-  if(type==='arret'){MATCH.stats.tirs_a++;MATCH.stats.tirs_c_a++;}
-  if(type==='occasion'||type==='but'){MATCH.stats.tirs_h++;}
+  var evDef=EVT[type];
+  if(evDef){
+    if(evDef.scoreDelta){MATCH.score_home+=evDef.scoreDelta;updateScore();}
+    if(evDef.scoreDeltaAway){MATCH.score_away+=evDef.scoreDeltaAway;updateScore();}
+    if(evDef.statDelta){
+      Object.keys(evDef.statDelta).forEach(function(k){ MATCH.stats[k]=(MATCH.stats[k]||0)+evDef.statDelta[k]; });
+    }
+  } else {
+    // Filet de securite si la config sport est absente (comportement football historique)
+    if(type==='but'){MATCH.score_home++;updateScore();}
+    if(type==='but_csc'){MATCH.score_away++;updateScore();}
+    if(type==='corner'){MATCH.stats.corners_h=(MATCH.stats.corners_h||0)+1;}
+    if(type==='faute'){MATCH.stats.fautes_h=(MATCH.stats.fautes_h||0)+1;}
+    if(type==='arret'){MATCH.stats.tirs_a=(MATCH.stats.tirs_a||0)+1;MATCH.stats.tirs_c_a=(MATCH.stats.tirs_c_a||0)+1;}
+    if(type==='occasion'||type==='but'){MATCH.stats.tirs_h=(MATCH.stats.tirs_h||0)+1;}
+  }
 
   MATCH.evenements.unshift(ev);
   saveMatch(MATCH);
@@ -496,7 +534,9 @@ function addEvent(type,pid){
 
 function quickEvent(type){
   // For events not tied to a specific player - open player picker or add directly
-  if(type==='corner'||type==='faute'){addEvent(type,-1);return;}
+  var evDef=EVT[type];
+  if(evDef&&evDef.perPlayer===false){addEvent(type,-1);return;}
+  if(!evDef&&(type==='corner'||type==='faute')){addEvent(type,-1);return;}
   openPlayerPicker(type);
 }
 
@@ -556,22 +596,32 @@ function removeEvent(evId){
   if(!MATCH)return;
   var ev=MATCH.evenements.find(function(e){return e.id===evId;});
   if(!ev)return;
-  if(ev.type==='but')MATCH.score_home=Math.max(0,MATCH.score_home-1);
-  if(ev.type==='but_csc')MATCH.score_away=Math.max(0,MATCH.score_away-1);
+  var evDef=EVT[ev.type];
+  if(evDef){
+    if(evDef.scoreDelta)MATCH.score_home=Math.max(0,MATCH.score_home-evDef.scoreDelta);
+    if(evDef.scoreDeltaAway)MATCH.score_away=Math.max(0,MATCH.score_away-evDef.scoreDeltaAway);
+  } else {
+    if(ev.type==='but')MATCH.score_home=Math.max(0,MATCH.score_home-1);
+    if(ev.type==='but_csc')MATCH.score_away=Math.max(0,MATCH.score_away-1);
+  }
   MATCH.evenements=MATCH.evenements.filter(function(e){return e.id!==evId;});
   updateScore();renderEventLog();saveMatch(MATCH);
 }
 
+function getStatPairsConfig(){
+  var cfg=(typeof SPORT_CONFIG!=='undefined'&&SPORT_CONFIG[CURRENT_SPORT]&&SPORT_CONFIG[CURRENT_SPORT].matchEvents)?SPORT_CONFIG[CURRENT_SPORT].matchEvents.statPairs:null;
+  return cfg||[{key:'tirs',label:'Tirs'},{key:'tirs_c',label:'Tirs cadrés'},{key:'corners',label:'Corners'},{key:'fautes',label:'Fautes'}];
+}
+var STAT_PALETTE=['#60A8D0','#4BC88A','#A060E0','#C89020','#E24B4A','#D4AF37'];
+
 function updateLiveStats(){
   var el=document.getElementById('live-stats');if(!el||!MATCH)return;
   var s=MATCH.stats;
-  var statItems=[
-    {l:'Possession',vh:s.poss+'%',va:(100-s.poss)+'%',col:'#D4AF37',pct:s.poss},
-    {l:'Tirs',vh:s.tirs_h,va:s.tirs_a,col:'#60A8D0',pct:s.tirs_h+s.tirs_a>0?Math.round(s.tirs_h/(s.tirs_h+s.tirs_a)*100):50},
-    {l:'Tirs cadrés',vh:s.tirs_c_h,va:s.tirs_c_a,col:'#4BC88A',pct:s.tirs_c_h+s.tirs_c_a>0?Math.round(s.tirs_c_h/(s.tirs_c_h+s.tirs_c_a)*100):50},
-    {l:'Corners',vh:s.corners_h,va:s.corners_a,col:'#A060E0',pct:s.corners_h+s.corners_a>0?Math.round(s.corners_h/(s.corners_h+s.corners_a)*100):50},
-    {l:'Fautes',vh:s.fautes_h,va:s.fautes_a,col:'#C89020',pct:s.fautes_h+s.fautes_a>0?Math.round(s.fautes_h/(s.fautes_h+s.fautes_a)*100):50}
-  ];
+  var statItems=[{l:'Possession',vh:s.poss+'%',va:(100-s.poss)+'%',col:'#D4AF37',pct:s.poss}];
+  getStatPairsConfig().forEach(function(p,i){
+    var vh=s[p.key+'_h']||0, va=s[p.key+'_a']||0;
+    statItems.push({l:p.label,vh:vh,va:va,col:STAT_PALETTE[i%STAT_PALETTE.length],pct:(vh+va)>0?Math.round(vh/(vh+va)*100):50});
+  });
   el.innerHTML=statItems.map(function(st){
     return '<div style="margin-bottom:10px">'
       +'<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'
@@ -617,21 +667,19 @@ function renderLive(){
   // Squad list in player panel
   var el=document.getElementById('live-squad');if(!el)return;
   var tits=MATCH.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
+  var quickList=getQuickEventsConfig().filter(function(e){return e.perPlayer;});
+  var primaryEv=(quickList.find(function(e){return e.scoreDelta;}))||quickList[0]||{key:'but',ico:'⚽',col:'#4BC88A'};
+  var actionEvs=quickList.slice(0,3);
   el.innerHTML=tits.map(function(p){
-    var buts=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='but';}).length;
-    var jaunes=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='jaune';}).length;
-    var rouge=MATCH.evenements.some(function(e){return e.joueur_id===p.id&&e.type==='rouge';});
+    var primaryCount=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type===primaryEv.key;}).length;
+    var btns=actionEvs.map(function(ev){
+      return '<button onclick="addEvent(\''+ev.key+'\','+p.id+')" title="'+ev.label+'" style="background:transparent;border:1px solid '+ev.col+'40;border-radius:4px;padding:3px 6px;cursor:pointer;font-size:11px;transition:all .2s">'+ev.ico+'</button>';
+    }).join('');
     return '<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.025);cursor:default">'
       +'<span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:10px;color:#475569;min-width:22px">N°'+p.numero+'</span>'
       +'<div style="flex:1"><div style="font-size:11px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:9px;color:#475569">'+POS_SH[p.poste]+'</div></div>'
-      +(buts?'<span style="font-size:12px">⚽</span><span style="font-size:10px;color:#4BC88A;font-family:Montserrat,sans-serif;font-weight:700">'+buts+'</span>':'')
-      +(jaunes===1?'<span style="font-size:12px">🟨</span>':jaunes>=2?'<span style="font-size:12px">🟥</span>':'')
-      +(rouge?'<span style="font-size:12px">🟥</span>':'')
-      +'<div style="display:flex;gap:3px">'
-        +'<button onclick="addEvent(\'but\','+p.id+')" title="But" style="background:rgba(75,200,138,.1);border:1px solid rgba(75,200,138,.25);border-radius:4px;padding:3px 6px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.background=\'rgba(75,200,138,.25)\'" onmouseout="this.style.background=\'rgba(75,200,138,.1)\'">⚽</button>'
-        +'<button onclick="addEvent(\'jaune\','+p.id+')" title="Carton jaune" style="background:rgba(251,203,87,.1);border:1px solid rgba(251,203,87,.25);border-radius:4px;padding:3px 6px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.background=\'rgba(251,203,87,.2)\'" onmouseout="this.style.background=\'rgba(251,203,87,.1)\'">🟨</button>'
-        +'<button onclick="addEvent(\'rouge\','+p.id+')" title="Carton rouge" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.25);border-radius:4px;padding:3px 6px;cursor:pointer;font-size:11px;transition:all .2s" onmouseover="this.style.background=\'rgba(226,75,74,.2)\'" onmouseout="this.style.background=\'rgba(226,75,74,.1)\'">🟥</button>'
-      +'</div>'
+      +(primaryCount?'<span style="font-size:12px">'+primaryEv.ico+'</span><span style="font-size:10px;color:'+primaryEv.col+';font-family:Montserrat,sans-serif;font-weight:700">'+primaryCount+'</span>':'')
+      +'<div style="display:flex;gap:3px">'+btns+'</div>'
     +'</div>';
   }).join('');
 }
@@ -641,17 +689,19 @@ function renderRapport(){
   if(!MATCH)return;
   var el=document.getElementById('rapport-content');if(!el)return;
 
-  var scorers=MATCH.evenements.filter(function(e){return e.type==='but';});
+  var primaryEvent=(getQuickEventsConfig().find(function(e){return e.perPlayer&&e.scoreDelta;}))||{key:'but',ico:'⚽'};
+  var scorersLabel=(typeof SPORT_CONFIG!=='undefined'&&SPORT_CONFIG[CURRENT_SPORT]&&SPORT_CONFIG[CURRENT_SPORT].matchEvents&&SPORT_CONFIG[CURRENT_SPORT].matchEvents.scorersLabel)||'Buteurs';
+  var scorers=MATCH.evenements.filter(function(e){return e.type===primaryEvent.key;});
   var cartons=MATCH.evenements.filter(function(e){return e.type==='jaune'||e.type==='rouge';});
 
   // Player notes section
   var tits=MATCH.titulaires.map(function(id){return ALL_PLAYERS.find(function(p){return p.id===id;});}).filter(Boolean);
   var noteRows=tits.map(function(p){
-    var buts=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type==='but';}).length;
+    var buts=MATCH.evenements.filter(function(e){return e.joueur_id===p.id&&e.type===primaryEvent.key;}).length;
     var note=MATCH.notes[p.id]||6;
     return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03)">'
       +'<span style="font-family:Montserrat,sans-serif;font-size:10px;color:#475569;min-width:22px">N°'+p.numero+'</span>'
-      +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#888">'+p.poste+(buts?' · <span style="color:#4BC88A">'+buts+' but'+(buts>1?'s':'')+'</span>':'')+'</div></div>'
+      +'<div style="flex:1"><div style="font-size:12px;font-weight:600">'+p.prenom+' '+p.nom+'</div><div style="font-size:10px;color:#888">'+p.poste+(buts?' · <span style="color:#4BC88A">'+buts+'x '+primaryEvent.ico+'</span>':'')+'</div></div>'
       +'<input type="range" min="1" max="10" step="0.5" value="'+note+'" style="-webkit-appearance:none;appearance:none;width:80px;height:3px;background:linear-gradient(to right,#D4AF37 0%,#D4AF37 '+(note*10)+'%,#222 '+(note*10)+'%,#222 100%);outline:none;border-radius:2px;cursor:pointer" oninput="setNote('+p.id+',this.value);this.style.background=\'linear-gradient(to right,#D4AF37 0%,#D4AF37 \'+(this.value*10)+\'%,#222 \'+(this.value*10)+\'%,#222 100%)\'" onchange="setNote('+p.id+',this.value)">'
       +'<div id="note-'+p.id+'" style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#1565C0;min-width:28px;text-align:right">'+note+'</div>'
     +'</div>';
@@ -676,8 +726,8 @@ function renderRapport(){
   // Events summary + Stats
   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">'
     +'<div class="rcard">'
-      +'<div class="ct">Buteurs</div>'
-      +(scorers.length?scorers.map(function(e){var p=ALL_PLAYERS.find(function(x){return x.id===e.joueur_id;});return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:#1565C0;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px">'+e.mins+"'</span><span style=\"font-size:13px\">⚽</span><span style=\"font-size:12px;font-weight:600\">"+(p?p.prenom+' '+p.nom:'?')+'</span></div>';}).join(''):'<div style="font-size:12px;color:#475569;padding:8px 0">Aucun but marqué</div>')
+      +'<div class="ct">'+scorersLabel+'</div>'
+      +(scorers.length?scorers.map(function(e){var p=ALL_PLAYERS.find(function(x){return x.id===e.joueur_id;});return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:#1565C0;font-family:Montserrat,sans-serif;font-weight:700;font-size:11px">'+e.mins+"'</span><span style=\"font-size:13px\">"+primaryEvent.ico+"</span><span style=\"font-size:12px;font-weight:600\">"+(p?p.prenom+' '+p.nom:'?')+'</span></div>';}).join(''):'<div style="font-size:12px;color:#475569;padding:8px 0">Aucune contribution enregistrée</div>')
     +'</div>'
     +'<div class="rcard">'
       +'<div class="ct">Statistiques</div>'
@@ -716,12 +766,11 @@ function renderRapport(){
 function updateRapportStats(){
   var el=document.getElementById('rapport-stats');if(!el||!MATCH)return;
   var s=MATCH.stats;
-  [['Possession',s.poss+'%',(100-s.poss)+'%'],
-   ['Tirs',s.tirs_h,s.tirs_a],
-   ['Tirs cadrés',s.tirs_c_h,s.tirs_c_a],
-   ['Corners',s.corners_h,s.corners_a],
-   ['Fautes',s.fautes_h,s.fautes_a]
-  ].forEach(function(r){
+  var rows=[['Possession',s.poss+'%',(100-s.poss)+'%']];
+  getStatPairsConfig().forEach(function(p){
+    rows.push([p.label, s[p.key+'_h']||0, s[p.key+'_a']||0]);
+  });
+  rows.forEach(function(r){
     var tot=typeof r[1]==='number'&&typeof r[2]==='number'?r[1]+r[2]:0;
     var pct=tot>0?Math.round(r[1]/tot*100):50;
     el.innerHTML+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="font-weight:600">'+r[1]+'</span><span style="color:#475569;font-size:10px">'+r[0]+'</span><span style="color:#888">'+r[2]+'</span></div><div style="height:3px;background:#1A1A1A;border-radius:2px;overflow:hidden"><div style="height:100%;background:#D4AF37;border-radius:2px;width:'+pct+'%"></div></div></div>';
