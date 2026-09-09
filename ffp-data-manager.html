@@ -8,6 +8,8 @@
 <title>One Sport — Gestionnaires de Données &amp; Sport Business Managers</title>
 <meta name="description" content="Des stagiaires dédiés à la gestion des données et au développement business de votre club sportif — sans mobiliser vos coachs ni votre direction.">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="manifest" href="ffp-manifest.json">
 <meta name="theme-color" content="#0D1B3E">
 <style>
@@ -23,8 +25,8 @@ header .logo img{height:38px;width:auto;display:block}
 header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16px;letter-spacing:2px;background:linear-gradient(135deg,#1565C0,#4BC88A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero{text-align:center;padding:50px 0 30px}
 .eyebrow{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.hero h1{font-size:clamp(28px,5vw,46px);line-height:1.15;margin-bottom:16px}
-.hero h1 span{color:var(--gold);letter-spacing:1px}
+.hero h1{font-size:clamp(28px,5vw,46px);line-height:1.15;margin-bottom:10px;color:var(--gold);letter-spacing:1px}
+.hero .tagline{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(15px,2.4vw,20px);color:#F0F0F0;margin-bottom:18px}
 .hero p{max-width:640px;margin:0 auto;color:#AAB4C4;font-size:15px;line-height:1.7}
 
 .pain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:40px 0}
@@ -52,14 +54,43 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
 .metier-card ul li::before{content:'—';position:absolute;left:0;color:var(--blue)}
 @media(max-width:700px){.metiers-grid{grid-template-columns:1fr}}
 
-.tabs{display:flex;gap:10px;justify-content:center;margin:44px 0 24px}
-.tab-btn{font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:13px 28px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#AAB4C4;cursor:pointer;transition:all .2s}
+.tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:44px 0 24px}
+.tab-btn{font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:13px 22px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#AAB4C4;cursor:pointer;transition:all .2s}
 .tab-btn.active{background:linear-gradient(135deg,var(--navy),var(--blue));border-color:transparent;color:#fff;box-shadow:0 4px 20px rgba(21,101,192,.35)}
+.tab-divider{width:1px;background:rgba(255,255,255,.15);margin:6px 4px}
 
 .panel{display:none;max-width:640px;margin:0 auto 60px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px}
+.panel.wide{max-width:900px}
 .panel.active{display:block}
 .panel h3{font-size:18px;margin-bottom:8px}
 .panel .sub{color:#AAB4C4;font-size:13px;margin-bottom:24px;line-height:1.6}
+
+.board-filter-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+.board-filter-chip{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:.3px;padding:7px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#AAB4C4;cursor:pointer;transition:all .2s}
+.board-filter-chip:hover{border-color:var(--gold);color:#EEE}
+.board-filter-chip.active{background:var(--gold);border-color:var(--gold);color:#0A0A0A}
+.board-filter-count{font-size:9.5px;opacity:.7;margin-left:3px}
+.board-map{height:320px;border-radius:12px;overflow:hidden;margin-bottom:20px;background:#0d1117}
+.board-map .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.25)}
+.leaflet-popup-content-wrapper{background:#111111;color:#EEEEEE;border-radius:8px}
+.leaflet-popup-tip{background:#111111}
+.leaflet-popup-content{margin:12px 14px;font-family:'Raleway',sans-serif}
+.board-popup-name{font-family:Montserrat,sans-serif;font-weight:700;font-size:13px}
+.board-popup-meta{font-size:11px;color:var(--gold);margin-top:2px}
+.board-cards-track{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px}
+.board-card{flex:0 0 220px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;cursor:pointer;transition:border-color .2s;opacity:0;transform:translateY(10px)}
+.board-card.shown{opacity:1;transform:translateY(0);transition:opacity .3s,transform .3s}
+.board-card:hover,.board-card.highlighted{border-color:var(--gold)}
+.board-card .name{font-family:Montserrat,sans-serif;font-weight:800;font-size:13.5px;color:#fff;margin-bottom:4px}
+.board-card .meta{font-size:11px;color:var(--gold);margin-bottom:8px}
+.board-card .pitch{font-size:12px;color:#AAB4C4;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.board-empty{text-align:center;color:#8896AC;font-size:13.5px;line-height:1.7;padding:20px 10px}
+.board-empty a{color:var(--gold);text-decoration:underline;cursor:pointer}
+.board-marker-icon{width:32px;height:32px;border-radius:50%;background:var(--gold);border:2px solid #0A0A0A;display:flex;align-items:center;justify-content:center;font-size:15px;opacity:0;transform:scale(0.3);transition:opacity .35s ease,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.board-marker-icon.dropped{opacity:1;transform:scale(1)}
+.board-marker-icon.pulse{animation:boardMarkerPulse 1.6s ease-out}
+@keyframes boardMarkerPulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.6)}100%{box-shadow:0 0 0 16px rgba(212,175,55,0)}}
+
 .field{margin-bottom:14px}
 .field label{display:block;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#8896AC;margin-bottom:6px}
 .field input,.field select,.field textarea{width:100%;background:#0B1220;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 13px;color:#F0F0F0;font-family:Raleway,sans-serif;font-size:13px;outline:none;transition:border-color .2s}
@@ -88,7 +119,8 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   </header>
 
   <section class="hero">
-    <h1><span>ONE SKILLS</span>, les managers du sport</h1>
+    <h1>ONE SKILLS</h1>
+    <div class="tagline">La Plateforme des managers du sport</div>
     <p>Filmer les matchs, saisir les évaluations, gérer les convocations — personne n'a le temps de le faire sérieusement en plus d'entraîner. Structurer des partenariats, professionnaliser la gestion d'un club — personne n'a le profil pour le faire en interne. One Sport prépare un vivier d'étudiants stagiaires sur ces deux métiers, en lien direct avec les clubs adhérents.</p>
   </section>
 
@@ -132,16 +164,46 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tab-club" onclick="switchTab('club')">🏟️ Je suis un club</button>
+    <button class="tab-btn active" id="tab-postes" onclick="switchTab('postes')">📋 Postes à pourvoir</button>
+    <button class="tab-btn" id="tab-vivier" onclick="switchTab('vivier')">🎓 Vivier de recrutement</button>
+    <span class="tab-divider"></span>
+    <button class="tab-btn" id="tab-club" onclick="switchTab('club')">🏟️ Je suis un club</button>
     <button class="tab-btn" id="tab-candidat" onclick="switchTab('candidat')">🎓 Je suis étudiant(e)</button>
   </div>
 
+  <!-- ═══ POSTES À POURVOIR (carte) ═══ -->
+  <div class="panel wide active" id="panel-postes">
+    <h3>Postes à pourvoir</h3>
+    <p class="sub">Besoins référencés et validés par les clubs adhérents.</p>
+    <div id="postesMapWrapper" style="display:none;">
+      <div id="postesFilterBar" class="board-filter-bar" style="display:none;"></div>
+      <div id="postesMap" class="board-map"></div>
+      <div id="postesCardsTrack" class="board-cards-track"></div>
+    </div>
+    <div class="board-empty" id="postesEmpty">Aucun poste publié pour le moment — le programme est en phase de test. <a onclick="switchTab('club')">Déposez le besoin de votre club</a> pour être parmi les premiers référencés.</div>
+  </div>
+
+  <!-- ═══ VIVIER DE RECRUTEMENT (carte) ═══ -->
+  <div class="panel wide" id="panel-vivier">
+    <h3>Vivier de recrutement</h3>
+    <p class="sub">Étudiants et jeunes diplômés inscrits, prêts à démarrer un stage.</p>
+    <div id="vivierMapWrapper" style="display:none;">
+      <div id="vivierFilterBar" class="board-filter-bar" style="display:none;"></div>
+      <div id="vivierMap" class="board-map"></div>
+      <div id="vivierCardsTrack" class="board-cards-track"></div>
+    </div>
+    <div class="board-empty" id="vivierEmpty">Aucun profil publié pour le moment — le programme est en phase de test. <a onclick="switchTab('candidat')">Rejoignez le vivier</a> pour être parmi les premiers référencés.</div>
+  </div>
+
   <!-- ═══ FORMULAIRE CLUB ═══ -->
-  <div class="panel active" id="panel-club">
+  <div class="panel" id="panel-club">
     <div id="club-form-wrap">
       <h3>Votre club a besoin d'un coup de main sur la donnée ?</h3>
       <p class="sub">Laissez-nous vos coordonnées : on vous recontacte dès qu'un vivier de candidats est prêt dans votre région.</p>
-      <div class="field"><label>Nom du club</label><input id="c-club-nom" type="text" placeholder="AS Voltaire Paris"></div>
+      <div class="row2">
+        <div class="field"><label>Nom du club</label><input id="c-club-nom" type="text" placeholder="AS Voltaire Paris"></div>
+        <div class="field"><label>Ville</label><input id="c-ville" type="text" placeholder="Paris, Lyon, Marseille..."></div>
+      </div>
       <div class="row2">
         <div class="field"><label>Votre nom</label><input id="c-contact-nom" type="text" placeholder="Prénom Nom"></div>
         <div class="field"><label>Fonction</label><input id="c-contact-fonction" type="text" placeholder="Coach, Directeur..."></div>
@@ -216,8 +278,9 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
       </div>
       <div class="row2">
         <div class="field"><label>École / Université</label><input id="s-ecole" type="text" placeholder="Nom de l'établissement"></div>
-        <div class="field"><label>Durée de stage disponible</label><input id="s-duree" type="text" placeholder="ex: 2 mois, 6 mois"></div>
+        <div class="field"><label>Ville</label><input id="s-ville" type="text" placeholder="Paris, Lyon, Marseille..."></div>
       </div>
+      <div class="field"><label>Durée de stage disponible</label><input id="s-duree" type="text" placeholder="ex: 2 mois, 6 mois"></div>
       <div class="field"><label>Sport(s) qui vous intéresse(nt)</label><input id="s-sport" type="text" placeholder="Football, Basketball, tous sports..."></div>
       <div class="field">
         <label>Compétences que vous pouvez apporter</label>
@@ -254,10 +317,12 @@ function toggleClubTasks(){
 }
 
 function switchTab(which){
-  document.getElementById('tab-club').classList.toggle('active', which==='club');
-  document.getElementById('tab-candidat').classList.toggle('active', which==='candidat');
-  document.getElementById('panel-club').classList.toggle('active', which==='club');
-  document.getElementById('panel-candidat').classList.toggle('active', which==='candidat');
+  ['postes','vivier','club','candidat'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.toggle('active', t===which);
+    document.getElementById('panel-'+t).classList.toggle('active', t===which);
+  });
+  if(which==='postes') loadBoard('postes');
+  if(which==='vivier') loadBoard('vivier');
 }
 
 async function ensureDB(){
@@ -269,15 +334,16 @@ async function submitLead(type){
   var errEl=document.getElementById(type+'-err');
   errEl.style.display='none';
 
-  var nom, email, tel, details;
+  var nom, email, tel, details, ville;
 
   if(type==='club'){
     nom=(document.getElementById('c-club-nom').value||'').trim();
+    ville=(document.getElementById('c-ville').value||'').trim();
     var contactNom=(document.getElementById('c-contact-nom').value||'').trim();
     email=(document.getElementById('c-email').value||'').trim();
     tel=(document.getElementById('c-tel').value||'').trim();
-    if(!nom||!contactNom||!email){
-      errEl.textContent='Nom du club, contact et email sont requis.';
+    if(!nom||!ville||!contactNom||!email){
+      errEl.textContent='Nom du club, ville, contact et email sont requis.';
       errEl.style.display='block';
       return;
     }
@@ -293,11 +359,12 @@ async function submitLead(type){
     };
   } else {
     nom=(document.getElementById('s-nom').value||'').trim();
+    ville=(document.getElementById('s-ville').value||'').trim();
     email=(document.getElementById('s-email').value||'').trim();
     tel=(document.getElementById('s-tel').value||'').trim();
     var niveau=document.getElementById('s-niveau').value;
-    if(!nom||!email||!niveau){
-      errEl.textContent="Nom, email et niveau d'études sont requis.";
+    if(!nom||!ville||!email||!niveau){
+      errEl.textContent="Nom, ville, email et niveau d'études sont requis.";
       errEl.style.display='block';
       return;
     }
@@ -319,9 +386,13 @@ async function submitLead(type){
     return;
   }
 
+  var coords=await geocodeVille(ville);
+
   try{
     var res=await FFP_DB.from('data_manager_leads').insert({
-      type:type, nom:nom, email:email, telephone:tel||null, details:details
+      type:type, nom:nom, email:email, telephone:tel||null, ville:ville,
+      location_lat:coords?coords.lat:null, location_lng:coords?coords.lng:null,
+      details:details
     });
     if(res.error){
       console.warn(res.error);
@@ -337,6 +408,144 @@ async function submitLead(type){
     errEl.style.display='block';
   }
 }
+// Geocodage du champ Ville en texte libre -> coordonnees GPS, via Nominatim
+// (OpenStreetMap, gratuit, sans cle API). Echec silencieux : le lead est quand
+// meme enregistre, simplement non affiche sur la carte publique.
+function simplifyLocationForGeocoding(text){
+  var match=text.match(/^([a-zA-ZÀ-ÿ''\-\s]+?)\s*\d{1,2}\s*(er|e|ème|eme)?\.?\s*$/i);
+  return match?match[1].trim():text.trim();
+}
+async function geocodeVille(villeText){
+  try{
+    var cleaned=simplifyLocationForGeocoding(villeText);
+    var query=encodeURIComponent(cleaned+', France');
+    var res=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=fr&q='+query,{headers:{'Accept-Language':'fr'}});
+    var results=await res.json();
+    if(results&&results.length){ return {lat:parseFloat(results[0].lat), lng:parseFloat(results[0].lon)}; }
+  }catch(err){ console.warn('Geocodage impossible pour "'+villeText+'":', err); }
+  return null;
+}
+function escapeHtml(str){ var d=document.createElement('div'); d.textContent=str??''; return d.innerHTML; }
+
+// ── Cartes interactives (postes / vivier) ──
+var BOARD_STATE={
+  postes:{loaded:false, map:null, markers:{}, rows:[], filter:'all', boardType:'club', emoji:'🏟️'},
+  vivier:{loaded:false, map:null, markers:{}, rows:[], filter:'all', boardType:'candidat', emoji:'🎓'}
+};
+
+async function loadBoard(which){
+  var state=BOARD_STATE[which];
+  if(state.loaded) return;
+  state.loaded=true;
+  try{
+    if(!(await ensureDB())) return;
+    var res=await FFP_DB.from('data_manager_public_board').select('*').eq('type', state.boardType).limit(60);
+    if(res.error || !res.data || !res.data.length) return; // reste sur le message "aucun poste/profil"
+
+    var rows=res.data.filter(function(r){ return r.location_lat!=null && r.location_lng!=null; });
+    if(!rows.length) return;
+
+    rows.sort(function(a,b){
+      var pa=(a.poste_type||''), pb=(b.poste_type||'');
+      var c=pa.localeCompare(pb);
+      return c!==0?c:(a.display_name||'').localeCompare(b.display_name||'');
+    });
+    state.rows=rows;
+
+    document.getElementById(which+'Empty').style.display='none';
+    document.getElementById(which+'MapWrapper').style.display='block';
+
+    state.map=L.map(which+'Map', {scrollWheelZoom:false}).setView([46.6,2.4], 6);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'&copy; OpenStreetMap contributors', maxZoom:19}).addTo(state.map);
+
+    buildBoardFilterBar(which, rows);
+    renderBoardRows(which, 'all');
+  }catch(err){ console.warn('Carte '+which+' non chargee:', err); }
+}
+
+function buildBoardFilterBar(which, rows){
+  var counts={};
+  rows.forEach(function(r){ var p=r.poste_type||'Autre'; counts[p]=(counts[p]||0)+1; });
+  var types=Object.keys(counts).sort(function(a,b){ return a.localeCompare(b); });
+
+  var bar=document.getElementById(which+'FilterBar');
+  bar.style.display='flex';
+  bar.innerHTML='';
+
+  var allChip=document.createElement('button');
+  allChip.className='board-filter-chip active';
+  allChip.textContent='Tous les profils';
+  allChip.onclick=function(){ selectBoardFilter(which,'all'); };
+  bar.appendChild(allChip);
+
+  types.forEach(function(t){
+    var chip=document.createElement('button');
+    chip.className='board-filter-chip';
+    chip.innerHTML=escapeHtml(t)+'<span class="board-filter-count">('+counts[t]+')</span>';
+    chip.onclick=function(){ selectBoardFilter(which,t); };
+    bar.appendChild(chip);
+  });
+}
+
+function selectBoardFilter(which, type){
+  BOARD_STATE[which].filter=type;
+  document.querySelectorAll('#'+which+'FilterBar .board-filter-chip').forEach(function(c,i){
+    c.classList.toggle('active', (i===0&&type==='all')||c.textContent.indexOf(type)===0);
+  });
+  renderBoardRows(which, type);
+}
+
+function renderBoardRows(which, type){
+  var state=BOARD_STATE[which];
+  Object.keys(state.markers).forEach(function(id){ state.map.removeLayer(state.markers[id]); });
+  state.markers={};
+  var track=document.getElementById(which+'CardsTrack');
+  track.innerHTML='';
+
+  var filtered=type==='all'?state.rows:state.rows.filter(function(r){ return (r.poste_type||'Autre')===type; });
+  if(!filtered.length){
+    track.innerHTML='<div class="board-empty">Aucun profil pour ce filtre pour le moment.</div>';
+    return;
+  }
+
+  filtered.forEach(function(row,i){
+    var icon=L.divIcon({className:'', html:'<div class="board-marker-icon" id="'+which+'-marker-'+row.id+'">'+state.emoji+'</div>', iconSize:[32,32], iconAnchor:[16,16]});
+    var marker=L.marker([row.location_lat, row.location_lng], {icon:icon}).addTo(state.map);
+    var metaBits=[row.poste_type, row.sport, row.ville].filter(Boolean);
+    marker.bindPopup(
+      '<div class="board-popup-name">'+escapeHtml(row.display_name||'')+'</div>'+
+      '<div class="board-popup-meta">'+escapeHtml(metaBits.join(' · '))+'</div>'
+    );
+    state.markers[row.id]=marker;
+
+    var card=document.createElement('div');
+    card.className='board-card';
+    card.id=which+'-card-'+row.id;
+    var cardMeta=[row.poste_type, row.ville].filter(Boolean).join(' · ');
+    card.innerHTML=
+      '<div class="name">'+escapeHtml(row.display_name||'')+'</div>'+
+      '<div class="meta">'+escapeHtml(cardMeta)+'</div>'+
+      '<div class="pitch">'+escapeHtml(row.pitch||row.ecole||row.sport||'')+'</div>';
+
+    card.addEventListener('click', function(){
+      document.querySelectorAll('#'+which+'CardsTrack .board-card').forEach(function(c){ c.classList.remove('highlighted'); });
+      card.classList.add('highlighted');
+      state.map.flyTo([row.location_lat, row.location_lng], 11, {duration:0.8});
+      state.markers[row.id].openPopup();
+      var el=document.getElementById(which+'-marker-'+row.id);
+      if(el){ el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); }
+    });
+    track.appendChild(card);
+
+    setTimeout(function(){
+      var el=document.getElementById(which+'-marker-'+row.id);
+      if(el) el.classList.add('dropped');
+      card.classList.add('shown');
+    }, 100*i);
+  });
+}
+
+loadBoard('postes');
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("ffp-sw.js").catch(function(){});</script>
 </body>
