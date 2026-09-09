@@ -18,9 +18,11 @@
 
   nav { display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid var(--border); }
   .nav-logo img { height:36px; filter:invert(1); }
-  .nav-links { display:flex; gap:20px; }
+  .nav-links { display:flex; gap:20px; align-items:center; }
   .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
   .nav-links a:hover, .nav-links a.active { color:var(--gold); }
+  .nav-logout { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; background:none; border:1.5px solid var(--border); border-radius:4px; padding:6px 12px; cursor:pointer; }
+  .nav-logout:hover { border-color:var(--gold); color:var(--gold); }
 
   .container { max-width:900px; margin:0 auto; padding:36px 20px 90px; }
   .loading-state, .empty-state { text-align:center; padding:60px 20px; color:#777; }
@@ -70,6 +72,8 @@
   <div class="nav-links">
     <a href="/academy/mes-reservations.html">Réservations</a>
     <a href="/academy/mes-disponibilites.html" class="active">Disponibilités</a>
+    <a href="/academy/">← Retour</a>
+    <button class="nav-logout" id="navLogoutBtn">Déconnexion</button>
   </div>
 </nav>
 
@@ -84,7 +88,7 @@
 (function() {
   var loadingEl = document.getElementById('loadingState');
   var appRoot = document.getElementById('appRoot');
-  var LOGIN_PAGE_URL = '/ffp-login.html';
+  var LOGIN_PAGE_URL = '/academy/enregistrement.html?login=1'; // pas ffp-login.html : systeme d'auth different (Supabase direct, pas les comptes club football)
 
   var state = {
     session: null,
@@ -100,6 +104,9 @@
     if (typeof initSupabase === 'function') initSupabase();
     if (!FFP_DB) { renderError("Impossible de contacter le serveur."); return; }
 
+    var logoutBtn = document.getElementById('navLogoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+
     var { data } = await FFP_DB.auth.getSession();
     if (!data.session) { window.location.href = LOGIN_PAGE_URL; return; }
     state.session = data.session;
@@ -111,6 +118,11 @@
       console.error(err);
       renderError("Une erreur est survenue lors du chargement de votre espace.");
     }
+  }
+
+  async function doLogout() {
+    await FFP_DB.auth.signOut();
+    window.location.href = LOGIN_PAGE_URL;
   }
 
   async function loadCoachSessions() {
