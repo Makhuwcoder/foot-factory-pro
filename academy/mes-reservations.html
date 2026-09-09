@@ -20,6 +20,10 @@
   .top-bar .brand { color:var(--white); font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.1rem; }
   .top-bar .brand span { color:var(--orange); }
   .top-bar .user-chip { color: var(--grey-light); font-size: 0.84rem; }
+  .top-bar .nav-back { color: var(--grey-light); font-size: 0.84rem; text-decoration: none; }
+  .top-bar .nav-back:hover { color: var(--white); }
+  .top-bar .nav-logout { font-family:'Montserrat',sans-serif; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; color:var(--grey-light); background:none; border:1px solid rgba(255,255,255,0.2); border-radius:4px; padding:6px 12px; cursor:pointer; }
+  .top-bar .nav-logout:hover { border-color:var(--orange); color:var(--orange); }
   .notif-wrap { position:relative; }
   .notif-bell { background:none; border:none; color:var(--white); font-size:1.15rem; cursor:pointer; position:relative; padding:4px; }
   .notif-badge { position:absolute; top:-2px; right:-2px; background:var(--orange); color:var(--white); font-size:0.62rem; font-weight:800; border-radius:9px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; font-family:'Montserrat',sans-serif; }
@@ -129,6 +133,8 @@
       <div class="notif-dropdown" id="notifDropdown"></div>
     </div>
     <div class="user-chip" id="userChip"></div>
+    <a href="/academy/" class="nav-back">← Retour</a>
+    <button class="nav-logout" id="navLogoutBtn">Déconnexion</button>
   </div>
 </div>
 
@@ -164,6 +170,9 @@
   init();
 
   async function init() {
+    const logoutBtn = document.getElementById('navLogoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+
     const { data: { session: currentSession } } = await supabase.auth.getSession();
     if (!currentSession) {
       window.location.href = LOGIN_PAGE_URL;
@@ -179,6 +188,11 @@
       console.error(err);
       renderError("Une erreur est survenue lors du chargement de votre espace.");
     }
+  }
+
+  async function doLogout() {
+    await supabase.auth.signOut();
+    window.location.href = LOGIN_PAGE_URL;
   }
 
   function timeAgo(iso) {
