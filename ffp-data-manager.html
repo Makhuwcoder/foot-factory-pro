@@ -19,6 +19,7 @@ h1,h2,h3{font-family:'Montserrat',sans-serif;font-weight:900}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 header{padding:18px 0}
 header a.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+header .logo img{height:38px;width:auto;display:block}
 header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16px;letter-spacing:2px;background:linear-gradient(135deg,#1565C0,#4BC88A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero{text-align:center;padding:50px 0 30px}
 .eyebrow{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
@@ -34,6 +35,22 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
 .solution{background:rgba(21,101,192,.06);border:1px solid rgba(21,101,192,.2);border-radius:16px;padding:32px;margin:40px 0;text-align:center}
 .solution h2{font-size:22px;margin-bottom:12px}
 .solution p{color:#AAB4C4;max-width:680px;margin:0 auto;line-height:1.7}
+
+.oneskills{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 32px;margin:36px 0;text-align:center}
+.oneskills .badge{display:inline-flex;align-items:center;gap:8px;font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);border:1px solid rgba(212,175,55,.4);border-radius:20px;padding:6px 14px;margin-bottom:16px}
+.oneskills p{color:#AAB4C4;max-width:720px;margin:0 auto;line-height:1.75;font-size:14px}
+.oneskills p strong{color:#EEE}
+
+.metiers-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:36px 0}
+.metier-card{background:linear-gradient(160deg,rgba(21,101,192,.1),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 24px;position:relative;overflow:hidden}
+.metier-card .tag{display:inline-block;font-family:Montserrat,sans-serif;font-weight:800;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);border:1px solid rgba(212,175,55,.35);border-radius:20px;padding:4px 10px;margin-bottom:12px}
+.metier-card .ic{font-size:30px;margin-bottom:10px}
+.metier-card h3{font-size:19px;margin-bottom:10px;color:#fff}
+.metier-card p{color:#AAB4C4;font-size:13.5px;line-height:1.65;margin-bottom:12px}
+.metier-card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.metier-card ul li{font-size:12.5px;color:#DDE3EC;padding-left:16px;position:relative}
+.metier-card ul li::before{content:'—';position:absolute;left:0;color:var(--blue)}
+@media(max-width:700px){.metiers-grid{grid-template-columns:1fr}}
 
 .tabs{display:flex;gap:10px;justify-content:center;margin:44px 0 24px}
 .tab-btn{font-family:Montserrat,sans-serif;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:13px 28px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#AAB4C4;cursor:pointer;transition:all .2s}
@@ -67,34 +84,51 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
 
 <div class="wrap">
   <header>
-    <a href="/ffp-accueil.html" class="logo"><span class="logo-text">ONE SPORT</span></a>
+    <a href="/ffp-accueil.html" class="logo"><img src="/logo.png" alt="One Sport"><span class="logo-text">ONE SPORT</span></a>
   </header>
 
   <section class="hero">
-    <div class="eyebrow">Nouveau programme — en phase de test</div>
-    <h1>Deux métiers du sport<br>que <span>personne ne finance</span> encore</h1>
+    <h1><span>Gestionnaire de Données</span> &amp; <span>Sport Business Manager</span></h1>
     <p>Filmer les matchs, saisir les évaluations, gérer les convocations — personne n'a le temps de le faire sérieusement en plus d'entraîner. Structurer des partenariats, professionnaliser la gestion d'un club — personne n'a le profil pour le faire en interne. One Sport prépare un vivier d'étudiants stagiaires sur ces deux métiers, en lien direct avec les clubs adhérents.</p>
   </section>
 
-  <div class="pain-grid">
-    <div class="pain-card"><div class="ic">🎥</div><div class="t">Filmer matchs<br>et entraînements</div></div>
-    <div class="pain-card"><div class="ic">📊</div><div class="t">Saisir évaluations<br>et performances</div></div>
-    <div class="pain-card"><div class="ic">🧪</div><div class="t">Enregistrer résultats<br>de tests</div></div>
-    <div class="pain-card"><div class="ic">📋</div><div class="t">Gérer les<br>convocations</div></div>
+  <div class="metiers-grid">
+    <div class="metier-card">
+      <span class="tag">Métier phare n°1</span>
+      <div class="ic">📊</div>
+      <h3>Gestionnaire de Données</h3>
+      <p>Le bras droit data du coach : il prend en charge tout ce qui se saisit, se filme et se compile pendant que le staff se concentre sur l'entraînement.</p>
+      <ul>
+        <li>Filmer matchs et entraînements</li>
+        <li>Saisir évaluations et performances</li>
+        <li>Enregistrer les résultats de tests</li>
+        <li>Gérer les convocations</li>
+      </ul>
+    </div>
+    <div class="metier-card">
+      <span class="tag">Métier phare n°2</span>
+      <div class="ic">📈</div>
+      <h3>Sport Business Manager</h3>
+      <p>Le profil qui professionnalise un club de l'intérieur : partenariats, structuration, reporting — ce que personne n'a le temps ni le mandat de faire en interne.</p>
+      <ul>
+        <li>Structurer et démarcher des partenaires</li>
+        <li>Business intelligence &amp; reporting</li>
+        <li>Professionnaliser la gestion du club</li>
+        <li>Piloter des projets transverses</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="pain-grid">
-    <div class="pain-card"><div class="ic">🤝</div><div class="t">Structurer les<br>partenariats</div></div>
-    <div class="pain-card"><div class="ic">📈</div><div class="t">Business intelligence<br>&amp; reporting</div></div>
-    <div class="pain-card"><div class="ic">🏟️</div><div class="t">Professionnaliser<br>la gestion du club</div></div>
-    <div class="pain-card"><div class="ic">🗂️</div><div class="t">Piloter des projets<br>transverses</div></div>
+  <div class="oneskills">
+    <div class="badge">✦ One Skills</div>
+    <p><strong>One Skills</strong> est la plateforme de mise en relation de One Sport dédiée aux métiers du management sportif. Elle connecte les clubs qui ont besoin de ces compétences avec les étudiants et jeunes diplômés qui veulent se lancer dans le Data Management et le Sport Business — deux filières en pleine émergence, mais encore sans véritable canal de recrutement dédié. One Skills structure cette mise en relation : dépôt de besoin côté club, dépôt de profil côté candidat, et mise en relation dès qu'un vivier correspond à la demande.</p>
   </div>
 
   <div class="solution">
-    <h2>Deux profils de stagiaires, deux niveaux de mission</h2>
-    <p><strong style="color:#EEE">Gestionnaire de Données</strong> — BTS, université, école d'ingénieur, stage de 2 à 6 mois, pour prendre en charge la saisie et le suivi de la performance pendant que le coach coache.<br><br>
-    <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus en école de commerce ou STAPS, stage de 6 à 7 mois rémunéré, pour structurer, développer et professionnaliser un club — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
-    Avant de construire la plateforme de mise en relation, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
+    <h2>Deux niveaux de mission, deux profils de stagiaires</h2>
+    <p><strong style="color:#EEE">Gestionnaire de Données</strong> — BTS, université, école d'ingénieur, stage de 2 à 6 mois.<br><br>
+    <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus en école de commerce ou STAPS, stage de 6 à 7 mois rémunéré — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
+    Avant de construire One Skills à grande échelle, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
   </div>
 
   <div class="tabs">
