@@ -3,7 +3,7 @@
 // Offline support renforcé + cache management
 // ══════════════════════════════════════════════════════
 
-var CACHE_NAME = 'ffp-v38';
+var CACHE_NAME = 'ffp-v39';
 
 // App shell : pages et fichiers essentiels pour un fonctionnement hors-ligne réel
 var APP_SHELL = [
