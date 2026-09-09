@@ -167,6 +167,7 @@
     academyId: null,
     coachId: null,
     step: 1,
+    loggedInWithoutDossier: false,
     academyName: '',
     disciplines: [],
     bio: '',
@@ -272,6 +273,7 @@
     state.session = null;
     state.coachId = null;
     state.step = 1;
+    state.loggedInWithoutDossier = false;
     renderRoot();
   }
 
@@ -366,6 +368,11 @@
     }
     state.session = data.session;
     await loadExistingAcademy();
+    // Connexion réussie mais aucun dossier Academy associé à ce compte : on
+    // atterrit sur l'étape 1, qui ressemble à s'y méprendre à "Devenir coach".
+    // On le signale explicitement pour éviter de donner l'impression que la
+    // connexion n'a rien fait.
+    state.loggedInWithoutDossier = !state.coachId;
     renderRoot();
   }
 
@@ -426,6 +433,7 @@
     return `
       <h2>Votre Academy</h2>
       <p class="panel-sub">Chaque coach exerce sous sa propre Academy. Ces informations seront visibles publiquement une fois votre profil validé.</p>
+      ${state.loggedInWithoutDossier ? '<div class="notice info" style="margin-bottom:26px;">Connexion réussie, mais aucun dossier Academy n\'est encore associé à ce compte. Complétez les informations ci-dessous pour créer le vôtre.</div>' : ''}
 
       <div class="field-group">
         <label>Nom de votre Academy <span class="req">*</span>
