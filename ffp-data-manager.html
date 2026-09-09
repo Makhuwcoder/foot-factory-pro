@@ -24,6 +24,7 @@ header a.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 header .logo img{height:38px;width:auto;display:block}
 header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16px;letter-spacing:2px;background:linear-gradient(135deg,#1565C0,#4BC88A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero{text-align:center;padding:50px 0 30px}
+.hero-logo{height:96px;width:auto;margin-bottom:22px}
 .eyebrow{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
 .hero h1{font-size:clamp(28px,5vw,46px);line-height:1.15;margin-bottom:10px;color:var(--gold);letter-spacing:1px}
 .hero .tagline{font-family:'Montserrat',sans-serif;font-weight:700;font-size:clamp(15px,2.4vw,20px);color:#F0F0F0;margin-bottom:18px}
@@ -119,10 +120,19 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   </header>
 
   <section class="hero">
+    <img src="/logo-one-sport-header-white.png" alt="One Sport" class="hero-logo">
     <h1>ONE SKILLS</h1>
     <div class="tagline">La Plateforme des managers du sport</div>
     <p>Filmer les matchs, saisir les évaluations, gérer les convocations — personne n'a le temps de le faire sérieusement en plus d'entraîner. Structurer des partenariats, professionnaliser la gestion d'un club — personne n'a le profil pour le faire en interne. One Sport prépare un vivier d'étudiants stagiaires sur ces deux métiers, en lien direct avec les clubs adhérents.</p>
   </section>
+
+  <div class="tabs" id="mainTabs">
+    <button class="tab-btn active" id="tab-postes" onclick="switchTab('postes')">📋 Postes à pourvoir</button>
+    <button class="tab-btn" id="tab-vivier" onclick="switchTab('vivier')">🎓 Vivier de recrutement</button>
+    <span class="tab-divider"></span>
+    <button class="tab-btn" id="tab-club" onclick="switchTab('club')">🏟️ Je suis un club</button>
+    <button class="tab-btn" id="tab-candidat" onclick="switchTab('candidat')">🎓 Je suis étudiant(e)</button>
+  </div>
 
   <div class="metiers-grid">
     <div class="metier-card">
@@ -160,15 +170,7 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
     <h2>Deux niveaux de mission, deux profils de stagiaires</h2>
     <p><strong style="color:#EEE">Gestionnaire de Données</strong> — BTS, université, école d'ingénieur, stage de 2 à 6 mois.<br><br>
     <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus en école de commerce ou STAPS, stage de 6 à 7 mois rémunéré — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
-    Avant de construire One Skills à grande échelle, on veut savoir si la demande est réellement là des deux côtés. Dites-nous où vous en êtes :</p>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" id="tab-postes" onclick="switchTab('postes')">📋 Postes à pourvoir</button>
-    <button class="tab-btn" id="tab-vivier" onclick="switchTab('vivier')">🎓 Vivier de recrutement</button>
-    <span class="tab-divider"></span>
-    <button class="tab-btn" id="tab-club" onclick="switchTab('club')">🏟️ Je suis un club</button>
-    <button class="tab-btn" id="tab-candidat" onclick="switchTab('candidat')">🎓 Je suis étudiant(e)</button>
+    Avant de construire One Skills à grande échelle, on veut savoir si la demande est réellement là des deux côtés.</p>
   </div>
 
   <!-- ═══ POSTES À POURVOIR (carte) ═══ -->
@@ -323,6 +325,7 @@ function switchTab(which){
   });
   if(which==='postes') loadBoard('postes');
   if(which==='vivier') loadBoard('vivier');
+  document.getElementById('panel-'+which).scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 async function ensureDB(){
