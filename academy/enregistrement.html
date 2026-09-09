@@ -22,6 +22,9 @@
   .nav-logo img { height: 36px; filter: invert(1); }
   .nav-back { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; text-decoration:none; }
   .nav-back:hover { color: var(--gold); }
+  .nav-right { display:flex; align-items:center; gap:18px; }
+  .nav-logout { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#999; background:none; border:1.5px solid var(--border); border-radius:4px; padding:6px 12px; cursor:pointer; }
+  .nav-logout:hover { border-color:var(--gold); color:var(--gold); }
 
   .wrapper { max-width: 980px; margin: 0 auto; padding: 40px 20px 100px; display:grid; grid-template-columns:230px 1fr; gap: 30px; }
 
@@ -140,7 +143,10 @@
 
 <nav>
   <a href="/academy/" class="nav-logo"><img src="/logo-one-sport-officiel.png" alt="One Sport" /></a>
-  <a href="/academy/" class="nav-back">← Retour</a>
+  <div class="nav-right">
+    <button id="navLogoutBtn" class="nav-logout" style="display:none" onclick="AcademyReg.doLogout()">Déconnexion</button>
+    <a href="/academy/" class="nav-back">← Retour</a>
+  </div>
 </nav>
 
 <div id="loadingState" class="loading-state">Chargement…</div>
@@ -251,11 +257,22 @@
     loadingEl.style.display = 'none';
     appRoot.style.display = 'block';
 
+    var logoutBtn = document.getElementById('navLogoutBtn');
+    if (logoutBtn) logoutBtn.style.display = state.session ? 'inline-block' : 'none';
+
     if (!state.session) {
       renderAuthGate();
       return;
     }
     renderWizard();
+  }
+
+  async function doLogout() {
+    await FFP_DB.auth.signOut();
+    state.session = null;
+    state.coachId = null;
+    state.step = 1;
+    renderRoot();
   }
 
   // ═══════════════════════════ AUTH GATE ═══════════════════════════
@@ -891,6 +908,7 @@
     showAuthTab: showAuthTab,
     doSignup: doSignup,
     doLogin: doLogin,
+    doLogout: doLogout,
     goStep: goStep,
     saveStep1: saveStep1,
     saveStep2: saveStep2,
