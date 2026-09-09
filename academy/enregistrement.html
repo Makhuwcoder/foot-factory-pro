@@ -260,17 +260,24 @@
 
   // ═══════════════════════════ AUTH GATE ═══════════════════════════
   function renderAuthGate() {
+    // Arrivée via "Accéder à mon espace coach" (?login=1) : on ouvre directement
+    // l'onglet connexion, avec un titre qui correspond (au lieu du titre
+    // "inscription" par défaut, qui donnait l'impression que le lien menait
+    // au même endroit que "Devenir coach").
+    var cameForLogin = false;
+    try { cameForLogin = new URLSearchParams(window.location.search).get('login') === '1'; } catch(e) {}
+
     appRoot.innerHTML = `
       <div class="auth-wrapper">
-        <h2 style="font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; font-size:1.4rem; margin-bottom:6px;">Enregistrer mon Academy</h2>
-        <p style="color:#999; font-size:0.9rem; margin-bottom:26px;">Créez votre accès pour commencer votre dossier d'inscription.</p>
+        <h2 style="font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; font-size:1.4rem; margin-bottom:6px;">${cameForLogin ? 'Accéder à mon Academy' : 'Enregistrer mon Academy'}</h2>
+        <p style="color:#999; font-size:0.9rem; margin-bottom:26px;">${cameForLogin ? 'Connectez-vous pour retrouver votre dossier et vos réservations.' : 'Créez votre accès pour commencer votre dossier d\'inscription.'}</p>
 
         <div class="auth-tabs">
-          <button class="auth-tab active" id="tabSignup" onclick="AcademyReg.showAuthTab('signup')">Créer un compte</button>
-          <button class="auth-tab" id="tabLogin" onclick="AcademyReg.showAuthTab('login')">J'ai déjà un compte</button>
+          <button class="auth-tab${cameForLogin ? '' : ' active'}" id="tabSignup" onclick="AcademyReg.showAuthTab('signup')">Créer un compte</button>
+          <button class="auth-tab${cameForLogin ? ' active' : ''}" id="tabLogin" onclick="AcademyReg.showAuthTab('login')">J'ai déjà un compte</button>
         </div>
 
-        <div class="auth-panel active" id="panelSignup">
+        <div class="auth-panel${cameForLogin ? '' : ' active'}" id="panelSignup">
           <div class="field-row">
             <div class="field-group"><label>Prénom</label><input type="text" id="suPrenom"></div>
             <div class="field-group"><label>Nom</label><input type="text" id="suNom"></div>
@@ -281,7 +288,7 @@
           <div id="signupMsg" style="margin-top:14px;"></div>
         </div>
 
-        <div class="auth-panel" id="panelLogin">
+        <div class="auth-panel${cameForLogin ? ' active' : ''}" id="panelLogin">
           <div class="field-group"><label>E-mail</label><input type="email" id="liEmail"></div>
           <div class="field-group"><label>Mot de passe</label><input type="password" id="liPassword"></div>
           <button class="btn btn-primary" style="width:100%;" onclick="AcademyReg.doLogin()">Me connecter</button>
@@ -289,10 +296,6 @@
         </div>
       </div>
     `;
-    // Arrivée via un lien "Déjà inscrit ? Se connecter" (?login=1) : ouvrir directement l'onglet connexion
-    try {
-      if (new URLSearchParams(window.location.search).get('login') === '1') showAuthTab('login');
-    } catch(e) {}
   }
 
   function showAuthTab(which) {
