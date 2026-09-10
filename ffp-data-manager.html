@@ -167,9 +167,9 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   </div>
 
   <div class="solution">
-    <h2>Deux niveaux de mission, deux profils de stagiaires</h2>
-    <p><strong style="color:#EEE">Gestionnaire de Données</strong> — BTS, université, école d'ingénieur, stage de 2 à 6 mois.<br><br>
-    <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus en école de commerce ou STAPS, stage de 6 à 7 mois rémunéré — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
+    <h2>Deux métiers, plusieurs formats de contrat</h2>
+    <p><strong style="color:#EEE">Gestionnaire de Données</strong> — tous niveaux (CAP à Bac+5), en stage ou en alternance selon le club.<br><br>
+    <strong style="color:#EEE">Sport Business Manager</strong> — profil de fin de cursus ou en alternance (école de commerce, STAPS), stage ou alternance rémunérée — un positionnement qui répond directement à la montée des mastères "sport business" dans les grandes écoles, avec un niveau de mission qui peut intéresser des clubs de haut niveau.<br><br>
     Avant de construire One Skills à grande échelle, on veut savoir si la demande est réellement là des deux côtés.</p>
   </div>
 
@@ -188,7 +188,7 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   <!-- ═══ VIVIER DE RECRUTEMENT (carte) ═══ -->
   <div class="panel wide" id="panel-vivier">
     <h3>Vivier de recrutement</h3>
-    <p class="sub">Étudiants et jeunes diplômés inscrits, prêts à démarrer un stage.</p>
+    <p class="sub">Étudiants et jeunes diplômés inscrits, prêts à démarrer un stage ou une alternance.</p>
     <div id="vivierMapWrapper" style="display:none;">
       <div id="vivierFilterBar" class="board-filter-bar" style="display:none;"></div>
       <div id="vivierMap" class="board-map"></div>
@@ -217,6 +217,24 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
       <div class="row2">
         <div class="field"><label>Sport principal</label><input id="c-sport" type="text" placeholder="Football, Rugby, Basketball..."></div>
         <div class="field"><label>Nombre d'équipes / coachs</label><input id="c-taille" type="text" placeholder="ex: 6 équipes, 8 coachs"></div>
+      </div>
+      <div class="field">
+        <label>Type de contrat proposé</label>
+        <div class="checks" id="c-contrat-checks">
+          <label><input type="checkbox" value="Stage"> Stage</label>
+          <label><input type="checkbox" value="Alternance"> Alternance (apprentissage)</label>
+          <label><input type="checkbox" value="Embauche"> Embauche (CDD/CDI)</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Niveau(x) accepté(s)</label>
+        <div class="checks" id="c-niveau-checks">
+          <label><input type="checkbox" value="CAP / Bac Pro"> CAP / Bac Pro</label>
+          <label><input type="checkbox" value="Bac+2 (BTS/DUT)"> Bac+2 (BTS/DUT)</label>
+          <label><input type="checkbox" value="Bac+3 (Licence)"> Bac+3 (Licence)</label>
+          <label><input type="checkbox" value="Bac+5 (Master/École)"> Bac+5 (Master/École)</label>
+          <label><input type="checkbox" value="Tous niveaux"> Tous niveaux</label>
+        </div>
       </div>
       <div class="field">
         <label>Type de profil recherché</label>
@@ -260,7 +278,7 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
   <!-- ═══ FORMULAIRE CANDIDAT ═══ -->
   <div class="panel" id="panel-candidat">
     <div id="candidat-form-wrap">
-      <h3>Envie d'un stage utile dans le sport-tech ?</h3>
+      <h3>Envie d'un stage ou d'une alternance utile dans le sport-tech ?</h3>
       <p class="sub">Rejoignez le vivier de futurs Gestionnaires de Données One Sport. On vous met en relation avec des clubs adhérents dès que le programme démarre dans votre secteur.</p>
       <div class="row2">
         <div class="field"><label>Prénom Nom</label><input id="s-nom" type="text" placeholder="Prénom Nom"></div>
@@ -282,12 +300,19 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
         <div class="field"><label>École / Université</label><input id="s-ecole" type="text" placeholder="Nom de l'établissement"></div>
         <div class="field"><label>Ville</label><input id="s-ville" type="text" placeholder="Paris, Lyon, Marseille..."></div>
       </div>
-      <div class="field"><label>Durée de stage disponible</label><input id="s-duree" type="text" placeholder="ex: 2 mois, 6 mois"></div>
+      <div class="field">
+        <label>Type de contrat recherché</label>
+        <div class="checks" id="s-contrat-checks">
+          <label><input type="checkbox" value="Stage"> Stage</label>
+          <label><input type="checkbox" value="Alternance"> Alternance (apprentissage)</label>
+          <label><input type="checkbox" value="Embauche"> Embauche (CDD/CDI)</label>
+        </div>
+      </div>
+      <div class="field"><label>Disponibilité</label><input id="s-duree" type="text" placeholder="ex: dispo immédiatement, à partir de septembre, 6 mois..."></div>
       <div class="field"><label>Sport(s) qui vous intéresse(nt)</label><input id="s-sport" type="text" placeholder="Football, Basketball, tous sports..."></div>
       <div class="field">
         <label>Compétences que vous pouvez apporter</label>
-        <div class="checks">
-          <label><input type="checkbox" value="Analyse de données"> Analyse de données</label>
+        <div class="checks" id="s-competences-checks">
           <label><input type="checkbox" value="Synthèse / rédaction"> Synthèse &amp; rédaction</label>
           <label><input type="checkbox" value="Communication digitale"> Communication digitale (réseaux, contenus)</label>
           <label><input type="checkbox" value="Excel / tableurs"> Excel / tableurs</label>
@@ -296,7 +321,7 @@ header .logo-text{font-family:Montserrat,sans-serif;font-weight:900;font-size:16
           <label><input type="checkbox" value="Anglais courant"> Anglais courant</label>
         </div>
       </div>
-      <div class="field"><label>Pourquoi ce stage vous intéresse (quelques lignes)</label><textarea id="s-motivation" placeholder="Motivation, expériences pertinentes..."></textarea></div>
+      <div class="field"><label>Pourquoi cette opportunité vous intéresse (quelques lignes)</label><textarea id="s-motivation" placeholder="Motivation, expériences pertinentes..."></textarea></div>
       <div id="candidat-err" class="msg error" style="display:none"></div>
       <button class="btn-submit" onclick="submitLead('candidat')">Rejoindre le vivier</button>
     </div>
@@ -350,13 +375,17 @@ async function submitLead(type){
       errEl.style.display='block';
       return;
     }
-    var taches=Array.prototype.slice.call(document.querySelectorAll('#panel-club .checks input:checked')).map(function(i){return i.value;});
+    var taches=Array.prototype.slice.call(document.querySelectorAll('#c-tasks-data .checks input:checked, #c-tasks-business .checks input:checked')).map(function(i){return i.value;});
+    var typeContrat=Array.prototype.slice.call(document.querySelectorAll('#c-contrat-checks input:checked')).map(function(i){return i.value;});
+    var niveaux=Array.prototype.slice.call(document.querySelectorAll('#c-niveau-checks input:checked')).map(function(i){return i.value;});
     details={
       poste_type:document.getElementById('c-poste-type').value,
       contact_nom:contactNom,
       fonction:(document.getElementById('c-contact-fonction').value||'').trim(),
       sport:(document.getElementById('c-sport').value||'').trim(),
       taille:(document.getElementById('c-taille').value||'').trim(),
+      type_contrat:typeContrat,
+      niveaux:niveaux,
       taches:taches,
       message:(document.getElementById('c-message').value||'').trim()
     };
@@ -371,11 +400,13 @@ async function submitLead(type){
       errEl.style.display='block';
       return;
     }
-    var competences=Array.prototype.slice.call(document.querySelectorAll('#panel-candidat .checks input:checked')).map(function(i){return i.value;});
+    var competences=Array.prototype.slice.call(document.querySelectorAll('#s-competences-checks input:checked')).map(function(i){return i.value;});
+    var candidatContrat=Array.prototype.slice.call(document.querySelectorAll('#s-contrat-checks input:checked')).map(function(i){return i.value;});
     details={
       niveau:niveau,
       poste_type:document.getElementById('s-poste-type').value,
       ecole:(document.getElementById('s-ecole').value||'').trim(),
+      type_contrat:candidatContrat,
       duree:(document.getElementById('s-duree').value||'').trim(),
       sport:(document.getElementById('s-sport').value||'').trim(),
       competences:competences,
@@ -514,7 +545,7 @@ function renderBoardRows(which, type){
   filtered.forEach(function(row,i){
     var icon=L.divIcon({className:'', html:'<div class="board-marker-icon" id="'+which+'-marker-'+row.id+'">'+state.emoji+'</div>', iconSize:[32,32], iconAnchor:[16,16]});
     var marker=L.marker([row.location_lat, row.location_lng], {icon:icon}).addTo(state.map);
-    var metaBits=[row.poste_type, row.sport, row.ville].filter(Boolean);
+    var metaBits=[row.poste_type, row.type_contrat, row.sport, row.ville].filter(Boolean);
     marker.bindPopup(
       '<div class="board-popup-name">'+escapeHtml(row.display_name||'')+'</div>'+
       '<div class="board-popup-meta">'+escapeHtml(metaBits.join(' · '))+'</div>'
@@ -524,7 +555,7 @@ function renderBoardRows(which, type){
     var card=document.createElement('div');
     card.className='board-card';
     card.id=which+'-card-'+row.id;
-    var cardMeta=[row.poste_type, row.ville].filter(Boolean).join(' · ');
+    var cardMeta=[row.poste_type, row.type_contrat, row.ville].filter(Boolean).join(' · ');
     card.innerHTML=
       '<div class="name">'+escapeHtml(row.display_name||'')+'</div>'+
       '<div class="meta">'+escapeHtml(cardMeta)+'</div>'+
