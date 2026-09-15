@@ -721,6 +721,7 @@ function renderRapport(){
     +'</div>'
     +'<div style="font-size:11px;color:#475569;margin-top:8px">'+MATCH.date+' · '+MATCH.lieu+'</div>'
     +(mvp?'<div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(21,101,192,.04);border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:7px 14px"><span style="font-size:16px">⭐</span><div style="text-align:left"><div style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:1px">Homme du match</div><div style="font-size:13px;font-weight:700">'+mvp.prenom+' '+mvp.nom+'</div></div></div>':'')
+    +((MATCH.id&&String(MATCH.id).indexOf('match_')!==0)?'<div style="margin-top:14px"><a href="ffp-analyse-video.html?match='+MATCH.id+'" style="display:inline-block;background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border-radius:8px;padding:10px 18px;text-decoration:none;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase">🎬 Analyser la vidéo du match</a></div>':'')
   +'</div>'
 
   // Events summary + Stats

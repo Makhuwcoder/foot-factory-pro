@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>One Sport — Analyse vidéo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="ffp-manifest.json">
+<meta name="theme-color" content="#D4AF37">
+<style>
+:root{--os-blue:#1565C0;--gl:#FBCB57}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Raleway',sans-serif;background:#000;color:#F0F0F0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(212,175,55,.04),transparent 60%);z-index:0}
+.rcard{background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:12px;padding:16px 18px;margin-bottom:12px;position:relative;z-index:1}
+.ct{font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#1565C0;margin-bottom:11px}
+.m-inp{background:#111;border:1px solid rgba(0,0,0,.12);border-radius:8px;padding:9px 12px;color:#F0F0F0;font-family:'Raleway',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.m-inp:focus{border-color:rgba(21,101,192,.5)}.m-inp option{background:#111}
+.btn{background:linear-gradient(135deg,#0D1B3E,#1565C0);color:#000;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;transition:all .2s}
+.btn:hover{box-shadow:0 0 16px rgba(21,101,192,.5)}
+.btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+.btn-ghost{background:transparent;border:1px solid rgba(212,175,55,.3);color:#1565C0;border-radius:8px;padding:9px 15px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.btn-danger{background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);color:#E24B4A;border-radius:8px;padding:9px 15px;cursor:pointer;font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.badge{display:inline-block;font-family:Montserrat,sans-serif;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:10px}
+.badge-draft{background:rgba(136,136,136,.15);color:#888;border:1px solid rgba(136,136,136,.3)}
+.badge-processing{background:rgba(96,168,208,.12);color:#60A8D0;border:1px solid rgba(96,168,208,.3)}
+.badge-ready{background:rgba(75,200,138,.12);color:#4BC88A;border:1px solid rgba(75,200,138,.3)}
+.badge-failed{background:rgba(226,75,74,.12);color:#E24B4A;border:1px solid rgba(226,75,74,.3)}
+.badge-free{background:rgba(212,175,55,.1);color:#D4AF37;border:1px solid rgba(212,175,55,.3)}
+.badge-pro{background:rgba(160,96,224,.12);color:#A060E0;border:1px solid rgba(160,96,224,.3)}
+.vwrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;border:1px solid rgba(212,175,55,.15)}
+.vwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vwrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.seg-chip{display:flex;align-items:center;gap:8px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.15);border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:12px}
+.seg-chip button{background:none;border:none;color:#E24B4A;cursor:pointer;font-size:14px;margin-left:auto}
+.gauge{height:6px;background:#1A1A1A;border-radius:3px;overflow:hidden}
+.gauge-fill{height:100%;transition:width .3s}
+.color-dot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.color-dot.on{border-color:#fff}
+.list-card{background:#0D0B05;border:1px solid rgba(212,175,55,.13);border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.list-card:hover{border-color:rgba(212,175,55,.4);transform:translateY(-1px)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1A1A1A;border:1px solid rgba(226,75,74,.4);color:#F0F0F0;padding:10px 18px;border-radius:8px;font-size:12px;z-index:999;max-width:90vw}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:#F0F4F8}::-webkit-scrollbar-thumb{background:rgba(212,175,55,.2);border-radius:2px}
+@media(max-width:700px){.resp-2{grid-template-columns:1fr!important}}
+</style>
+<script src="ffp-auth.js"></script>
+</head>
+<body>
+<script>
+(function(){
+  // FFP AUTH GUARD v3 — synchrone
+  var LS='ffp_session',LSC='ffp_scout_session';
+  var roles=['coach','directeur','parent'];
+  function get(k){try{var r=localStorage.getItem(k);if(!r)return null;var d=JSON.parse(r);if(d&&d._exp&&Date.now()>d._exp){localStorage.removeItem(k);return null;}return d;}catch(e){return null;}}
+  var s=get(LS);
+  if(!s&&roles.indexOf('scout')>=0){s=get(LSC);if(s)try{localStorage.setItem(LS,JSON.stringify(s));}catch(e){}}
+  if(!s){window.location.replace('ffp-login.html');return;}
+  if(roles.length>0&&roles.indexOf(s.role)<0){window.location.replace('ffp-login.html');return;}
+})();
+</script>
+<script>
+(function(){
+  var LS = 'ffp_session', LS_SC = 'ffp_scout_session';
+  var roles = ['coach','directeur','parent'];
+  if (window.location.search.indexOf('demo=') >= 0) return;
+  function getSess(key) {
+    try {
+      var r = localStorage.getItem(key);
+      if (!r) return null;
+      var d = JSON.parse(r);
+      if (!d) return null;
+      if (d._exp && Date.now() > d._exp) { localStorage.removeItem(key); return null; }
+      return d;
+    } catch(e) { return null; }
+  }
+  var sess = getSess(LS);
+  if (!sess && roles.indexOf('scout') >= 0) {
+    sess = getSess(LS_SC);
+    if (sess) { localStorage.setItem(LS, JSON.stringify(sess)); }
+  }
+  if (!sess) { window.location.replace('ffp-login.html'); return; }
+  if (roles.length > 0 && roles.indexOf(sess.role) < 0) { window.location.replace('ffp-login.html'); }
+})();
+</script>
+<script>
+function ffpAuthGuard(allowedRoles, redirectUrl) {
+  redirectUrl = redirectUrl || 'ffp-login.html';
+  try {
+    var raw = localStorage.getItem('ffp_session');
+    if (!raw) { window.location.replace(redirectUrl); return false; }
+    var sess = JSON.parse(raw);
+    if (!sess || (sess._exp && Date.now() > sess._exp)) {
+      localStorage.removeItem('ffp_session');
+      window.location.replace(redirectUrl);
+      return false;
+    }
+    if (allowedRoles && allowedRoles.indexOf(sess.role) < 0) {
+      window.location.replace(redirectUrl);
+      return false;
+    }
+    return sess;
+  } catch(e) {
+    window.location.replace(redirectUrl);
+    return false;
+  }
+}
+(function(){
+  var sess = null;
+  try {
+    var raw = localStorage.getItem('ffp_session');
+    if (raw) {
+      var d = JSON.parse(raw);
+      if (d && (!d._exp || Date.now() < d._exp)) {
+        var allowed = ['coach','directeur','coordinateur','parent'];
+        if (allowed.indexOf(d.role) >= 0) sess = d;
+      }
+    }
+  } catch(e) {}
+  if (!sess) { window.location.replace('ffp-login.html'); return; }
+  window.FFP_SESSION = sess;
+})();
+</script>
+
+<header style="position:sticky;top:0;z-index:100;background:rgba(0,0,0,.97);border-bottom:1px solid rgba(212,175,55,.15);backdrop-filter:blur(10px);padding:0 16px;display:flex;align-items:center;gap:10px;min-height:52px;flex-wrap:wrap">
+<a href="ffp-accueil.html" style="display:flex;flex-direction:column;align-items:flex-start;text-decoration:none;gap:1px;padding:6px 0;flex-shrink:0"><div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ONE SPORT</div><div style="font-family:Montserrat,sans-serif;font-weight:600;font-size:7px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(212,175,55,.45)">ANALYSER · DÉVELOPPER · PERFORMER</div></a>
+<div style="display:flex;gap:7px;margin-left:auto;align-items:center">
+<a href="ffp-match.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Matchs</a>
+<a id="nav-home" href="ffp-coach.html" style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;text-decoration:none;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:4px 9px">Accueil</a>
+</div>
+</header>
+
+<div style="max-width:1100px;margin:0 auto;padding:16px 18px;position:relative;z-index:1">
+  <div id="msg-banner"></div>
+  <div id="view-list"></div>
+  <div id="view-editor" style="display:none"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="ffp-supabase.js"></script>
+<script src="sport-config.js"></script>
+<script src="//assets.mediadelivery.net/playerjs/playerjs-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════
+// ONE SPORT — ANALYSE VIDÉO (module Média)
+// Coach : upload → sélection de segments → commentaire vocal
+// + annotations synchronisées → publication.
+// Parent/Joueur : lecture de l'analyse publiée.
+// ══════════════════════════════════════════════════════
+
+var SESS = window.FFP_SESSION;
+var IS_STAFF = (SESS.role === 'coach' || SESS.role === 'directeur');
+var qp = new URLSearchParams(window.location.search);
+var Q_ID = qp.get('id');
+var Q_MATCH = qp.get('match');
+
+var ANALYSIS = null, SEGMENTS = [], SEGMENTS_DRAFT = [], RECIPIENTS = [], JOUEURS = [], MATCHES = [];
+var RAW_PLAYER = null, STITCH = null;
+var REC_STATE = null; // { recorder, chunks, stream, marks, curStroke, startedAt }
+var POLL_TIMER = null;
+var DRAW_COLOR = '#FD6A03';
+var COLORS = ['#FD6A03','#4BC88A','#60A8D0','#E24B4A','#FBCB57'];
+
+document.getElementById('nav-home').href = SESS.role === 'parent' ? 'ffp-parents.html' : 'ffp-coach.html';
+
+function toast(msg, isErr){
+  var b = document.getElementById('msg-banner');
+  b.innerHTML = '<div class="toast" style="position:static;transform:none;margin-bottom:12px;border-color:'+(isErr?'rgba(226,75,74,.4)':'rgba(75,200,138,.4)')+'">'+msg+'</div>';
+  setTimeout(function(){ if(b.innerHTML.indexOf(msg)>=0) b.innerHTML=''; }, 6000);
+}
+
+function msToClock(ms){
+  ms = Math.max(0, ms|0);
+  var s = Math.floor(ms/1000), m = Math.floor(s/60);
+  s = s % 60;
+  return m + ':' + (s<10?'0':'') + s;
+}
+function clockToMs(str){
+  if(!str) return 0;
+  var parts = String(str).split(':');
+  if(parts.length===1) return (parseInt(parts[0],10)||0)*1000;
+  var m = parseInt(parts[0],10)||0, s = parseInt(parts[1],10)||0;
+  return (m*60+s)*1000;
+}
+
+async function ensureDB(){
+  var tries=0;
+  while(!FFP_DB && tries<20){ await new Promise(function(r){setTimeout(r,100);}); tries++; }
+  return !!FFP_DB;
+}
+
+// ── Boot ──────────────────────────────────────────────
+(async function boot(){
+  if(!(await ensureDB())){ toast('Connexion à la base indisponible.', true); return; }
+  if(Q_ID){ openEditor(Q_ID); }
+  else { renderList(); }
+})();
+
+// ── Liste des analyses (RLS filtre automatiquement selon le rôle) ──
+async function renderList(){
+  document.getElementById('view-editor').style.display='none';
+  var listEl = document.getElementById('view-list');
+  listEl.style.display='block';
+  listEl.innerHTML = '<div class="rcard"><div class="ct">Chargement…</div></div>';
+
+  var res = await FFP_DB.from('match_analyses')
+    .select('id,title,status,video_ready,visibility_scope,created_at,matchs(titre,adversaire,date_match)')
+    .order('created_at',{ascending:false});
+
+  var rows = res.data || [];
+
+  var newBtn = IS_STAFF ? '<button class="btn" onclick="showNewForm()" style="margin-bottom:14px">+ Nouvelle analyse</button>' : '';
+  var formHost = '<div id="new-form-host"></div>';
+
+  var cards = rows.map(function(r){
+    var m = r.matchs || {};
+    var stBadge = {draft:['badge-draft','Brouillon'],processing:['badge-processing','En traitement'],ready:['badge-ready','Publiée'],failed:['badge-failed','Échec']}[r.status] || ['badge-draft', r.status];
+    return '<div class="list-card" onclick="location.href=\'ffp-analyse-video.html?id='+r.id+'\'">'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+        +'<div style="flex:1;min-width:160px"><div style="font-weight:700;font-size:13px">'+esc(r.title||m.titre||'Analyse sans titre')+'</div>'
+        +'<div style="font-size:11px;color:#888">'+esc(m.titre||'')+(m.adversaire?' vs '+esc(m.adversaire):'')+(m.date_match?' · '+m.date_match:'')+'</div></div>'
+        +'<span class="badge '+stBadge[0]+'">'+stBadge[1]+'</span>'
+        +(r.video_ready?'':'<span class="badge badge-processing">Vidéo en cours</span>')
+      +'</div></div>';
+  }).join('') || '<div class="rcard" style="text-align:center;color:#475569;padding:30px">'
+      +(IS_STAFF?'Aucune analyse pour le moment. Créez-en une à partir d\'un match.':'Aucune analyse vidéo disponible pour le moment.')+'</div>';
+
+  listEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">'
+    +'<div style="font-family:Montserrat,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#1565C0,#0D1B3E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">🎬 Analyses vidéo</div>'
+    +'</div>' + newBtn + formHost + cards;
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+async function showNewForm(){
+  var host = document.getElementById('new-form-host');
+  host.innerHTML = '<div class="rcard"><div class="ct">Nouvelle analyse vidéo</div><div id="new-form-body">Chargement des matchs…</div></div>';
+
+  var clubId = SESS.club_id;
+  var q = FFP_DB.from('matchs').select('id,titre,adversaire,date_match,category_id').eq('club_id', clubId);
+  if(SESS.role === 'coach' && SESS.category_id) q = q.eq('category_id', SESS.category_id);
+  q = q.order('date_match',{ascending:false}).limit(50);
+  var res = await q;
+  var matches = res.data || [];
+
+  var body = document.getElementById('new-form-body');
+  if(!matches.length){
+    body.innerHTML = '<div style="color:#888;font-size:12px">Aucun match trouvé. Créez d\'abord un match dans le module Matchs.</div>';
+    return;
+  }
+  var opts = matches.map(function(m){ return '<option value="'+m.id+'" data-cat="'+esc(m.category_id)+'">'+esc(m.titre)+(m.adversaire?' vs '+esc(m.adversaire):'')+(m.date_match?' — '+m.date_match:'')+'</option>'; }).join('');
+  body.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">'
+    +'<div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Match</label><select class="m-inp" id="nf-match">'+opts+'</select></div>'
+    +'<div><label style="font-family:Montserrat,sans-serif;font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Titre de l\'analyse</label><input class="m-inp" id="nf-title" placeholder="Analyse — 2e mi-temps"></div>'
+    +'<div style="display:flex;gap:8px"><button class="btn" onclick="createAnalysis()">Créer</button><button class="btn-ghost" onclick="document.getElementById(\'new-form-host\').innerHTML=\'\'">Annuler</button></div>'
+  +'</div>';
+
+  if(Q_MATCH){ var sel=document.getElementById('nf-match'); if(sel) sel.value = Q_MATCH; }
+}
+
+async function createAnalysis(){
+  var matchSel = document.getElementById('nf-match');
+  var matchId = matchSel.value;
+  var categoryId = matchSel.selectedOptions[0].getAttribute('data-cat');
+  var title = document.getElementById('nf-title').value.trim();
+
+  var clubRes = await FFP_DB.from('clubs').select('plan').eq('id', SESS.club_id).single();
+  var plan = (clubRes.data && clubRes.data.plan === 'premium') ? 'pro' : 'free';
+
+  var payload = {
+    match_id: matchId, club_id: SESS.club_id, category_id: categoryId, coach_id: SESS.supabase_id,
+    title: title || null, plan_at_creation: plan
+  };
+  var ins = await FFP_DB.from('match_analyses').insert(payload).select().single();
+  if(ins.error){ toast('Erreur création : '+ins.error.message, true); return; }
+  window.location.href = 'ffp-analyse-video.html?id=' + ins.data.id;
+}
+
+// ── Éditeur / Lecteur ─────────────────────────────────
+async function openEditor(id){
+  document.getElementById('view-list').style.display='none';
+  var host = document.getElementById('view-editor');
+  host.style.display='block';
+  host.innerHTML = '<div class="rcard"><div class="ct">Chargement…</div></div>';
+
+  var res = await FFP_DB.from('match_analyses').select('*, matchs(titre,adversaire,date_match,club_id)').eq('id', id).single();
+  if(res.error || !res.data){
+    host.innerHTML = '<div class="rcard" style="text-align:center;color:#E24B4A;padding:30px">Analyse introuvable ou accès non autorisé.<br><button class="btn-ghost" style="margin-top:12px" onclick="location.href=\'ffp-analyse-video.html\'">← Retour</button></div>';
+    return;
+  }
+  ANALYSIS = res.data;
+
+  var segRes = await FFP_DB.from('match_analysis_segments').select('*').eq('analysis_id', id).order('order_index');
+  SEGMENTS = segRes.data || [];
+  SEGMENTS_DRAFT = SEGMENTS.map(function(s){ return {start_ms:s.original_start_ms, end_ms:s.original_end_ms}; });
+
+  var IS_OWNER = IS_STAFF; // toute analyse récupérable via RLS par un coach/directeur leur appartient déjà
+
+  if(IS_OWNER){
+    var recRes = await FFP_DB.from('match_analysis_recipients').select('id,joueur_id,joueurs(prenom,nom)').eq('analysis_id', id);
+    RECIPIENTS = recRes.data || [];
+    var jRes = await FFP_DB.from('joueurs').select('id,prenom,nom').eq('club_id', ANALYSIS.club_id).eq('category_id', ANALYSIS.category_id).eq('actif', true).order('nom');
+    JOUEURS = jRes.data || [];
+    renderEditorStaff();
+  } else {
+    renderEditorViewer();
+  }
+}
+
+function statusLabel(s){
+  return {draft:'Brouillon',processing:'En traitement',ready:'Publiée',failed:'Échec'}[s] || s;
+}
+
+// ── Vue STAFF (coach / directeur) ─────────────────────
+function renderEditorStaff(){
+  var host = document.getElementById('view-editor');
+  var m = ANALYSIS.matchs || {};
+  var capMs = 15*60*1000;
+  var usedMs = SEGMENTS_DRAFT.reduce(function(s,x){return s+Math.max(0,x.end_ms-x.start_ms);},0);
+  var isFree = ANALYSIS.plan_at_creation === 'free';
+  var capPct = isFree ? Math.min(100, usedMs/capMs*100) : Math.min(100, usedMs / (30*60*1000) * 100);
+
+  host.innerHTML = ''
+  +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">'
+    +'<button class="btn-ghost" onclick="location.href=\'ffp-analyse-video.html\'">← Retour</button>'
+    +'<div style="flex:1"></div>'
+    +'<span class="badge '+(ANALYSIS.plan_at_creation==='pro'?'badge-pro':'badge-free')+'">'+(ANALYSIS.plan_at_creation==='pro'?'Plan Pro':'Plan Gratuit · 15 min max')+'</span>'
+    +'<span class="badge badge-'+ANALYSIS.status+'">'+statusLabel(ANALYSIS.status)+'</span>'
+  +'</div>'
+
+  +'<div class="rcard" style="border-top:3px solid #D4AF37">'
+    +'<div class="ct">Analyse</div>'
+    +'<input class="m-inp" id="ed-title" value="'+esc(ANALYSIS.title||'')+'" placeholder="Titre de l\'analyse" onblur="saveTitle()" style="margin-bottom:8px">'
+    +'<div style="font-size:11px;color:#888">'+esc(m.titre||'')+(m.adversaire?' vs '+esc(m.adversaire):'')+(m.date_match?' · '+m.date_match:'')+'</div>'
+  +'</div>'
+
+  +'<div class="rcard" style="border-top:3px solid #1565C0"><div class="ct">🎬 Vidéo du match</div><div id="video-zone"></div></div>'
+
+  +'<div id="timeline-zone"></div>'
+  +'<div id="record-zone"></div>'
+
+  +'<div class="rcard"><div class="ct">👁 Visibilité</div><div id="visibility-zone"></div></div>'
+
+  +'<div class="rcard" style="border-top:3px solid #4BC88A"><div class="ct">🚀 Publication</div><div id="publish-zone"></div></div>'
+
+  +'<div style="text-align:right;margin-top:6px"><button class="btn-danger" onclick="deleteAnalysis()">🗑 Supprimer cette analyse</button></div>';
+
+  renderVideoZone();
+  renderVisibilityZone();
+  renderPublishZone();
+}
+
+async function saveTitle(){
+  var v = document.getElementById('ed-title').value.trim();
+  if(v === ANALYSIS.title) return;
+  ANALYSIS.title = v;
+  await FFP_DB.from('match_analyses').update({title:v}).eq('id', ANALYSIS.id);
+}
+
+// ── Zone vidéo : upload ou lecteur ────────────────────
+function renderVideoZone(){
+  var el = document.getElementById('video-zone');
+  if(!ANALYSIS.bunny_video_id){
+    el.innerHTML = '<div style="border:1px dashed rgba(96,168,208,.35);background:rgba(96,168,208,.03);border-radius:10px;padding:18px;text-align:center">'
+      +'<div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#60A8D0;margin-bottom:8px">Ajoutez la vidéo du match ou de l\'entraînement</div>'
+      +'<div style="font-size:11px;color:#888;margin-bottom:12px">MP4, MOV — hébergée sur Bunny Stream</div>'
+      +'<input type="file" id="video-file" accept="video/*" style="display:none" onchange="startVideoUpload(this)">'
+      +'<label for="video-file" class="btn">📹 Choisir un fichier</label>'
+      +'<div id="upload-progress" style="margin-top:14px;display:none"></div>'
+    +'</div>';
+    return;
+  }
+
+  el.innerHTML = '<div class="vwrap"><iframe id="bunny-frame" src="https://iframe.mediadelivery.net/embed/753621/'+ANALYSIS.bunny_video_id+'?autoplay=false" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen></iframe><canvas id="bunny-canvas" style="pointer-events:none"></canvas></div>'
+    +'<div id="video-status" style="margin-top:8px;font-size:11px;color:#888"></div>';
+
+  initRawPlayer();
+  if(!ANALYSIS.video_ready && ANALYSIS.status !== 'failed'){
+    document.getElementById('video-status').innerHTML = '⟳ Encodage Bunny Stream en cours…';
+    pollVideoStatus();
+  } else if(ANALYSIS.status === 'failed'){
+    document.getElementById('video-status').innerHTML = '<span style="color:#E24B4A">Échec de l\'encodage vidéo. Réessayez avec un autre fichier (contactez le support si le problème persiste).</span>';
+  } else {
+    document.getElementById('video-status').innerHTML = '✅ Vidéo prête ('+msToClock(ANALYSIS.duration_ms||0)+')';
+    renderTimelineZone();
+    renderRecordZone();
+  }
+}
+
+async function startVideoUpload(input){
+  var file = input.files && input.files[0];
+  if(!file) return;
+  var prog = document.getElementById('upload-progress');
+  prog.style.display='block';
+  prog.innerHTML = '<div class="gauge"><div class="gauge-fill" id="up-bar" style="width:0%;background:#60A8D0"></div></div><div id="up-pct" style="font-size:11px;color:#888;margin-top:6px">Préparation…</div>';
+
+  var credRes = await FFP_DB.functions.invoke('bunny-create-upload', { body: { analysisId: ANALYSIS.id, title: ANALYSIS.title } });
+  if(credRes.error){ toast('Erreur upload : '+credRes.error.message, true); return; }
+  var cred = credRes.data;
+  ANALYSIS.bunny_video_id = cred.videoId;
+
+  var upload = new tus.Upload(file, {
+    endpoint: cred.uploadEndpoint,
+    retryDelays: [0,3000,5000,10000,20000],
+    headers: {
+      AuthorizationSignature: cred.authorizationSignature,
+      AuthorizationExpire: String(cred.authorizationExpire),
+      VideoId: cred.videoId,
+      LibraryId: cred.libraryId
+    },
+    metadata: { filetype: file.type, title: file.name },
+    onError: function(err){ toast('Échec de l\'upload : '+err, true); },
+    onProgress: function(sent, total){
+      var pct = (sent/total*100).toFixed(0);
+      var bar = document.getElementById('up-bar'), pctEl = document.getElementById('up-pct');
+      if(bar) bar.style.width = pct+'%';
+      if(pctEl) pctEl.textContent = 'Envoi… ' + pct + '% (' + (sent/1048576).toFixed(0) + ' / ' + (total/1048576).toFixed(0) + ' Mo)';
+    },
+    onSuccess: function(){
+      toast('Vidéo envoyée — encodage en cours sur Bunny Stream.');
+      renderVideoZone();
+    }
+  });
+  upload.start();
+}
+
+function initRawPlayer(){
+  var frame = document.getElementById('bunny-frame');
+  if(!frame || typeof playerjs === 'undefined') return;
+  RAW_PLAYER = new playerjs.Player(frame);
+  RAW_PLAYER.on('ready', function(){
+    var cv = document.getElementById('bunny-canvas');
+    if(cv){ cv.width = cv.clientWidth; cv.height = cv.clientHeight; }
+  });
+}
+
+async function pollVideoStatus(){
+  if(POLL_TIMER) clearInterval(POLL_TIMER);
+  POLL_TIMER = setInterval(async function(){
+    var res = await FFP_DB.functions.invoke('bunny-video-status', { body: { analysisId: ANALYSIS.id } });
+    if(res.error) return;
+    var d = res.data;
+    if(d.videoReady || d.status === 'failed'){
+      clearInterval(POLL_TIMER); POLL_TIMER = null;
+      ANALYSIS.video_ready = d.videoReady;
+      ANALYSIS.status = d.status;
+      ANALYSIS.duration_ms = d.durationMs;
+      renderVideoZone();
+    }
+  }, 5000);
+}
+
+// ── Timeline / sélection de segments ──────────────────
+function renderTimelineZone(){
+  var el = document.getElementById('timeline-zone');
+  var capMs = 15*60*1000;
+  var usedMs = SEGMENTS_DRAFT.reduce(function(s,x){return s+Math.max(0,x.end_ms-x.start_ms);},0);
+  var isFree = ANALYSIS.plan_at_creation === 'free';
+  var overCap = isFree && usedMs > capMs;
+  var pct = isFree ? Math.min(100, usedMs/capMs*100) : Math.min(100, usedMs/(ANALYSIS.duration_ms||1)*100);
+
+  var chips = SEGMENTS_DRAFT.map(function(s,i){
+    return '<div class="seg-chip"><span style="font-family:Montserrat,sans-serif;font-weight:700;color:#D4AF37">#'+(i+1)+'</span><span>'+msToClock(s.start_ms)+' → '+msToClock(s.end_ms)+'</span><span style="color:#475569">('+msToClock(s.end_ms-s.start_ms)+')</span><button onclick="removeSegment('+i+')">×</button></div>';
+  }).join('') || '<div style="font-size:11px;color:#475569;margin-bottom:8px">Aucun segment sélectionné pour l\'instant'+(ANALYSIS.plan_at_creation==='pro'?' — la vidéo complète sera utilisée si vous ne définissez aucun segment.':'.')+'</div>';
+
+  el.innerHTML = '<div class="rcard"><div class="ct">✂️ Sélection des moments à garder</div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'
+      +'<button class="btn-ghost" onclick="markPoint(\'seg-start\')">⏱ Marquer début</button>'
+      +'<input class="m-inp" id="seg-start" style="width:90px" placeholder="0:00">'
+      +'<button class="btn-ghost" onclick="markPoint(\'seg-end\')">⏱ Marquer fin</button>'
+      +'<input class="m-inp" id="seg-end" style="width:90px" placeholder="0:00">'
+      +'<button class="btn" onclick="addSegment()">+ Ajouter</button>'
+    +'</div>'
+    +chips
+    +'<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:10px;color:#888;margin-bottom:4px"><span>Durée sélectionnée</span><span>'+msToClock(usedMs)+(isFree?' / 15:00':'')+'</span></div>'
+    +'<div class="gauge"><div class="gauge-fill" style="width:'+pct+'%;background:'+(overCap?'#E24B4A':'#4BC88A')+'"></div></div>'
+    +(overCap?'<div style="color:#E24B4A;font-size:11px;margin-top:6px">Plafond gratuit dépassé (15 min max). Retirez des segments ou passez au plan Pro.</div>':'')
+    +'</div>'
+    +'<div style="margin-top:12px"><button class="btn" onclick="saveSegments()">💾 Enregistrer les segments</button></div>'
+  +'</div>';
+}
+
+function markPoint(inputId){
+  if(!RAW_PLAYER) return;
+  RAW_PLAYER.getCurrentTime(function(sec){
+    document.getElementById(inputId).value = msToClock(sec*1000);
+  });
+}
+
+function addSegment(){
+  var startMs = clockToMs(document.getElementById('seg-start').value);
+  var endMs = clockToMs(document.getElementById('seg-end').value);
+  if(endMs <= startMs){ toast('La fin du segment doit être après le début.', true); return; }
+  SEGMENTS_DRAFT.push({start_ms:startMs, end_ms:endMs});
+  renderTimelineZone();
+}
+function removeSegment(i){ SEGMENTS_DRAFT.splice(i,1); renderTimelineZone(); }
+
+async function saveSegments(){
+  await FFP_DB.from('match_analysis_segments').delete().eq('analysis_id', ANALYSIS.id);
+  if(SEGMENTS_DRAFT.length){
+    var cum = 0;
+    var rows = SEGMENTS_DRAFT.map(function(s,i){
+      var dur = Math.max(0, s.end_ms - s.start_ms);
+      var row = { analysis_id: ANALYSIS.id, order_index: i, original_start_ms: s.start_ms, original_end_ms: s.end_ms, stitched_start_ms: cum, stitched_end_ms: cum+dur };
+      cum += dur;
+      return row;
+    });
+    var ins = await FFP_DB.from('match_analysis_segments').insert(rows);
+    if(ins.error){ toast('Erreur : '+ins.error.message, true); return; }
+  }
+  var segRes = await FFP_DB.from('match_analysis_segments').select('*').eq('analysis_id', ANALYSIS.id).order('order_index');
+  SEGMENTS = segRes.data || [];
+  var ares = await FFP_DB.from('match_analyses').select('total_selected_duration_ms').eq('id', ANALYSIS.id).single();
+  if(ares.data) ANALYSIS.total_selected_duration_ms = ares.data.total_selected_duration_ms;
+  toast('Segments enregistrés.');
+  renderRecordZone();
+}
+
+// ── Enregistrement commentaire vocal + annotations ────
+function activeSegments(){
+  if(SEGMENTS.length) return SEGMENTS;
+  return [{ order_index:0, original_start_ms:0, original_end_ms: ANALYSIS.duration_ms||0, stitched_start_ms:0, stitched_end_ms: ANALYSIS.duration_ms||0 }];
+}
+
+function makeStitchedController(){
+  var segs = activeSegments();
+  var idx = 0;
+  var listeners = {};
+  var self = { active:true, segs:segs };
+  function emit(evt,val){ (listeners[evt]||[]).forEach(function(fn){fn(val);}); }
+  // Chaque contrôleur ne réagit qu'à ses propres événements (self.active),
+  // pour éviter toute interférence si un nouvel enregistrement en crée un autre.
+  RAW_PLAYER.on('timeupdate', function(data){
+    if(!self.active) return;
+    var origMs = (data.seconds||0)*1000;
+    var seg = segs[idx];
+    if(origMs >= seg.original_end_ms - 80){
+      if(idx+1 < segs.length){ idx++; RAW_PLAYER.setCurrentTime(segs[idx].original_start_ms/1000); return; }
+      else { self.active=false; RAW_PLAYER.pause(); emit('ended'); return; }
+    }
+    var stitchedMs = seg.stitched_start_ms + Math.max(0, origMs - seg.original_start_ms);
+    emit('timeupdate', stitchedMs);
+  });
+  self.on = function(evt,fn){ (listeners[evt]=listeners[evt]||[]).push(fn); };
+  self.play = function(fromStitchedMs){
+    self.active = true;
+    var target = fromStitchedMs||0;
+    for(var i=0;i<segs.length;i++){ if(target <= segs[i].stitched_end_ms){ idx=i; break; } }
+    var seg = segs[idx];
+    var origSec = (seg.original_start_ms + Math.max(0,target-seg.stitched_start_ms))/1000;
+    RAW_PLAYER.setCurrentTime(origSec);
+    setTimeout(function(){ if(self.active) RAW_PLAYER.play(); }, 250);
+  };
+  self.pause = function(){ self.active=false; RAW_PLAYER.pause(); };
+  return self;
+}
+
+function renderRecordZone(){
+  var el = document.getElementById('record-zone');
+  if(!ANALYSIS.video_ready){ el.innerHTML=''; return; }
+  el.innerHTML = '<div class="rcard"><div class="ct">🎙️ Commentaire vocal + annotations</div>'
+    +'<div id="rec-controls">'
+      +(ANALYSIS.audio_url ? '<div style="font-size:12px;color:#4BC88A;margin-bottom:8px">✅ Un commentaire a déjà été enregistré. Vous pouvez le réenregistrer pour le remplacer.</div>' : '')
+      +'<button class="btn" id="rec-start-btn" onclick="startRecording()">🔴 Démarrer l\'enregistrement</button>'
+    +'</div>'
+  +'</div>';
+}
+
+async function startRecording(){
+  var canvas = document.getElementById('bunny-canvas');
+  if(!canvas || !RAW_PLAYER){ toast('Vidéo non prête.', true); return; }
+  canvas.style.pointerEvents = 'auto';
+  canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
+  var ctx = canvas.getContext('2d');
+
+  var stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch(e){ toast('Micro non accessible : '+e.message, true); return; }
+
+  var recorder = new MediaRecorder(stream);
+  var chunks = [];
+  recorder.ondataavailable = function(e){ if(e.data.size>0) chunks.push(e.data); };
+
+  REC_STATE = { recorder:recorder, chunks:chunks, stream:stream, marks:[], curStroke:null, startedAt:0, ctx:ctx, canvas:canvas };
+
+  STITCH = makeStitchedController();
+  STITCH.on('timeupdate', function(ms){ REC_STATE.nowMs = ms; });
+  STITCH.on('ended', function(){ if(REC_STATE) stopRecording(); });
+
+  var controls = document.getElementById('rec-controls');
+  controls.innerHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">'
+    + COLORS.map(function(c){ return '<div class="color-dot'+(c===DRAW_COLOR?' on':'')+'" style="background:'+c+'" onclick="setDrawColor(\''+c+'\',this)"></div>'; }).join('')
+    + '<button class="btn-ghost" onclick="clearCanvasRecording()">🧹 Effacer</button>'
+    + '<button class="btn-danger" onclick="stopRecording()">⏹ Terminer</button>'
+  + '</div><div style="font-size:11px;color:#888">Dessinez sur la vidéo pendant qu\'elle joue — votre voix et vos tracés seront synchronisés à la lecture.</div>';
+
+  canvas.onpointerdown = function(e){ recPointerDown(e); };
+  canvas.onpointermove = function(e){ recPointerMove(e); };
+  window.addEventListener('pointerup', recPointerUp);
+
+  recorder.start();
+  REC_STATE.startedAt = performance.now();
+  STITCH.play(0);
+}
+
+function setDrawColor(c, el){
+  DRAW_COLOR = c;
+  document.querySelectorAll('.color-dot').forEach(function(d){ d.classList.remove('on'); });
+  if(el) el.classList.add('on');
+}
+
+function clearCanvasRecording(){
+  if(!REC_STATE) return;
+  REC_STATE.ctx.clearRect(0,0,REC_STATE.canvas.width,REC_STATE.canvas.height);
+  REC_STATE.marks.push({ type:'clear', t: REC_STATE.nowMs||0 });
+}
+
+function recPointerDown(e){
+  if(!REC_STATE) return;
+  var r = REC_STATE.canvas.getBoundingClientRect();
+  var x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
+  REC_STATE.curStroke = { type:'stroke', color:DRAW_COLOR, t: REC_STATE.nowMs||0, points:[{t:REC_STATE.nowMs||0, x:x, y:y}] };
+  REC_STATE._downT = performance.now();
+}
+function recPointerMove(e){
+  if(!REC_STATE || !REC_STATE.curStroke) return;
+  var r = REC_STATE.canvas.getBoundingClientRect();
+  var x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
+  var pts = REC_STATE.curStroke.points;
+  pts.push({t:REC_STATE.nowMs||0, x:x, y:y});
+  var ctx = REC_STATE.ctx, cw = REC_STATE.canvas.width, ch = REC_STATE.canvas.height;
+  ctx.strokeStyle = REC_STATE.curStroke.color; ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
+  var a = pts[pts.length-2], b = pts[pts.length-1];
+  ctx.beginPath(); ctx.moveTo(a.x*cw, a.y*ch); ctx.lineTo(b.x*cw, b.y*ch); ctx.stroke();
+}
+function recPointerUp(e){
+  if(!REC_STATE || !REC_STATE.curStroke) return;
+  var dt = performance.now() - (REC_STATE._downT||0);
+  var pts = REC_STATE.curStroke.points;
+  if(dt < 180 && pts.length <= 2){
+    // clic simple = ping
+    REC_STATE.marks.push({ type:'ping', t: REC_STATE.curStroke.t, x: pts[0].x, y: pts[0].y, color: DRAW_COLOR });
+  } else if(pts.length > 1){
+    REC_STATE.marks.push(REC_STATE.curStroke);
+  }
+  REC_STATE.curStroke = null;
+}
+
+async function stopRecording(){
+  if(!REC_STATE) return;
+  var canvas = REC_STATE.canvas;
+  canvas.onpointerdown = canvas.onpointermove = null;
+  window.removeEventListener('pointerup', recPointerUp);
+  canvas.style.pointerEvents = 'none';
+  if(STITCH){ STITCH.active=false; STITCH.pause(); }
+
+  var rec = REC_STATE.recorder;
+  var marks = REC_STATE.marks;
+  var stream = REC_STATE.stream;
+  document.getElementById('rec-controls').innerHTML = '<div style="font-size:12px;color:#60A8D0">⟳ Enregistrement en cours de sauvegarde…</div>';
+
+  rec.onstop = async function(){
+    stream.getTracks().forEach(function(t){ t.stop(); });
+    var blob = new Blob(REC_STATE.chunks, { type:'audio/webm' });
+    var path = ANALYSIS.id + '/voiceover_' + Date.now() + '.webm';
+    var up = await FFP_DB.storage.from('match-analysis-audio').upload(path, blob, { contentType:'audio/webm', upsert:true });
+    if(up.error){ toast('Erreur de sauvegarde audio : '+up.error.message, true); REC_STATE=null; renderRecordZone(); return; }
+    var pub = FFP_DB.storage.from('match-analysis-audio').getPublicUrl(path);
+    var audioUrl = pub.data.publicUrl;
+    var events = { audioStartMs:0, marks: marks };
+    var upd = await FFP_DB.from('match_analyses').update({ audio_url: audioUrl, events: events }).eq('id', ANALYSIS.id);
+    if(upd.error){ toast('Erreur : '+upd.error.message, true); } else { toast('Commentaire enregistré.'); }
+    ANALYSIS.audio_url = audioUrl;
+    ANALYSIS.events = events;
+    REC_STATE = null;
+    renderRecordZone();
+    renderPublishZone();
+  };
+  rec.stop();
+}
+
+// ── Visibilité ─────────────────────────────────────────
+function renderVisibilityZone(){
+  var el = document.getElementById('visibility-zone');
+  var scope = ANALYSIS.visibility_scope || 'team';
+  var recIds = RECIPIENTS.map(function(r){return r.joueur_id;});
+  var joueurRows = JOUEURS.map(function(j){
+    var checked = recIds.indexOf(j.id) >= 0;
+    return '<label style="display:flex;align-items:center;gap:7px;padding:5px 0;font-size:12px"><input type="'+(scope==='individual'?'radio':'checkbox')+'" name="vis-j" value="'+j.id+'" '+(checked?'checked':'')+'> '+esc(j.prenom)+' '+esc(j.nom)+'</label>';
+  }).join('');
+
+  el.innerHTML = '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">'
+    +['team','selected','individual'].map(function(v){
+      var lbl = {team:'Équipe entière',selected:'Joueurs sélectionnés',individual:'Un seul joueur'}[v];
+      return '<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="radio" name="vis-scope" value="'+v+'" '+(scope===v?'checked':'')+' onchange="renderVisibilityZone()"> '+lbl+'</label>';
+    }).join('')
+  +'</div>'
+  + (scope!=='team' ? '<div style="max-height:220px;overflow-y:auto;border:1px solid rgba(212,175,55,.1);border-radius:8px;padding:8px 12px;margin-bottom:10px">'+(joueurRows||'<div style="color:#475569;font-size:12px">Aucun joueur dans cette catégorie.</div>')+'</div>' : '')
+  +'<button class="btn" onclick="saveVisibility()">💾 Enregistrer la visibilité</button>';
+}
+
+async function saveVisibility(){
+  var radios = document.getElementsByName('vis-scope');
+  var scope = 'team';
+  for(var i=0;i<radios.length;i++){ if(radios[i].checked) scope = radios[i].value; }
+
+  var joueurIds = [];
+  var checks = document.getElementsByName('vis-j');
+  for(var j=0;j<checks.length;j++){ if(checks[j].checked) joueurIds.push(parseInt(checks[j].value,10)); }
+  if(scope !== 'team' && !joueurIds.length){ toast('Sélectionnez au moins un joueur.', true); return; }
+  if(scope === 'individual' && joueurIds.length > 1) joueurIds = [joueurIds[0]];
+
+  var upd = await FFP_DB.from('match_analyses').update({ visibility_scope: scope }).eq('id', ANALYSIS.id);
+  if(upd.error){ toast('Erreur : '+upd.error.message, true); return; }
+  ANALYSIS.visibility_scope = scope;
+
+  await FFP_DB.from('match_analysis_recipients').delete().eq('analysis_id', ANALYSIS.id);
+  if(scope !== 'team' && joueurIds.length){
+    var rows = joueurIds.map(function(id){ return { analysis_id: ANALYSIS.id, joueur_id: id }; });
+    await FFP_DB.from('match_analysis_recipients').insert(rows);
+  }
+  var recRes = await FFP_DB.from('match_analysis_recipients').select('id,joueur_id,joueurs(prenom,nom)').eq('analysis_id', ANALYSIS.id);
+  RECIPIENTS = recRes.data || [];
+  toast('Visibilité enregistrée.');
+  renderPublishZone();
+}
+
+// ── Publication ────────────────────────────────────────
+function renderPublishZone(){
+  var el = document.getElementById('publish-zone');
+  var checks = [
+    { ok: ANALYSIS.video_ready, label:'Vidéo encodée' },
+    { ok: true, label: SEGMENTS.length ? SEGMENTS.length+' segment(s) sélectionné(s)' : (ANALYSIS.plan_at_creation==='pro' ? 'Vidéo complète (aucun segment)' : 'Aucun segment sélectionné') },
+    { ok: !!ANALYSIS.audio_url, label: ANALYSIS.audio_url ? 'Commentaire vocal enregistré' : 'Pas de commentaire vocal (optionnel)' },
+    { ok: !!ANALYSIS.visibility_scope, label:'Visibilité : '+(({team:'équipe entière',selected:'joueurs sélectionnés',individual:'joueur unique'})[ANALYSIS.visibility_scope]||'à définir') }
+  ];
+  var list = checks.map(function(c){ return '<div style="font-size:12px;margin-bottom:4px">'+(c.ok?'✅':'⬜')+' '+c.label+'</div>'; }).join('');
+
+  var canPublish = ANALYSIS.video_ready;
+  var isReady = ANALYSIS.status === 'ready';
+
+  el.innerHTML = list + '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'
+    + (isReady
+        ? '<button class="btn-ghost" onclick="unpublish()">↩ Dépublier (repasser en brouillon)</button>'
+        + '<button class="btn-ghost" onclick="copyShareLink()">🔗 Copier le lien de partage</button>'
+        : '<button class="btn" '+(canPublish?'':'disabled')+' onclick="publishAnalysis()">🚀 Publier l\'analyse</button>')
+    + '</div>';
+}
+
+async function publishAnalysis(){
+  var upd = await FFP_DB.from('match_analyses').update({ status:'ready' }).eq('id', ANALYSIS.id);
+  if(upd.error){ toast('Erreur : '+upd.error.message, true); return; }
+  ANALYSIS.status = 'ready';
+  toast('Analyse publiée !');
+  renderPublishZone();
+}
+async function unpublish(){
+  var upd = await FFP_DB.from('match_analyses').update({ status:'draft' }).eq('id', ANALYSIS.id);
+  if(upd.error){ toast('Erreur : '+upd.error.message, true); return; }
+  ANALYSIS.status = 'draft';
+  renderPublishZone();
+}
+function copyShareLink(){
+  var url = window.location.origin + '/ffp-analyse-video.html?id=' + ANALYSIS.id;
+  if(navigator.clipboard) navigator.clipboard.writeText(url);
+  toast('Lien copié : ' + url);
+}
+async function deleteAnalysis(){
+  if(!confirm('Supprimer définitivement cette analyse ? Cette action est irréversible.')) return;
+  var del = await FFP_DB.from('match_analyses').delete().eq('id', ANALYSIS.id);
+  if(del.error){ toast('Erreur : '+del.error.message, true); return; }
+  window.location.href = 'ffp-analyse-video.html';
+}
+
+// ── Vue VIEWER (parent / joueur) ──────────────────────
+function renderEditorViewer(){
+  var host = document.getElementById('view-editor');
+  var m = ANALYSIS.matchs || {};
+  host.innerHTML = ''
+  +'<button class="btn-ghost" onclick="location.href=\'ffp-analyse-video.html\'" style="margin-bottom:14px">← Retour</button>'
+  +'<div class="rcard" style="border-top:3px solid #D4AF37">'
+    +'<div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:16px;margin-bottom:4px">'+esc(ANALYSIS.title||m.titre||'Analyse')+'</div>'
+    +'<div style="font-size:11px;color:#888">'+esc(m.titre||'')+(m.adversaire?' vs '+esc(m.adversaire):'')+(m.date_match?' · '+m.date_match:'')+'</div>'
+  +'</div>'
+  +'<div class="rcard"><div class="vwrap"><iframe id="bunny-frame" src="https://iframe.mediadelivery.net/embed/753621/'+ANALYSIS.bunny_video_id+'?autoplay=false" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen></iframe><canvas id="bunny-canvas" style="pointer-events:none"></canvas></div>'
+    +'<div style="margin-top:12px;display:flex;align-items:center;gap:10px">'
+      +'<button class="btn" id="play-btn" onclick="toggleViewerPlayback()">▶ Lire l\'analyse</button>'
+      +(ANALYSIS.audio_url ? '<span style="font-size:11px;color:#888">🎙️ Commentaire du coach synchronisé</span>' : '<span style="font-size:11px;color:#475569">Pas de commentaire vocal sur cette analyse.</span>')
+    +'</div>'
+    +(ANALYSIS.audio_url ? '<audio id="viewer-audio" src="'+esc(ANALYSIS.audio_url)+'" style="display:none" preload="auto"></audio>' : '')
+  +'</div>';
+
+  initRawPlayer();
+  var frame = document.getElementById('bunny-frame');
+  frame.onload = function(){ setTimeout(initViewerCanvas, 400); };
+}
+
+var VIEWER_PLAYING = false;
+function initViewerCanvas(){
+  var cv = document.getElementById('bunny-canvas');
+  if(cv){ cv.width = cv.clientWidth; cv.height = cv.clientHeight; }
+}
+
+function toggleViewerPlayback(){
+  var btn = document.getElementById('play-btn');
+  var audio = document.getElementById('viewer-audio');
+  if(VIEWER_PLAYING){
+    VIEWER_PLAYING = false;
+    if(STITCH) STITCH.pause();
+    if(audio) audio.pause();
+    btn.textContent = '▶ Reprendre';
+    return;
+  }
+  VIEWER_PLAYING = true;
+  btn.textContent = '⏸ Pause';
+  if(!STITCH){
+    STITCH = makeStitchedController();
+    STITCH.on('ended', function(){ VIEWER_PLAYING=false; btn.textContent='▶ Revoir'; if(audio) audio.pause(); });
+  }
+  STITCH.play(0);
+  if(audio){ audio.currentTime = 0; audio.play(); requestAnimationFrame(viewerDrawLoop); }
+}
+
+function viewerDrawLoop(){
+  if(!VIEWER_PLAYING) return;
+  var audio = document.getElementById('viewer-audio');
+  var cv = document.getElementById('bunny-canvas');
+  if(audio && cv && ANALYSIS.events && ANALYSIS.events.marks){
+    var nowMs = audio.currentTime*1000;
+    redrawMarksUpTo(cv, ANALYSIS.events.marks, nowMs);
+  }
+  requestAnimationFrame(viewerDrawLoop);
+}
+
+function redrawMarksUpTo(canvas, marks, nowMs){
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  var cw = canvas.width, ch = canvas.height;
+  var lastClear = 0;
+  marks.forEach(function(m){ if(m.type==='clear' && m.t<=nowMs) lastClear = m.t; });
+  marks.forEach(function(m){
+    if(m.t < lastClear) return;
+    if(m.type==='stroke' && m.t<=nowMs){
+      ctx.strokeStyle = m.color; ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.beginPath();
+      var started=false;
+      m.points.forEach(function(p){
+        if(p.t>nowMs) return;
+        if(!started){ ctx.moveTo(p.x*cw,p.y*ch); started=true; } else { ctx.lineTo(p.x*cw,p.y*ch); }
+      });
+      ctx.stroke();
+    } else if(m.type==='ping' && m.t<=nowMs && nowMs - m.t < 1800){
+      var age = (nowMs-m.t)/1800;
+      ctx.beginPath();
+      ctx.arc(m.x*cw, m.y*ch, 10+age*14, 0, Math.PI*2);
+      ctx.strokeStyle = m.color; ctx.globalAlpha = 1-age; ctx.lineWidth=3; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  });
+}
+</script>
+</body>
+</html>
