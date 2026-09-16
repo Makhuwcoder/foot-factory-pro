@@ -563,13 +563,17 @@ function renderRecordZone(){
   if(!ANALYSIS.video_ready){ el.innerHTML=''; return; }
   el.innerHTML = '<div class="rcard"><div class="ct">🎙️ Commentaire vocal + annotations</div>'
     +'<div id="rec-controls">'
-      +(ANALYSIS.audio_url ? '<div style="font-size:12px;color:#4BC88A;margin-bottom:8px">✅ Un commentaire a déjà été enregistré. Vous pouvez le réenregistrer pour le remplacer.</div>' : '')
+      +(ANALYSIS.audio_url ?
+          '<div style="font-size:12px;color:#4BC88A;margin-bottom:8px">✅ Un commentaire a déjà été enregistré. Vous pouvez le réenregistrer pour le remplacer.</div>'
+          +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><button class="btn-ghost" id="play-btn" onclick="toggleViewerPlayback()">▶ Prévisualiser (son + tracés)</button><audio id="viewer-audio" src="'+esc(ANALYSIS.audio_url)+'" style="display:none" preload="auto"></audio></div>'
+        : '')
       +'<button class="btn" id="rec-start-btn" onclick="startRecording()">🔴 Démarrer l\'enregistrement</button>'
     +'</div>'
   +'</div>';
 }
 
 async function startRecording(){
+  if(VIEWER_PLAYING) toggleViewerPlayback();
   var canvas = document.getElementById('bunny-canvas');
   if(!canvas || !RAW_PLAYER){ toast('Vidéo non prête.', true); return; }
   canvas.style.pointerEvents = 'auto';
@@ -584,10 +588,21 @@ async function startRecording(){
   var chunks = [];
   recorder.ondataavailable = function(e){ if(e.data.size>0) chunks.push(e.data); };
 
-  REC_STATE = { recorder:recorder, chunks:chunks, stream:stream, marks:[], curStroke:null, startedAt:0, ctx:ctx, canvas:canvas };
+  REC_STATE = { recorder:recorder, chunks:chunks, stream:stream, marks:[], curStroke:null, startedAt:0, videoOffsetMs:0, _offsetSet:false, ctx:ctx, canvas:canvas };
 
   STITCH = makeStitchedController();
-  STITCH.on('timeupdate', function(ms){ REC_STATE.nowMs = ms; });
+  // Le micro démarre immédiatement, mais la vidéo (iframe Bunny) met un peu de temps
+  // à réellement démarrer (seek + buffering). On mesure ce décalage une seule fois,
+  // au premier "timeupdate" réel, pour caler les timestamps des tracés sur l'horloge
+  // audio (celle utilisée à la relecture) plutôt que sur l'horloge vidéo.
+  STITCH.on('timeupdate', function(ms){
+    if(!REC_STATE) return;
+    if(!REC_STATE._offsetSet){
+      REC_STATE._offsetSet = true;
+      REC_STATE.videoOffsetMs = performance.now() - REC_STATE.startedAt;
+    }
+    REC_STATE.nowMs = ms;
+  });
   STITCH.on('ended', function(){ if(REC_STATE) stopRecording(); });
 
   var controls = document.getElementById('rec-controls');
@@ -612,17 +627,25 @@ function setDrawColor(c, el){
   if(el) el.classList.add('on');
 }
 
+// Timestamp d'un événement d'annotation, exprimé sur l'horloge audio
+// (temps écoulé depuis le déclenchement du micro), pour rester cohérent
+// avec la relecture qui se cale sur audio.currentTime.
+function recNowMs(){
+  if(!REC_STATE) return 0;
+  return (REC_STATE.videoOffsetMs||0) + (REC_STATE.nowMs||0);
+}
+
 function clearCanvasRecording(){
   if(!REC_STATE) return;
   REC_STATE.ctx.clearRect(0,0,REC_STATE.canvas.width,REC_STATE.canvas.height);
-  REC_STATE.marks.push({ type:'clear', t: REC_STATE.nowMs||0 });
+  REC_STATE.marks.push({ type:'clear', t: recNowMs() });
 }
 
 function recPointerDown(e){
   if(!REC_STATE) return;
   var r = REC_STATE.canvas.getBoundingClientRect();
   var x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
-  REC_STATE.curStroke = { type:'stroke', color:DRAW_COLOR, t: REC_STATE.nowMs||0, points:[{t:REC_STATE.nowMs||0, x:x, y:y}] };
+  REC_STATE.curStroke = { type:'stroke', color:DRAW_COLOR, t: recNowMs(), points:[{t:recNowMs(), x:x, y:y}] };
   REC_STATE._downT = performance.now();
 }
 function recPointerMove(e){
@@ -630,7 +653,7 @@ function recPointerMove(e){
   var r = REC_STATE.canvas.getBoundingClientRect();
   var x = (e.clientX-r.left)/r.width, y = (e.clientY-r.top)/r.height;
   var pts = REC_STATE.curStroke.points;
-  pts.push({t:REC_STATE.nowMs||0, x:x, y:y});
+  pts.push({t:recNowMs(), x:x, y:y});
   var ctx = REC_STATE.ctx, cw = REC_STATE.canvas.width, ch = REC_STATE.canvas.height;
   ctx.strokeStyle = REC_STATE.curStroke.color; ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
   var a = pts[pts.length-2], b = pts[pts.length-1];
@@ -667,7 +690,7 @@ async function stopRecording(){
     var blob = new Blob(REC_STATE.chunks, { type:'audio/webm' });
     var path = ANALYSIS.id + '/voiceover_' + Date.now() + '.webm';
     var up = await FFP_DB.storage.from('match-analysis-audio').upload(path, blob, { contentType:'audio/webm', upsert:true });
-    if(up.error){ toast('Erreur de sauvegarde audio : '+up.error.message, true); REC_STATE=null; renderRecordZone(); return; }
+    if(up.error){ toast('Erreur de sauvegarde audio : '+up.error.message, true); REC_STATE=null; STITCH=null; renderRecordZone(); return; }
     var pub = FFP_DB.storage.from('match-analysis-audio').getPublicUrl(path);
     var audioUrl = pub.data.publicUrl;
     var events = { audioStartMs:0, marks: marks };
@@ -676,6 +699,7 @@ async function stopRecording(){
     ANALYSIS.audio_url = audioUrl;
     ANALYSIS.events = events;
     REC_STATE = null;
+    STITCH = null;
     renderRecordZone();
     renderPublishZone();
   };
